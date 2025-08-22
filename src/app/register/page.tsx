@@ -4,34 +4,83 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, UserPlus, Gift } from 'lucide-react'
-import { initializeUserIfNeeded, isReferralCodeValid } from '@/utils/referral'
+import { initializeUserIfNeeded, isReferralCodeValid, createUserWithReferral } from '@/utils/referral'
 
 export default function RegisterPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [referralCode, setReferralCode] = useState('')
   const [isValidReferral, setIsValidReferral] = useState<boolean | null>(null)
   const [isRegistering, setIsRegistering] = useState(false)
+  const [errors, setErrors] = useState<{[key: string]: string}>({})
+  const [requiresReferral, setRequiresReferral] = useState(false)
 
   useEffect(() => {
     const refCode = searchParams.get('ref')
     if (refCode) {
       setReferralCode(refCode)
       setIsValidReferral(isReferralCodeValid(refCode))
+      setRequiresReferral(true)
     }
   }, [searchParams])
 
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {}
+    
+    if (!phone.trim()) {
+      newErrors.phone = 'Le numéro de téléphone est requis'
+    } else if (!/^\+?[0-9]{8,15}$/.test(phone.replace(/\s/g, ''))) {
+      newErrors.phone = 'Format de numéro invalide'
+    }
+    
+    if (!password.trim()) {
+      newErrors.password = 'Le mot de passe est requis'
+    } else if (password.length < 6) {
+      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
+    }
+    
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
+    }
+    
+    // Validation stricte du code de parrainage
+    if (requiresReferral && !isValidReferral) {
+      newErrors.referral = 'Code d\'invitation invalide. Vous ne pouvez pas vous inscrire sans un code valide.'
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleRegister = () => {
+    if (!validateForm()) return
+    
     setIsRegistering(true)
     
-    // Créer l'utilisateur avec le code de parrainage s'il est valide
-    const referredBy = isValidReferral ? referralCode : undefined
-    initializeUserIfNeeded(referredBy)
-    
-    // Rediriger vers l'accueil
-    setTimeout(() => {
-      router.push('/')
-    }, 1500)
+    try {
+      // Créer l'utilisateur avec le code de parrainage
+      const success = createUserWithReferral({
+        phone: phone.trim(),
+        password,
+        referredBy: isValidReferral ? referralCode : undefined
+      })
+      
+      if (success) {
+        // Rediriger vers l'accueil
+        setTimeout(() => {
+          router.push('/')
+        }, 1500)
+      } else {
+        setErrors({ general: 'Erreur lors de la création du compte' })
+        setIsRegistering(false)
+      }
+    } catch (error) {
+      setErrors({ general: 'Erreur lors de la création du compte' })
+      setIsRegistering(false)
+    }
   }
 
   return (
@@ -60,8 +109,78 @@ export default function RegisterPage() {
               <p className="text-gray-600">Rejoignez notre plateforme d'investissement</p>
             </div>
 
+            {/* Form Fields */}
+            <div className="space-y-4 mb-6">
+              <div>
+                <input
+                  type="tel"
+                  placeholder="Numéro de téléphone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              </div>
+              
+              <div>
+                <input
+                  type="password"
+                  placeholder="Mot de passe"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              </div>
+              
+              <div>
+                <input
+                  type="password"
+                  placeholder="Confirmer le mot de passe"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+              </div>
+              
+              <div>
+                <input
+                  type="text"
+                  placeholder="Code d'invitation (requis)"
+                  value={referralCode}
+                  onChange={(e) => {
+                    const code = e.target.value.toUpperCase()
+                    setReferralCode(code)
+                    if (code) {
+                      setIsValidReferral(isReferralCodeValid(code))
+                    } else {
+                      setIsValidReferral(null)
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.referral ? 'border-red-500' : referralCode && isValidReferral === false ? 'border-red-500' : referralCode && isValidReferral ? 'border-green-500' : 'border-gray-300'
+                  }`}
+                  disabled={requiresReferral}
+                />
+                {errors.referral && <p className="text-red-500 text-sm mt-1">{errors.referral}</p>}
+                {referralCode && isValidReferral === false && (
+                  <p className="text-red-500 text-sm mt-1">Code d'invitation invalide</p>
+                )}
+                {referralCode && isValidReferral && (
+                  <p className="text-green-600 text-sm mt-1">✓ Code d'invitation valide</p>
+                )}
+              </div>
+            </div>
+            
             {/* Referral Info */}
-            {referralCode && (
+            {requiresReferral && (
               <div className={`p-4 rounded-lg mb-6 ${
                 isValidReferral 
                   ? 'bg-green-50 border border-green-200' 
@@ -70,12 +189,17 @@ export default function RegisterPage() {
                 <div className="flex items-center mb-2">
                   <Gift className={`mr-2 ${isValidReferral ? 'text-green-600' : 'text-red-600'}`} size={20} />
                   <span className={`font-medium ${isValidReferral ? 'text-green-800' : 'text-red-800'}`}>
-                    {isValidReferral ? 'Code de parrainage valide !' : 'Code de parrainage invalide'}
+                    {isValidReferral ? 'Invitation valide !' : 'Invitation invalide'}
                   </span>
                 </div>
                 <p className={`text-sm ${isValidReferral ? 'text-green-700' : 'text-red-700'}`}>
                   Code: <span className="font-mono font-bold">{referralCode}</span>
                 </p>
+                {!isValidReferral && (
+                  <p className="text-sm text-red-600 mt-1 font-medium">
+                    ⚠️ Vous devez avoir un code d'invitation valide pour vous inscrire
+                  </p>
+                )}
                 {isValidReferral && (
                   <p className="text-sm text-green-600 mt-1">
                     🎉 Vous bénéficierez d'avantages spéciaux !
@@ -83,13 +207,19 @@ export default function RegisterPage() {
                 )}
               </div>
             )}
+            
+            {errors.general && (
+              <div className="p-4 rounded-lg mb-6 bg-red-50 border border-red-200">
+                <p className="text-red-700 text-sm">{errors.general}</p>
+              </div>
+            )}
 
             {/* Registration Button */}
             <button
               onClick={handleRegister}
-              disabled={isRegistering}
+              disabled={isRegistering || (requiresReferral && !isValidReferral)}
               className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
-                isRegistering
+                isRegistering || (requiresReferral && !isValidReferral)
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
               }`}

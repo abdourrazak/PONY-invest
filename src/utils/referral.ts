@@ -2,6 +2,8 @@
 
 export interface User {
   id: string;
+  phone?: string;
+  password?: string;
   referralCode: string;
   referredBy?: string;
   createdAt: string;
@@ -109,6 +111,55 @@ export function getReferralStats(): ReferralStats {
     referralCode: currentUser.referralCode,
     referralLink: getReferralLink(currentUser.referralCode)
   };
+}
+
+// Crée un utilisateur avec informations complètes
+export function createUserWithReferral(userData: {
+  phone: string;
+  password: string;
+  referredBy?: string;
+}): boolean {
+  try {
+    // Vérifier si le code de parrainage est valide (si fourni)
+    if (userData.referredBy && !isReferralCodeValid(userData.referredBy)) {
+      return false;
+    }
+
+    const users = getAllUsers();
+    
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = users.find(u => u.phone === userData.phone);
+    if (existingUser) {
+      return false;
+    }
+    
+    // Génère un code unique
+    let referralCode = generateReferralCode();
+    while (users.some(u => u.referralCode === referralCode)) {
+      referralCode = generateReferralCode();
+    }
+
+    const newUser: User = {
+      id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+      phone: userData.phone,
+      password: userData.password, // En production, il faudrait hasher le mot de passe
+      referralCode,
+      referredBy: userData.referredBy,
+      createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    saveAllUsers(users);
+    
+    // Sauvegarde l'utilisateur actuel
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    localStorage.setItem('userId', newUser.id);
+    
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'utilisateur:', error);
+    return false;
+  }
 }
 
 // Initialise un utilisateur s'il n'existe pas

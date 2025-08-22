@@ -1,15 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Cloud, Plus, Minus, Smartphone, Wallet, ChevronRight, Share2, Users, Copy } from 'lucide-react'
+import { Cloud, Plus, Minus, Smartphone, Wallet, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
-import { initializeUserIfNeeded, getReferralStats } from '@/utils/referral'
 
 export default function ComptePage() {
   const [balance, setBalance] = useState(1000)
   const [funds, setFunds] = useState(1000)
-  const [referralStats, setReferralStats] = useState({ totalReferrals: 0, referralCode: '', referralLink: '' })
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const savedBalance = localStorage.getItem('userBalance')
@@ -27,10 +24,10 @@ export default function ComptePage() {
       localStorage.setItem('userFunds', '1000')
     }
 
-    // Initialiser l'utilisateur et récupérer les stats de parrainage
-    initializeUserIfNeeded()
-    const stats = getReferralStats()
-    setReferralStats(stats)
+    // Générer un ID utilisateur unique si pas encore fait
+    if (!localStorage.getItem('userId')) {
+      localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
+    }
   }, [])
   return (
     <div className="min-h-screen bg-gray-100">
@@ -168,64 +165,6 @@ export default function ComptePage() {
               </div>
             </div>
           </button>
-
-          {/* Referral Section */}
-          <div className="bg-gradient-to-r from-white via-purple-50/40 to-white rounded-xl p-4 shadow-lg border border-purple-200/50 mb-4">
-            <div className="flex items-center mb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                <Share2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <span className="text-gray-800 text-base font-black tracking-wide">Mon Parrainage</span>
-                <div className="flex items-center mt-1">
-                  <Users className="w-4 h-4 text-purple-600 mr-1" />
-                  <span className="text-purple-600 text-sm font-medium">{referralStats.totalReferrals} filleul{referralStats.totalReferrals !== 1 ? 's' : ''}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-gray-600 font-medium mb-1 block">Mon Code d'Invitation</label>
-                <div className="flex items-center bg-gray-50 rounded-lg p-2">
-                  <span className="font-mono font-bold text-purple-600 flex-1">{referralStats.referralCode}</span>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(referralStats.referralCode)
-                      setCopied(true)
-                      setTimeout(() => setCopied(false), 2000)
-                    }}
-                    className="ml-2 p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-xs text-gray-600 font-medium mb-1 block">Lien d'Invitation</label>
-                <div className="flex items-center bg-gray-50 rounded-lg p-2">
-                  <span className="text-sm text-gray-700 flex-1 truncate">{referralStats.referralLink}</span>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(referralStats.referralLink)
-                      setCopied(true)
-                      setTimeout(() => setCopied(false), 2000)
-                    }}
-                    className="ml-2 p-1 text-purple-600 hover:bg-purple-100 rounded transition-colors"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              
-              {copied && (
-                <div className="text-center text-green-600 text-sm font-medium">
-                  ✅ Copié dans le presse-papiers !
-                </div>
-              )}
-            </div>
-          </div>
 
           <Link href="/register-auth" className="block w-full">
             <button className="w-full bg-gradient-to-r from-white via-red-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-red-200/50 hover:border-red-400 group backdrop-blur-sm transform hover:scale-[1.02]">

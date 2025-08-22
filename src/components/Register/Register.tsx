@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Eye, EyeOff, Smartphone, Lock, Users, ArrowRight } from 'lucide-react'
-import { initializeUserIfNeeded, isReferralCodeValid } from '@/utils/referral'
+import { createUserWithReferral, isReferralCodeValid } from '@/utils/referral'
 
 export default function Register() {
   const router = useRouter()
@@ -54,9 +54,11 @@ export default function Register() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
-    // Validation code parrainage (optionnel)
-    if (formData.referralCode && !isReferralCodeValid(formData.referralCode)) {
-      newErrors.referralCode = 'Code de parrainage invalide'
+    // Validation code d'invitation (obligatoire)
+    if (!formData.referralCode) {
+      newErrors.referralCode = 'Le code d\'invitation est requis'
+    } else if (!isReferralCodeValid(formData.referralCode)) {
+      newErrors.referralCode = 'Code d\'invitation invalide - Vous ne pouvez pas vous inscrire'
     }
 
     setErrors(newErrors)
@@ -74,21 +76,26 @@ export default function Register() {
       // Simuler l'inscription
       await new Promise(resolve => setTimeout(resolve, 1500))
       
-      // Créer l'utilisateur avec le code de parrainage
-      const referredBy = formData.referralCode && isReferralCodeValid(formData.referralCode) 
-        ? formData.referralCode 
-        : undefined
+      // Créer l'utilisateur avec validation stricte du code d'invitation
+      const success = createUserWithReferral({
+        phone: formData.phone,
+        password: formData.password,
+        referredBy: formData.referralCode
+      })
       
-      initializeUserIfNeeded(referredBy)
-      
-      // Sauvegarder les données utilisateur
-      localStorage.setItem('userPhone', formData.phone)
-      localStorage.setItem('isLoggedIn', 'true')
-      
-      // Rediriger vers l'accueil
-      router.push('/')
+      if (success) {
+        // Sauvegarder les données utilisateur
+        localStorage.setItem('userPhone', formData.phone)
+        localStorage.setItem('isLoggedIn', 'true')
+        
+        // Rediriger vers l'accueil
+        router.push('/')
+      } else {
+        setErrors({ referralCode: 'Erreur lors de l\'inscription. Code d\'invitation invalide.' })
+      }
     } catch (error) {
       console.error('Erreur inscription:', error)
+      setErrors({ referralCode: 'Erreur lors de l\'inscription. Veuillez réessayer.' })
     } finally {
       setIsLoading(false)
     }
@@ -225,13 +232,14 @@ export default function Register() {
             <div>
               <label className="flex items-center text-blue-700 font-semibold mb-2">
                 <Users className="w-4 h-4 mr-2" />
-                Code de parrainage <span className="text-red-500 ml-1">*</span>
+                Code d'invitation <span className="text-red-500 ml-1">*</span>
               </label>
               <input
                 type="text"
                 value={formData.referralCode}
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
-                placeholder="Ex: ABC12345"
+                placeholder="Code requis pour s'inscrire"
+                disabled={!!searchParams.get('ref')}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
                   errors.referralCode 
                     ? 'border-red-300 bg-red-50' 
@@ -240,24 +248,24 @@ export default function Register() {
                       : isValidReferral === false
                         ? 'border-red-300 bg-red-50'
                         : 'border-gray-200 bg-white focus:border-blue-500 focus:bg-white'
-                } focus:outline-none focus:ring-2 focus:ring-blue-200`}
+                } focus:outline-none focus:ring-2 focus:ring-blue-200 ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
               />
               {errors.referralCode && <p className="text-red-500 text-xs mt-1">{errors.referralCode}</p>}
               {isValidReferral === true && (
-                <p className="text-green-600 text-xs mt-1">✅ Code de parrainage valide</p>
+                <p className="text-green-600 text-xs mt-1">✅ Code d'invitation valide</p>
               )}
               {isValidReferral === false && formData.referralCode && (
-                <p className="text-red-500 text-xs mt-1">❌ Code de parrainage invalide</p>
+                <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide - Inscription impossible</p>
               )}
-              <p className="text-gray-400 text-xs mt-1">* Optionnel</p>
+              <p className="text-red-400 text-xs mt-1 font-medium">* Requis pour s'inscrire</p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !formData.referralCode || isValidReferral === false}
               className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
-                isLoading
+                isLoading || !formData.referralCode || isValidReferral === false
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
               } flex items-center justify-center`}
