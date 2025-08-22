@@ -120,14 +120,12 @@ export default function Register() {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
         {/* Logo Section */}
         <div className="mb-8 text-center">
-          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/30 backdrop-blur-sm">
-            <Image 
-              src="/asml_logo_.png" 
-              alt="Global Logo" 
-              width={48} 
-              height={48} 
-              className="object-contain"
-            />
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center relative animate-pulse">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="text-white text-2xl mb-1">🌍</div>
+              <span className="text-white font-bold text-sm leading-none">Global</span>
+            </div>
           </div>
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
             Rejoins l'aventure Global
@@ -155,10 +153,10 @@ export default function Register() {
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="693098879"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                   errors.phone 
                     ? 'border-red-300 bg-red-50' 
-                    : 'border-blue-200 bg-blue-50/50 focus:border-blue-500 focus:bg-white'
+                    : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
                 } focus:outline-none focus:ring-2 focus:ring-blue-200`}
               />
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -177,10 +175,10 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 ${
+                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                     errors.password 
                       ? 'border-red-300 bg-red-50' 
-                      : 'border-blue-200 bg-blue-50/50 focus:border-blue-500 focus:bg-white'
+                      : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
                   } focus:outline-none focus:ring-2 focus:ring-blue-200`}
                 />
                 <button
@@ -206,10 +204,10 @@ export default function Register() {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 ${
+                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                     errors.confirmPassword 
                       ? 'border-red-300 bg-red-50' 
-                      : 'border-blue-200 bg-blue-50/50 focus:border-blue-500 focus:bg-white'
+                      : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
                   } focus:outline-none focus:ring-2 focus:ring-blue-200`}
                 />
                 <button
@@ -234,14 +232,14 @@ export default function Register() {
                 value={formData.referralCode}
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
                 placeholder="Ex: ABC12345"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 ${
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
                   errors.referralCode 
                     ? 'border-red-300 bg-red-50' 
                     : isValidReferral === true
                       ? 'border-green-300 bg-green-50'
                       : isValidReferral === false
                         ? 'border-red-300 bg-red-50'
-                        : 'border-gray-200 bg-gray-50/50 focus:border-blue-500 focus:bg-white'
+                        : 'border-gray-200 bg-white focus:border-blue-500 focus:bg-white'
                 } focus:outline-none focus:ring-2 focus:ring-blue-200`}
               />
               {errors.referralCode && <p className="text-red-500 text-xs mt-1">{errors.referralCode}</p>}
