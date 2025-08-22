@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
 
 export default function LoginPage() {
@@ -82,7 +81,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-            Bienvenue sur Global
+            Connexion à Global
           </div>
         </div>
 
@@ -106,7 +105,7 @@ export default function LoginPage() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="693098879"
+                placeholder=""
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                   errors.phone 
                     ? 'border-red-300 bg-red-50' 
@@ -128,7 +127,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="••••••••"
+                  placeholder=""
                   className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                     errors.password 
                       ? 'border-red-300 bg-red-50' 
@@ -174,11 +173,36 @@ export default function LoginPage() {
               <p className="text-gray-600">
                 Pas encore de compte ?{' '}
                 <Link href="/register-auth" className="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
-                  S'inscrire
+                  Créer un compte
                 </Link>
               </p>
             </div>
           </form>
+        </div>
+
+        {/* Benefits */}
+        <div className="mt-8 max-w-md w-full">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/50">
+            <h3 className="font-bold text-gray-800 mb-3 text-center">🎯 Accès à votre compte</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center text-green-700">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                Vos investissements
+              </div>
+              <div className="flex items-center text-blue-700">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                Historique des gains
+              </div>
+              <div className="flex items-center text-purple-700">
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                Système de parrainage
+              </div>
+              <div className="flex items-center text-orange-700">
+                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                Retraits sécurisés
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
