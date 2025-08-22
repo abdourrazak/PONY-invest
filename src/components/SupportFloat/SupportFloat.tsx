@@ -20,7 +20,7 @@ export default function SupportFloat() {
         onClick={handleSupportClick}
       >
         <Image
-          src="/src/public/online-support--v1.png"
+          src="/online-support--v1.png"
           alt="Support en ligne"
           width={50}
           height={50}

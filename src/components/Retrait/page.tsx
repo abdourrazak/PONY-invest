@@ -119,13 +119,13 @@ export default function RetraitPage() {
                   <div className="flex items-center justify-center">
                     {index === 0 && (
                       <div className="flex items-center">
-                        <Image src="/src/public/org.png" alt="Orange Money" width={20} height={20} className="object-contain mr-2" />
+                        <Image src="/org.png" alt="Orange Money" width={20} height={20} className="object-contain mr-2" />
                         <span className="text-orange-600 font-medium text-sm">Orange Money</span>
                       </div>
                     )}
                     {index === 1 && (
                       <div className="flex items-center">
-                        <Image src="/src/public/mtn.png" alt="MTN Money" width={20} height={20} className="object-contain mr-2" />
+                        <Image src="/mtn.png" alt="MTN Money" width={20} height={20} className="object-contain mr-2" />
                         <span className="text-yellow-600 font-medium text-sm">MTN Money</span>
                       </div>
                     )}

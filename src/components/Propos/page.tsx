@@ -113,7 +113,7 @@ export default function ProposPage() {
           {/* EUV Image */}
           <div className="relative">
             <img 
-              src="/src/public/asml2.jpeg" 
+              src="/asml2.jpeg" 
               alt="Technologie EUV Global" 
               className="w-full h-48 object-cover"
             />
@@ -194,7 +194,7 @@ export default function ProposPage() {
             {/* Strategic Image */}
             <div className="relative rounded-lg overflow-hidden">
               <img 
-                src="/src/public/banner2.jpeg" 
+                src="/banner2.jpeg" 
                 alt="Position stratégique Global" 
                 className="w-full h-48 object-cover"
               />

@@ -58,7 +58,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p1.png" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p1.png" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -91,7 +91,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p2.png" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p2.png" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -124,7 +124,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p3.png" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p3.png" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -157,7 +157,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p4.png" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p4.png" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -190,7 +190,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p5.png" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p5.png" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -223,7 +223,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p6.png" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p6.png" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -256,7 +256,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
-              <Image src="/src/public/p7.png" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p7.png" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">

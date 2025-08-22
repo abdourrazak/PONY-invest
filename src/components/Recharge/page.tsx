@@ -98,10 +98,10 @@ export default function RechargePage() {
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3 shadow-sm">
                     {index === 0 && (
-                      <Image src="/src/public/org.png" alt="Orange Money" width={24} height={24} className="object-contain" />
+                      <Image src="/org.png" alt="Orange Money" width={20} height={20} className="object-contain mr-2" />
                     )}
                     {index === 1 && (
-                      <Image src="/src/public/mtn.png" alt="MTN Money" width={24} height={24} className="object-contain" />
+                      <Image src="/mtn.png" alt="MTN Money" width={20} height={20} className="object-contain mr-2" />
                     )}
                     {index === 2 && (
                       <div className="text-green-500 text-lg">₿</div>
