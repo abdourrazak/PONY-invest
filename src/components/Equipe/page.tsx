@@ -1,0 +1,217 @@
+'use client'
+import { useState } from 'react'
+import { ArrowLeft, Users, TrendingUp, Award, Target } from 'lucide-react'
+import SupportFloat from '../SupportFloat/SupportFloat'
+import Link from 'next/link'
+
+export default function EquipePage() {
+  const [activeTab, setActiveTab] = useState('Équipe A')
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setShowSuccess(true)
+      setTimeout(() => setShowSuccess(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
+            <ArrowLeft size={24} className="drop-shadow-sm" />
+          </Link>
+          <h1 className="text-white text-xl font-bold tracking-wide drop-shadow-md flex items-center">
+            <Users className="mr-2" size={24} />
+            Mon Équipe
+          </h1>
+          <div className="w-10"></div>
+        </div>
+      </header>
+
+      {/* Stats Cards */}
+      <div className="px-4 py-4">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-white to-green-50 rounded-xl p-5 text-center shadow-lg border border-green-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <TrendingUp className="text-green-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Revenu Total</span>
+            </div>
+            <div className="text-green-600 text-2xl font-black">0 FCFA</div>
+          </div>
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl p-5 text-center shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="text-blue-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Total Invitations</span>
+            </div>
+            <div className="text-blue-600 text-2xl font-black">0</div>
+          </div>
+        </div>
+
+        {/* Code d'Invitation */}
+        <div className="bg-gradient-to-r from-white to-green-50 rounded-xl p-5 mb-4 shadow-lg border border-green-100">
+          <div className="text-gray-800 font-bold mb-3 flex items-center">
+            <Award className="text-green-500 mr-2" size={20} />
+            Code d'Invitation
+          </div>
+          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-green-50 rounded-xl p-4 border border-green-200">
+            <span className="text-green-600 font-mono text-lg font-bold">R8GT04</span>
+            <button 
+              onClick={() => handleCopy('R8GT04')}
+              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+            >
+              COPIER
+            </button>
+          </div>
+        </div>
+
+        {/* Lien d'Invitation */}
+        <div className="bg-gradient-to-r from-white to-blue-50 rounded-xl p-5 mb-6 shadow-lg border border-blue-100">
+          <div className="text-gray-800 font-bold mb-3 flex items-center">
+            <Target className="text-blue-500 mr-2" size={20} />
+            Lien d'Invitation
+          </div>
+          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-blue-200">
+            <span className="text-blue-600 text-xs flex-1 mr-2 truncate font-mono">
+              https://wfarm.shop/register?ref=R8GT04
+            </span>
+            <button 
+              onClick={() => handleCopy('https://wfarm.shop/register?ref=R8GT04')}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+            >
+              COPIER
+            </button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-xl mb-4 shadow-lg border border-gray-200">
+          <div className="flex">
+            {['Équipe A', 'Équipe B', 'Équipe C'].map((tab, index) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-4 px-4 text-sm font-bold transition-all duration-200 transform hover:scale-105 ${
+                  activeTab === tab
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-green-50'
+                } ${index === 0 ? 'rounded-tl-xl' : ''} ${index === 2 ? 'rounded-tr-xl' : ''}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Team Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-white to-purple-50 rounded-xl p-5 text-center shadow-lg border border-purple-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="text-purple-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Total Invitations</span>
+            </div>
+            <div className="text-purple-600 text-2xl font-black">0</div>
+          </div>
+          <div className="bg-gradient-to-br from-white to-orange-50 rounded-xl p-5 text-center shadow-lg border border-orange-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <Award className="text-orange-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Invitations Valides</span>
+            </div>
+            <div className="text-orange-600 text-2xl font-black">0</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-white to-green-50 rounded-xl p-5 text-center shadow-lg border border-green-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <TrendingUp className="text-green-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Revenu Total</span>
+            </div>
+            <div className="text-green-600 text-2xl font-black">0 FCFA</div>
+          </div>
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl p-5 text-center shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-2">
+              <Target className="text-blue-500 mr-2" size={20} />
+              <span className="text-gray-700 text-sm font-bold">Profit de l'Équipe</span>
+            </div>
+            <div className="text-blue-600 text-2xl font-black">22</div>
+          </div>
+        </div>
+
+        {/* Team Members List */}
+        <div className="pb-20">
+          <div className="bg-gradient-to-r from-white to-gray-50 rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="text-gray-800 font-bold mb-4 flex items-center">
+              <Users className="text-green-500 mr-2" size={20} />
+              Membres de l'Équipe
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-center bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 border border-green-200">
+              <div>
+                <div className="text-green-600 font-bold text-sm">Mobile</div>
+              </div>
+              <div>
+                <div className="text-blue-600 font-bold text-sm">Niveau</div>
+              </div>
+              <div>
+                <div className="text-purple-600 font-bold text-sm">Investissement</div>
+              </div>
+            </div>
+            <div className="mt-4 text-center text-gray-500 py-8">
+              <Users size={48} className="mx-auto mb-2 opacity-50" />
+              <p className="font-medium">Aucun membre dans cette équipe</p>
+              <p className="text-sm">Invitez des amis pour commencer à gagner !</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 border border-green-400 animate-bounce">
+          <div className="flex items-center">
+            <Award className="mr-2" size={20} />
+            <span className="font-bold">Copié avec succès !</span>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="flex justify-around items-center">
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+              <span className="text-gray-500 text-xs">🏠</span>
+            </div>
+            <span className="text-gray-500 text-xs">Accueil</span>
+          </Link>
+          <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+              <span className="text-gray-500 text-xs">📊</span>
+            </div>
+            <span className="text-gray-500 text-xs">Produits</span>
+          </Link>
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
+              <span className="text-white text-xs">👥</span>
+            </div>
+            <span className="text-green-600 text-xs font-medium">Équipe</span>
+          </Link>
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+              <span className="text-gray-500 text-xs">👤</span>
+            </div>
+            <span className="text-gray-500 text-xs">Mon Compte</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Support Float */}
+      <SupportFloat />
+    </div>
+  )
+}

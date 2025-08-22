@@ -1,0 +1,255 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { ArrowLeft, Clock, Gift } from 'lucide-react'
+
+interface DailyReward {
+  day: number
+  amount: number
+  claimed: boolean
+  available: boolean
+}
+
+export default function CheckQuotidien() {
+  const [rewards, setRewards] = useState<DailyReward[]>([
+    { day: 1, amount: 75, claimed: false, available: true },
+    { day: 2, amount: 100, claimed: false, available: false },
+    { day: 3, amount: 25, claimed: false, available: false },
+    { day: 4, amount: 40, claimed: false, available: false },
+    { day: 5, amount: 120, claimed: false, available: false },
+    { day: 6, amount: 30, claimed: false, available: false },
+    { day: 7, amount: 150, claimed: false, available: false }
+  ])
+
+  const [currentDay, setCurrentDay] = useState(1)
+  const [balance, setBalance] = useState(1000) // Solde de base
+  const [nextCheckIn, setNextCheckIn] = useState<Date | null>(null)
+  const [timeRemaining, setTimeRemaining] = useState('')
+
+  // Initialiser les données depuis localStorage
+  useEffect(() => {
+    const savedRewards = localStorage.getItem('dailyRewards')
+    const savedCurrentDay = localStorage.getItem('currentDay')
+    const savedBalance = localStorage.getItem('userBalance')
+    const savedNextCheckIn = localStorage.getItem('nextCheckIn')
+
+    if (savedRewards) {
+      setRewards(JSON.parse(savedRewards))
+    }
+    if (savedCurrentDay) {
+      setCurrentDay(parseInt(savedCurrentDay))
+    }
+    if (savedBalance) {
+      setBalance(parseInt(savedBalance))
+    } else {
+      // Premier accès - définir le solde de base
+      localStorage.setItem('userBalance', '1000')
+    }
+    if (savedNextCheckIn) {
+      setNextCheckIn(new Date(savedNextCheckIn))
+    }
+  }, [])
+
+  // Timer pour le prochain check-in
+  useEffect(() => {
+    if (!nextCheckIn) return
+
+    const interval = setInterval(() => {
+      const now = new Date()
+      const diff = nextCheckIn.getTime() - now.getTime()
+
+      if (diff <= 0) {
+        // Temps écoulé - débloquer le prochain jour
+        const newRewards = rewards.map((reward, index) => {
+          if (index === currentDay && currentDay < 7) {
+            return { ...reward, available: true }
+          }
+          return reward
+        })
+        setRewards(newRewards)
+        localStorage.setItem('dailyRewards', JSON.stringify(newRewards))
+        setNextCheckIn(null)
+        localStorage.removeItem('nextCheckIn')
+        setTimeRemaining('')
+      } else {
+        // Calculer le temps restant
+        const hours = Math.floor(diff / (1000 * 60 * 60))
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+        setTimeRemaining(`${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`)
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [nextCheckIn, rewards, currentDay])
+
+  const claimReward = (day: number) => {
+    const reward = rewards.find(r => r.day === day)
+    if (!reward || reward.claimed || !reward.available) return
+
+    // Récupérer la récompense
+    const newBalance = balance + reward.amount
+    setBalance(newBalance)
+    localStorage.setItem('userBalance', newBalance.toString())
+
+    // Mettre à jour le solde de fonds (Mes atouts)
+    const currentFunds = parseInt(localStorage.getItem('userFunds') || '1000')
+    const newFunds = currentFunds + reward.amount
+    localStorage.setItem('userFunds', newFunds.toString())
+
+    // Sauvegarder l'historique des récompenses pour synchronisation future
+    const rewardHistory = JSON.parse(localStorage.getItem('rewardHistory') || '[]')
+    rewardHistory.push({
+      day,
+      amount: reward.amount,
+      timestamp: new Date().toISOString(),
+      userId: localStorage.getItem('userId') || 'user_' + Date.now()
+    })
+    localStorage.setItem('rewardHistory', JSON.stringify(rewardHistory))
+
+    // Marquer comme récupérée
+    const newRewards = rewards.map(r => 
+      r.day === day ? { ...r, claimed: true, available: false } : r
+    )
+
+    // Débloquer le prochain jour après 24h
+    if (day < 7) {
+      const nextDay = new Date()
+      nextDay.setHours(nextDay.getHours() + 24)
+      setNextCheckIn(nextDay)
+      localStorage.setItem('nextCheckIn', nextDay.toISOString())
+      
+      setCurrentDay(day + 1)
+      localStorage.setItem('currentDay', (day + 1).toString())
+    }
+
+    setRewards(newRewards)
+    localStorage.setItem('dailyRewards', JSON.stringify(newRewards))
+
+    // Générer un ID utilisateur unique si pas encore fait
+    if (!localStorage.getItem('userId')) {
+      localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
+            <ArrowLeft size={24} className="drop-shadow-sm" />
+          </Link>
+          <h1 className="text-white text-xl font-bold tracking-wide drop-shadow-md flex items-center">
+            <Gift className="mr-2" size={24} />
+            Check-in Quotidien
+          </h1>
+          <div className="w-10"></div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="p-6">
+        {/* Balance Display */}
+        <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl p-4 mb-6 text-center shadow-2xl">
+          <div className="text-white text-sm font-medium mb-1">Solde Actuel</div>
+          <div className="text-white text-2xl font-black">{balance} XOF</div>
+        </div>
+
+        {/* Reward Container */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-6 border-4 border-yellow-400 shadow-2xl">
+          {/* Title */}
+          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl px-6 py-4 mb-6 text-center shadow-xl">
+            <h2 className="text-yellow-300 text-2xl font-black tracking-wide">
+              RÉCOMPENSE
+            </h2>
+            <h3 className="text-yellow-300 text-2xl font-black tracking-wide">
+              QUOTIDIENNE
+            </h3>
+          </div>
+
+          {/* Next Check-in Timer */}
+          {timeRemaining && (
+            <div className="text-center mb-6">
+              <div className="text-yellow-300 text-lg font-bold mb-2 flex items-center justify-center">
+                <Clock className="mr-2" size={20} />
+                Prochain check-in dans:
+              </div>
+              <div className="text-yellow-400 text-xl font-black">{timeRemaining}</div>
+            </div>
+          )}
+
+          {/* Rewards Grid */}
+          <div className="grid grid-cols-5 gap-3 mb-4">
+            {rewards.slice(0, 5).map((reward) => (
+              <button
+                key={reward.day}
+                onClick={() => claimReward(reward.day)}
+                disabled={!reward.available || reward.claimed}
+                className={`
+                  rounded-2xl p-4 border-4 transition-all duration-200 transform
+                  ${reward.claimed 
+                    ? 'bg-gray-700 border-gray-600 opacity-50' 
+                    : reward.available 
+                      ? 'bg-gradient-to-br from-red-600 to-red-700 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer' 
+                      : 'bg-gray-800 border-gray-600 opacity-70'
+                  }
+                `}
+              >
+                <div className="text-yellow-300 text-sm font-bold mb-2">
+                  Jour {reward.day}
+                </div>
+                <div className="text-yellow-400 text-lg font-black">
+                  {reward.amount} F
+                </div>
+                {reward.claimed && (
+                  <div className="text-green-400 text-xs mt-1">✓ Récupéré</div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 justify-center max-w-xs mx-auto">
+            {rewards.slice(5, 7).map((reward) => (
+              <button
+                key={reward.day}
+                onClick={() => claimReward(reward.day)}
+                disabled={!reward.available || reward.claimed}
+                className={`
+                  rounded-2xl p-4 border-4 transition-all duration-200 transform
+                  ${reward.claimed 
+                    ? 'bg-gray-700 border-gray-600 opacity-50' 
+                    : reward.available 
+                      ? 'bg-gradient-to-br from-red-600 to-red-700 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer' 
+                      : 'bg-gray-800 border-gray-600 opacity-70'
+                  }
+                `}
+              >
+                <div className="text-yellow-300 text-sm font-bold mb-2">
+                  Jour {reward.day}
+                </div>
+                <div className="text-yellow-400 text-lg font-black">
+                  {reward.amount} F
+                </div>
+                {reward.claimed && (
+                  <div className="text-green-400 text-xs mt-1">✓ Récupéré</div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Instructions */}
+          <div className="mt-6 text-center">
+            <p className="text-yellow-300 text-sm font-medium">
+              Récupérez votre récompense quotidienne !
+            </p>
+            <p className="text-yellow-400 text-xs mt-1">
+              Revenez chaque jour pour débloquer la prochaine récompense
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
