@@ -227,7 +227,8 @@ export default function ComptePage() {
             </div>
           </div>
 
-          <button className="w-full bg-gradient-to-r from-white via-red-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-red-200/50 hover:border-red-400 group backdrop-blur-sm transform hover:scale-[1.02]">
+          <Link href="/register-auth" className="block w-full">
+            <button className="w-full bg-gradient-to-r from-white via-red-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-red-200/50 hover:border-red-400 group backdrop-blur-sm transform hover:scale-[1.02]">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
@@ -243,7 +244,8 @@ export default function ComptePage() {
                 </svg>
               </div>
             </div>
-          </button>
+            </button>
+          </Link>
 
         </div>
       </div>
