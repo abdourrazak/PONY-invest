@@ -80,9 +80,12 @@ export function getCurrentUser(): User | null {
 export function getReferralLink(referralCode: string): string {
   if (typeof window === 'undefined') return '';
   
-  const baseUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://axml-global.vercel.app' 
-    : window.location.origin;
+  // Détection automatique de l'URL Vercel ou locale
+  const baseUrl = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')
+    ? window.location.origin
+    : process.env.NODE_ENV === 'production' 
+      ? 'https://axml-global.vercel.app' 
+      : window.location.origin;
     
   return `${baseUrl}/register?ref=${referralCode}`;
 }
