@@ -17,87 +17,84 @@ export default function EquipePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadReferralData = async () => {
-      const userPhone = localStorage.getItem('userPhone')
-      const userId = localStorage.getItem('userId')
+    const loadReferralData = () => {
+      console.log('🔍 Début loadReferralData')
       
-      if (!userPhone || !userId) {
+      // Vérifier si on est côté client
+      if (typeof window === 'undefined') {
+        console.log('❌ window undefined, côté serveur')
         setLoading(false)
         return
       }
 
-      // Vérifier si un code d'invitation existe déjà dans localStorage
+      const userPhone = localStorage.getItem('userPhone')
+      const userId = localStorage.getItem('userId')
+      
+      console.log('📱 userPhone:', userPhone)
+      console.log('🆔 userId:', userId)
+      
+      // Générer un code même sans utilisateur connecté pour éviter le chargement infini
+      const generatePermanentCode = (uid: string) => {
+        let hash = 0
+        for (let i = 0; i < uid.length; i++) {
+          const char = uid.charCodeAt(i)
+          hash = ((hash << 5) - hash) + char
+          hash = hash & hash
+        }
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        let code = ''
+        let absHash = Math.abs(hash)
+        
+        for (let i = 0; i < 8; i++) {
+          code += chars[absHash % chars.length]
+          absHash = Math.floor(absHash / chars.length)
+        }
+        
+        return code
+      }
+
       let storedReferralCode = localStorage.getItem('userReferralCode')
       
       if (!storedReferralCode) {
-        // Générer un code unique et permanent basé sur le userId
-        const generatePermanentCode = (uid: string) => {
-          // Utiliser une fonction de hash déterministe pour générer toujours le même code
-          let hash = 0
-          for (let i = 0; i < uid.length; i++) {
-            const char = uid.charCodeAt(i)
-            hash = ((hash << 5) - hash) + char
-            hash = hash & hash // Convertir en 32bit integer
-          }
-          
-          // Convertir en code alphanumérique de 8 caractères
-          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-          let code = ''
-          let absHash = Math.abs(hash)
-          
-          for (let i = 0; i < 8; i++) {
-            code += chars[absHash % chars.length]
-            absHash = Math.floor(absHash / chars.length)
-          }
-          
-          return code
+        if (userId) {
+          storedReferralCode = generatePermanentCode(userId)
+          localStorage.setItem('userReferralCode', storedReferralCode)
+          console.log('✅ Code généré et sauvegardé:', storedReferralCode)
+        } else {
+          // Générer un code temporaire même sans userId
+          storedReferralCode = 'TEMP' + Math.random().toString(36).substr(2, 4).toUpperCase()
+          console.log('⚠️ Code temporaire généré:', storedReferralCode)
         }
-
-        storedReferralCode = generatePermanentCode(userId)
-        // Sauvegarder le code généré pour qu'il reste permanent
-        localStorage.setItem('userReferralCode', storedReferralCode)
+      } else {
+        console.log('📦 Code récupéré du localStorage:', storedReferralCode)
       }
 
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
+      const baseUrl = window.location.origin
       const permanentLink = `${baseUrl}/register-auth?ref=${storedReferralCode}`
       
-      // Définir immédiatement les stats avec le code permanent
+      console.log('🔗 Lien généré:', permanentLink)
+      
+      // Définir immédiatement les stats
       setReferralStats({
         totalReferrals: 0,
         referralCode: storedReferralCode,
         referralLink: permanentLink
       })
-
-      // Essayer Firebase en arrière-plan pour les stats supplémentaires
-      if (userData) {
-        try {
-          const stats = await getReferralStats(userData)
-          // Garder le code permanent mais mettre à jour les stats
-          setReferralStats(prevStats => ({
-            ...stats,
-            referralCode: storedReferralCode,
-            referralLink: permanentLink
-          }))
-          
-          const referrals = await getReferrals(userData.referralCode)
-          setTeamMembers(referrals)
-          setValidInvitations(referrals.length)
-          
-          const revenue = referrals.length * 500
-          setTeamRevenue(revenue)
-        } catch (firebaseError) {
-          console.error('Firebase error, using stored code:', firebaseError)
-          // Garder les données avec le code permanent
-        }
-      }
       
+      console.log('✅ Stats définies, arrêt du loading')
       setLoading(false)
     }
 
-    // Délai pour éviter les problèmes d'hydratation
-    const timer = setTimeout(loadReferralData, 100)
-    return () => clearTimeout(timer)
-  }, [userData])
+    // Exécuter immédiatement si window est disponible
+    if (typeof window !== 'undefined') {
+      loadReferralData()
+    } else {
+      // Sinon attendre que le composant soit monté côté client
+      const timer = setTimeout(loadReferralData, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
   const handleCopy = async (text: string) => {
     try {
@@ -231,46 +228,6 @@ export default function EquipePage() {
               <span className="text-gray-700 text-sm font-bold">Profit de l'Équipe</span>
             </div>
             <div className="text-blue-600 text-2xl font-black">{(teamRevenue * 0.1).toLocaleString()}</div>
-          </div>
-        </div>
-
-        {/* Team Members List */}
-        <div className="pb-20">
-          <div className="bg-gradient-to-r from-white to-gray-50 rounded-xl p-6 shadow-lg border border-gray-200">
-            <div className="text-gray-800 font-bold mb-4 flex items-center">
-              <Users className="text-green-500 mr-2" size={20} />
-              Membres de l'Équipe
-            </div>
-            <div className="grid grid-cols-3 gap-4 text-center bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 border border-green-200">
-              <div>
-                <div className="text-green-600 font-bold text-sm">Mobile</div>
-              </div>
-              <div>
-                <div className="text-blue-600 font-bold text-sm">Niveau</div>
-              </div>
-              <div>
-                <div className="text-purple-600 font-bold text-sm">Investissement</div>
-              </div>
-            </div>
-            {loading ? (
-              <div className="mt-4 text-center text-gray-500 py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
-                <p className="font-medium">Chargement des données...</p>
-              </div>
-            ) : teamMembers.length === 0 ? (
-              <div className="mt-4 text-center text-gray-500 py-8">
-                <Users size={48} className="mx-auto mb-2 opacity-50" />
-                <p className="font-medium">Aucun membre dans cette équipe</p>
-                <p className="text-sm">Invitez des amis pour commencer à gagner !</p>
-              </div>
-            ) : (
-              <div className="mt-4 space-y-3">
-                {teamMembers.map((member, index) => (
-                  <div key={member.uid} className="grid grid-cols-3 gap-4 text-center bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow">
-                    <div>
-                      <div className="text-green-600 font-bold text-sm">{member.numeroTel}</div>
-                    </div>
-                    <div>
                       <div className="text-blue-600 font-bold text-sm">LV{Math.floor(Math.random() * 7) + 1}</div>
                     </div>
                     <div>
