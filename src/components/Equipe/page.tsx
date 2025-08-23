@@ -18,70 +18,80 @@ export default function EquipePage() {
 
   useEffect(() => {
     const loadReferralData = async () => {
-      // Toujours utiliser localStorage en premier pour éviter les problèmes de SSR
       const userPhone = localStorage.getItem('userPhone')
       const userId = localStorage.getItem('userId')
       
       if (!userPhone || !userId) {
-        // Générer un code temporaire pour les utilisateurs non connectés
-        const tempCode = 'DEMO' + Math.random().toString(36).substr(2, 4).toUpperCase()
-        setReferralStats({
-          totalReferrals: 0,
-          referralCode: tempCode,
-          referralLink: `${typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'}/register-auth?ref=${tempCode}`
-        })
         setLoading(false)
         return
       }
 
-      // Essayer d'abord avec les données localStorage
-      try {
-        // Générer un code basé sur le userId pour la cohérence
-        const generateCodeFromUserId = (uid: string) => {
-          const hash = uid.split('').reduce((a, b) => {
-            a = ((a << 5) - a) + b.charCodeAt(0)
-            return a & a
-          }, 0)
-          return 'USR' + Math.abs(hash).toString(36).substr(0, 5).toUpperCase()
-        }
-
-        const fallbackCode = generateCodeFromUserId(userId)
-        const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
-        
-        setReferralStats({
-          totalReferrals: 0,
-          referralCode: fallbackCode,
-          referralLink: `${baseUrl}/register-auth?ref=${fallbackCode}`
-        })
-
-        // Essayer Firebase en arrière-plan si userData est disponible
-        if (userData) {
-          try {
-            const stats = await getReferralStats(userData)
-            setReferralStats(stats)
-            
-            const referrals = await getReferrals(userData.referralCode)
-            setTeamMembers(referrals)
-            setValidInvitations(referrals.length)
-            
-            const revenue = referrals.length * 500
-            setTeamRevenue(revenue)
-          } catch (firebaseError) {
-            console.error('Firebase error, using fallback:', firebaseError)
-            // Garder les données de fallback déjà définies
+      // Vérifier si un code d'invitation existe déjà dans localStorage
+      let storedReferralCode = localStorage.getItem('userReferralCode')
+      
+      if (!storedReferralCode) {
+        // Générer un code unique et permanent basé sur le userId
+        const generatePermanentCode = (uid: string) => {
+          // Utiliser une fonction de hash déterministe pour générer toujours le même code
+          let hash = 0
+          for (let i = 0; i < uid.length; i++) {
+            const char = uid.charCodeAt(i)
+            hash = ((hash << 5) - hash) + char
+            hash = hash & hash // Convertir en 32bit integer
           }
+          
+          // Convertir en code alphanumérique de 8 caractères
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+          let code = ''
+          let absHash = Math.abs(hash)
+          
+          for (let i = 0; i < 8; i++) {
+            code += chars[absHash % chars.length]
+            absHash = Math.floor(absHash / chars.length)
+          }
+          
+          return code
         }
-      } catch (error) {
-        console.error('Erreur générale:', error)
-        // Fallback ultime
-        setReferralStats({
-          totalReferrals: 0,
-          referralCode: 'FALLBACK',
-          referralLink: `https://axml-global.vercel.app/register-auth?ref=FALLBACK`
-        })
-      } finally {
-        setLoading(false)
+
+        storedReferralCode = generatePermanentCode(userId)
+        // Sauvegarder le code généré pour qu'il reste permanent
+        localStorage.setItem('userReferralCode', storedReferralCode)
       }
+
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
+      const permanentLink = `${baseUrl}/register-auth?ref=${storedReferralCode}`
+      
+      // Définir immédiatement les stats avec le code permanent
+      setReferralStats({
+        totalReferrals: 0,
+        referralCode: storedReferralCode,
+        referralLink: permanentLink
+      })
+
+      // Essayer Firebase en arrière-plan pour les stats supplémentaires
+      if (userData) {
+        try {
+          const stats = await getReferralStats(userData)
+          // Garder le code permanent mais mettre à jour les stats
+          setReferralStats(prevStats => ({
+            ...stats,
+            referralCode: storedReferralCode,
+            referralLink: permanentLink
+          }))
+          
+          const referrals = await getReferrals(userData.referralCode)
+          setTeamMembers(referrals)
+          setValidInvitations(referrals.length)
+          
+          const revenue = referrals.length * 500
+          setTeamRevenue(revenue)
+        } catch (firebaseError) {
+          console.error('Firebase error, using stored code:', firebaseError)
+          // Garder les données avec le code permanent
+        }
+      }
+      
+      setLoading(false)
     }
 
     // Délai pour éviter les problèmes d'hydratation

@@ -93,6 +93,30 @@ export default function Register() {
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('userId', result.user.uid)
         
+        // Générer et sauvegarder le code d'invitation permanent
+        const generatePermanentCode = (uid: string) => {
+          let hash = 0
+          for (let i = 0; i < uid.length; i++) {
+            const char = uid.charCodeAt(i)
+            hash = ((hash << 5) - hash) + char
+            hash = hash & hash
+          }
+          
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+          let code = ''
+          let absHash = Math.abs(hash)
+          
+          for (let i = 0; i < 8; i++) {
+            code += chars[absHash % chars.length]
+            absHash = Math.floor(absHash / chars.length)
+          }
+          
+          return code
+        }
+        
+        const userReferralCode = generatePermanentCode(result.user.uid)
+        localStorage.setItem('userReferralCode', userReferralCode)
+        
         // Rediriger vers l'accueil
         router.push('/')
       } else {
