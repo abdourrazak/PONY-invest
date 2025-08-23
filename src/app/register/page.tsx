@@ -3,16 +3,20 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, UserPlus, Gift } from 'lucide-react'
+import { ArrowLeft, UserPlus, Gift, Eye, EyeOff, Smartphone, Lock, Users, ArrowRight } from 'lucide-react'
 import { initializeUserIfNeeded, isReferralCodeValid, createUserWithReferral } from '@/utils/referral'
 
 export default function RegisterPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [referralCode, setReferralCode] = useState('')
+  const [formData, setFormData] = useState({
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    referralCode: ''
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isValidReferral, setIsValidReferral] = useState<boolean | null>(null)
   const [isRegistering, setIsRegistering] = useState(false)
   const [errors, setErrors] = useState<{[key: string]: string}>({})
@@ -21,7 +25,7 @@ export default function RegisterPage() {
   useEffect(() => {
     const refCode = searchParams.get('ref')
     if (refCode) {
-      setReferralCode(refCode)
+      setFormData(prev => ({ ...prev, referralCode: refCode }))
       setIsValidReferral(isReferralCodeValid(refCode))
       setRequiresReferral(true)
     }
@@ -30,153 +34,227 @@ export default function RegisterPage() {
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
     
-    if (!phone.trim()) {
+    if (!formData.phone.trim()) {
       newErrors.phone = 'Le numéro de téléphone est requis'
-    } else if (!/^\+?[0-9]{8,15}$/.test(phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Format de numéro invalide'
+    } else if (!/^6[0-9]{8}$/.test(formData.phone)) {
+      newErrors.phone = 'Format: 6XXXXXXXX'
     }
     
-    if (!password.trim()) {
+    if (!formData.password.trim()) {
       newErrors.password = 'Le mot de passe est requis'
-    } else if (password.length < 6) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Minimum 6 caractères'
     }
     
-    if (password !== confirmPassword) {
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Confirmez votre mot de passe'
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
     
-    // Validation stricte du code de parrainage
-    if (requiresReferral && !isValidReferral) {
-      newErrors.referral = 'Code d\'invitation invalide. Vous ne pouvez pas vous inscrire sans un code valide.'
+    // Validation stricte du code d'invitation
+    if (!formData.referralCode) {
+      newErrors.referralCode = 'Le code d\'invitation est requis'
+    } else if (!isReferralCodeValid(formData.referralCode)) {
+      newErrors.referralCode = 'Code d\'invitation invalide - Vous ne pouvez pas vous inscrire'
     }
     
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!validateForm()) return
     
     setIsRegistering(true)
     
     try {
-      // Créer l'utilisateur avec le code de parrainage
+      // Simuler l'inscription
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Créer l'utilisateur avec validation stricte du code d'invitation
       const success = createUserWithReferral({
-        phone: phone.trim(),
-        password,
-        referredBy: isValidReferral ? referralCode : undefined
+        phone: formData.phone,
+        password: formData.password,
+        referredBy: formData.referralCode
       })
       
       if (success) {
+        // Sauvegarder les données utilisateur
+        localStorage.setItem('userPhone', formData.phone)
+        localStorage.setItem('isLoggedIn', 'true')
+        
         // Rediriger vers l'accueil
-        setTimeout(() => {
-          router.push('/')
-        }, 1500)
+        router.push('/')
       } else {
-        setErrors({ general: 'Erreur lors de la création du compte' })
-        setIsRegistering(false)
+        setErrors({ referralCode: 'Erreur lors de l\'inscription. Code d\'invitation invalide.' })
       }
     } catch (error) {
-      setErrors({ general: 'Erreur lors de la création du compte' })
+      console.error('Erreur inscription:', error)
+      setErrors({ referralCode: 'Erreur lors de l\'inscription. Veuillez réessayer.' })
+    } finally {
       setIsRegistering(false)
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-5 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center">
-          <Link href="/" className="mr-3 hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </Link>
-          <h1 className="text-white text-lg font-black tracking-wide drop-shadow-lg">Inscription</h1>
-        </div>
-      </header>
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // Validation en temps réel pour le code de parrainage
+    if (field === 'referralCode') {
+      if (value) {
+        setIsValidReferral(isReferralCodeValid(value))
+      } else {
+        setIsValidReferral(null)
+      }
+    }
+    
+    // Effacer l'erreur quand l'utilisateur tape
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
 
-      {/* Main Content */}
-      <div className="px-5 py-8">
-        <div className="max-w-md mx-auto">
-          {/* Welcome Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <UserPlus className="text-white" size={32} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Bienvenue sur AXML</h2>
-              <p className="text-gray-600">Rejoignez notre plateforme d'investissement</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-green-400/10 to-purple-400/10 animate-pulse"></div>
+      
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+        {/* Logo Section */}
+        <div className="mb-8 text-center">
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center relative animate-pulse">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="text-white text-2xl mb-1">🌍</div>
+              <span className="text-white font-bold text-sm leading-none">Global</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+            Rejoins l'aventure Global
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-6 text-center">
+            <h1 className="text-2xl font-black text-white mb-2">Créer un compte Global</h1>
+            <p className="text-green-100 text-sm">Rejoignez notre plateforme d'investissement</p>
+          </div>
+
+          {/* Form */}
+          <div className="p-6 space-y-5">
+
+            {/* Phone Field */}
+            <div>
+              <label className="flex items-center text-blue-700 font-semibold mb-2">
+                <Smartphone className="w-4 h-4 mr-2" />
+                Numéro de téléphone
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                placeholder=""
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                  errors.phone 
+                    ? 'border-red-300 bg-red-50' 
+                    : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
+                } focus:outline-none focus:ring-2 focus:ring-blue-200`}
+              />
+              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+              <p className="text-blue-400 text-xs mt-1">Format: 6XXXXXXXX</p>
             </div>
 
-            {/* Form Fields */}
-            <div className="space-y-4 mb-6">
-              <div>
+            {/* Password Field */}
+            <div>
+              <label className="flex items-center text-blue-700 font-semibold mb-2">
+                <Lock className="w-4 h-4 mr-2" />
+                Mot de passe
+              </label>
+              <div className="relative">
                 <input
-                  type="tel"
-                  placeholder="Numéro de téléphone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.phone ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  placeholder=""
+                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                    errors.password 
+                      ? 'border-red-300 bg-red-50' 
+                      : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
+                  } focus:outline-none focus:ring-2 focus:ring-blue-200`}
                 />
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-              
-              <div>
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label className="flex items-center text-blue-700 font-semibold mb-2">
+                <Lock className="w-4 h-4 mr-2" />
+                Confirmation du mot de passe
+              </label>
+              <div className="relative">
                 <input
-                  type="password"
-                  placeholder="Mot de passe"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  placeholder=""
+                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                    errors.confirmPassword 
+                      ? 'border-red-300 bg-red-50' 
+                      : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
+                  } focus:outline-none focus:ring-2 focus:ring-blue-200`}
                 />
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-              
-              <div>
-                <input
-                  type="password"
-                  placeholder="Confirmer le mot de passe"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-              </div>
-              
-              <div>
-                <input
-                  type="text"
-                  placeholder="Code d'invitation (requis)"
-                  value={referralCode}
-                  onChange={(e) => {
-                    const code = e.target.value.toUpperCase()
-                    setReferralCode(code)
-                    if (code) {
-                      setIsValidReferral(isReferralCodeValid(code))
-                    } else {
-                      setIsValidReferral(null)
-                    }
-                  }}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    errors.referral ? 'border-red-500' : referralCode && isValidReferral === false ? 'border-red-500' : referralCode && isValidReferral ? 'border-green-500' : 'border-gray-300'
-                  }`}
-                  disabled={requiresReferral}
-                />
-                {errors.referral && <p className="text-red-500 text-sm mt-1">{errors.referral}</p>}
-                {referralCode && isValidReferral === false && (
-                  <p className="text-red-500 text-sm mt-1">Code d'invitation invalide</p>
-                )}
-                {referralCode && isValidReferral && (
-                  <p className="text-green-600 text-sm mt-1">✓ Code d'invitation valide</p>
-                )}
-              </div>
+              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+            </div>
+
+            {/* Referral Code Field */}
+            <div>
+              <label className="flex items-center text-blue-700 font-semibold mb-2">
+                <Users className="w-4 h-4 mr-2" />
+                Code d'invitation <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.referralCode}
+                onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
+                placeholder="Code requis pour s'inscrire"
+                disabled={requiresReferral}
+                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
+                  errors.referralCode 
+                    ? 'border-red-300 bg-red-50' 
+                    : isValidReferral === true
+                      ? 'border-green-300 bg-green-50'
+                      : isValidReferral === false
+                        ? 'border-red-300 bg-red-50'
+                        : 'border-gray-200 bg-white focus:border-blue-500 focus:bg-white'
+                } focus:outline-none focus:ring-2 focus:ring-blue-200 ${requiresReferral ? 'opacity-60' : ''}`}
+              />
+              {errors.referralCode && <p className="text-red-500 text-xs mt-1">{errors.referralCode}</p>}
+              {isValidReferral === true && (
+                <p className="text-green-600 text-xs mt-1">✅ Code d'invitation valide</p>
+              )}
+              {isValidReferral === false && formData.referralCode && (
+                <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide - Inscription impossible</p>
+              )}
+              <p className="text-red-400 text-xs mt-1 font-medium">* Requis pour s'inscrire</p>
             </div>
             
             {/* Referral Info */}
@@ -214,46 +292,63 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* Registration Button */}
+            {/* Submit Button */}
             <button
               onClick={handleRegister}
-              disabled={isRegistering || (requiresReferral && !isValidReferral)}
+              disabled={isRegistering || !formData.referralCode || isValidReferral === false}
               className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
-                isRegistering || (requiresReferral && !isValidReferral)
+                isRegistering || !formData.referralCode || isValidReferral === false
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
-              }`}
+                  : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+              } flex items-center justify-center`}
             >
               {isRegistering ? (
-                <div className="flex items-center justify-center">
+                <div className="flex items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Création du compte...
+                  Création en cours...
                 </div>
               ) : (
-                'Créer mon compte'
+                <div className="flex items-center">
+                  S'inscrire
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </div>
               )}
             </button>
 
-            {/* Info */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-800 mb-2">Avantages de l'inscription :</h3>
-              <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Solde de départ : 1000 FCFA</li>
-                <li>• Récompenses quotidiennes</li>
-                <li>• Accès aux investissements</li>
-                <li>• Système de parrainage</li>
-              </ul>
+            {/* Login Link */}
+            <div className="text-center pt-4 border-t border-gray-200">
+              <p className="text-gray-600">
+                Déjà un compte ? {' '}
+                <Link href="/login" className="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                  Connexion
+                </Link>
+              </p>
             </div>
           </div>
+        </div>
 
-          {/* Already have account */}
-          <div className="text-center">
-            <p className="text-gray-600">
-              Déjà inscrit ?{' '}
-              <Link href="/" className="text-green-600 font-medium hover:text-green-700">
-                Accéder à mon compte
-              </Link>
-            </p>
+        {/* Benefits */}
+        <div className="mt-8 max-w-md w-full">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/50">
+            <h3 className="font-bold text-gray-800 mb-3 text-center">🎁 Avantages de l'inscription</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center text-green-700">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                Solde de départ : 1000 FCFA
+              </div>
+              <div className="flex items-center text-blue-700">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                Récompenses quotidiennes
+              </div>
+              <div className="flex items-center text-purple-700">
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                Système de parrainage
+              </div>
+              <div className="flex items-center text-orange-700">
+                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                Investissements rentables
+              </div>
+            </div>
           </div>
         </div>
       </div>

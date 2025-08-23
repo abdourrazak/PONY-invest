@@ -3,37 +3,84 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft, Users, TrendingUp, Award, Target, Copy } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import Link from 'next/link'
-import { initializeUserIfNeeded, getReferralStats, getAllUsers } from '@/utils/referral'
+import { useAuth } from '@/contexts/AuthContext'
+import { getReferralStats, getReferrals } from '@/lib/firebaseAuth'
 
 export default function EquipePage() {
   const [activeTab, setActiveTab] = useState('Équipe A')
   const [showSuccess, setShowSuccess] = useState(false)
+  const { userData } = useAuth()
   const [referralStats, setReferralStats] = useState({ totalReferrals: 0, referralCode: '', referralLink: '' })
   const [teamRevenue, setTeamRevenue] = useState(0)
   const [validInvitations, setValidInvitations] = useState(0)
   const [teamMembers, setTeamMembers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Initialiser l'utilisateur et récupérer les stats
-    initializeUserIfNeeded()
-    const stats = getReferralStats()
-    setReferralStats(stats)
-    
-    // Récupérer tous les utilisateurs pour calculer les stats
-    const allUsers = getAllUsers()
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
-    
-    if (currentUser.referralCode) {
-      // Filtrer les filleuls de cet utilisateur
-      const myReferrals = allUsers.filter(user => user.referredBy === currentUser.referralCode)
-      setTeamMembers(myReferrals)
-      setValidInvitations(myReferrals.length)
-      
-      // Calculer le revenu de l'équipe (simulation)
-      const revenue = myReferrals.length * 500 // 500 FCFA par filleul
-      setTeamRevenue(revenue)
+    const loadReferralData = async () => {
+      if (!userData) {
+        // Si pas d'utilisateur connecté, utiliser localStorage comme fallback
+        const userPhone = localStorage.getItem('userPhone')
+        const userId = localStorage.getItem('userId')
+        
+        if (!userPhone || !userId) {
+          setLoading(false)
+          return
+        }
+        
+        // Créer un utilisateur temporaire pour affichage
+        const tempUser = {
+          uid: userId,
+          numeroTel: userPhone,
+          referralCode: localStorage.getItem('userReferralCode') || 'TEMP1234',
+          createdAt: new Date().toISOString()
+        }
+        
+        try {
+          const stats = await getReferralStats(tempUser)
+          setReferralStats(stats)
+          setLoading(false)
+        } catch (error) {
+          console.error('Erreur avec utilisateur temporaire:', error)
+          // Fallback complet
+          setReferralStats({
+            totalReferrals: 0,
+            referralCode: 'TEMP1234',
+            referralLink: `${window.location.origin}/register-auth?ref=TEMP1234`
+          })
+          setLoading(false)
+        }
+        return
+      }
+
+      try {
+        // Récupérer les stats de parrainage
+        const stats = await getReferralStats(userData)
+        setReferralStats(stats)
+        
+        // Récupérer les filleuls
+        const referrals = await getReferrals(userData.referralCode)
+        setTeamMembers(referrals)
+        setValidInvitations(referrals.length)
+        
+        // Calculer le revenu de l'équipe (simulation)
+        const revenue = referrals.length * 500 // 500 FCFA par filleul
+        setTeamRevenue(revenue)
+      } catch (error) {
+        console.error('Erreur chargement données parrainage:', error)
+        // Fallback en cas d'erreur Firebase
+        setReferralStats({
+          totalReferrals: 0,
+          referralCode: userData.referralCode || 'ERROR123',
+          referralLink: `${window.location.origin}/register-auth?ref=${userData.referralCode || 'ERROR123'}`
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [])
+
+    loadReferralData()
+  }, [userData])
 
   const handleCopy = async (text: string) => {
     try {
@@ -87,7 +134,7 @@ export default function EquipePage() {
             Code d'Invitation
           </div>
           <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-green-50 rounded-xl p-4 border border-green-200">
-            <span className="text-green-600 font-mono text-lg font-bold">{referralStats.referralCode}</span>
+            <span className="text-green-600 font-mono text-lg font-bold">{referralStats.referralCode || 'Chargement...'}</span>
             <button 
               onClick={() => handleCopy(referralStats.referralCode)}
               className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
@@ -105,7 +152,7 @@ export default function EquipePage() {
           </div>
           <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-blue-200">
             <span className="text-blue-600 text-xs flex-1 mr-2 truncate font-mono">
-              {referralStats.referralLink}
+              {referralStats.referralLink || 'Chargement...'}
             </span>
             <button 
               onClick={() => handleCopy(referralStats.referralLink)}
@@ -188,7 +235,12 @@ export default function EquipePage() {
                 <div className="text-purple-600 font-bold text-sm">Investissement</div>
               </div>
             </div>
-            {teamMembers.length === 0 ? (
+            {loading ? (
+              <div className="mt-4 text-center text-gray-500 py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
+                <p className="font-medium">Chargement des données...</p>
+              </div>
+            ) : teamMembers.length === 0 ? (
               <div className="mt-4 text-center text-gray-500 py-8">
                 <Users size={48} className="mx-auto mb-2 opacity-50" />
                 <p className="font-medium">Aucun membre dans cette équipe</p>
@@ -197,9 +249,9 @@ export default function EquipePage() {
             ) : (
               <div className="mt-4 space-y-3">
                 {teamMembers.map((member, index) => (
-                  <div key={member.id} className="grid grid-cols-3 gap-4 text-center bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow">
+                  <div key={member.uid} className="grid grid-cols-3 gap-4 text-center bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow">
                     <div>
-                      <div className="text-green-600 font-bold text-sm">+237{Math.floor(Math.random() * 900000000) + 600000000}</div>
+                      <div className="text-green-600 font-bold text-sm">{member.numeroTel}</div>
                     </div>
                     <div>
                       <div className="text-blue-600 font-bold text-sm">LV{Math.floor(Math.random() * 7) + 1}</div>

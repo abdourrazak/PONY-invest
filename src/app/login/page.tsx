@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
+import { loginUser } from '@/lib/firebaseAuth'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,6 +15,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<{[key: string]: string}>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [showErrorPopup, setShowErrorPopup] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
@@ -40,17 +43,36 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // Simuler la connexion
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Connexion avec Firebase Auth + Firestore
+      const result = await loginUser(formData.phone, formData.password)
       
-      // Sauvegarder les données de connexion
-      localStorage.setItem('userPhone', formData.phone)
-      localStorage.setItem('isLoggedIn', 'true')
-      
-      // Rediriger vers l'accueil
-      router.push('/')
+      if (result.success && result.user) {
+        // Sauvegarder les données de connexion
+        localStorage.setItem('userPhone', formData.phone)
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userId', result.user.uid)
+        
+        // Rediriger vers l'accueil
+        router.push('/')
+      } else {
+        // Afficher popup d'erreur
+        const message = result.error || 'Numéro de téléphone ou mot de passe incorrect'
+        setErrorMessage(message)
+        setShowErrorPopup(true)
+        setErrors({ password: message })
+        
+        // Masquer le popup après 4 secondes
+        setTimeout(() => setShowErrorPopup(false), 4000)
+      }
     } catch (error) {
       console.error('Erreur connexion:', error)
+      const message = 'Erreur de connexion. Vérifiez votre connexion internet.'
+      setErrorMessage(message)
+      setShowErrorPopup(true)
+      setErrors({ password: message })
+      
+      // Masquer le popup après 4 secondes
+      setTimeout(() => setShowErrorPopup(false), 4000)
     } finally {
       setIsLoading(false)
     }
@@ -84,6 +106,27 @@ export default function LoginPage() {
             Connexion à Global
           </div>
         </div>
+
+        {/* Error Popup */}
+        {showErrorPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-red-200 animate-pulse">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-red-500 text-2xl">⚠️</span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Connexion échouée</h3>
+                <p className="text-gray-600 text-sm mb-6">{errorMessage}</p>
+                <button
+                  onClick={() => setShowErrorPopup(false)}
+                  className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-bold hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Réessayer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form Card */}
         <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 overflow-hidden">

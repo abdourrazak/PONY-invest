@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Eye, EyeOff, Smartphone, Lock, Users, ArrowRight } from 'lucide-react'
-import { createUserWithReferral, isReferralCodeValid } from '@/utils/referral'
+import { registerUser, isReferralCodeValid } from '@/lib/firebaseAuth'
 
 export default function Register() {
   const router = useRouter()
@@ -21,12 +21,19 @@ export default function Register() {
   const [errors, setErrors] = useState<{[key: string]: string}>({})
   const [isLoading, setIsLoading] = useState(false)
   const [isValidReferral, setIsValidReferral] = useState<boolean | null>(null)
+  const [showErrorPopup, setShowErrorPopup] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const refCode = searchParams.get('ref')
     if (refCode) {
       setFormData(prev => ({ ...prev, referralCode: refCode }))
-      setIsValidReferral(isReferralCodeValid(refCode))
+      // Validation asynchrone du code de parrainage
+      const validateCode = async () => {
+        const isValid = await isReferralCodeValid(refCode)
+        setIsValidReferral(isValid)
+      }
+      validateCode()
     }
   }, [searchParams])
 
@@ -57,7 +64,7 @@ export default function Register() {
     // Validation code d'invitation (obligatoire)
     if (!formData.referralCode) {
       newErrors.referralCode = 'Le code d\'invitation est requis'
-    } else if (!isReferralCodeValid(formData.referralCode)) {
+    } else if (isValidReferral === false) {
       newErrors.referralCode = 'Code d\'invitation invalide - Vous ne pouvez pas vous inscrire'
     }
 
@@ -73,29 +80,40 @@ export default function Register() {
     setIsLoading(true)
 
     try {
-      // Simuler l'inscription
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Inscription avec Firebase Auth + Firestore
+      const result = await registerUser(
+        formData.phone,
+        formData.password,
+        formData.referralCode
+      )
       
-      // Créer l'utilisateur avec validation stricte du code d'invitation
-      const success = createUserWithReferral({
-        phone: formData.phone,
-        password: formData.password,
-        referredBy: formData.referralCode
-      })
-      
-      if (success) {
+      if (result.success && result.user) {
         // Sauvegarder les données utilisateur
         localStorage.setItem('userPhone', formData.phone)
         localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userId', result.user.uid)
         
         // Rediriger vers l'accueil
         router.push('/')
       } else {
-        setErrors({ referralCode: 'Erreur lors de l\'inscription. Code d\'invitation invalide.' })
+        // Afficher popup d'erreur
+        const message = result.error || 'Erreur lors de l\'inscription. Vérifiez vos informations.'
+        setErrorMessage(message)
+        setShowErrorPopup(true)
+        setErrors({ referralCode: message })
+        
+        // Masquer le popup après 4 secondes
+        setTimeout(() => setShowErrorPopup(false), 4000)
       }
     } catch (error) {
       console.error('Erreur inscription:', error)
-      setErrors({ referralCode: 'Erreur lors de l\'inscription. Veuillez réessayer.' })
+      const message = 'Erreur lors de l\'inscription. Vérifiez votre connexion internet.'
+      setErrorMessage(message)
+      setShowErrorPopup(true)
+      setErrors({ referralCode: message })
+      
+      // Masquer le popup après 4 secondes
+      setTimeout(() => setShowErrorPopup(false), 4000)
     } finally {
       setIsLoading(false)
     }
@@ -107,7 +125,12 @@ export default function Register() {
     // Validation en temps réel pour le code de parrainage
     if (field === 'referralCode') {
       if (value) {
-        setIsValidReferral(isReferralCodeValid(value))
+        // Validation asynchrone
+        const validateCode = async () => {
+          const isValid = await isReferralCodeValid(value)
+          setIsValidReferral(isValid)
+        }
+        validateCode()
       } else {
         setIsValidReferral(null)
       }
@@ -319,6 +342,27 @@ export default function Register() {
             </div>
           </div>
         </div>
+
+        {/* Error Popup */}
+        {showErrorPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-red-200 animate-pulse">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-red-500 text-2xl">❌</span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Inscription échouée</h3>
+                <p className="text-gray-600 text-sm mb-6">{errorMessage}</p>
+                <button
+                  onClick={() => setShowErrorPopup(false)}
+                  className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-bold hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Réessayer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

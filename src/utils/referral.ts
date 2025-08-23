@@ -89,7 +89,7 @@ export function getReferralLink(referralCode: string): string {
       ? 'https://axml-global.vercel.app' 
       : window.location.origin;
     
-  return `${baseUrl}/register?ref=${referralCode}`;
+  return `${baseUrl}/register-auth?ref=${referralCode}`;
 }
 
 // Récupère les statistiques de parrainage
