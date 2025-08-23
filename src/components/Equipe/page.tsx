@@ -60,7 +60,7 @@ export default function EquipePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 pb-20">
       {/* Header */}
       <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
         <div className="flex items-center justify-between">

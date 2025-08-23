@@ -93,6 +93,8 @@ export async function registerUser(
       console.log('❌ Code d\'invitation invalide:', referredBy)
       return { success: false, error: 'Code d\'invitation invalide' }
     }
+    
+    console.log('✅ Inscription autorisée (avec ou sans code d\'invitation)')
 
     console.log('✅ Code d\'invitation valide, création utilisateur Firebase')
     

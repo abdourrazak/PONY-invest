@@ -36,7 +36,7 @@ export default function Accueil() {
   const { currentUser, userData, loading } = useAuth()
   const router = useRouter()
 
-  // Rediriger vers login si pas connecté
+  // Rediriger vers inscription si pas connecté (pas de localStorage)
   useEffect(() => {
     if (!loading) {
       // Vérifier localStorage pour la session
@@ -44,7 +44,8 @@ export default function Accueil() {
       const userPhone = localStorage.getItem('userPhone')
       
       if (!currentUser && (!isLoggedIn || !userPhone)) {
-        router.push('/login')
+        // Rediriger vers inscription pour forcer la création de compte
+        router.push('/register')
       }
     }
   }, [currentUser, loading, router])

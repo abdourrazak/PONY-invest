@@ -52,11 +52,9 @@ export default function RegisterPage() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
     
-    // Validation stricte du code d'invitation
-    if (!formData.referralCode) {
-      newErrors.referralCode = 'Le code d\'invitation est requis'
-    } else if (!isReferralCodeValid(formData.referralCode)) {
-      newErrors.referralCode = 'Code d\'invitation invalide - Vous ne pouvez pas vous inscrire'
+    // Code d'invitation optionnel pour l'administrateur (premier utilisateur)
+    if (formData.referralCode && !isReferralCodeValid(formData.referralCode)) {
+      newErrors.referralCode = 'Code d\'invitation invalide'
     }
     
     setErrors(newErrors)
@@ -72,11 +70,11 @@ export default function RegisterPage() {
       // Simuler l'inscription
       await new Promise(resolve => setTimeout(resolve, 1500))
       
-      // Créer l'utilisateur avec validation stricte du code d'invitation
+      // Créer l'utilisateur (code d'invitation optionnel)
       const success = createUserWithReferral({
         phone: formData.phone,
         password: formData.password,
-        referredBy: formData.referralCode
+        referredBy: formData.referralCode || undefined
       })
       
       if (success) {
@@ -229,13 +227,13 @@ export default function RegisterPage() {
             <div>
               <label className="flex items-center text-blue-700 font-semibold mb-2">
                 <Users className="w-4 h-4 mr-2" />
-                Code d'invitation <span className="text-red-500 ml-1">*</span>
+                Code d'invitation <span className="text-gray-500 ml-1">(optionnel)</span>
               </label>
               <input
                 type="text"
                 value={formData.referralCode}
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
-                placeholder="Code requis pour s'inscrire"
+                placeholder="Code d'invitation (optionnel)"
                 disabled={requiresReferral}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
                   errors.referralCode 
@@ -252,9 +250,9 @@ export default function RegisterPage() {
                 <p className="text-green-600 text-xs mt-1">✅ Code d'invitation valide</p>
               )}
               {isValidReferral === false && formData.referralCode && (
-                <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide - Inscription impossible</p>
+                <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide</p>
               )}
-              <p className="text-red-400 text-xs mt-1 font-medium">* Requis pour s'inscrire</p>
+              <p className="text-blue-400 text-xs mt-1">Laissez vide si vous êtes le premier utilisateur</p>
             </div>
             
             {/* Referral Info */}
@@ -295,9 +293,9 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <button
               onClick={handleRegister}
-              disabled={isRegistering || !formData.referralCode || isValidReferral === false}
+              disabled={isRegistering || isValidReferral === false}
               className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
-                isRegistering || !formData.referralCode || isValidReferral === false
+                isRegistering || isValidReferral === false
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
               } flex items-center justify-center`}
