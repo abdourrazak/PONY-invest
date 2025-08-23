@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Bell, CreditCard, Info, Users, LogOut, ArrowLeftRight, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import { useAuth } from '@/contexts/AuthContext'
 
 const banners = [
   '/banner1.jpeg',
@@ -31,6 +33,33 @@ const services = [
 export default function Accueil() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrollText, setScrollText] = useState(0)
+  const { currentUser, userData, loading } = useAuth()
+  const router = useRouter()
+
+  // Rediriger vers login si pas connecté
+  useEffect(() => {
+    if (!loading) {
+      // Vérifier localStorage pour la session
+      const isLoggedIn = localStorage.getItem('isLoggedIn')
+      const userPhone = localStorage.getItem('userPhone')
+      
+      if (!currentUser && (!isLoggedIn || !userPhone)) {
+        router.push('/login')
+      }
+    }
+  }, [currentUser, loading, router])
+
+  // Afficher un loader pendant la vérification d'auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
 
   useEffect(() => {
     const slideInterval = setInterval(() => {

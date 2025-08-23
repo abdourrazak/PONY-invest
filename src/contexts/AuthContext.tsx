@@ -35,7 +35,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await getCurrentUserData()
         setUserData(data)
       } else {
-        setUserData(null)
+        // Vérifier localStorage pour maintenir la session
+        const isLoggedIn = localStorage.getItem('isLoggedIn')
+        const userPhone = localStorage.getItem('userPhone')
+        const userId = localStorage.getItem('userId')
+        
+        if (isLoggedIn && userPhone && userId) {
+          // Créer un utilisateur temporaire basé sur localStorage
+          const tempUserData: User = {
+            uid: userId,
+            numeroTel: userPhone,
+            referralCode: localStorage.getItem('userReferralCode') || '',
+            createdAt: null
+          }
+          setUserData(tempUserData)
+        } else {
+          setUserData(null)
+        }
       }
       
       setLoading(false)
