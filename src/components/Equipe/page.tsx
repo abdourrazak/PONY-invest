@@ -10,89 +10,42 @@ export default function EquipePage() {
   const [activeTab, setActiveTab] = useState('Équipe A')
   const [showSuccess, setShowSuccess] = useState(false)
   const { userData } = useAuth()
-  const [referralStats, setReferralStats] = useState({ totalReferrals: 0, referralCode: '', referralLink: '' })
+  const [referralStats, setReferralStats] = useState(() => {
+    const defaultCode = 'AXML' + Math.random().toString(36).substr(2, 4).toUpperCase()
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
+    return {
+      totalReferrals: 0,
+      referralCode: defaultCode,
+      referralLink: `${baseUrl}/register-auth?ref=${defaultCode}`
+    }
+  })
   const [teamRevenue, setTeamRevenue] = useState(0)
   const [validInvitations, setValidInvitations] = useState(0)
   const [teamMembers, setTeamMembers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadReferralData = () => {
-      console.log('🔍 Début loadReferralData')
+    // Forcer l'arrêt du loading immédiatement
+    setLoading(false)
+    
+    // Générer un code simple et permanent
+    if (typeof window !== 'undefined') {
+      const userId = localStorage.getItem('userId') || 'anonymous'
+      let storedCode = localStorage.getItem('userReferralCode')
       
-      // Vérifier si on est côté client
-      if (typeof window === 'undefined') {
-        console.log('❌ window undefined, côté serveur')
-        setLoading(false)
-        return
+      if (!storedCode) {
+        // Code simple basé sur timestamp + random
+        storedCode = 'AXML' + Date.now().toString().slice(-4) + Math.random().toString(36).substr(2, 2).toUpperCase()
+        localStorage.setItem('userReferralCode', storedCode)
       }
-
-      const userPhone = localStorage.getItem('userPhone')
-      const userId = localStorage.getItem('userId')
       
-      console.log('📱 userPhone:', userPhone)
-      console.log('🆔 userId:', userId)
+      const link = `${window.location.origin}/register-auth?ref=${storedCode}`
       
-      // Générer un code même sans utilisateur connecté pour éviter le chargement infini
-      const generatePermanentCode = (uid: string) => {
-        let hash = 0
-        for (let i = 0; i < uid.length; i++) {
-          const char = uid.charCodeAt(i)
-          hash = ((hash << 5) - hash) + char
-          hash = hash & hash
-        }
-        
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-        let code = ''
-        let absHash = Math.abs(hash)
-        
-        for (let i = 0; i < 8; i++) {
-          code += chars[absHash % chars.length]
-          absHash = Math.floor(absHash / chars.length)
-        }
-        
-        return code
-      }
-
-      let storedReferralCode = localStorage.getItem('userReferralCode')
-      
-      if (!storedReferralCode) {
-        if (userId) {
-          storedReferralCode = generatePermanentCode(userId)
-          localStorage.setItem('userReferralCode', storedReferralCode)
-          console.log('✅ Code généré et sauvegardé:', storedReferralCode)
-        } else {
-          // Générer un code temporaire même sans userId
-          storedReferralCode = 'TEMP' + Math.random().toString(36).substr(2, 4).toUpperCase()
-          console.log('⚠️ Code temporaire généré:', storedReferralCode)
-        }
-      } else {
-        console.log('📦 Code récupéré du localStorage:', storedReferralCode)
-      }
-
-      const baseUrl = window.location.origin
-      const permanentLink = `${baseUrl}/register-auth?ref=${storedReferralCode}`
-      
-      console.log('🔗 Lien généré:', permanentLink)
-      
-      // Définir immédiatement les stats
       setReferralStats({
         totalReferrals: 0,
-        referralCode: storedReferralCode,
-        referralLink: permanentLink
+        referralCode: storedCode,
+        referralLink: link
       })
-      
-      console.log('✅ Stats définies, arrêt du loading')
-      setLoading(false)
-    }
-
-    // Exécuter immédiatement si window est disponible
-    if (typeof window !== 'undefined') {
-      loadReferralData()
-    } else {
-      // Sinon attendre que le composant soit monté côté client
-      const timer = setTimeout(loadReferralData, 50)
-      return () => clearTimeout(timer)
     }
   }, [])
 
@@ -228,15 +181,6 @@ export default function EquipePage() {
               <span className="text-gray-700 text-sm font-bold">Profit de l'Équipe</span>
             </div>
             <div className="text-blue-600 text-2xl font-black">{(teamRevenue * 0.1).toLocaleString()}</div>
-                      <div className="text-blue-600 font-bold text-sm">LV{Math.floor(Math.random() * 7) + 1}</div>
-                    </div>
-                    <div>
-                      <div className="text-purple-600 font-bold text-sm">{(Math.floor(Math.random() * 50) + 5) * 1000} FCFA</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
