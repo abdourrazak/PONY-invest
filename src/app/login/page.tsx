@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
 import { loginUser } from '@/lib/firebaseAuth'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -53,30 +55,18 @@ export default function LoginPage() {
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('userId', result.user.uid)
         
-        // Générer et sauvegarder le code d'invitation permanent si pas déjà présent
-        if (!localStorage.getItem('userReferralCode')) {
-          const generatePermanentCode = (uid: string) => {
-            let hash = 0
-            for (let i = 0; i < uid.length; i++) {
-              const char = uid.charCodeAt(i)
-              hash = ((hash << 5) - hash) + char
-              hash = hash & hash
+        // Récupérer le code d'invitation permanent depuis Firestore
+        try {
+          const userDoc = await getDoc(doc(db, 'users', result.user.uid))
+          if (userDoc.exists()) {
+            const userData = userDoc.data()
+            if (userData.referralCode) {
+              localStorage.setItem('userReferralCode', userData.referralCode)
+              console.log('✅ Code d\'invitation récupéré depuis Firestore:', userData.referralCode)
             }
-            
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-            let code = ''
-            let absHash = Math.abs(hash)
-            
-            for (let i = 0; i < 8; i++) {
-              code += chars[absHash % chars.length]
-              absHash = Math.floor(absHash / chars.length)
-            }
-            
-            return code
           }
-          
-          const userReferralCode = generatePermanentCode(result.user.uid)
-          localStorage.setItem('userReferralCode', userReferralCode)
+        } catch (error) {
+          console.log('⚠️ Erreur récupération code Firestore:', error)
         }
         
         // Rediriger vers l'accueil

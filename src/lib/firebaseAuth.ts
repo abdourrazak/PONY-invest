@@ -201,20 +201,7 @@ export async function getCurrentUserData(): Promise<User | null> {
   }
 }
 
-// Compter les filleuls d'un utilisateur
-export async function getReferralCount(referralCode: string): Promise<number> {
-  try {
-    const usersRef = collection(db, 'users')
-    const q = query(usersRef, where('referredBy', '==', referralCode))
-    const querySnapshot = await getDocs(q)
-    return querySnapshot.size
-  } catch (error) {
-    console.error('Erreur comptage filleuls:', error)
-    return 0
-  }
-}
-
-// Récupérer tous les filleuls d'un utilisateur
+// Récupérer les filleuls d'un utilisateur
 export async function getReferrals(referralCode: string): Promise<User[]> {
   try {
     const usersRef = collection(db, 'users')
@@ -223,13 +210,24 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
     
     const referrals: User[] = []
     querySnapshot.forEach((doc) => {
-      referrals.push(doc.data() as User)
+      referrals.push({ ...doc.data(), uid: doc.id } as User)
     })
     
     return referrals
   } catch (error) {
     console.error('Erreur récupération filleuls:', error)
     return []
+  }
+}
+
+// Compter les filleuls d'un utilisateur
+export async function getReferralCount(referralCode: string): Promise<number> {
+  try {
+    const referrals = await getReferrals(referralCode)
+    return referrals.length
+  } catch (error) {
+    console.error('Erreur comptage filleuls:', error)
+    return 0
   }
 }
 

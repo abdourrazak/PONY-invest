@@ -4,49 +4,60 @@ import { ArrowLeft, Users, TrendingUp, Award, Target, Copy } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import { getReferralStats, getReferrals } from '@/lib/firebaseAuth'
+import { getReferralCount, getReferrals } from '@/lib/firebaseAuth'
 
 export default function EquipePage() {
   const [activeTab, setActiveTab] = useState('Équipe A')
   const [showSuccess, setShowSuccess] = useState(false)
   const { userData } = useAuth()
-  const [referralStats, setReferralStats] = useState(() => {
-    const defaultCode = 'AXML' + Math.random().toString(36).substr(2, 4).toUpperCase()
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
-    return {
-      totalReferrals: 0,
-      referralCode: defaultCode,
-      referralLink: `${baseUrl}/register-auth?ref=${defaultCode}`
-    }
+  const [referralStats, setReferralStats] = useState({
+    totalReferrals: 0,
+    referralCode: '',
+    referralLink: ''
   })
-  const [teamRevenue, setTeamRevenue] = useState(0)
-  const [validInvitations, setValidInvitations] = useState(0)
   const [teamMembers, setTeamMembers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Forcer l'arrêt du loading immédiatement
-    setLoading(false)
-    
-    // Générer un code simple et permanent
-    if (typeof window !== 'undefined') {
-      const userId = localStorage.getItem('userId') || 'anonymous'
-      let storedCode = localStorage.getItem('userReferralCode')
+    const loadReferralData = async () => {
+      setLoading(false)
       
-      if (!storedCode) {
-        // Code simple basé sur timestamp + random
-        storedCode = 'AXML' + Date.now().toString().slice(-4) + Math.random().toString(36).substr(2, 2).toUpperCase()
-        localStorage.setItem('userReferralCode', storedCode)
+      if (typeof window !== 'undefined') {
+        let storedCode = localStorage.getItem('userReferralCode')
+        
+        if (!storedCode) {
+          // Code simple basé sur timestamp + random
+          storedCode = 'AXML' + Date.now().toString().slice(-4) + Math.random().toString(36).substr(2, 2).toUpperCase()
+          localStorage.setItem('userReferralCode', storedCode)
+        }
+        
+        const link = `${window.location.origin}/register-auth?ref=${storedCode}`
+        
+        // Récupérer les filleuls et le compteur
+        try {
+          const [referrals, count] = await Promise.all([
+            getReferrals(storedCode),
+            getReferralCount(storedCode)
+          ])
+          
+          setTeamMembers(referrals)
+          setReferralStats({
+            totalReferrals: count,
+            referralCode: storedCode,
+            referralLink: link
+          })
+        } catch (error) {
+          console.log('Erreur chargement données parrainage:', error)
+          setReferralStats({
+            totalReferrals: 0,
+            referralCode: storedCode,
+            referralLink: link
+          })
+        }
       }
-      
-      const link = `${window.location.origin}/register-auth?ref=${storedCode}`
-      
-      setReferralStats({
-        totalReferrals: 0,
-        referralCode: storedCode,
-        referralLink: link
-      })
     }
+    
+    loadReferralData()
   }, [])
 
   const handleCopy = async (text: string) => {
@@ -163,7 +174,7 @@ export default function EquipePage() {
               <Award className="text-orange-500 mr-2" size={20} />
               <span className="text-gray-700 text-sm font-bold">Invitations Valides</span>
             </div>
-            <div className="text-orange-600 text-2xl font-black">{validInvitations}</div>
+            <div className="text-orange-600 text-2xl font-black">{referralStats.totalReferrals}</div>
           </div>
         </div>
 
@@ -173,16 +184,46 @@ export default function EquipePage() {
               <TrendingUp className="text-green-500 mr-2" size={20} />
               <span className="text-gray-700 text-sm font-bold">Revenu Total</span>
             </div>
-            <div className="text-green-600 text-2xl font-black">{teamRevenue.toLocaleString()} FCFA</div>
+            <div className="text-green-600 text-2xl font-black">0 FCFA</div>
           </div>
           <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl p-5 text-center shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
             <div className="flex items-center justify-center mb-2">
               <Target className="text-blue-500 mr-2" size={20} />
               <span className="text-gray-700 text-sm font-bold">Profit de l'Équipe</span>
             </div>
-            <div className="text-blue-600 text-2xl font-black">{(teamRevenue * 0.1).toLocaleString()}</div>
+            <div className="text-blue-600 text-2xl font-black">0 FCFA</div>
           </div>
         </div>
+
+        {/* Liste des filleuls */}
+        {teamMembers.length > 0 && (
+          <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 mb-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+              <Users className="mr-2 text-blue-500" size={20} />
+              Mes Filleuls ({teamMembers.length})
+            </h3>
+            <div className="space-y-3">
+              {teamMembers.map((member, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-green-400 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                      {member.numeroTel?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">{member.numeroTel || 'Utilisateur'}</p>
+                      <p className="text-xs text-gray-500">
+                        Inscrit le {member.createdAt?.toDate?.()?.toLocaleDateString() || 'Date inconnue'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-green-600 font-bold text-sm">
+                    Actif
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Success Message */}
