@@ -79,18 +79,26 @@ export async function registerUser(
   referredBy?: string
 ): Promise<{ success: boolean; user?: User; error?: string }> {
   try {
+    console.log('🔥 Firebase registerUser appelé avec:', { numeroTel, referredBy })
+    
     // Vérifier si le code de parrainage existe (si fourni)
     if (referredBy && !(await isReferralCodeValid(referredBy))) {
+      console.log('❌ Code d\'invitation invalide:', referredBy)
       return { success: false, error: 'Code d\'invitation invalide' }
     }
 
+    console.log('✅ Code d\'invitation valide, création utilisateur Firebase')
+    
     // Créer l'utilisateur avec Firebase Auth (utiliser le numéro comme email temporaire)
     const email = `${numeroTel}@axml.local`
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const firebaseUser = userCredential.user
 
+    console.log('✅ Utilisateur Firebase créé:', firebaseUser.uid)
+
     // Générer un code d'invitation unique
     const referralCode = await generateUniqueReferralCode()
+    console.log('✅ Code d\'invitation généré:', referralCode)
 
     // Créer le document utilisateur dans Firestore
     const userData: User = {
@@ -102,11 +110,26 @@ export async function registerUser(
     }
 
     await setDoc(doc(db, 'users', firebaseUser.uid), userData)
+    console.log('✅ Document Firestore créé avec succès')
 
     return { success: true, user: userData }
   } catch (error: any) {
-    console.error('Erreur inscription:', error)
-    return { success: false, error: error.message }
+    console.error('💥 Erreur Firebase inscription:', error)
+    
+    // Gestion spécifique des erreurs Firebase
+    let errorMessage = 'Erreur lors de l\'inscription'
+    
+    if (error.code === 'auth/email-already-in-use') {
+      errorMessage = 'Ce numéro de téléphone est déjà utilisé'
+    } else if (error.code === 'auth/weak-password') {
+      errorMessage = 'Le mot de passe doit contenir au moins 6 caractères'
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'Problème de connexion internet'
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    return { success: false, error: errorMessage }
   }
 }
 

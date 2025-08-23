@@ -80,6 +80,11 @@ export default function Register() {
     setIsLoading(true)
 
     try {
+      console.log('🚀 Début inscription avec:', {
+        phone: formData.phone,
+        referralCode: formData.referralCode
+      })
+      
       // Inscription avec Firebase Auth + Firestore
       const result = await registerUser(
         formData.phone,
@@ -87,7 +92,11 @@ export default function Register() {
         formData.referralCode
       )
       
+      console.log('📋 Résultat inscription:', result)
+      
       if (result.success && result.user) {
+        console.log('✅ Inscription réussie, sauvegarde localStorage')
+        
         // Sauvegarder les données utilisateur
         localStorage.setItem('userPhone', formData.phone)
         localStorage.setItem('isLoggedIn', 'true')
@@ -117,9 +126,11 @@ export default function Register() {
         const userReferralCode = generatePermanentCode(result.user.uid)
         localStorage.setItem('userReferralCode', userReferralCode)
         
+        console.log('🏠 Redirection vers accueil')
         // Rediriger vers l'accueil
         router.push('/')
       } else {
+        console.error('❌ Échec inscription:', result.error)
         // Afficher popup d'erreur
         const message = result.error || 'Erreur lors de l\'inscription. Vérifiez vos informations.'
         setErrorMessage(message)
@@ -130,7 +141,7 @@ export default function Register() {
         setTimeout(() => setShowErrorPopup(false), 4000)
       }
     } catch (error) {
-      console.error('Erreur inscription:', error)
+      console.error('💥 Erreur inscription catch:', error)
       const message = 'Erreur lors de l\'inscription. Vérifiez votre connexion internet.'
       setErrorMessage(message)
       setShowErrorPopup(true)
