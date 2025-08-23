@@ -63,11 +63,12 @@ export default function Register() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
-    // Validation code d'invitation - Pas de validation si le code vient de l'URL
+    // Validation code d'invitation - Pas de validation d'erreur pour les codes d'URL
     const hasReferralFromURL = !!searchParams.get('ref')
     if (!hasReferralFromURL && formData.referralCode && isValidReferral === false) {
       newErrors.referralCode = 'Code d\'invitation invalide'
     }
+    // Les codes d'URL sont toujours considérés comme valides pour la validation du formulaire
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -83,14 +84,20 @@ export default function Register() {
     try {
       console.log('🚀 Début inscription avec:', {
         phone: formData.phone,
-        referralCode: formData.referralCode
+        referralCode: formData.referralCode,
+        hasReferralFromURL: !!searchParams.get('ref'),
+        urlRef: searchParams.get('ref')
       })
+      
+      // Forcer l'utilisation du code d'URL si présent
+      const finalReferralCode = searchParams.get('ref') || formData.referralCode || undefined
+      console.log('🎯 Code final utilisé pour inscription:', finalReferralCode)
       
       // Inscription avec Firebase Auth + Firestore
       const result = await registerUser(
         formData.phone,
         formData.password,
-        formData.referralCode || undefined
+        finalReferralCode
       )
       
       console.log('📋 Résultat inscription:', result)
@@ -131,9 +138,19 @@ export default function Register() {
         // Rediriger vers l'accueil
         router.push('/')
       } else {
-        console.error('❌ Échec inscription:', result.error)
+        console.log('❌ Inscription échouée:', result.error)
+        console.log('🔍 Debug - Code utilisé:', finalReferralCode)
+        console.log('🔍 Debug - Code d\'URL:', searchParams.get('ref'))
+        console.log('🔍 Debug - Code du formulaire:', formData.referralCode)
+        
+        // Pour les codes d'URL, ne pas afficher d'erreur de code invalide
+        let message = result.error || 'Erreur lors de l\'inscription. Veuillez réessayer.'
+        if (searchParams.get('ref') && result.error === 'Code d\'invitation invalide') {
+          message = 'Erreur lors de l\'inscription. Veuillez réessayer plus tard.'
+          console.log('🔄 Erreur de code d\'URL masquée pour l\'utilisateur')
+        }
+        
         // Afficher popup d'erreur
-        const message = result.error || 'Erreur lors de l\'inscription. Vérifiez vos informations.'
         setErrorMessage(message)
         setShowErrorPopup(true)
         setErrors({ referralCode: message })
