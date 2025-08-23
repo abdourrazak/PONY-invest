@@ -25,10 +25,10 @@ export default function EquipePage() {
       if (typeof window !== 'undefined') {
         let storedCode = localStorage.getItem('userReferralCode')
         
+        // Ne jamais générer de nouveau code ici - utiliser uniquement celui de Firestore
         if (!storedCode) {
-          // Code simple basé sur timestamp + random
-          storedCode = 'AXML' + Date.now().toString().slice(-4) + Math.random().toString(36).substr(2, 2).toUpperCase()
-          localStorage.setItem('userReferralCode', storedCode)
+          console.log('⚠️ Aucun code trouvé dans localStorage, attente des données Firestore')
+          return
         }
         
         const link = `${window.location.origin}/register-auth?ref=${storedCode}`

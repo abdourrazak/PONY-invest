@@ -52,8 +52,10 @@ export default function RegisterPage() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
     
-    // Code d'invitation optionnel pour l'administrateur (premier utilisateur)
-    if (formData.referralCode && !isReferralCodeValid(formData.referralCode)) {
+    // Code d'invitation obligatoire
+    if (!formData.referralCode) {
+      newErrors.referralCode = 'Code d\'invitation requis'
+    } else if (!isReferralCodeValid(formData.referralCode)) {
       newErrors.referralCode = 'Code d\'invitation invalide'
     }
     
@@ -227,13 +229,13 @@ export default function RegisterPage() {
             <div>
               <label className="flex items-center text-blue-700 font-semibold mb-2">
                 <Users className="w-4 h-4 mr-2" />
-                Code d'invitation <span className="text-gray-500 ml-1">(optionnel)</span>
+                Code d'invitation <span className="text-red-500 ml-1">*</span>
               </label>
               <input
                 type="text"
                 value={formData.referralCode}
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
-                placeholder="Code d'invitation (optionnel)"
+                placeholder="Code d'invitation requis"
                 disabled={requiresReferral}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
                   errors.referralCode 
@@ -252,7 +254,7 @@ export default function RegisterPage() {
               {isValidReferral === false && formData.referralCode && (
                 <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide</p>
               )}
-              <p className="text-blue-400 text-xs mt-1">Laissez vide si vous êtes le premier utilisateur</p>
+              <p className="text-red-400 text-xs mt-1 font-medium">* Code d'invitation requis pour s'inscrire</p>
             </div>
             
             {/* Referral Info */}

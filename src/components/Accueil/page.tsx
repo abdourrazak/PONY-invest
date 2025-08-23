@@ -44,7 +44,7 @@ export default function Accueil() {
       const userPhone = localStorage.getItem('userPhone')
       
       if (!currentUser && (!isLoggedIn || !userPhone)) {
-        // Rediriger vers inscription pour forcer la création de compte
+        // Rediriger vers register si pas d'utilisateur
         router.push('/register')
       }
     }

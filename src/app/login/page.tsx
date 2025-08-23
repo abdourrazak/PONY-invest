@@ -60,9 +60,15 @@ export default function LoginPage() {
           const userDoc = await getDoc(doc(db, 'users', result.user.uid))
           if (userDoc.exists()) {
             const userData = userDoc.data()
-            if (userData.referralCode) {
-              localStorage.setItem('userReferralCode', userData.referralCode)
-              console.log('✅ Code d\'invitation récupéré depuis Firestore:', userData.referralCode)
+            // Sauvegarder le code de parrainage depuis Firestore - PERMANENT
+            if (userData?.referralCode) {
+              const existingCode = localStorage.getItem('userReferralCode')
+              if (!existingCode || existingCode !== userData.referralCode) {
+                localStorage.setItem('userReferralCode', userData.referralCode)
+                console.log('✅ Code de parrainage permanent sauvegardé:', userData.referralCode)
+              } else {
+                console.log('✅ Code de parrainage déjà présent:', existingCode)
+              }
             }
           }
         } catch (error) {
