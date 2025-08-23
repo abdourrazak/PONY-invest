@@ -90,7 +90,7 @@ export default function Register() {
       const result = await registerUser(
         formData.phone,
         formData.password,
-        formData.referralCode
+        formData.referralCode || undefined
       )
       
       console.log('📋 Résultat inscription:', result)
