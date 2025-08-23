@@ -48,8 +48,8 @@ export default function EquipePage() {
             referralLink: link
           })
           
-          // Calculate team revenue (placeholder - can be updated with real revenue data)
-          const calculatedRevenue = referrals.length * 10000 // 10,000 FCFA per referral
+          // Calculate team revenue - 25 FCFA per referral
+          const calculatedRevenue = referrals.length * 25
           setTeamRevenue(calculatedRevenue)
         } catch (error) {
           console.log('Erreur chargement données parrainage:', error)

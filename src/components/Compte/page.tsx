@@ -3,31 +3,57 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Cloud, Plus, Minus, Smartphone, Wallet, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import { useAuth } from '@/contexts/AuthContext'
+import { getReferralCount } from '@/lib/firebaseAuth'
 
 export default function ComptePage() {
+  const { userData } = useAuth()
   const [balance, setBalance] = useState(1000)
   const [funds, setFunds] = useState(1000)
+  const [referralRewards, setReferralRewards] = useState(0)
 
   useEffect(() => {
-    const savedBalance = localStorage.getItem('userBalance')
-    const savedFunds = localStorage.getItem('userFunds')
+    const loadUserData = async () => {
+      const savedBalance = localStorage.getItem('userBalance')
+      const savedFunds = localStorage.getItem('userFunds')
+      
+      if (savedBalance) {
+        setBalance(parseInt(savedBalance))
+      } else {
+        localStorage.setItem('userBalance', '1000')
+      }
+
+      // Calculer les récompenses de parrainage
+      const storedCode = localStorage.getItem('userReferralCode')
+      if (storedCode) {
+        try {
+          const referralCount = await getReferralCount(storedCode)
+          const rewards = referralCount * 25 // 25 FCFA par parrainage
+          setReferralRewards(rewards)
+          
+          // Mettre à jour le solde total (1000 XOF de base + récompenses)
+          const totalFunds = 1000 + rewards
+          setFunds(totalFunds)
+          localStorage.setItem('userFunds', totalFunds.toString())
+        } catch (error) {
+          console.log('Erreur calcul récompenses:', error)
+          setFunds(1000)
+        }
+      } else {
+        if (savedFunds) {
+          setFunds(parseInt(savedFunds))
+        } else {
+          localStorage.setItem('userFunds', '1000')
+        }
+      }
+
+      // Générer un ID utilisateur unique si pas encore fait
+      if (!localStorage.getItem('userId')) {
+        localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
+      }
+    }
     
-    if (savedBalance) {
-      setBalance(parseInt(savedBalance))
-    } else {
-      localStorage.setItem('userBalance', '1000')
-    }
-
-    if (savedFunds) {
-      setFunds(parseInt(savedFunds))
-    } else {
-      localStorage.setItem('userFunds', '1000')
-    }
-
-    // Générer un ID utilisateur unique si pas encore fait
-    if (!localStorage.getItem('userId')) {
-      localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
-    }
+    loadUserData()
   }, [])
   return (
     <div className="min-h-screen bg-gray-100">
@@ -42,7 +68,9 @@ export default function ComptePage() {
               </div>
             </div>
             <div className="text-white">
-              <div className="text-lg font-black tracking-wide drop-shadow-lg">+237693098877</div>
+              <div className="text-lg font-black tracking-wide drop-shadow-lg">
+                {userData?.numeroTel || '+237693098877'}
+              </div>
               <div className="text-green-200 text-sm font-medium">Membre Actif</div>
             </div>
           </div>
@@ -125,7 +153,7 @@ export default function ComptePage() {
             <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-3 shadow-lg border border-blue-400/30 hover:scale-105 transition-all duration-300">
               <div className="text-center">
                 <div className="text-blue-100 text-xs font-medium mb-1">Gains totaux</div>
-                <div className="text-white text-lg font-black drop-shadow-lg">{(funds - 1000).toLocaleString('fr-FR')} XOF</div>
+                <div className="text-white text-lg font-black drop-shadow-lg">{referralRewards.toLocaleString('fr-FR')} XOF</div>
                 <div className="text-blue-200 text-xs mt-1">💰 Récompenses</div>
               </div>
             </div>
