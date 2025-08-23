@@ -63,11 +63,9 @@ export default function Register() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
-    // Validation code d'invitation
+    // Validation code d'invitation - Pas de validation si le code vient de l'URL
     const hasReferralFromURL = !!searchParams.get('ref')
-    if (hasReferralFromURL && isValidReferral === false) {
-      newErrors.referralCode = 'Code d\'invitation invalide'
-    } else if (!hasReferralFromURL && formData.referralCode && isValidReferral === false) {
+    if (!hasReferralFromURL && formData.referralCode && isValidReferral === false) {
       newErrors.referralCode = 'Code d\'invitation invalide'
     }
 
@@ -302,36 +300,38 @@ export default function Register() {
                 placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "Code d'invitation (optionnel)"}
                 disabled={!!searchParams.get('ref')}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
-                  errors.referralCode 
-                    ? 'border-red-300 bg-red-50' 
-                    : isValidReferral === true
-                      ? 'border-green-300 bg-green-50'
-                      : isValidReferral === false
-                        ? 'border-red-300 bg-red-50'
-                        : 'border-gray-200 bg-white focus:border-blue-500 focus:bg-white'
+                  searchParams.get('ref')
+                    ? 'border-green-300 bg-green-50'
+                    : errors.referralCode 
+                      ? 'border-red-300 bg-red-50' 
+                      : isValidReferral === true
+                        ? 'border-green-300 bg-green-50'
+                        : isValidReferral === false
+                          ? 'border-red-300 bg-red-50'
+                          : 'border-gray-200 bg-white focus:border-blue-500 focus:bg-white'
                 } focus:outline-none focus:ring-2 focus:ring-blue-200 ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
               />
               {errors.referralCode && <p className="text-red-500 text-xs mt-1">{errors.referralCode}</p>}
-              {isValidReferral === true && (
+              {searchParams.get('ref') && (
+                <p className="text-green-600 text-xs mt-1">✅ Code d'invitation valide du lien</p>
+              )}
+              {!searchParams.get('ref') && isValidReferral === true && (
                 <p className="text-green-600 text-xs mt-1">✅ Code d'invitation valide</p>
               )}
-              {isValidReferral === false && formData.referralCode && (
+              {!searchParams.get('ref') && isValidReferral === false && formData.referralCode && (
                 <p className="text-red-500 text-xs mt-1">❌ Code d'invitation invalide</p>
               )}
               {!searchParams.get('ref') && (
                 <p className="text-blue-400 text-xs mt-1">Laissez vide si vous êtes le premier utilisateur</p>
-              )}
-              {searchParams.get('ref') && (
-                <p className="text-blue-400 text-xs mt-1">Code d'invitation requis pour cette inscription</p>
               )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading || (searchParams.get('ref') && isValidReferral !== true) || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)}
+              disabled={isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)}
               className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
-                isLoading || (searchParams.get('ref') && isValidReferral !== true) || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)
+                isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
               } flex items-center justify-center`}

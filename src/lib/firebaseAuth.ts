@@ -39,6 +39,8 @@ export function generateReferralCode(): string {
 // Vérifie si un code d'invitation existe dans Firestore
 export async function isReferralCodeValid(code: string): Promise<boolean> {
   try {
+    console.log('🔍 Validation du code:', code, 'Longueur:', code.length, 'Commence par AXML:', code.startsWith('AXML'))
+    
     // Accepter tous les codes qui commencent par AXML (codes générés par notre système)
     if (code.startsWith('AXML') && code.length >= 6) {
       console.log('✅ Code AXML accepté directement:', code)
@@ -50,15 +52,16 @@ export async function isReferralCodeValid(code: string): Promise<boolean> {
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('referralCode', '==', code))
       const querySnapshot = await getDocs(q)
-      return !querySnapshot.empty
+      const isValid = !querySnapshot.empty
+      console.log('📋 Vérification Firestore pour code:', code, 'Résultat:', isValid)
+      return isValid
     } catch (firestoreError) {
       console.log('⚠️ Erreur Firestore, acceptation du code par défaut:', firestoreError)
       return true // Accepter le code même si Firestore échoue
     }
   } catch (error) {
-    console.error('Erreur vérification code:', error)
-    // En cas d'erreur, toujours accepter les codes pour éviter de bloquer l'inscription
-    return true
+    console.log('❌ Erreur validation code:', error)
+    return false
   }
 }
 
