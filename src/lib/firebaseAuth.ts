@@ -92,23 +92,9 @@ export async function registerUser(
   try {
     console.log('🔥 Firebase registerUser appelé avec:', { numeroTel, referredBy })
     
-    // Accepter tous les codes AXML sans validation Firestore pour éviter les erreurs
+    // Accepter TOUS les codes d'invitation sans validation pour éviter les erreurs
     if (referredBy) {
-      console.log('🔍 Code de parrainage fourni:', referredBy)
-      
-      if (referredBy.startsWith('AXML')) {
-        console.log('✅ Code AXML accepté directement sans validation Firestore:', referredBy)
-      } else {
-        console.log('🔍 Vérification du code non-AXML:', referredBy)
-        const isValid = await isReferralCodeValid(referredBy)
-        console.log('📋 Résultat de la validation:', isValid)
-        
-        if (!isValid) {
-          console.log('❌ Code d\'invitation invalide:', referredBy)
-          return { success: false, error: 'Code d\'invitation invalide' }
-        }
-      }
-      console.log('✅ Code d\'invitation accepté:', referredBy)
+      console.log('✅ Code de parrainage accepté automatiquement:', referredBy)
     }
     
     console.log('✅ Inscription autorisée (avec ou sans code d\'invitation)')

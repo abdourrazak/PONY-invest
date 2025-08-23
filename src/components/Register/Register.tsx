@@ -143,14 +143,15 @@ export default function Register() {
         console.log('🔍 Debug - Code d\'URL:', searchParams.get('ref'))
         console.log('🔍 Debug - Code du formulaire:', formData.referralCode)
         
-        // Pour les codes d'URL, ne pas afficher d'erreur de code invalide
+        // Afficher les détails d'erreur pour le debug mobile
         let message = result.error || 'Erreur lors de l\'inscription. Veuillez réessayer.'
-        if (searchParams.get('ref') && result.error === 'Code d\'invitation invalide') {
-          message = 'Erreur lors de l\'inscription. Veuillez réessayer plus tard.'
-          console.log('🔄 Erreur de code d\'URL masquée pour l\'utilisateur')
+        
+        // Ajouter des détails pour aider au debug
+        if (searchParams.get('ref')) {
+          message = `Erreur: ${result.error || 'Inconnue'}\nCode URL: ${searchParams.get('ref')}\nCode final: ${finalReferralCode}`
         }
         
-        // Afficher popup d'erreur
+        // Afficher popup d'erreur avec détails
         setErrorMessage(message)
         setShowErrorPopup(true)
         setErrors({ referralCode: message })
