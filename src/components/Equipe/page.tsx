@@ -16,6 +16,7 @@ export default function EquipePage() {
     referralLink: ''
   })
   const [teamMembers, setTeamMembers] = useState<any[]>([])
+  const [teamRevenue, setTeamRevenue] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -46,6 +47,10 @@ export default function EquipePage() {
             referralCode: storedCode,
             referralLink: link
           })
+          
+          // Calculate team revenue (placeholder - can be updated with real revenue data)
+          const calculatedRevenue = referrals.length * 10000 // 10,000 FCFA per referral
+          setTeamRevenue(calculatedRevenue)
         } catch (error) {
           console.log('Erreur chargement données parrainage:', error)
           setReferralStats({
