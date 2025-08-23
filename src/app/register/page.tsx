@@ -271,7 +271,7 @@ export default function RegisterPage() {
                   </span>
                 </div>
                 <p className={`text-sm ${isValidReferral ? 'text-green-700' : 'text-red-700'}`}>
-                  Code: <span className="font-mono font-bold">{referralCode}</span>
+                  Code: <span className="font-mono font-bold">{formData.referralCode}</span>
                 </p>
                 {!isValidReferral && (
                   <p className="text-sm text-red-600 mt-1 font-medium">
