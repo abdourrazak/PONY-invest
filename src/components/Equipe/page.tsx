@@ -18,68 +18,75 @@ export default function EquipePage() {
 
   useEffect(() => {
     const loadReferralData = async () => {
-      if (!userData) {
-        // Si pas d'utilisateur connecté, utiliser localStorage comme fallback
-        const userPhone = localStorage.getItem('userPhone')
-        const userId = localStorage.getItem('userId')
-        
-        if (!userPhone || !userId) {
-          setLoading(false)
-          return
-        }
-        
-        // Créer un utilisateur temporaire pour affichage
-        const tempUser = {
-          uid: userId,
-          numeroTel: userPhone,
-          referralCode: localStorage.getItem('userReferralCode') || 'TEMP1234',
-          createdAt: new Date().toISOString()
-        }
-        
-        try {
-          const stats = await getReferralStats(tempUser)
-          setReferralStats(stats)
-          setLoading(false)
-        } catch (error) {
-          console.error('Erreur avec utilisateur temporaire:', error)
-          // Fallback complet
-          setReferralStats({
-            totalReferrals: 0,
-            referralCode: 'TEMP1234',
-            referralLink: `${window.location.origin}/register-auth?ref=TEMP1234`
-          })
-          setLoading(false)
-        }
+      // Toujours utiliser localStorage en premier pour éviter les problèmes de SSR
+      const userPhone = localStorage.getItem('userPhone')
+      const userId = localStorage.getItem('userId')
+      
+      if (!userPhone || !userId) {
+        // Générer un code temporaire pour les utilisateurs non connectés
+        const tempCode = 'DEMO' + Math.random().toString(36).substr(2, 4).toUpperCase()
+        setReferralStats({
+          totalReferrals: 0,
+          referralCode: tempCode,
+          referralLink: `${typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'}/register-auth?ref=${tempCode}`
+        })
+        setLoading(false)
         return
       }
 
+      // Essayer d'abord avec les données localStorage
       try {
-        // Récupérer les stats de parrainage
-        const stats = await getReferralStats(userData)
-        setReferralStats(stats)
+        // Générer un code basé sur le userId pour la cohérence
+        const generateCodeFromUserId = (uid: string) => {
+          const hash = uid.split('').reduce((a, b) => {
+            a = ((a << 5) - a) + b.charCodeAt(0)
+            return a & a
+          }, 0)
+          return 'USR' + Math.abs(hash).toString(36).substr(0, 5).toUpperCase()
+        }
+
+        const fallbackCode = generateCodeFromUserId(userId)
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://axml-global.vercel.app'
         
-        // Récupérer les filleuls
-        const referrals = await getReferrals(userData.referralCode)
-        setTeamMembers(referrals)
-        setValidInvitations(referrals.length)
-        
-        // Calculer le revenu de l'équipe (simulation)
-        const revenue = referrals.length * 500 // 500 FCFA par filleul
-        setTeamRevenue(revenue)
-      } catch (error) {
-        console.error('Erreur chargement données parrainage:', error)
-        // Fallback en cas d'erreur Firebase
         setReferralStats({
           totalReferrals: 0,
-          referralCode: userData.referralCode || 'ERROR123',
-          referralLink: `${window.location.origin}/register-auth?ref=${userData.referralCode || 'ERROR123'}`
+          referralCode: fallbackCode,
+          referralLink: `${baseUrl}/register-auth?ref=${fallbackCode}`
+        })
+
+        // Essayer Firebase en arrière-plan si userData est disponible
+        if (userData) {
+          try {
+            const stats = await getReferralStats(userData)
+            setReferralStats(stats)
+            
+            const referrals = await getReferrals(userData.referralCode)
+            setTeamMembers(referrals)
+            setValidInvitations(referrals.length)
+            
+            const revenue = referrals.length * 500
+            setTeamRevenue(revenue)
+          } catch (firebaseError) {
+            console.error('Firebase error, using fallback:', firebaseError)
+            // Garder les données de fallback déjà définies
+          }
+        }
+      } catch (error) {
+        console.error('Erreur générale:', error)
+        // Fallback ultime
+        setReferralStats({
+          totalReferrals: 0,
+          referralCode: 'FALLBACK',
+          referralLink: `https://axml-global.vercel.app/register-auth?ref=FALLBACK`
         })
       } finally {
         setLoading(false)
       }
     }
 
-    loadReferralData()
+    // Délai pour éviter les problèmes d'hydratation
+    const timer = setTimeout(loadReferralData, 100)
+    return () => clearTimeout(timer)
   }, [userData])
 
   const handleCopy = async (text: string) => {

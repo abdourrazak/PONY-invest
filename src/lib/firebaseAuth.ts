@@ -189,12 +189,12 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
 
 // Générer le lien d'invitation
 export function getReferralLink(referralCode: string): string {
-  if (typeof window === 'undefined') return ''
-  
   // Détection automatique de l'URL selon l'environnement
-  const baseUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://axml-global.vercel.app' 
-    : window.location.origin
+  const baseUrl = typeof window !== 'undefined' 
+    ? window.location.origin
+    : process.env.NODE_ENV === 'production' 
+      ? 'https://axml-global.vercel.app' 
+      : 'http://localhost:3000'
     
   return `${baseUrl}/register-auth?ref=${referralCode}`
 }
