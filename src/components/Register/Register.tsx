@@ -353,7 +353,10 @@ export default function Register() {
             <div className="text-center pt-4 border-t border-gray-200">
               <p className="text-gray-600">
                 Déjà un compte ?{' '}
-                <Link href="/login" className="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                <Link 
+                  href={searchParams.get('ref') ? `/login?ref=${searchParams.get('ref')}` : '/login'} 
+                  className="text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                >
                   Connexion
                 </Link>
               </p>

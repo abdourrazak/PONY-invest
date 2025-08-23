@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
 import { loginUser } from '@/lib/firebaseAuth'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [formData, setFormData] = useState({
     phone: '',
     password: ''
@@ -241,7 +242,10 @@ export default function LoginPage() {
             <div className="text-center pt-4 border-t border-gray-200">
               <p className="text-gray-600">
                 Pas encore de compte ?{' '}
-                <Link href="/register-auth" className="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                <Link 
+                  href={searchParams.get('ref') ? `/register-auth?ref=${searchParams.get('ref')}` : '/register-auth'} 
+                  className="text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                >
                   Créer un compte
                 </Link>
               </p>
