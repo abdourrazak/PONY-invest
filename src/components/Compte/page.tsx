@@ -11,11 +11,11 @@ export default function ComptePage() {
   const [balance, setBalance] = useState(1000)
   const [funds, setFunds] = useState(1000)
   const [referralRewards, setReferralRewards] = useState(0)
+  const [checkInRewards, setCheckInRewards] = useState(0)
 
   useEffect(() => {
     const loadUserData = async () => {
       const savedBalance = localStorage.getItem('userBalance')
-      const savedFunds = localStorage.getItem('userFunds')
       
       if (savedBalance) {
         setBalance(parseInt(savedBalance))
@@ -25,27 +25,27 @@ export default function ComptePage() {
 
       // Calculer les récompenses de parrainage
       const storedCode = localStorage.getItem('userReferralCode')
+      let referralRewards = 0
+      
       if (storedCode) {
         try {
           const referralCount = await getReferralCount(storedCode)
-          const rewards = referralCount * 25 // 25 FCFA par parrainage
-          setReferralRewards(rewards)
-          
-          // Mettre à jour le solde total (1000 XOF de base + récompenses)
-          const totalFunds = 1000 + rewards
-          setFunds(totalFunds)
-          localStorage.setItem('userFunds', totalFunds.toString())
+          referralRewards = referralCount * 25 // 25 FCFA par parrainage
+          setReferralRewards(referralRewards)
         } catch (error) {
-          console.log('Erreur calcul récompenses:', error)
-          setFunds(1000)
-        }
-      } else {
-        if (savedFunds) {
-          setFunds(parseInt(savedFunds))
-        } else {
-          localStorage.setItem('userFunds', '1000')
+          console.log('Erreur calcul récompenses parrainage:', error)
         }
       }
+
+      // Calculer les récompenses de check-in quotidien
+      const rewardHistory = JSON.parse(localStorage.getItem('rewardHistory') || '[]')
+      const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
+      setCheckInRewards(checkInRewardsTotal)
+
+      // Calculer le solde total (1000 XOF de base + récompenses parrainage + récompenses check-in)
+      const totalFunds = 1000 + referralRewards + checkInRewardsTotal
+      setFunds(totalFunds)
+      localStorage.setItem('userFunds', totalFunds.toString())
 
       // Générer un ID utilisateur unique si pas encore fait
       if (!localStorage.getItem('userId')) {
@@ -153,8 +153,8 @@ export default function ComptePage() {
             <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-3 shadow-lg border border-blue-400/30 hover:scale-105 transition-all duration-300">
               <div className="text-center">
                 <div className="text-blue-100 text-xs font-medium mb-1">Gains totaux</div>
-                <div className="text-white text-lg font-black drop-shadow-lg">{referralRewards.toLocaleString('fr-FR')} XOF</div>
-                <div className="text-blue-200 text-xs mt-1">💰 Récompenses</div>
+                <div className="text-white text-lg font-black drop-shadow-lg">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
+                <div className="text-blue-200 text-xs mt-1">💰 Parrainage + Check-in</div>
               </div>
             </div>
           </div>
