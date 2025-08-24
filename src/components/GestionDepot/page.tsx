@@ -84,8 +84,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       {/* Header */}
       <header className={`bg-gradient-to-r ${headerColors} px-4 py-4 shadow-lg relative overflow-hidden`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${isOrange ? 'from-orange-400/20 via-red-400/20 to-orange-500/20' : isMTN ? 'from-yellow-400/20 via-orange-400/20 to-yellow-500/20' : 'from-blue-400/20 via-purple-400/20 to-indigo-500/20'} animate-pulse`}></div>
-        <div className="relative z-10 flex items-center">
-          <Link href="/recharge" className="mr-3 hover:scale-110 transition-transform duration-200">
+        <div className="relative z-10 flex items-center justify-between">
+          <Link href="/recharge" className="hover:scale-110 transition-transform duration-200">
             <ArrowLeft className="text-white" size={18} />
           </Link>
           <div className="flex items-center">
@@ -98,6 +98,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
             </div>
             <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">{serviceName}</h1>
           </div>
+          <div className="w-5"></div>
         </div>
       </header>
 

@@ -111,8 +111,8 @@ export default function Accueil() {
       width: '100vw',
       maxWidth: '100vw',
       overflowX: 'hidden',
-      touchAction: 'pan-y',
-      WebkitOverflowScrolling: 'touch'
+      WebkitOverflowScrolling: 'touch',
+      scrollBehavior: 'smooth'
     }}>
       {/* Header - Optimisé pour mobile */}
       <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
@@ -187,7 +187,7 @@ export default function Accueil() {
             )
 
             return service.href ? (
-              <NavigationLink key={index} href={service.href} className="page-flip-animation">
+              <NavigationLink key={index} href={service.href}>
                 {ServiceContent}
               </NavigationLink>
             ) : (
