@@ -37,21 +37,32 @@ export default function Accueil() {
   const { currentUser, userData, loading } = useAuth()
   const router = useRouter()
 
-  // Force viewport reset on component mount
+  // Force viewport reset and fix scroll issues
   useEffect(() => {
     const resetViewport = () => {
       const viewport = document.querySelector('meta[name="viewport"]')
       if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
       }
+    }
+    
+    // Fix scroll behavior
+    const fixScrollBehavior = () => {
+      document.body.style.position = 'relative'
+      document.body.style.overflowX = 'hidden'
+      document.body.style.height = 'auto'
+      document.body.style.minHeight = '100vh'
       
-      // Force zoom reset
-      if (window.visualViewport) {
-        window.scrollTo(0, 0)
-      }
+      // Prevent scroll bounce
+      document.addEventListener('touchmove', (e) => {
+        if (e.target === document.body) {
+          e.preventDefault()
+        }
+      }, { passive: false })
     }
     
     resetViewport()
+    fixScrollBehavior()
     
     // Reset on orientation change
     window.addEventListener('orientationchange', resetViewport)
@@ -107,12 +118,13 @@ export default function Accueil() {
 
   return (
     <div className="min-h-screen bg-gray-100" style={{ 
-      minHeight: '100dvh',
-      width: '100vw',
-      maxWidth: '100vw',
+      minHeight: '100vh',
+      width: '100%',
+      maxWidth: '100%',
       overflowX: 'hidden',
+      position: 'relative',
       WebkitOverflowScrolling: 'touch',
-      scrollBehavior: 'smooth'
+      overscrollBehavior: 'none'
     }}>
       {/* Header - Optimisé pour mobile */}
       <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
@@ -137,7 +149,7 @@ export default function Accueil() {
         </div>
       </header>
 
-      <main className="px-3 sm:px-4 py-3 sm:py-4">
+      <main className="px-3 sm:px-4 py-3 sm:py-4" style={{ touchAction: 'pan-y' }}>
         {/* Banner Slider */}
         <div className="relative w-full h-40 sm:h-52 overflow-hidden rounded-xl shadow-2xl mb-4 border border-gray-200">
           {banners.map((banner, index) => (

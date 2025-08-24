@@ -173,15 +173,30 @@ body {
 
 /* Fix scroll issues on mobile */
 @media screen and (max-width: 768px) {
-  body {
+  html, body {
     position: relative;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  body {
+    touch-action: pan-y;
   }
   
   .min-h-screen {
     min-height: 100vh;
-    min-height: 100dvh;
+    position: relative;
+  }
+  
+  /* Prevent iOS scroll bounce */
+  .homepage-container {
+    position: relative;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
   }
 }
