@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
@@ -28,16 +29,17 @@ export default function RetraitPage() {
       {/* Header */}
       <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-4 shadow-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center">
-          <Link href="/" className="mr-3 hover:scale-110 transition-transform duration-200">
+        <div className="relative z-10 flex items-center justify-between">
+          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
             <ArrowLeft className="text-white" size={18} />
-          </Link>
+          </NavigationLink>
           <div className="flex items-center">
             <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
               <span className="text-white text-base">💸</span>
             </div>
             <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Retrait</h1>
           </div>
+          <div className="w-5"></div>
         </div>
       </header>
 

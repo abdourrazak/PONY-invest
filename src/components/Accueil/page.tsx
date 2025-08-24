@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Bell, CreditCard, Info, Users, LogOut, ArrowLeftRight, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -109,7 +110,9 @@ export default function Accueil() {
       minHeight: '100dvh',
       width: '100vw',
       maxWidth: '100vw',
-      overflowX: 'hidden'
+      overflowX: 'hidden',
+      touchAction: 'pan-y',
+      WebkitOverflowScrolling: 'touch'
     }}>
       {/* Header - Optimisé pour mobile */}
       <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
@@ -184,9 +187,9 @@ export default function Accueil() {
             )
 
             return service.href ? (
-              <Link key={index} href={service.href}>
+              <NavigationLink key={index} href={service.href} className="page-flip-animation">
                 {ServiceContent}
-              </Link>
+              </NavigationLink>
             ) : (
               <div key={index}>
                 {ServiceContent}
@@ -477,7 +480,7 @@ export default function Accueil() {
         {/* Navigation Bottom */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
           <div className="flex justify-around items-center">
-            <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <NavigationLink href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -485,25 +488,25 @@ export default function Accueil() {
                 </svg>
               </div>
               <span className="text-green-600 text-xs font-medium">Accueil</span>
-            </Link>
-            <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            </NavigationLink>
+            <NavigationLink href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
                 <span className="text-gray-500 text-xs">📊</span>
               </div>
               <span className="text-gray-500 text-xs">Produits</span>
-            </Link>
-            <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            </NavigationLink>
+            <NavigationLink href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
                 <span className="text-gray-500 text-xs">👥</span>
               </div>
               <span className="text-gray-500 text-xs">Équipe</span>
-            </Link>
-            <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            </NavigationLink>
+            <NavigationLink href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
                 <span className="text-gray-500 text-xs">👤</span>
               </div>
               <span className="text-gray-500 text-xs">Mon Compte</span>
-            </Link>
+            </NavigationLink>
           </div>
         </div>
       </main>

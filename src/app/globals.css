@@ -2,33 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Prevent text size adjustment and improve touch action on mobile */
-* {
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-html, body {
-  touch-action: manipulation;
-  width: 100vw;
-  overflow-x: hidden;
+/* Disable text size adjustment and zoom on inputs */
+input, textarea, select, button {
+  -webkit-text-size-adjust: 100% !important;
+  -moz-text-size-adjust: 100% !important;
+  -ms-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  
+  /* Force font size to prevent zoom */
+  font-size: 16px !important;
+  
+  /* Disable user select and touch callout */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
-
-/* Prevent zoom on any input focus - Critical for mobile */
-input, textarea, select, button {
-  font-size: 16px !important;
-  -webkit-text-size-adjust: 100%;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Anti-zoom properties */
+  transform: scale(1) !important;
+  zoom: 1 !important;
 }
 
 /* Specific input types to prevent zoom */
@@ -108,4 +103,59 @@ select:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #15803d;
+}
+
+/* Page Transition Styles */
+.page-transitioning {
+  overflow: hidden !important;
+}
+
+.page-transition-enter {
+  opacity: 0;
+  transform: perspective(1000px) rotateY(-15deg) translateX(-30px) scale(0.95);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: perspective(1000px) rotateY(0deg) translateX(0px) scale(1);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: perspective(1000px) rotateY(0deg) translateX(0px) scale(1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: perspective(1000px) rotateY(15deg) translateX(30px) scale(0.95);
+}
+
+/* Premium page flip effect */
+@keyframes pageFlip {
+  0% {
+    transform: perspective(1000px) rotateY(0deg) translateZ(0px);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(-90deg) translateZ(50px);
+    box-shadow: -20px 0 40px rgba(0,0,0,0.3);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg) translateZ(0px);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+}
+
+.page-flip-animation {
+  animation: pageFlip 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Smooth transitions for all navigation */
+a, button {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
