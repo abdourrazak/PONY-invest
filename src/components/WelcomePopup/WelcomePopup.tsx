@@ -13,9 +13,16 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
 
   useEffect(() => {
     if (isOpen) {
+      console.log('🎉 WelcomePopup: Opening popup')
       setIsVisible(true)
+    } else {
+      console.log('❌ WelcomePopup: Popup closed')
     }
   }, [isOpen])
+
+  useEffect(() => {
+    console.log('🔍 WelcomePopup mounted, isOpen:', isOpen)
+  }, [])
 
   const handleClose = () => {
     setIsVisible(false)

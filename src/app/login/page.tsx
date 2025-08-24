@@ -81,12 +81,14 @@ export default function LoginPage() {
         
         // Vérifier si c'est une première connexion pour afficher le popup
         const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
+        console.log('🔍 Login: hasSeenWelcome =', hasSeenWelcome)
+        
         if (!hasSeenWelcome) {
+          console.log('🎉 Login: Showing welcome popup')
           setShowWelcomePopup(true)
-          setTimeout(() => {
-            router.push('/')
-          }, 500)
+          // Ne pas rediriger automatiquement, laisser le popup gérer la redirection
         } else {
+          console.log('🏠 Login: Redirecting to home (welcome already seen)')
           // Rediriger vers l'accueil
           router.push('/')
         }

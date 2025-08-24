@@ -84,12 +84,22 @@ export default function Accueil() {
       const userPhone = localStorage.getItem('userPhone')
       const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
       
+      console.log('🔍 Accueil useEffect - Debug:', {
+        currentUser: !!currentUser,
+        isLoggedIn,
+        userPhone,
+        hasSeenWelcome,
+        loading
+      })
+      
       if (!currentUser && (!isLoggedIn || !userPhone)) {
         // Rediriger vers register si pas d'utilisateur
         router.push('/register')
       } else if ((currentUser || isLoggedIn) && !hasSeenWelcome) {
         // Afficher popup de bienvenue pour nouveaux utilisateurs
+        console.log('🎉 Accueil: Showing welcome popup in 1 second')
         setTimeout(() => {
+          console.log('🎉 Accueil: Setting showWelcomePopup to true')
           setShowWelcomePopup(true)
         }, 1000) // Délai de 1 seconde pour une meilleure UX
       }

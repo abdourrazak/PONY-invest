@@ -121,10 +121,9 @@ export default function Register() {
         }
         console.log('🏠 Redirection vers accueil')
         // Afficher popup de bienvenue pour nouveau utilisateur
+        console.log('🎉 Register: Showing welcome popup')
         setShowWelcomePopup(true)
-        setTimeout(() => {
-          router.push('/')
-        }, 500)
+        // Ne pas rediriger automatiquement, laisser le popup gérer la redirection
       } else {
         console.log('❌ Inscription échouée:', result.error)
         console.log('🔍 Debug - Code utilisé:', finalReferralCode)
