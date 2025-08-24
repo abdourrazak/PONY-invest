@@ -80,32 +80,32 @@ export default function Accueil() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header - Simplifié comme demandé */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
+      {/* Header - Optimisé pour mobile */}
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-14 h-14 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-xl border-3 border-white flex items-center justify-center relative animate-pulse">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-xl border-2 sm:border-3 border-white flex items-center justify-center relative animate-pulse">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
               <div className="relative z-10 flex flex-col items-center">
                 <div className="text-white text-xs mb-0.5">🌍</div>
-                <span className="text-white font-bold text-xs leading-none">Global</span>
+                <span className="text-white font-bold text-[8px] sm:text-xs leading-none">Global</span>
               </div>
             </div>
           </div>
           
           <div className="text-center flex-1">
-            <span className="text-white text-xl font-bold tracking-wide drop-shadow-md">Accueil</span>
+            <span className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md">Accueil</span>
           </div>
 
-          <button className="relative p-3 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200 transform hover:scale-110 shadow-lg">
-            <Bell size={22} className="drop-shadow-sm" />
+          <button className="relative p-2 sm:p-3 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200 transform hover:scale-110 shadow-lg">
+            <Bell size={18} className="drop-shadow-sm sm:w-5 sm:h-5" />
           </button>
         </div>
       </header>
 
-      <main className="px-4 py-4">
+      <main className="px-3 sm:px-4 py-3 sm:py-4">
         {/* Banner Slider */}
-        <div className="relative w-full h-52 overflow-hidden rounded-xl shadow-2xl mb-4 border border-gray-200">
+        <div className="relative w-full h-40 sm:h-52 overflow-hidden rounded-xl shadow-2xl mb-4 border border-gray-200">
           {banners.map((banner, index) => (
             <div
               key={index}
@@ -137,16 +137,16 @@ export default function Accueil() {
           </div>
         </div>
 
-        {/* Service Grid - Exactement comme sur l'image */}
-        <div className="grid grid-cols-4 gap-4">
+        {/* Service Grid - Optimisé pour mobile */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className="bg-white rounded-xl shadow-md p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer h-[65px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
-                <div className={`${service.color} p-2 rounded-xl mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
-                  <IconComponent size={24} className="text-white drop-shadow-sm" />
+              <div className="bg-white rounded-xl shadow-md p-3 sm:p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[80px] sm:h-[65px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
+                <div className={`${service.color} p-1.5 sm:p-2 rounded-xl mb-1 sm:mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
+                  <IconComponent size={20} className="text-white drop-shadow-sm sm:w-6 sm:h-6" />
                 </div>
-                <span className="text-[11px] text-gray-800 text-center font-bold leading-tight">
+                <span className="text-[10px] sm:text-[11px] text-gray-800 text-center font-bold leading-tight px-1">
                   {service.title}
                 </span>
               </div>

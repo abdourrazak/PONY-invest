@@ -89,68 +89,71 @@ export default function EquipePage() {
   return (
     <div className="min-h-screen bg-gray-100 pb-20">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
-            <ArrowLeft size={24} className="drop-shadow-sm" />
+            <ArrowLeft size={20} className="drop-shadow-sm sm:w-6 sm:h-6" />
           </Link>
-          <h1 className="text-white text-xl font-bold tracking-wide drop-shadow-md flex items-center">
-            <Users className="mr-2" size={24} />
+          <h1 className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md flex items-center">
+            <Users className="mr-1 sm:mr-2" size={20} />
             Mon Équipe
           </h1>
-          <div className="w-10"></div>
+          <div className="w-8 sm:w-10"></div>
         </div>
       </header>
 
       {/* Stats Cards */}
-      <div className="px-4 py-4">
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-white to-green-50 rounded-xl p-5 text-center shadow-lg border border-green-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
-            <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="text-green-500 mr-2" size={20} />
-              <span className="text-gray-700 text-sm font-bold">Revenu Total</span>
+      <div className="px-3 sm:px-4 py-3 sm:py-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-gradient-to-br from-white to-green-50 rounded-xl p-3 sm:p-5 text-center shadow-lg border border-green-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-1 sm:mb-2">
+              <TrendingUp className="text-green-500 mr-1 sm:mr-2" size={16} />
+              <span className="text-gray-700 text-xs sm:text-sm font-bold">Revenu Total</span>
             </div>
-            <div className="text-green-600 text-2xl font-black">{teamRevenue.toLocaleString()} FCFA</div>
+            <div className="text-green-600 text-lg sm:text-2xl font-black">{teamRevenue.toLocaleString()} FCFA</div>
           </div>
-          <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl p-5 text-center shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="text-blue-500 mr-2" size={20} />
-              <span className="text-gray-700 text-sm font-bold">Total Invitations</span>
+          <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl p-3 sm:p-5 text-center shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <div className="flex items-center justify-center mb-1 sm:mb-2">
+              <Users className="text-blue-500 mr-1 sm:mr-2" size={16} />
+              <span className="text-gray-700 text-xs sm:text-sm font-bold">Total Invitations</span>
             </div>
-            <div className="text-blue-600 text-2xl font-black">{referralStats.totalReferrals}</div>
+            <div className="text-blue-600 text-lg sm:text-2xl font-black">{referralStats.totalReferrals}</div>
           </div>
         </div>
 
         {/* Code d'Invitation */}
-        <div className="bg-gradient-to-r from-white to-green-50 rounded-xl p-5 mb-4 shadow-lg border border-green-100">
-          <div className="text-gray-800 font-bold mb-3 flex items-center">
-            <Award className="text-green-500 mr-2" size={20} />
-            Code d'Invitation
+        <div className="bg-gradient-to-r from-white to-green-50 rounded-xl p-3 sm:p-5 mb-4 shadow-lg border border-green-100">
+          <div className="text-gray-800 font-bold mb-2 sm:mb-3 flex items-center">
+            <Award className="text-green-500 mr-1 sm:mr-2" size={16} />
+            <span className="text-sm sm:text-base">Code d'Invitation</span>
           </div>
-          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-green-50 rounded-xl p-4 border border-green-200">
-            <span className="text-green-600 font-mono text-lg font-bold">{referralStats.referralCode || 'Chargement...'}</span>
-            <button 
+          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-green-50 rounded-xl p-3 sm:p-4 border border-green-200 gap-2">
+            <span className="text-gray-800 font-mono text-sm sm:text-lg font-bold tracking-wider truncate">
+              {referralStats.referralCode || 'Chargement...'}
+            </span>
+            <button
               onClick={() => handleCopy(referralStats.referralCode)}
-              className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+              className="bg-green-500 hover:bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 flex-shrink-0"
             >
-              COPIER
+              <Copy size={14} className="mr-1 sm:mr-2" />
+              <span className="text-xs sm:text-sm">Copier</span>
             </button>
           </div>
         </div>
 
         {/* Lien d'Invitation */}
-        <div className="bg-gradient-to-r from-white to-blue-50 rounded-xl p-5 mb-6 shadow-lg border border-blue-100">
-          <div className="text-gray-800 font-bold mb-3 flex items-center">
-            <Target className="text-blue-500 mr-2" size={20} />
-            Lien d'Invitation
+        <div className="bg-gradient-to-r from-white to-blue-50 rounded-xl p-3 sm:p-5 mb-4 sm:mb-6 shadow-lg border border-blue-100">
+          <div className="text-gray-800 font-bold mb-2 sm:mb-3 flex items-center">
+            <Target className="text-blue-500 mr-1 sm:mr-2" size={16} />
+            <span className="text-sm sm:text-base">Lien d'Invitation</span>
           </div>
-          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-blue-200">
-            <span className="text-blue-600 text-xs flex-1 mr-2 truncate font-mono">
+          <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-3 sm:p-4 border border-blue-200 gap-2">
+            <span className="text-blue-600 text-xs sm:text-sm flex-1 mr-2 truncate font-mono">
               {referralStats.referralLink || 'Chargement...'}
             </span>
             <button 
               onClick={() => handleCopy(referralStats.referralLink)}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 flex-shrink-0"
             >
               COPIER
             </button>

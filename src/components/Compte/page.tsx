@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Cloud, Plus, Minus, Smartphone, Wallet, ChevronRight } from 'lucide-react'
+import { Cloud, Plus, Minus, Smartphone, Wallet, ChevronRight, ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { useAuth } from '@/contexts/AuthContext'
 import { getReferralCount } from '@/lib/firebaseAuth'
@@ -61,82 +61,68 @@ export default function ComptePage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-6 shadow-2xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-14 h-14 bg-gradient-to-br from-white/30 to-white/10 rounded-xl flex items-center justify-center shadow-xl border border-white/20 backdrop-blur-sm hover:scale-110 transition-all duration-300">
-              <div className="w-10 h-10 bg-gradient-to-br from-white to-gray-100 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-gray-700 text-base font-bold">👤</span>
-              </div>
-            </div>
-            <div className="text-white">
-              <div className="text-lg font-black tracking-wide drop-shadow-lg">
-                {userData?.numeroTel || '+237693098877'}
-              </div>
-              <div className="text-green-200 text-sm font-medium">Membre Actif</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-blue-500/80 to-cyan-500/80 p-2 rounded-xl shadow-lg backdrop-blur-sm border border-white/20">
-              <Cloud className="text-white drop-shadow-sm" size={24} />
-            </div>
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2 rounded-full shadow-xl border border-white/20 hover:scale-105 transition-all duration-200">
-              <span className="text-white text-sm font-black tracking-wide drop-shadow-sm">LV0</span>
-            </div>
-          </div>
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
+            <ArrowLeft size={20} className="drop-shadow-sm sm:w-6 sm:h-6" />
+          </Link>
+          <h1 className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md flex items-center">
+            <Wallet className="mr-1 sm:mr-2" size={20} />
+            Mes Atouts
+          </h1>
+          <div className="w-8 sm:w-10"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6 pb-20">
+      <div className="px-3 sm:px-4 py-4 sm:py-6 pb-20">
         {/* Mes atouts */}
-        <div className="mx-4 mb-6">
-          <div className="bg-gradient-to-br from-green-600 via-green-700 to-blue-600 rounded-3xl p-5 shadow-2xl border border-white/30 relative overflow-hidden">
+        <div className="mx-2 sm:mx-4 mb-4 sm:mb-6">
+          <div className="bg-gradient-to-br from-green-600 via-green-700 to-blue-600 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl border border-white/30 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+            <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-12 translate-x-12 sm:-translate-y-16 sm:translate-x-16"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-8 -translate-x-8 sm:translate-y-12 sm:-translate-x-12"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-white text-xl font-black tracking-wide drop-shadow-lg">Mes atouts</h3>
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-3 rounded-xl shadow-xl border border-white/20 backdrop-blur-sm">
-                  <span className="text-yellow-900 text-lg font-black drop-shadow-sm">💎</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <h3 className="text-white text-lg sm:text-xl font-black tracking-wide drop-shadow-lg">Mes atouts</h3>
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-2 sm:p-3 rounded-xl shadow-xl border border-white/20 backdrop-blur-sm">
+                  <span className="text-yellow-900 text-base sm:text-lg font-black drop-shadow-sm">💎</span>
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-white text-4xl font-black mb-2 drop-shadow-xl animate-pulse tracking-wide">
+                <div className="text-white text-2xl sm:text-4xl font-black mb-1 sm:mb-2 drop-shadow-xl animate-pulse tracking-wide">
                   {funds.toLocaleString('fr-FR')} XOF
                 </div>
-                <div className="text-green-100 text-sm font-black drop-shadow-sm">Solde disponible</div>
+                <div className="text-green-100 text-xs sm:text-sm font-black drop-shadow-sm">Solde disponible</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="px-4 py-5">
-          <div className="grid grid-cols-2 gap-3">
-            <button className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-green-400/30">
-              <div className="flex items-center justify-center space-x-2">
-                <Plus size={20} className="drop-shadow-sm" />
+        <div className="px-2 sm:px-4 py-3 sm:py-5">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <button className="bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-green-400/30">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                <Plus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
                 <span className="drop-shadow-sm">Recharge</span>
               </div>
             </button>
-            <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-blue-400/30">
-              <div className="flex items-center justify-center space-x-2">
-                <Minus size={20} className="drop-shadow-sm" />
+            <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-blue-400/30">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                <Minus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
                 <span className="drop-shadow-sm">Retrait</span>
               </div>
             </button>
-            <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-purple-400/30">
-              <div className="flex items-center justify-center space-x-2">
-                <Smartphone size={20} className="drop-shadow-sm" />
+            <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-purple-400/30">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                <Smartphone size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
                 <span className="drop-shadow-sm">Appareil</span>
               </div>
             </button>
-            <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-xl font-bold text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-orange-400/30">
-              <div className="flex items-center justify-center space-x-2">
-                <Wallet size={20} className="drop-shadow-sm" />
+            <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-orange-400/30">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                <Wallet size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
                 <span className="drop-shadow-sm">Portefeuille</span>
               </div>
             </button>
@@ -144,20 +130,20 @@ export default function ComptePage() {
         </div>
 
         {/* Stats */}
-        <div className="mx-4 mb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-3 shadow-lg border border-green-400/30 hover:scale-105 transition-all duration-300">
+        <div className="mx-2 sm:mx-4 mb-3 sm:mb-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-2.5 sm:p-3 shadow-lg border border-green-400/30 hover:scale-105 transition-all duration-300">
               <div className="text-center">
-                <div className="text-green-100 text-xs font-medium mb-1">Gains aujourd'hui</div>
-                <div className="text-white text-lg font-black drop-shadow-lg">0 XOF</div>
-                <div className="text-green-200 text-xs mt-1">📈 +0%</div>
+                <div className="text-green-100 text-[10px] sm:text-xs font-medium mb-1">Gains aujourd'hui</div>
+                <div className="text-white text-sm sm:text-lg font-black drop-shadow-lg">0 XOF</div>
+                <div className="text-green-200 text-[10px] sm:text-xs mt-1">📈 +0%</div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-3 shadow-lg border border-blue-400/30 hover:scale-105 transition-all duration-300">
+            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-2.5 sm:p-3 shadow-lg border border-blue-400/30 hover:scale-105 transition-all duration-300">
               <div className="text-center">
-                <div className="text-blue-100 text-xs font-medium mb-1">Gains totaux</div>
-                <div className="text-white text-lg font-black drop-shadow-lg">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
-                <div className="text-blue-200 text-xs mt-1">💰 Parrainage + Check-in</div>
+                <div className="text-blue-100 text-[10px] sm:text-xs font-medium mb-1">Gains totaux</div>
+                <div className="text-white text-sm sm:text-lg font-black drop-shadow-lg">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
+                <div className="text-blue-200 text-[10px] sm:text-xs mt-1">💰 Parrainage + Check-in</div>
               </div>
             </div>
           </div>
