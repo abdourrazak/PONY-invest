@@ -5,14 +5,20 @@ import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function SupportPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
       {/* Header */}
-      <header className="bg-green-500 px-4 py-4 relative">
-        <div className="flex items-center justify-center">
-          <Link href="/" className="absolute left-4">
-            <ArrowLeft size={24} className="text-white" />
+      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-5 shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
+        <div className="relative z-10 flex items-center">
+          <Link href="/" className="mr-3 hover:scale-110 transition-transform duration-200">
+            <ArrowLeft className="text-white" size={20} />
           </Link>
-          <h1 className="text-white text-lg font-medium">Support</h1>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+              <span className="text-white text-lg">🎧</span>
+            </div>
+            <h1 className="text-white text-lg font-black tracking-wide drop-shadow-lg">Support</h1>
+          </div>
         </div>
       </header>
 

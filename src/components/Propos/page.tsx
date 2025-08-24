@@ -5,94 +5,112 @@ import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function ProposPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
       {/* Header */}
-      <header className="bg-green-500 px-4 py-4 relative">
-        <div className="flex items-center justify-center">
-          <Link href="/" className="absolute left-4">
-            <ArrowLeft size={24} className="text-white" />
+      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-5 shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
+        <div className="relative z-10 flex items-center">
+          <Link href="/" className="mr-3 hover:scale-110 transition-transform duration-200">
+            <ArrowLeft className="text-white" size={20} />
           </Link>
-          <h1 className="text-white text-lg font-medium">À propos de Global</h1>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+              <span className="text-white text-lg">ℹ️</span>
+            </div>
+            <h1 className="text-white text-lg font-black tracking-wide drop-shadow-lg">À propos de Global</h1>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <div className="px-4 py-6 pb-20">
         {/* Company Title */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-black mb-4">Global Holdings</h1>
-          <p className="text-gray-600 text-sm leading-relaxed px-2">
-            <span className="font-semibold text-black">Advanced Semiconductor Materials Lithography</span> - Le leader mondial dans la fabrication 
-            de machines de lithographie ultra-sophistiquées pour la production de puces 
-            électroniques de nouvelle génération.
-          </p>
+        <div className="text-center mb-8">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-6 rounded-2xl shadow-xl mb-6">
+            <h1 className="text-3xl font-black mb-3 drop-shadow-lg">Global Holdings</h1>
+            <div className="w-20 h-1 bg-white/50 mx-auto mb-3 rounded-full"></div>
+            <p className="text-blue-100 text-sm leading-relaxed font-medium">
+              <span className="font-bold text-white">Advanced Semiconductor Materials Lithography</span> - Le leader mondial dans la fabrication 
+              de machines de lithographie ultra-sophistiquées pour la production de puces 
+              électroniques de nouvelle génération.
+            </p>
+          </div>
         </div>
 
         {/* Company Overview Section */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <div className="flex items-center mb-6">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-black">Aperçu de l'Entreprise</h2>
+            <div>
+              <div className="w-16 h-1.5 bg-gradient-to-r from-green-500 to-blue-500 mb-2 rounded-full"></div>
+              <h2 className="text-xl font-black text-gray-800">Aperçu de l'Entreprise</h2>
+            </div>
           </div>
 
           {/* Info Cards Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-8">
             {/* Siège Social */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="text-gray-600 text-xs font-medium mb-1">Siège Social</div>
-              <div className="text-black text-sm font-semibold">Veldhoven, Pays-Bas</div>
+              <div className="text-blue-600 text-xs font-bold mb-2">Siège Social</div>
+              <div className="text-blue-800 text-sm font-black">Veldhoven, Pays-Bas</div>
             </div>
 
             {/* Fondation */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="text-gray-600 text-xs font-medium mb-1">Fondation</div>
-              <div className="text-black text-sm font-semibold">1984</div>
+              <div className="text-green-600 text-xs font-bold mb-2">Fondation</div>
+              <div className="text-green-800 text-sm font-black">1984</div>
             </div>
 
             {/* Employés */}
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
-              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
               </div>
-              <div className="text-gray-600 text-xs font-medium mb-1">Employés</div>
-              <div className="text-black text-sm font-semibold">+40 000</div>
+              <div className="text-purple-600 text-xs font-bold mb-2">Employés</div>
+              <div className="text-purple-800 text-sm font-black">+40 000</div>
             </div>
 
             {/* Secteur */}
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
-              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="text-gray-600 text-xs font-medium mb-1">Secteur</div>
-              <div className="text-black text-sm font-semibold">Semi-conducteurs</div>
+              <div className="text-orange-600 text-xs font-bold mb-2">Secteur</div>
+              <div className="text-orange-800 text-sm font-black">Semi-conducteurs</div>
             </div>
           </div>
         </div>
 
         {/* Description */}
-        <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
-          <p className="text-gray-700 text-sm leading-relaxed">
-            Global est spécialisée dans la <span className="font-semibold text-black">fabrication de machines de lithographie ultra-sophistiquées</span> qui 
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-white/50 mb-8">
+          <div className="flex items-center mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+              <span className="text-white text-lg">🔬</span>
+            </div>
+            <h3 className="text-lg font-black text-gray-800">Notre Spécialité</h3>
+          </div>
+          <p className="text-gray-700 text-sm leading-relaxed font-medium">
+            Global est spécialisée dans la <span className="font-black text-blue-600">fabrication de machines de lithographie ultra-sophistiquées</span> qui 
             permettent de graver des circuits microscopiques sur les microprocesseurs. Ces équipements sont 
-            indispensables pour la production de puces électroniques modernes.
+            <span className="font-black text-green-600">indispensables</span> pour la production de puces électroniques modernes.
           </p>
         </div>
 
