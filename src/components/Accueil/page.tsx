@@ -137,16 +137,16 @@ export default function Accueil() {
           </div>
         </div>
 
-        {/* Service Grid - Optimisé pour mobile */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {/* Service Grid - 4 colonnes sur mobile */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-4">
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className="bg-white rounded-xl shadow-md p-3 sm:p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[80px] sm:h-[65px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
-                <div className={`${service.color} p-1.5 sm:p-2 rounded-xl mb-1 sm:mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
-                  <IconComponent size={20} className="text-white drop-shadow-sm sm:w-6 sm:h-6" />
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-2 sm:p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[70px] sm:h-[65px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
+                <div className={`${service.color} p-1 sm:p-2 rounded-lg sm:rounded-xl mb-1 sm:mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
+                  <IconComponent size={14} className="text-white drop-shadow-sm sm:w-6 sm:h-6" />
                 </div>
-                <span className="text-[10px] sm:text-[11px] text-gray-800 text-center font-bold leading-tight px-1">
+                <span className="text-[8px] sm:text-[11px] text-gray-800 text-center font-bold leading-tight px-0.5 sm:px-1">
                   {service.title}
                 </span>
               </div>
@@ -189,13 +189,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">3 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+600 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">3 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+600 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -221,13 +227,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">5 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+1 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">5 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+1 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -253,13 +265,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">7 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+2 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">7 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+2 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -285,13 +303,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">12 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+2 400 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">12 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+2 400 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -317,13 +341,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">20 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+4 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">20 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+4 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -349,13 +379,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">50 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+10 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">50 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+10 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -381,13 +417,19 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
-                  <span className="text-gray-800 text-sm font-bold">Prix :</span>
-                  <span className="text-blue-600 text-sm font-black">95 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Par jour :</span>
-                  <span className="text-green-600 text-sm font-black">+19 000 FCFA</span>
-                  <span className="text-gray-800 text-sm font-bold">Durée :</span>
-                  <span className="text-purple-600 text-sm font-black">30 jours</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-600 text-xs sm:text-sm font-black">95 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-600 text-xs sm:text-sm font-black">+19 000 FCFA</span>
+                  </div>
+                  <div className="flex justify-between sm:flex-col sm:items-center">
+                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                  </div>
                 </div>
               </div>
             </div>
