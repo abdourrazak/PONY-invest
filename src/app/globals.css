@@ -21,6 +21,10 @@ body {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   touch-action: manipulation;
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
 }
 
 /* Animation pour le texte défilant */

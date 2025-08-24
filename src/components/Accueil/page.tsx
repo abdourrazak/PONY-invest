@@ -36,6 +36,32 @@ export default function Accueil() {
   const { currentUser, userData, loading } = useAuth()
   const router = useRouter()
 
+  // Force viewport reset on component mount
+  useEffect(() => {
+    const resetViewport = () => {
+      const viewport = document.querySelector('meta[name="viewport"]')
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+      }
+      
+      // Force zoom reset
+      if (window.visualViewport) {
+        window.scrollTo(0, 0)
+      }
+    }
+    
+    resetViewport()
+    
+    // Reset on orientation change
+    window.addEventListener('orientationchange', resetViewport)
+    window.addEventListener('resize', resetViewport)
+    
+    return () => {
+      window.removeEventListener('orientationchange', resetViewport)
+      window.removeEventListener('resize', resetViewport)
+    }
+  }, [])
+
   // Rediriger vers inscription si pas connecté (pas de localStorage)
   useEffect(() => {
     if (!loading) {
@@ -79,7 +105,12 @@ export default function Accueil() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100" style={{ 
+      minHeight: '100dvh',
+      width: '100vw',
+      maxWidth: '100vw',
+      overflowX: 'hidden'
+    }}>
       {/* Header - Optimisé pour mobile */}
       <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
         <div className="flex items-center justify-between">
