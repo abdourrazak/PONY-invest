@@ -82,30 +82,30 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
       {/* Header */}
-      <header className={`bg-gradient-to-r ${headerColors} px-4 py-5 shadow-xl relative overflow-hidden`}>
+      <header className={`bg-gradient-to-r ${headerColors} px-4 py-4 shadow-lg relative overflow-hidden`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${isOrange ? 'from-orange-400/20 via-red-400/20 to-orange-500/20' : isMTN ? 'from-yellow-400/20 via-orange-400/20 to-yellow-500/20' : 'from-blue-400/20 via-purple-400/20 to-indigo-500/20'} animate-pulse`}></div>
         <div className="relative z-10 flex items-center">
           <Link href="/recharge" className="mr-3 hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
+            <ArrowLeft className="text-white" size={18} />
           </Link>
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
               {isCrypto ? (
-                <span className="text-white text-lg font-bold">₿</span>
+                <span className="text-white text-base font-bold">₿</span>
               ) : (
-                <Image src={logoSrc} alt={serviceName} width={20} height={20} className="object-contain" />
+                <Image src={logoSrc} alt={serviceName} width={16} height={16} className="object-contain" />
               )}
             </div>
-            <h1 className="text-white text-lg font-black tracking-wide drop-shadow-lg">{serviceName}</h1>
+            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">{serviceName}</h1>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6 max-w-md mx-auto">
+      <div className="px-4 py-4 max-w-md mx-auto">
         {/* Amount Section */}
-        <div className="mb-6">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-base mb-3`}>
+        <div className="mb-4">
+          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
             Montant à déposer (FCFA)
           </label>
           <div className="relative">
@@ -114,47 +114,47 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               placeholder="Minimum 3,000 FCFA"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className={`w-full px-4 py-4 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-lg transition-all duration-300`}
+              className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}
             />
           </div>
         </div>
 
         {/* Beneficiary Code Section */}
-        <div className="mb-6">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-base mb-3`}>
+        <div className="mb-4">
+          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
             Code ou adresse du compte bénéficiaire
           </label>
-          <div className="flex items-center gap-3">
-            <div className={`flex-1 ${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-4 py-4`}>
-              <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-sm' : 'text-lg'}`}>{beneficiaryCode}</span>
+          <div className="flex items-center gap-2">
+            <div className={`flex-1 ${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-3 py-3`}>
+              <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-xs' : 'text-sm'}`}>{beneficiaryCode}</span>
             </div>
             <button
               onClick={() => copyToClipboard(beneficiaryCode)}
-              className={`w-12 h-12 ${isOrange ? 'bg-blue-500 hover:bg-blue-600' : isMTN ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'} rounded-xl flex items-center justify-center transition-colors duration-200 shadow-lg`}
+              className={`w-10 h-10 ${isOrange ? 'bg-blue-500 hover:bg-blue-600' : isMTN ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'} rounded-xl flex items-center justify-center transition-colors duration-200 shadow-sm`}
             >
-              <Copy className="w-5 h-5 text-white" />
+              <Copy className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
 
         {/* Beneficiary Name Section */}
-        <div className="mb-6">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-base mb-3`}>
+        <div className="mb-4">
+          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
             Compte bénéficiaire
           </label>
-          <div className={`${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-4 py-4`}>
-            <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-xs break-all' : 'text-lg'}`}>{beneficiaryName}</span>
+          <div className={`${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-3 py-3`}>
+            <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-xs break-all' : 'text-sm'}`}>{beneficiaryName}</span>
           </div>
         </div>
 
         {/* Transaction Capture Section */}
-        <div className="mb-8">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-base mb-3`}>
+        <div className="mb-6">
+          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
             Capture de transaction
           </label>
           
           {!imagePreview ? (
-            <div className={`border-2 border-dashed ${isOrange ? 'border-blue-300 bg-blue-50/50 hover:bg-blue-50' : isMTN ? 'border-yellow-300 bg-yellow-50/50 hover:bg-yellow-50' : 'border-blue-300 bg-blue-50/50 hover:bg-blue-50'} rounded-xl p-6 text-center transition-colors duration-200`}>
+            <div className={`border-2 border-dashed ${isOrange ? 'border-blue-300 bg-blue-50/50 hover:bg-blue-50' : isMTN ? 'border-yellow-300 bg-yellow-50/50 hover:bg-yellow-50' : 'border-blue-300 bg-blue-50/50 hover:bg-blue-50'} rounded-xl p-4 text-center transition-colors duration-200`}>
               <input
                 type="file"
                 accept="image/*"
@@ -163,27 +163,27 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                 id="transaction-image"
               />
               <label htmlFor="transaction-image" className="cursor-pointer">
-                <div className={`w-16 h-16 ${isOrange ? 'bg-blue-500' : isMTN ? 'bg-yellow-500' : 'bg-blue-500'} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                  <Upload className="w-8 h-8 text-white" />
+                <div className={`w-12 h-12 ${isOrange ? 'bg-blue-500' : isMTN ? 'bg-yellow-500' : 'bg-blue-500'} rounded-full flex items-center justify-center mx-auto mb-3`}>
+                  <Upload className="w-6 h-6 text-white" />
                 </div>
-                <p className={`${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-bold text-sm mb-2`}>Ajouter une capture</p>
-                <p className={`${isOrange ? 'text-blue-500' : isMTN ? 'text-yellow-500' : 'text-blue-500'} text-xs`}>Cliquez pour sélectionner une image</p>
+                <p className={`${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-bold text-xs mb-1`}>Ajouter une capture</p>
+                <p className={`${isOrange ? 'text-blue-500' : isMTN ? 'text-yellow-500' : 'text-blue-500'} text-xs`}>Cliquez pour sélectionner</p>
               </label>
             </div>
           ) : (
             <div className="relative">
-              <div className={`border-2 ${isOrange ? 'border-blue-300' : isMTN ? 'border-yellow-300' : 'border-blue-300'} rounded-xl overflow-hidden bg-white shadow-lg`}>
+              <div className={`border-2 ${isOrange ? 'border-blue-300' : isMTN ? 'border-yellow-300' : 'border-blue-300'} rounded-xl overflow-hidden bg-white shadow-sm`}>
                 <img
                   src={imagePreview}
                   alt="Transaction capture"
-                  className="w-full h-48 object-cover"
+                  className="w-full h-40 object-cover"
                 />
               </div>
               <button
                 onClick={removeImage}
-                className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-200"
+                className="absolute top-2 right-2 w-7 h-7 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-200"
               >
-                <X className="w-4 h-4 text-white" />
+                <X className="w-3 h-3 text-white" />
               </button>
             </div>
           )}
@@ -193,7 +193,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         <button
           onClick={handleSubmit}
           disabled={!amount || !transactionImage}
-          className={`w-full py-4 rounded-xl font-black text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl ${
+          className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
             amount && transactionImage
               ? isOrange 
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
@@ -204,14 +204,14 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           }`}
         >
           <div className="flex items-center justify-center">
-            <span className="text-xl mr-2">📤</span>
+            <span className="text-lg mr-2">📤</span>
             Soumettre le dépôt
           </div>
         </button>
 
         {/* Instructions */}
-        <div className={`mt-6 ${isOrange ? 'bg-orange-50 border-orange-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border rounded-xl p-4`}>
-          <h3 className={`${isOrange ? 'text-orange-700' : isMTN ? 'text-yellow-700' : 'text-blue-700'} font-black text-sm mb-2`}>Instructions :</h3>
+        <div className={`mt-4 ${isOrange ? 'bg-orange-50 border-orange-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border rounded-xl p-3`}>
+          <h3 className={`${isOrange ? 'text-orange-700' : isMTN ? 'text-yellow-700' : 'text-blue-700'} font-black text-xs mb-2`}>Instructions :</h3>
           <ul className={`${isOrange ? 'text-orange-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} text-xs space-y-1 font-medium`}>
             <li>• {isCrypto ? 'Envoyez USDT TRC20 vers l\'adresse ci-dessus' : 'Effectuez le transfert vers le code ci-dessus'}</li>
             <li>• Prenez une capture d'écran de la confirmation</li>
