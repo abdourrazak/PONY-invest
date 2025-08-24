@@ -113,7 +113,8 @@ export default function Register() {
         // Le code d'invitation est déjà généré et sauvegardé dans Firestore lors de l'inscription
         // Récupérer le code depuis les données utilisateur retournées
         if (result.user.referralCode) {
-          localStorage.setItem('userReferralCode', result.user.referralCode)
+          const userKey = result.user.numeroTel
+          localStorage.setItem(`userReferralCode_${userKey}`, result.user.referralCode)
           console.log('✅ Code d\'invitation sauvegardé:', result.user.referralCode)
         }
         console.log('🏠 Redirection vers accueil')

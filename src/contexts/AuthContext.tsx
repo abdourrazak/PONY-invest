@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const tempUserData: User = {
             uid: userId,
             numeroTel: userPhone,
-            referralCode: localStorage.getItem('userReferralCode') || '',
+            referralCode: localStorage.getItem(`userReferralCode_${userPhone}`) || '',
             createdAt: null
           }
           setUserData(tempUserData)

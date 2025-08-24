@@ -26,8 +26,8 @@ export default function ComptePage() {
         localStorage.setItem(`userBalance_${userKey}`, '1000')
       }
 
-      // Calculer les récompenses de parrainage
-      const storedCode = localStorage.getItem('userReferralCode')
+      // Calculer les récompenses de parrainage spécifiques à l'utilisateur
+      const storedCode = localStorage.getItem(`userReferralCode_${userKey}`)
       let referralRewards = 0
       
       if (storedCode) {

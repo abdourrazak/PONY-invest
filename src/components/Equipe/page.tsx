@@ -24,7 +24,7 @@ export default function EquipePage() {
       setLoading(false)
       
       if (typeof window !== 'undefined') {
-        let storedCode = localStorage.getItem('userReferralCode')
+        let storedCode = localStorage.getItem(`userReferralCode_${userData?.numeroTel || 'default'}`)
         
         // Ne jamais générer de nouveau code ici - utiliser uniquement celui de Firestore
         if (!storedCode) {

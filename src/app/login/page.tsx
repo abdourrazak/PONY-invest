@@ -62,9 +62,10 @@ export default function LoginPage() {
             const userData = userDoc.data()
             // Sauvegarder le code de parrainage depuis Firestore - PERMANENT
             if (userData?.referralCode) {
-              const existingCode = localStorage.getItem('userReferralCode')
+              const userKey = userData.numeroTel
+              const existingCode = localStorage.getItem(`userReferralCode_${userKey}`)
               if (!existingCode || existingCode !== userData.referralCode) {
-                localStorage.setItem('userReferralCode', userData.referralCode)
+                localStorage.setItem(`userReferralCode_${userKey}`, userData.referralCode)
                 console.log('✅ Code de parrainage permanent sauvegardé:', userData.referralCode)
               } else {
                 console.log('✅ Code de parrainage déjà présent:', existingCode)
