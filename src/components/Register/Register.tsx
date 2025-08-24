@@ -26,6 +26,11 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState('')
   const [showWelcomePopup, setShowWelcomePopup] = useState(false)
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('🔍 Register: showWelcomePopup state changed to:', showWelcomePopup)
+  }, [showWelcomePopup])
+
   useEffect(() => {
     const refCode = searchParams.get('ref')
     if (refCode) {
@@ -122,7 +127,11 @@ export default function Register() {
         console.log('🏠 Redirection vers accueil')
         // Afficher popup de bienvenue pour nouveau utilisateur
         console.log('🎉 Register: Showing welcome popup')
+        // Effacer hasSeenWelcome pour être sûr que le popup s'affiche
+        localStorage.removeItem('hasSeenWelcome')
+        // Forcer l'affichage immédiat du popup
         setShowWelcomePopup(true)
+        console.log('🎉 Register: Popup state set to true')
         // Ne pas rediriger automatiquement, laisser le popup gérer la redirection
       } else {
         console.log('❌ Inscription échouée:', result.error)

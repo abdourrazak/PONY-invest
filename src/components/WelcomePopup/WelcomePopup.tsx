@@ -38,10 +38,15 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
     handleClose()
   }
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    console.log('❌ WelcomePopup: Not rendering, isOpen =', isOpen)
+    return null
+  }
+
+  console.log('✅ WelcomePopup: Rendering popup, isVisible =', isVisible)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       {/* Backdrop */}
       <div 
         className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ${
@@ -51,13 +56,21 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
       />
       
       {/* Popup */}
-      <div className={`
-        relative bg-gradient-to-br from-white via-gray-50 to-blue-50 
-        rounded-3xl shadow-2xl border border-gray-200/50
-        max-w-xs sm:max-w-sm w-full max-h-[85vh] overflow-y-auto
-        transform transition-all duration-300 ease-out
-        ${isVisible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}
-      `}>
+      <div 
+        className={`
+          relative bg-gradient-to-br from-white via-gray-50 to-blue-50 
+          rounded-3xl shadow-2xl border border-gray-200/50
+          max-w-xs sm:max-w-sm w-full max-h-[85vh] overflow-y-auto
+          transform transition-all duration-300 ease-out
+          ${isVisible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}
+        `}
+        style={{ 
+          position: 'relative',
+          zIndex: 10000,
+          display: 'block',
+          visibility: 'visible'
+        }}
+      >
         {/* Close Button */}
         <button
           onClick={handleClose}

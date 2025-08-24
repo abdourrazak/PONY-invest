@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -23,6 +23,11 @@ export default function LoginPage() {
   const [showErrorPopup, setShowErrorPopup] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showWelcomePopup, setShowWelcomePopup] = useState(false)
+
+  // Debug state changes
+  useEffect(() => {
+    console.log('🔍 Login: showWelcomePopup state changed to:', showWelcomePopup)
+  }, [showWelcomePopup])
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
@@ -85,8 +90,11 @@ export default function LoginPage() {
         
         if (!hasSeenWelcome) {
           console.log('🎉 Login: Showing welcome popup')
+          // Effacer d'abord hasSeenWelcome pour être sûr
+          localStorage.removeItem('hasSeenWelcome')
+          // Forcer l'affichage immédiat du popup
           setShowWelcomePopup(true)
-          // Ne pas rediriger automatiquement, laisser le popup gérer la redirection
+          console.log('🎉 Login: Popup state set to true')
         } else {
           console.log('🏠 Login: Redirecting to home (welcome already seen)')
           // Rediriger vers l'accueil
