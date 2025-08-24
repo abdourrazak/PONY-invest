@@ -153,6 +153,8 @@ export default function RechargePage() {
                 router.push('/gestion-depot?method=orange')
               } else if (selectedPaymentMethod === 1) {
                 router.push('/gestion-depot?method=mtn')
+              } else if (selectedPaymentMethod === 2) {
+                router.push('/gestion-depot?method=crypto')
               }
             }}
             className="w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white py-4 rounded-xl font-black text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl"
