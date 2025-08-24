@@ -125,14 +125,13 @@ export default function Register() {
           console.log('✅ Code d\'invitation sauvegardé:', result.user.referralCode)
         }
         console.log('🏠 Redirection vers accueil')
-        // Afficher popup de bienvenue pour nouveau utilisateur
-        console.log('🎉 Register: Showing welcome popup')
-        // Effacer hasSeenWelcome pour être sûr que le popup s'affiche
+        // Afficher popup de bienvenue pour chaque inscription
+        console.log('🎉 Register: Showing welcome popup (every registration)')
+        // Toujours effacer hasSeenWelcome pour forcer l'affichage
         localStorage.removeItem('hasSeenWelcome')
-        // Forcer l'affichage immédiat du popup
+        // Afficher le popup à chaque inscription
         setShowWelcomePopup(true)
         console.log('🎉 Register: Popup state set to true')
-        // Ne pas rediriger automatiquement, laisser le popup gérer la redirection
       } else {
         console.log('❌ Inscription échouée:', result.error)
         console.log('🔍 Debug - Code utilisé:', finalReferralCode)
@@ -433,7 +432,8 @@ export default function Register() {
           isOpen={showWelcomePopup}
           onClose={() => {
             setShowWelcomePopup(false)
-            localStorage.setItem('hasSeenWelcome', 'true')
+            // Ne plus sauvegarder hasSeenWelcome pour permettre l'affichage répétitif
+            console.log('🔒 Register: Popup closed, redirecting to home')
             router.push('/')
           }}
           onTelegramJoin={() => {

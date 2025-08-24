@@ -95,9 +95,11 @@ export default function Accueil() {
       if (!currentUser && (!isLoggedIn || !userPhone)) {
         // Rediriger vers register si pas d'utilisateur
         router.push('/register')
-      } else if ((currentUser || isLoggedIn) && !hasSeenWelcome) {
-        // Afficher popup de bienvenue pour nouveaux utilisateurs
-        console.log('🎉 Accueil: Showing welcome popup in 1 second')
+      } else if ((currentUser || isLoggedIn)) {
+        // Afficher popup de bienvenue à CHAQUE visite de l'accueil
+        console.log('🎉 Accueil: Showing welcome popup in 1 second (every visit)')
+        // Toujours effacer hasSeenWelcome pour forcer l'affichage
+        localStorage.removeItem('hasSeenWelcome')
         setTimeout(() => {
           console.log('🎉 Accueil: Setting showWelcomePopup to true')
           setShowWelcomePopup(true)
@@ -109,7 +111,8 @@ export default function Accueil() {
   // Gérer la fermeture du popup de bienvenue
   const handleWelcomeClose = () => {
     setShowWelcomePopup(false)
-    localStorage.setItem('hasSeenWelcome', 'true')
+    // Ne plus sauvegarder hasSeenWelcome pour permettre l'affichage répétitif
+    console.log('🔒 Accueil: Popup closed, no hasSeenWelcome saved')
   }
 
   const handleTelegramJoin = () => {

@@ -84,22 +84,13 @@ export default function LoginPage() {
           console.log('⚠️ Erreur récupération code Firestore:', error)
         }
         
-        // Vérifier si c'est une première connexion pour afficher le popup
-        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
-        console.log('🔍 Login: hasSeenWelcome =', hasSeenWelcome)
-        
-        if (!hasSeenWelcome) {
-          console.log('🎉 Login: Showing welcome popup')
-          // Effacer d'abord hasSeenWelcome pour être sûr
-          localStorage.removeItem('hasSeenWelcome')
-          // Forcer l'affichage immédiat du popup
-          setShowWelcomePopup(true)
-          console.log('🎉 Login: Popup state set to true')
-        } else {
-          console.log('🏠 Login: Redirecting to home (welcome already seen)')
-          // Rediriger vers l'accueil
-          router.push('/')
-        }
+        // Afficher le popup à CHAQUE connexion
+        console.log('🎉 Login: Showing welcome popup (every login)')
+        // Toujours effacer hasSeenWelcome pour forcer l'affichage
+        localStorage.removeItem('hasSeenWelcome')
+        // Afficher le popup à chaque connexion
+        setShowWelcomePopup(true)
+        console.log('🎉 Login: Popup state set to true')
       } else {
         // Afficher popup d'erreur
         const message = result.error || 'Numéro de téléphone ou mot de passe incorrect'
@@ -305,7 +296,8 @@ export default function LoginPage() {
         isOpen={showWelcomePopup}
         onClose={() => {
           setShowWelcomePopup(false)
-          localStorage.setItem('hasSeenWelcome', 'true')
+          // Ne plus sauvegarder hasSeenWelcome pour permettre l'affichage répétitif
+          console.log('🔒 Login: Popup closed, redirecting to home')
           router.push('/')
         }}
         onTelegramJoin={() => {
