@@ -23,8 +23,19 @@ export default function EquipePage() {
     const loadReferralData = async () => {
       setLoading(false)
       
-      if (typeof window !== 'undefined') {
-        let storedCode = localStorage.getItem(`userReferralCode_${userData?.numeroTel || 'default'}`)
+      if (typeof window !== 'undefined' && userData?.numeroTel) {
+        let storedCode = localStorage.getItem(`userReferralCode_${userData.numeroTel}`)
+        
+        // Migration: vérifier l'ancien format si pas trouvé
+        if (!storedCode) {
+          const oldCode = localStorage.getItem('userReferralCode')
+          if (oldCode) {
+            localStorage.setItem(`userReferralCode_${userData.numeroTel}`, oldCode)
+            localStorage.removeItem('userReferralCode')
+            storedCode = oldCode
+            console.log('✅ Code migré vers le nouveau format')
+          }
+        }
         
         // Ne jamais générer de nouveau code ici - utiliser uniquement celui de Firestore
         if (!storedCode) {
@@ -63,7 +74,7 @@ export default function EquipePage() {
     }
     
     loadReferralData()
-  }, [])
+  }, [userData])
 
   const handleCopy = async (text: string) => {
     try {
