@@ -200,15 +200,15 @@ export default function Register() {
         </div>
 
         {/* Form Card */}
-        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+        <div className="w-full max-w-lg bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-6 text-center">
-            <h1 className="text-2xl font-black text-white mb-2">Créer un compte Global</h1>
-            <p className="text-green-100 text-sm">Rejoignez notre plateforme d'investissement</p>
+          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-6 sm:p-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">Créer un compte Global</h1>
+            <p className="text-green-100 text-sm sm:text-base">Rejoignez notre plateforme d'investissement</p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
             {/* Phone Field */}
             <div>
               <label className="flex items-center text-blue-700 font-semibold mb-2">
@@ -220,7 +220,7 @@ export default function Register() {
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder=""
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                className={`w-full px-4 py-4 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                   errors.phone 
                     ? 'border-red-300 bg-red-50' 
                     : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
@@ -242,7 +242,7 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder=""
-                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                  className={`w-full px-4 py-4 pr-12 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                     errors.password 
                       ? 'border-red-300 bg-red-50' 
                       : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
@@ -271,7 +271,7 @@ export default function Register() {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   placeholder=""
-                  className={`w-full px-4 py-3 pr-12 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                  className={`w-full px-4 py-4 pr-12 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
                     errors.confirmPassword 
                       ? 'border-red-300 bg-red-50' 
                       : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
@@ -300,7 +300,7 @@ export default function Register() {
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
                 placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "Code d'invitation (optionnel)"}
                 disabled={!!searchParams.get('ref')}
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
+                className={`w-full px-4 py-4 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 font-mono ${
                   searchParams.get('ref')
                     ? 'border-green-300 bg-green-50'
                     : errors.referralCode 
@@ -331,7 +331,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)}
-              className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 transform ${
+              className={`w-full py-5 text-lg rounded-xl font-bold text-white transition-all duration-300 transform ${
                 isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'

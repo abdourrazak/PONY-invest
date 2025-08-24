@@ -187,132 +187,54 @@ export default function CheckQuotidien() {
             </div>
           )}
 
-          {/* Rewards Grid - 3 blocs par ligne en rectangles */}
+          {/* Rewards Grid - Rectangles horizontaux */}
           <div className="space-y-3 mb-4">
-            {/* Ligne 1: Jours 1-3 */}
-            <div className="grid grid-cols-3 gap-3">
-              {rewards.slice(0, 3).map((reward) => (
-                <button
-                  key={reward.day}
-                  onClick={() => claimReward(reward.day)}
-                  disabled={!reward.available || reward.claimed}
-                  className={`
-                    rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[110px] flex flex-col justify-center items-center
-                    ${reward.claimed 
-                      ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-500 opacity-60' 
-                      : reward.available 
-                        ? 'bg-gradient-to-br from-red-500 to-red-600 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer shadow-lg' 
-                        : 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 opacity-50'
-                    }
-                  `}
-                >
-                  <div className="bg-black bg-opacity-20 rounded-lg px-3 py-1 mb-2">
-                    <div className="text-yellow-300 text-sm font-bold">
+            {rewards.map((reward) => (
+              <button
+                key={reward.day}
+                onClick={() => claimReward(reward.day)}
+                disabled={!reward.available || reward.claimed}
+                className={`
+                  w-full rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[80px] flex flex-row items-center justify-between
+                  ${reward.claimed 
+                    ? 'bg-gradient-to-r from-gray-600 to-gray-700 border-gray-500 opacity-60' 
+                    : reward.available 
+                      ? 'bg-gradient-to-r from-red-500 to-red-600 border-yellow-400 hover:scale-[1.02] hover:shadow-xl cursor-pointer shadow-lg' 
+                      : 'bg-gradient-to-r from-gray-700 to-gray-800 border-gray-600 opacity-50'
+                  }
+                `}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="bg-black bg-opacity-20 rounded-lg px-4 py-2">
+                    <div className="text-yellow-300 text-lg font-bold">
                       Jour {reward.day}
                     </div>
                   </div>
-                  <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-3 py-2 mb-1">
-                    <div className="text-yellow-100 text-lg font-black">
+                  <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-4 py-2">
+                    <div className="text-yellow-100 text-xl font-black">
                       {reward.amount} FCFA
                     </div>
                   </div>
+                </div>
+                <div className="flex items-center">
                   {reward.claimed && (
-                    <div className="bg-green-500 bg-opacity-30 rounded-full px-2 py-1">
-                      <div className="text-green-300 text-xs font-bold">✓ Récupéré</div>
+                    <div className="bg-green-500 bg-opacity-30 rounded-full px-3 py-2">
+                      <div className="text-green-300 text-sm font-bold">✓ Récupéré</div>
                     </div>
                   )}
                   {!reward.available && !reward.claimed && (
-                    <div className="bg-gray-500 bg-opacity-30 rounded-full px-2 py-1">
-                      <div className="text-gray-300 text-xs font-bold">🔒 Verrouillé</div>
+                    <div className="bg-gray-500 bg-opacity-30 rounded-full px-3 py-2">
+                      <div className="text-gray-300 text-sm font-bold">🔒 Verrouillé</div>
                     </div>
                   )}
-                </button>
-              ))}
-            </div>
-
-            {/* Ligne 2: Jours 4-6 */}
-            <div className="grid grid-cols-3 gap-3">
-              {rewards.slice(3, 6).map((reward) => (
-                <button
-                  key={reward.day}
-                  onClick={() => claimReward(reward.day)}
-                  disabled={!reward.available || reward.claimed}
-                  className={`
-                    rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[110px] flex flex-col justify-center items-center
-                    ${reward.claimed 
-                      ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-500 opacity-60' 
-                      : reward.available 
-                        ? 'bg-gradient-to-br from-red-500 to-red-600 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer shadow-lg' 
-                        : 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 opacity-50'
-                    }
-                  `}
-                >
-                  <div className="bg-black bg-opacity-20 rounded-lg px-3 py-1 mb-2">
-                    <div className="text-yellow-300 text-sm font-bold">
-                      Jour {reward.day}
-                    </div>
-                  </div>
-                  <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-3 py-2 mb-1">
-                    <div className="text-yellow-100 text-lg font-black">
-                      {reward.amount} FCFA
-                    </div>
-                  </div>
-                  {reward.claimed && (
-                    <div className="bg-green-500 bg-opacity-30 rounded-full px-2 py-1">
-                      <div className="text-green-300 text-xs font-bold">✓ Récupéré</div>
+                  {reward.available && !reward.claimed && (
+                    <div className="bg-yellow-500 bg-opacity-30 rounded-full px-3 py-2">
+                      <div className="text-yellow-200 text-sm font-bold">👆 Récupérer</div>
                     </div>
                   )}
-                  {!reward.available && !reward.claimed && (
-                    <div className="bg-gray-500 bg-opacity-30 rounded-full px-2 py-1">
-                      <div className="text-gray-300 text-xs font-bold">🔒 Verrouillé</div>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Ligne 3: Jour 7 centré */}
-            <div className="flex justify-center">
-              <div className="w-1/3">
-                {rewards.slice(6, 7).map((reward) => (
-                  <button
-                    key={reward.day}
-                    onClick={() => claimReward(reward.day)}
-                    disabled={!reward.available || reward.claimed}
-                    className={`
-                      w-full rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[110px] flex flex-col justify-center items-center
-                      ${reward.claimed 
-                        ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-500 opacity-60' 
-                        : reward.available 
-                          ? 'bg-gradient-to-br from-red-500 to-red-600 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer shadow-lg' 
-                          : 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 opacity-50'
-                      }
-                    `}
-                  >
-                    <div className="bg-black bg-opacity-20 rounded-lg px-3 py-1 mb-2">
-                      <div className="text-yellow-300 text-sm font-bold">
-                        Jour {reward.day}
-                      </div>
-                    </div>
-                    <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-3 py-2 mb-1">
-                      <div className="text-yellow-100 text-lg font-black">
-                        {reward.amount} FCFA
-                      </div>
-                    </div>
-                    {reward.claimed && (
-                      <div className="bg-green-500 bg-opacity-30 rounded-full px-2 py-1">
-                        <div className="text-green-300 text-xs font-bold">✓ Récupéré</div>
-                      </div>
-                    )}
-                    {!reward.available && !reward.claimed && (
-                      <div className="bg-gray-500 bg-opacity-30 rounded-full px-2 py-1">
-                        <div className="text-gray-300 text-xs font-bold">🔒 Verrouillé</div>
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+                </div>
+              </button>
+            ))}
           </div>
 
           {/* Instructions */}
