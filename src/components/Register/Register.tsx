@@ -220,7 +220,8 @@ export default function Register() {
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
-                className={`w-full px-3 py-2.5 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                style={{ fontSize: '16px' }}
+                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                   errors.phone 
                     ? 'border-red-400 bg-red-50 shadow-red-100' 
                     : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
@@ -242,7 +243,8 @@ export default function Register() {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Minimum 6 caractères"
-                  className={`w-full px-3 py-2.5 pr-10 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  style={{ fontSize: '16px' }}
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                     errors.password 
                       ? 'border-red-400 bg-red-50 shadow-red-100' 
                       : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
@@ -271,7 +273,8 @@ export default function Register() {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   placeholder="Confirmez votre mot de passe"
-                  className={`w-full px-3 py-2.5 pr-10 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  style={{ fontSize: '16px' }}
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                     errors.confirmPassword 
                       ? 'border-red-400 bg-red-50 shadow-red-100' 
                       : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
@@ -300,7 +303,8 @@ export default function Register() {
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
                 placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "AXML... (optionnel)"}
                 disabled={!!searchParams.get('ref')}
-                className={`w-full px-3 py-2.5 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-mono font-bold ${
+                style={{ fontSize: '16px' }}
+                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-mono font-bold ${
                   searchParams.get('ref')
                     ? 'border-green-400 bg-green-50 shadow-green-100'
                     : errors.referralCode 

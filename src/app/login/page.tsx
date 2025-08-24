@@ -173,7 +173,8 @@ export default function LoginPage() {
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
-                className={`w-full px-3 py-2.5 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                style={{ fontSize: '16px' }}
+                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                   errors.phone 
                     ? 'border-red-400 bg-red-50 shadow-red-100' 
                     : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
@@ -195,7 +196,8 @@ export default function LoginPage() {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Votre mot de passe"
-                  className={`w-full px-3 py-2.5 pr-10 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  style={{ fontSize: '16px' }}
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                     errors.password 
                       ? 'border-red-400 bg-red-50 shadow-red-100' 
                       : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'

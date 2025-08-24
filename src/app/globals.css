@@ -2,29 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent text size adjustment and improve touch action on mobile */
 * {
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  touch-action: manipulation;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background-color: #f3f4f6;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
+html, body {
   touch-action: manipulation;
   width: 100vw;
-  max-width: 100vw;
   overflow-x: hidden;
-  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent zoom on any input focus - Critical for mobile */
+input, textarea, select, button {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Specific input types to prevent zoom */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+input[type="url"],
+textarea,
+select {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  zoom: 1;
+}
+
+/* Force disable zoom on focus */
+input:focus,
+textarea:focus,
+select:focus {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  zoom: 1;
+}
+
+/* Additional mobile optimizations */
+@media screen and (max-width: 768px) {
+  input, textarea, select, button {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+    zoom: 1;
+  }
+  
+  /* Prevent any scaling or zooming */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 }
 
 /* Animation pour le texte défilant */
