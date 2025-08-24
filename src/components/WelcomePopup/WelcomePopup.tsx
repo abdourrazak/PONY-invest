@@ -33,8 +33,7 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
     if (onTelegramJoin) {
       onTelegramJoin()
     }
-    // Open Telegram link
-    window.open('https://t.me/your_telegram_group', '_blank')
+    // Ne plus rediriger vers Telegram, juste fermer le popup
     handleClose()
   }
 
@@ -130,13 +129,13 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
               </div>
             </div>
 
-            {/* Waffarm */}
+            {/* Global */}
             <div className="flex items-center space-x-3 bg-orange-50 p-3 rounded-xl border-l-4 border-orange-500">
               <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-base">🌟</span>
               </div>
               <div>
-                <p className="text-gray-800 text-xs font-medium">Investissement Waffarm</p>
+                <p className="text-gray-800 text-xs font-medium">Investissement Global</p>
                 <p className="text-gray-600 text-xs">Revenus en 90 jours</p>
               </div>
             </div>

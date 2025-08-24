@@ -95,16 +95,8 @@ export default function Accueil() {
       if (!currentUser && (!isLoggedIn || !userPhone)) {
         // Rediriger vers register si pas d'utilisateur
         router.push('/register')
-      } else if ((currentUser || isLoggedIn)) {
-        // Afficher popup de bienvenue à CHAQUE visite de l'accueil
-        console.log('🎉 Accueil: Showing welcome popup in 1 second (every visit)')
-        // Toujours effacer hasSeenWelcome pour forcer l'affichage
-        localStorage.removeItem('hasSeenWelcome')
-        setTimeout(() => {
-          console.log('🎉 Accueil: Setting showWelcomePopup to true')
-          setShowWelcomePopup(true)
-        }, 1000) // Délai de 1 seconde pour une meilleure UX
       }
+      // Ne plus afficher le popup automatiquement sur l'accueil
     }
   }, [currentUser, loading, router])
 
