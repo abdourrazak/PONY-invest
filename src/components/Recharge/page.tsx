@@ -2,11 +2,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function RechargePage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
+  const router = useRouter()
 
   const paymentMethods = [
     {
@@ -145,7 +147,14 @@ export default function RechargePage() {
         
         {/* Action Button */}
         <div className="mt-8">
-          <button className="w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white py-4 rounded-xl font-black text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl">
+          <button 
+            onClick={() => {
+              if (selectedPaymentMethod === 0) {
+                router.push('/gestion-depot')
+              }
+            }}
+            className="w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white py-4 rounded-xl font-black text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl"
+          >
             <div className="flex items-center justify-center">
               <span className="text-xl mr-2">💳</span>
               Continuer vers le paiement
