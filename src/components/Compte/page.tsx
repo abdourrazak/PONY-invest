@@ -15,12 +15,15 @@ export default function ComptePage() {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const savedBalance = localStorage.getItem('userBalance')
+      if (!userData?.numeroTel) return
+      
+      const userKey = userData.numeroTel
+      const savedBalance = localStorage.getItem(`userBalance_${userKey}`)
       
       if (savedBalance) {
         setBalance(parseInt(savedBalance))
       } else {
-        localStorage.setItem('userBalance', '1000')
+        localStorage.setItem(`userBalance_${userKey}`, '1000')
       }
 
       // Calculer les récompenses de parrainage
@@ -37,15 +40,15 @@ export default function ComptePage() {
         }
       }
 
-      // Calculer les récompenses de check-in quotidien
-      const rewardHistory = JSON.parse(localStorage.getItem('rewardHistory') || '[]')
+      // Calculer les récompenses de check-in quotidien spécifiques à l'utilisateur
+      const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userKey}`) || '[]')
       const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
       setCheckInRewards(checkInRewardsTotal)
 
       // Calculer le solde total (1000 XOF de base + récompenses parrainage + récompenses check-in)
       const totalFunds = 1000 + referralRewards + checkInRewardsTotal
       setFunds(totalFunds)
-      localStorage.setItem('userFunds', totalFunds.toString())
+      localStorage.setItem(`userFunds_${userKey}`, totalFunds.toString())
 
       // Générer un ID utilisateur unique si pas encore fait
       if (!localStorage.getItem('userId')) {
@@ -54,7 +57,7 @@ export default function ComptePage() {
     }
     
     loadUserData()
-  }, [])
+  }, [userData])
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Gift } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface DailyReward {
   day: number
@@ -12,6 +13,7 @@ interface DailyReward {
 }
 
 export default function CheckQuotidien() {
+  const { userData } = useAuth()
   const [rewards, setRewards] = useState<DailyReward[]>([
     { day: 1, amount: 75, claimed: false, available: true },
     { day: 2, amount: 100, claimed: false, available: false },
@@ -26,13 +28,19 @@ export default function CheckQuotidien() {
   const [balance, setBalance] = useState(1000) // Solde de base
   const [nextCheckIn, setNextCheckIn] = useState<Date | null>(null)
   const [timeRemaining, setTimeRemaining] = useState('')
+  const [userId, setUserId] = useState<string | null>(null)
 
-  // Initialiser les données depuis localStorage
+  // Initialiser les données depuis localStorage spécifiques à l'utilisateur
   useEffect(() => {
-    const savedRewards = localStorage.getItem('dailyRewards')
-    const savedCurrentDay = localStorage.getItem('currentDay')
-    const savedBalance = localStorage.getItem('userBalance')
-    const savedNextCheckIn = localStorage.getItem('nextCheckIn')
+    if (!userData?.numeroTel) return
+    
+    const userKey = userData.numeroTel
+    setUserId(userKey)
+    
+    const savedRewards = localStorage.getItem(`dailyRewards_${userKey}`)
+    const savedCurrentDay = localStorage.getItem(`currentDay_${userKey}`)
+    const savedBalance = localStorage.getItem(`userBalance_${userKey}`)
+    const savedNextCheckIn = localStorage.getItem(`nextCheckIn_${userKey}`)
 
     if (savedRewards) {
       setRewards(JSON.parse(savedRewards))
@@ -43,13 +51,13 @@ export default function CheckQuotidien() {
     if (savedBalance) {
       setBalance(parseInt(savedBalance))
     } else {
-      // Premier accès - définir le solde de base
-      localStorage.setItem('userBalance', '1000')
+      // Premier accès - définir le solde de base pour cet utilisateur
+      localStorage.setItem(`userBalance_${userKey}`, '1000')
     }
     if (savedNextCheckIn) {
       setNextCheckIn(new Date(savedNextCheckIn))
     }
-  }, [])
+  }, [userData])
 
   // Timer pour le prochain check-in
   useEffect(() => {
@@ -68,9 +76,11 @@ export default function CheckQuotidien() {
           return reward
         })
         setRewards(newRewards)
-        localStorage.setItem('dailyRewards', JSON.stringify(newRewards))
+        if (userId) {
+          localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
+          localStorage.removeItem(`nextCheckIn_${userId}`)
+        }
         setNextCheckIn(null)
-        localStorage.removeItem('nextCheckIn')
         setTimeRemaining('')
       } else {
         // Calculer le temps restant
@@ -85,28 +95,30 @@ export default function CheckQuotidien() {
   }, [nextCheckIn, rewards, currentDay])
 
   const claimReward = (day: number) => {
+    if (!userId) return
+    
     const reward = rewards.find(r => r.day === day)
     if (!reward || reward.claimed || !reward.available) return
 
     // Récupérer la récompense
     const newBalance = balance + reward.amount
     setBalance(newBalance)
-    localStorage.setItem('userBalance', newBalance.toString())
+    localStorage.setItem(`userBalance_${userId}`, newBalance.toString())
 
     // Mettre à jour le solde de fonds (Mes atouts)
-    const currentFunds = parseInt(localStorage.getItem('userFunds') || '1000')
+    const currentFunds = parseInt(localStorage.getItem(`userFunds_${userId}`) || '1000')
     const newFunds = currentFunds + reward.amount
-    localStorage.setItem('userFunds', newFunds.toString())
+    localStorage.setItem(`userFunds_${userId}`, newFunds.toString())
 
     // Sauvegarder l'historique des récompenses pour synchronisation future
-    const rewardHistory = JSON.parse(localStorage.getItem('rewardHistory') || '[]')
+    const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userId}`) || '[]')
     rewardHistory.push({
       day,
       amount: reward.amount,
       timestamp: new Date().toISOString(),
-      userId: localStorage.getItem('userId') || 'user_' + Date.now()
+      userId: userId
     })
-    localStorage.setItem('rewardHistory', JSON.stringify(rewardHistory))
+    localStorage.setItem(`rewardHistory_${userId}`, JSON.stringify(rewardHistory))
 
     // Marquer comme récupérée
     const newRewards = rewards.map(r => 
@@ -118,19 +130,14 @@ export default function CheckQuotidien() {
       const nextDay = new Date()
       nextDay.setHours(nextDay.getHours() + 24)
       setNextCheckIn(nextDay)
-      localStorage.setItem('nextCheckIn', nextDay.toISOString())
+      localStorage.setItem(`nextCheckIn_${userId}`, nextDay.toISOString())
       
       setCurrentDay(day + 1)
-      localStorage.setItem('currentDay', (day + 1).toString())
+      localStorage.setItem(`currentDay_${userId}`, (day + 1).toString())
     }
 
     setRewards(newRewards)
-    localStorage.setItem('dailyRewards', JSON.stringify(newRewards))
-
-    // Générer un ID utilisateur unique si pas encore fait
-    if (!localStorage.getItem('userId')) {
-      localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
-    }
+    localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
   }
 
   return (
