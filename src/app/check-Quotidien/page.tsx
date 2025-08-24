@@ -187,60 +187,42 @@ export default function CheckQuotidien() {
             </div>
           )}
 
-          {/* Rewards Grid */}
-          <div className="grid grid-cols-5 gap-3 mb-4">
-            {rewards.slice(0, 5).map((reward) => (
+          {/* Rewards Grid - Organisé en rectangles structurés */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+            {rewards.map((reward) => (
               <button
                 key={reward.day}
                 onClick={() => claimReward(reward.day)}
                 disabled={!reward.available || reward.claimed}
                 className={`
-                  rounded-2xl p-4 border-4 transition-all duration-200 transform
+                  rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[100px] flex flex-col justify-center items-center
                   ${reward.claimed 
-                    ? 'bg-gray-700 border-gray-600 opacity-50' 
+                    ? 'bg-gradient-to-br from-gray-600 to-gray-700 border-gray-500 opacity-60' 
                     : reward.available 
-                      ? 'bg-gradient-to-br from-red-600 to-red-700 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer' 
-                      : 'bg-gray-800 border-gray-600 opacity-70'
+                      ? 'bg-gradient-to-br from-red-500 to-red-600 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer shadow-lg' 
+                      : 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 opacity-50'
                   }
                 `}
               >
-                <div className="text-yellow-300 text-sm font-bold mb-2">
-                  Jour {reward.day}
+                <div className="bg-black bg-opacity-20 rounded-lg px-3 py-1 mb-2">
+                  <div className="text-yellow-300 text-sm font-bold">
+                    Jour {reward.day}
+                  </div>
                 </div>
-                <div className="text-yellow-400 text-lg font-black">
-                  {reward.amount} F
+                <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-3 py-2 mb-1">
+                  <div className="text-yellow-100 text-lg font-black">
+                    {reward.amount} FCFA
+                  </div>
                 </div>
                 {reward.claimed && (
-                  <div className="text-green-400 text-xs mt-1">✓ Récupéré</div>
+                  <div className="bg-green-500 bg-opacity-30 rounded-full px-2 py-1">
+                    <div className="text-green-300 text-xs font-bold">✓ Récupéré</div>
+                  </div>
                 )}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 justify-center max-w-xs mx-auto">
-            {rewards.slice(5, 7).map((reward) => (
-              <button
-                key={reward.day}
-                onClick={() => claimReward(reward.day)}
-                disabled={!reward.available || reward.claimed}
-                className={`
-                  rounded-2xl p-4 border-4 transition-all duration-200 transform
-                  ${reward.claimed 
-                    ? 'bg-gray-700 border-gray-600 opacity-50' 
-                    : reward.available 
-                      ? 'bg-gradient-to-br from-red-600 to-red-700 border-yellow-400 hover:scale-105 hover:shadow-xl cursor-pointer' 
-                      : 'bg-gray-800 border-gray-600 opacity-70'
-                  }
-                `}
-              >
-                <div className="text-yellow-300 text-sm font-bold mb-2">
-                  Jour {reward.day}
-                </div>
-                <div className="text-yellow-400 text-lg font-black">
-                  {reward.amount} F
-                </div>
-                {reward.claimed && (
-                  <div className="text-green-400 text-xs mt-1">✓ Récupéré</div>
+                {!reward.available && !reward.claimed && (
+                  <div className="bg-gray-500 bg-opacity-30 rounded-full px-2 py-1">
+                    <div className="text-gray-300 text-xs font-bold">🔒 Verrouillé</div>
+                  </div>
                 )}
               </button>
             ))}

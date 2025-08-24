@@ -142,11 +142,11 @@ export default function Accueil() {
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-2 sm:p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[70px] sm:h-[65px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
-                <div className={`${service.color} p-1 sm:p-2 rounded-lg sm:rounded-xl mb-1 sm:mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
-                  <IconComponent size={14} className="text-white drop-shadow-sm sm:w-6 sm:h-6" />
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-5 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[85px] sm:h-[75px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
+                <div className={`${service.color} p-1.5 sm:p-2 rounded-lg sm:rounded-xl mb-1.5 sm:mb-2 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
+                  <IconComponent size={16} className="text-white drop-shadow-sm sm:w-6 sm:h-6" />
                 </div>
-                <span className="text-[8px] sm:text-[11px] text-gray-800 text-center font-bold leading-tight px-0.5 sm:px-1">
+                <span className="text-[9px] sm:text-[11px] text-gray-800 text-center font-bold leading-tight px-0.5 sm:px-1">
                   {service.title}
                 </span>
               </div>
