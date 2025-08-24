@@ -153,40 +153,40 @@ export default function LoginPage() {
         )}
 
         {/* Form Card */}
-        <div className="w-full max-w-lg bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-6 sm:p-8 text-center">
-            <h1 className="text-2xl sm:text-3xl font-black text-white mb-2">Connexion</h1>
-            <p className="text-green-100 text-sm sm:text-base">Accédez à votre compte Global</p>
+          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-4 text-center">
+            <h1 className="text-lg font-black text-white mb-1">Connexion</h1>
+            <p className="text-green-100 text-xs font-bold">Accédez à votre compte Global</p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 space-y-4">
             {/* Phone Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-semibold mb-2">
-                <Smartphone className="w-4 h-4 mr-2" />
+              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+                <Smartphone className="w-3 h-3 mr-1" />
                 Numéro de téléphone
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder=""
-                className={`w-full px-4 py-4 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                placeholder="6XXXXXXXX"
+                className={`w-full px-3 py-2.5 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                   errors.phone 
-                    ? 'border-red-300 bg-red-50' 
-                    : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
-                } focus:outline-none focus:ring-2 focus:ring-blue-200`}
+                    ? 'border-red-400 bg-red-50 shadow-red-100' 
+                    : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
+                } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
               />
-              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-              <p className="text-blue-400 text-xs mt-1">Format: 6XXXXXXXX</p>
+              {errors.phone && <p className="text-red-500 text-xs mt-1 font-bold">{errors.phone}</p>}
+              <p className="text-blue-500 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-semibold mb-2">
-                <Lock className="w-4 h-4 mr-2" />
+              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+                <Lock className="w-3 h-3 mr-1" />
                 Mot de passe
               </label>
               <div className="relative">
@@ -194,29 +194,29 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder=""
-                  className={`w-full px-4 py-4 pr-12 text-lg rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 ${
+                  placeholder="Votre mot de passe"
+                  className={`w-full px-3 py-2.5 pr-10 text-sm rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
                     errors.password 
-                      ? 'border-red-300 bg-red-50' 
-                      : 'border-blue-200 bg-white focus:border-blue-500 focus:bg-white'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-200`}
+                      ? 'border-red-400 bg-red-50 shadow-red-100' 
+                      : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
+                  } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-red-500 text-xs mt-1 font-bold">{errors.password}</p>}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-5 text-lg rounded-xl font-bold text-white transition-all duration-300 transform ${
+              className={`w-full py-3 text-sm rounded-lg font-black text-white transition-all duration-300 transform ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
@@ -236,12 +236,12 @@ export default function LoginPage() {
             </button>
 
             {/* Register Link */}
-            <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-gray-600">
+            <div className="text-center pt-3 border-t border-gray-200">
+              <p className="text-gray-600 text-sm font-bold">
                 Pas encore de compte ?{' '}
                 <Link 
                   href={searchParams.get('ref') ? `/register-auth?ref=${searchParams.get('ref')}` : '/register-auth'} 
-                  className="text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                  className="text-blue-600 font-black hover:text-blue-700 transition-colors"
                 >
                   Créer un compte
                 </Link>
