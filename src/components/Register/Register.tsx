@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye, EyeOff, Smartphone, Lock, Users, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, Smartphone, Lock, Users, ArrowRight, UserPlus, Gift } from 'lucide-react'
+import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { registerUser, isReferralCodeValid } from '@/lib/firebaseAuth'
 
 export default function Register() {
@@ -23,6 +24,7 @@ export default function Register() {
   const [isValidReferral, setIsValidReferral] = useState<boolean | null>(null)
   const [showErrorPopup, setShowErrorPopup] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
 
   useEffect(() => {
     const refCode = searchParams.get('ref')
@@ -118,8 +120,11 @@ export default function Register() {
           console.log('✅ Code d\'invitation sauvegardé:', result.user.referralCode)
         }
         console.log('🏠 Redirection vers accueil')
-        // Rediriger vers l'accueil
-        router.push('/')
+        // Afficher popup de bienvenue pour nouveau utilisateur
+        setShowWelcomePopup(true)
+        setTimeout(() => {
+          router.push('/')
+        }, 500)
       } else {
         console.log('❌ Inscription échouée:', result.error)
         console.log('🔍 Debug - Code utilisé:', finalReferralCode)
@@ -414,6 +419,19 @@ export default function Register() {
             </div>
           </div>
         )}
+
+        {/* Welcome Popup */}
+        <WelcomePopup 
+          isOpen={showWelcomePopup}
+          onClose={() => {
+            setShowWelcomePopup(false)
+            localStorage.setItem('hasSeenWelcome', 'true')
+            router.push('/')
+          }}
+          onTelegramJoin={() => {
+            console.log('User joined Telegram group from register')
+          }}
+        />
       </div>
     </div>
   )

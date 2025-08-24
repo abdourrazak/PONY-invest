@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Bell, CreditCard, Info, Users, LogOut, ArrowLeftRight, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { useAuth } from '@/contexts/AuthContext'
 
 const banners = [
@@ -34,6 +35,7 @@ const services = [
 export default function Accueil() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrollText, setScrollText] = useState(0)
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
   const { currentUser, userData, loading } = useAuth()
   const router = useRouter()
 
@@ -74,19 +76,36 @@ export default function Accueil() {
     }
   }, [])
 
-  // Rediriger vers inscription si pas connecté (pas de localStorage)
+  // Rediriger vers inscription si pas connecté et gérer popup de bienvenue
   useEffect(() => {
     if (!loading) {
       // Vérifier localStorage pour la session
       const isLoggedIn = localStorage.getItem('isLoggedIn')
       const userPhone = localStorage.getItem('userPhone')
+      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
       
       if (!currentUser && (!isLoggedIn || !userPhone)) {
         // Rediriger vers register si pas d'utilisateur
         router.push('/register')
+      } else if ((currentUser || isLoggedIn) && !hasSeenWelcome) {
+        // Afficher popup de bienvenue pour nouveaux utilisateurs
+        setTimeout(() => {
+          setShowWelcomePopup(true)
+        }, 1000) // Délai de 1 seconde pour une meilleure UX
       }
     }
   }, [currentUser, loading, router])
+
+  // Gérer la fermeture du popup de bienvenue
+  const handleWelcomeClose = () => {
+    setShowWelcomePopup(false)
+    localStorage.setItem('hasSeenWelcome', 'true')
+  }
+
+  const handleTelegramJoin = () => {
+    // Analytics ou tracking si nécessaire
+    console.log('User joined Telegram group')
+  }
 
   // Afficher un loader pendant la vérification d'auth
   if (loading) {
@@ -536,6 +555,13 @@ export default function Accueil() {
 
       {/* Support Float */}
       <SupportFloat />
+
+      {/* Welcome Popup */}
+      <WelcomePopup 
+        isOpen={showWelcomePopup}
+        onClose={handleWelcomeClose}
+        onTelegramJoin={handleTelegramJoin}
+      />
     </div>
   )
 }

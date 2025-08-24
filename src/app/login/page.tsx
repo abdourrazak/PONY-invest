@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@/contexts/AuthContext'
+import WelcomePopup from '@/components/WelcomePopup/WelcomePopup'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
 import { loginUser } from '@/lib/firebaseAuth'
 import { doc, getDoc } from 'firebase/firestore'
@@ -20,6 +22,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showErrorPopup, setShowErrorPopup] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {}
@@ -76,8 +79,17 @@ export default function LoginPage() {
           console.log('⚠️ Erreur récupération code Firestore:', error)
         }
         
-        // Rediriger vers l'accueil
-        router.push('/')
+        // Vérifier si c'est une première connexion pour afficher le popup
+        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
+        if (!hasSeenWelcome) {
+          setShowWelcomePopup(true)
+          setTimeout(() => {
+            router.push('/')
+          }, 500)
+        } else {
+          // Rediriger vers l'accueil
+          router.push('/')
+        }
       } else {
         // Afficher popup d'erreur
         const message = result.error || 'Numéro de téléphone ou mot de passe incorrect'
@@ -277,6 +289,19 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Welcome Popup */}
+      <WelcomePopup 
+        isOpen={showWelcomePopup}
+        onClose={() => {
+          setShowWelcomePopup(false)
+          localStorage.setItem('hasSeenWelcome', 'true')
+          router.push('/')
+        }}
+        onTelegramJoin={() => {
+          console.log('User joined Telegram group from login')
+        }}
+      />
     </div>
   )
 }
