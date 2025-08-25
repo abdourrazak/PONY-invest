@@ -102,18 +102,22 @@ export default function ComptePage() {
         {/* Action Buttons */}
         <div className="px-2 sm:px-4 py-3 sm:py-5">
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <button className="bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-green-400/30">
-              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
-                <Plus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
-                <span className="drop-shadow-sm">Recharge</span>
-              </div>
-            </button>
-            <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-blue-400/30">
-              <div className="flex items-center justify-center space-x-1 sm:space-x-2">
-                <Minus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
-                <span className="drop-shadow-sm">Retrait</span>
-              </div>
-            </button>
+            <Link href="/recharge">
+              <button className="bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-green-400/30 w-full">
+                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                  <Plus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
+                  <span className="drop-shadow-sm">Recharge</span>
+                </div>
+              </button>
+            </Link>
+            <Link href="/retrait">
+              <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-blue-400/30 w-full">
+                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                  <Minus size={16} className="drop-shadow-sm sm:w-5 sm:h-5" />
+                  <span className="drop-shadow-sm">Retrait</span>
+                </div>
+              </button>
+            </Link>
             <Link href="/mes-gains">
               <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl font-bold text-sm sm:text-base shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-purple-400/30 w-full">
                 <div className="flex items-center justify-center space-x-1 sm:space-x-2">
