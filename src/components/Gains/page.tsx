@@ -71,16 +71,16 @@ export default function MesGains() {
       overscrollBehavior: 'none'
     }}>
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
+      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
         <div className="flex items-center justify-between">
           <button 
             onClick={() => router.back()}
-            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200 transform hover:scale-110"
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200 transform hover:scale-110 shadow-lg"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="drop-shadow-sm" />
           </button>
           <div className="text-center flex-1">
-            <span className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md">Mes Gains</span>
+            <span className="text-white text-lg sm:text-xl font-black tracking-wide drop-shadow-lg">Mes Gains</span>
           </div>
           <div className="w-10"></div>
         </div>
@@ -88,94 +88,104 @@ export default function MesGains() {
 
       <main className="px-3 sm:px-4 py-3 sm:py-4" style={{ touchAction: 'pan-y' }}>
         {/* Montant Crédité */}
-        <div className="bg-white rounded-xl shadow-lg p-4 mb-4 border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-gradient-to-br from-white via-green-50/30 to-white rounded-xl shadow-2xl p-4 sm:p-5 mb-4 border border-green-200/50 hover:shadow-3xl transition-all duration-300 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
-              <span className="text-gray-600 text-sm font-medium">Montant Crédité</span>
-              <Info size={16} className="text-gray-400 ml-2" />
+              <span className="text-gray-700 text-sm font-black tracking-wide">Montant Crédité</span>
+              <Info size={16} className="text-green-500 ml-2 drop-shadow-sm" />
             </div>
-            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-              <CreditCard size={16} className="text-orange-600" />
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <CreditCard size={18} className="text-white drop-shadow-sm" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-blue-700">
+          <div className="text-2xl sm:text-3xl font-black text-transparent bg-gradient-to-r from-green-600 via-green-700 to-blue-600 bg-clip-text drop-shadow-sm">
             {loading ? 'Chargement...' : formatCurrency(userGains.montantCredite)}
           </div>
         </div>
 
         {/* Grille des statistiques */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
           {/* Forfaits VIP Actifs */}
-          <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm font-medium">Forfaits VIP Actifs</span>
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Crown size={16} className="text-blue-600" />
+          <div className="bg-gradient-to-br from-white via-blue-50/40 to-white rounded-xl shadow-2xl p-4 border border-blue-200/50 hover:shadow-3xl hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-gray-700 text-xs sm:text-sm font-black tracking-wide">Forfaits VIP Actifs</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Crown size={16} className="text-white drop-shadow-sm sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="text-xl font-bold text-blue-700">
+            <div className="text-xl sm:text-2xl font-black text-transparent bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text">
               {loading ? '...' : userGains.forfaitsVipActifs}
             </div>
           </div>
 
           {/* Gains Horaire */}
-          <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm font-medium">Gains Horaire</span>
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                <Clock size={16} className="text-green-600" />
+          <div className="bg-gradient-to-br from-white via-green-50/40 to-white rounded-xl shadow-2xl p-4 border border-green-200/50 hover:shadow-3xl hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-gray-700 text-xs sm:text-sm font-black tracking-wide">Gains Horaire</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Clock size={16} className="text-white drop-shadow-sm sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="text-xl font-bold text-blue-700">
+            <div className="text-xl sm:text-2xl font-black text-transparent bg-gradient-to-r from-green-600 to-green-800 bg-clip-text">
               {loading ? '...' : formatCurrency(userGains.gainsHoraire)}
             </div>
           </div>
 
           {/* Revenus Quotidiens */}
-          <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm font-medium">Revenus Quotidiens</span>
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                <TrendingUp size={16} className="text-purple-600" />
+          <div className="bg-gradient-to-br from-white via-purple-50/40 to-white rounded-xl shadow-2xl p-4 border border-purple-200/50 hover:shadow-3xl hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-gray-700 text-xs sm:text-sm font-black tracking-wide">Revenus Quotidiens</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg">
+                <TrendingUp size={16} className="text-white drop-shadow-sm sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="text-xl font-bold text-blue-700">
+            <div className="text-xl sm:text-2xl font-black text-transparent bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text">
               {loading ? '...' : formatCurrency(userGains.revenusQuotidiens)}
             </div>
           </div>
 
           {/* Total Dépensé */}
-          <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm font-medium">Total Dépensé</span>
-              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                <CreditCard size={16} className="text-red-600" />
+          <div className="bg-gradient-to-br from-white via-red-50/40 to-white rounded-xl shadow-2xl p-4 border border-red-200/50 hover:shadow-3xl hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-gray-700 text-xs sm:text-sm font-black tracking-wide">Total Dépensé</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
+                <CreditCard size={16} className="text-white drop-shadow-sm sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="text-xl font-bold text-blue-700">
+            <div className="text-xl sm:text-2xl font-black text-transparent bg-gradient-to-r from-red-600 to-red-800 bg-clip-text">
               {loading ? '...' : formatCurrency(userGains.totalDepense)}
             </div>
           </div>
         </div>
 
         {/* Section Forfaits et Revenus */}
-        <div className="bg-white rounded-xl shadow-lg p-4 mb-4 border border-gray-200">
-          <h2 className="text-center text-lg font-bold text-gray-800 mb-6">
+        <div className="bg-gradient-to-br from-white via-violet-50/30 to-white rounded-2xl shadow-2xl p-4 sm:p-6 mb-4 border border-violet-200/50 backdrop-blur-sm">
+          <h2 className="text-center text-lg sm:text-xl font-black text-transparent bg-gradient-to-r from-violet-600 via-purple-700 to-violet-800 bg-clip-text mb-6 tracking-wide drop-shadow-sm">
             Mes Forfaits Et Revenus Actifs
           </h2>
           
           {/* État vide */}
           <div className="text-center py-12">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-gray-100 via-violet-50 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border border-violet-200/30">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-12 sm:h-12">
                 <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" 
-                      fill="#9CA3AF" stroke="#9CA3AF" strokeWidth="1"/>
+                      fill="url(#gradient1)" stroke="url(#gradient2)" strokeWidth="1"/>
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="100%" stopColor="#A855F7" />
+                  </linearGradient>
+                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#7C3AED" />
+                    <stop offset="100%" stopColor="#9333EA" />
+                  </linearGradient>
+                </defs>
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-700 mb-2">
+            <h3 className="text-lg sm:text-xl font-black text-transparent bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text mb-2 tracking-wide">
               Aucun Forfait VIP Actif
             </h3>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-600 text-sm sm:text-base font-bold">
               Activez un forfait VIP pour commencer à générer des revenus
             </p>
           </div>
