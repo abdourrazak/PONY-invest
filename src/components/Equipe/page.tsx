@@ -116,11 +116,11 @@ export default function EquipePage() {
     }
   }, [userData])
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (text: string, type: 'code' | 'link') => {
     try {
       await navigator.clipboard.writeText(text)
       setShowSuccess(true)
-      setTimeout(() => setShowSuccess(false), 2000)
+      setTimeout(() => setShowSuccess(false), 3000)
     } catch (err) {
       console.error('Failed to copy: ', err)
     }
@@ -163,7 +163,7 @@ export default function EquipePage() {
               {referralStats.referralCode}
             </span>
             <button
-              onClick={() => handleCopy(referralStats.referralCode)}
+              onClick={() => handleCopy(referralStats.referralCode, 'code')}
               className="bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-1 sm:gap-2 flex-shrink-0"
             >
               <span className="text-xs sm:text-sm">COPIER</span>
@@ -179,7 +179,7 @@ export default function EquipePage() {
               {referralStats.referralLink}
             </span>
             <button
-              onClick={() => handleCopy(referralStats.referralLink)}
+              onClick={() => handleCopy(referralStats.referralLink, 'link')}
               className="bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-1 sm:gap-2 flex-shrink-0"
             >
               <span className="text-xs sm:text-sm">COPIER</span>
@@ -275,6 +275,22 @@ export default function EquipePage() {
           </Link>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccess && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl shadow-2xl border border-green-400 flex items-center gap-3">
+            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+              <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="font-bold text-sm">
+              ✅ Copié avec succès !
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Support Float */}
       <SupportFloat />
