@@ -66,10 +66,14 @@ export default function ComptePage() {
           <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
             <ArrowLeft size={20} className="drop-shadow-sm sm:w-6 sm:h-6" />
           </Link>
-          <h1 className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md flex items-center">
-            <Wallet className="mr-1 sm:mr-2" size={20} />
-            Mes Atouts
-          </h1>
+          <div className="text-center flex-1">
+            <div className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md">
+              Mon Compte
+            </div>
+            <div className="text-green-100 text-xs sm:text-sm font-medium drop-shadow-sm">
+              {userData?.numeroTel || 'Utilisateur'}
+            </div>
+          </div>
           <div className="w-8 sm:w-10"></div>
         </div>
       </header>
