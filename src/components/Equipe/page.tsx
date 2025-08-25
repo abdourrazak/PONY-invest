@@ -146,12 +146,12 @@ export default function EquipePage() {
       <div className="px-3 sm:px-4 py-3 sm:py-4">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="bg-white rounded-xl p-4 sm:p-6 text-center shadow-lg border border-gray-200">
-            <div className="text-gray-700 text-sm font-bold mb-2">Revenu Total</div>
-            <div className="text-green-600 text-2xl sm:text-3xl font-black">F{teamRevenue.toFixed(2)}</div>
-          </div>
-          <div className="bg-white rounded-xl p-4 sm:p-6 text-center shadow-lg border border-gray-200">
             <div className="text-gray-700 text-sm font-bold mb-2">Total des Invitations</div>
             <div className="text-green-600 text-2xl sm:text-3xl font-black">{referralStats.totalReferrals}</div>
+          </div>
+          <div className="bg-white rounded-xl p-4 sm:p-6 text-center shadow-lg border border-gray-200">
+            <div className="text-gray-700 text-sm font-bold mb-2">Revenu Total</div>
+            <div className="text-green-600 text-2xl sm:text-3xl font-black">F{teamRevenue.toFixed(2)}</div>
           </div>
         </div>
 

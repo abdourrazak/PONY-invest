@@ -94,7 +94,7 @@ export async function registerUser(
     
     // Accepter TOUS les codes d'invitation sans validation pour éviter les erreurs
     if (referredBy) {
-      console.log('✅ Code de parrainage accepté automatiquement:', referredBy)
+      console.log('✅ Code de parrainage reçu:', referredBy)
     }
     
     console.log('✅ Inscription autorisée (avec ou sans code d\'invitation)')
@@ -117,15 +117,26 @@ export async function registerUser(
       uid: firebaseUser.uid,
       numeroTel,
       referralCode,
-      referredBy,
+      referredBy: referredBy || undefined, // S'assurer que referredBy est bien défini
       createdAt: serverTimestamp()
     }
 
+    console.log('💾 Données utilisateur à sauvegarder:', userData)
+
     try {
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
-      console.log('✅ Document Firestore créé avec succès')
+      console.log('✅ Document Firestore créé avec succès pour:', firebaseUser.uid)
+      
+      // Vérifier immédiatement que le document a été créé
+      const savedDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
+      if (savedDoc.exists()) {
+        const savedData = savedDoc.data()
+        console.log('✅ Vérification: Document sauvegardé:', savedData)
+      } else {
+        console.log('⚠️ Vérification: Document non trouvé après sauvegarde')
+      }
     } catch (firestoreError) {
-      console.log('⚠️ Erreur Firestore lors de la sauvegarde, mais inscription réussie:', firestoreError)
+      console.log('❌ Erreur Firestore lors de la sauvegarde:', firestoreError)
       // Ne pas faire échouer l'inscription si Firestore échoue
     }
 
@@ -204,18 +215,25 @@ export async function getCurrentUserData(): Promise<User | null> {
 // Récupérer les filleuls d'un utilisateur
 export async function getReferrals(referralCode: string): Promise<User[]> {
   try {
+    console.log('🔍 getReferrals appelé avec le code:', referralCode)
+    
     const usersRef = collection(db, 'users')
     const q = query(usersRef, where('referredBy', '==', referralCode))
     const querySnapshot = await getDocs(q)
     
+    console.log('📊 Nombre de documents trouvés:', querySnapshot.size)
+    
     const referrals: User[] = []
     querySnapshot.forEach((doc) => {
-      referrals.push({ ...doc.data(), uid: doc.id } as User)
+      const userData = { ...doc.data(), uid: doc.id } as User
+      console.log('👤 Filleul trouvé:', userData.numeroTel, 'Parrainé par:', userData.referredBy)
+      referrals.push(userData)
     })
     
+    console.log('✅ Total filleuls retournés:', referrals.length)
     return referrals
   } catch (error) {
-    console.error('Erreur récupération filleuls:', error)
+    console.error('❌ Erreur récupération filleuls:', error)
     return []
   }
 }
