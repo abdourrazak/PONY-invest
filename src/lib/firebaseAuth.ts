@@ -22,7 +22,7 @@ export interface User {
   uid: string
   numeroTel: string
   referralCode: string
-  referredBy?: string
+  referredBy?: string | null
   createdAt: any
 }
 
@@ -117,11 +117,18 @@ export async function registerUser(
       uid: firebaseUser.uid,
       numeroTel,
       referralCode,
-      referredBy: referredBy || undefined, // S'assurer que referredBy est bien défini
+      referredBy: referredBy || null, // Utiliser null au lieu d'undefined pour Firestore
       createdAt: serverTimestamp()
     }
 
-    console.log('💾 Données utilisateur à sauvegarder:', userData)
+    console.log('💾 Données utilisateur à sauvegarder:', {
+      uid: userData.uid,
+      numeroTel: userData.numeroTel,
+      referralCode: userData.referralCode,
+      referredBy: userData.referredBy,
+      referredByType: typeof userData.referredBy,
+      referredByOriginal: referredBy
+    })
 
     try {
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)

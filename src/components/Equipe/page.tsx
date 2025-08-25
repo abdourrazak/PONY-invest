@@ -58,12 +58,20 @@ export default function EquipePage() {
         
         // Récupérer les filleuls et le compteur
         try {
-          const [referrals, count] = await Promise.all([
-            getReferrals(storedCode),
-            getReferralCount(storedCode)
-          ])
+          console.log('🚀 Début récupération des filleuls pour le code:', storedCode)
           
-          console.log('📊 Filleuls trouvés:', referrals.length, 'Compteur:', count)
+          const referrals = await getReferrals(storedCode)
+          const count = referrals.length
+          
+          console.log('📊 Résultats finaux:', {
+            filleulsTrouves: referrals.length,
+            compteur: count,
+            detailsFilleuls: referrals.map(r => ({
+              numero: r.numeroTel,
+              referredBy: r.referredBy,
+              uid: r.uid
+            }))
+          })
           
           setTeamMembers(referrals)
           setReferralStats({
@@ -82,11 +90,12 @@ export default function EquipePage() {
             recompenseParFilleul: 25
           })
           
-          console.log('✅ Données de parrainage chargées:', {
-            code: storedCode,
-            filleuls: referrals.length,
-            revenus: calculatedRevenue
-          })
+          // Forcer le re-render
+          setTimeout(() => {
+            console.log('🔄 Force refresh après 2 secondes')
+            setTeamMembers([...referrals])
+          }, 2000)
+          
         } catch (error) {
           console.log('❌ Erreur chargement données parrainage:', error)
           setReferralStats({
