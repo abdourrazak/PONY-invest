@@ -37,13 +37,24 @@ export default function EquipePage() {
           }
         }
         
-        // Ne jamais générer de nouveau code ici - utiliser uniquement celui de Firestore
+        // Si pas de code en localStorage, utiliser celui de userData (Firestore)
+        if (!storedCode && userData.referralCode) {
+          storedCode = userData.referralCode
+          localStorage.setItem(`userReferralCode_${userData.numeroTel}`, storedCode)
+          console.log('✅ Code récupéré depuis Firestore:', storedCode)
+        }
+        
         if (!storedCode) {
-          console.log('⚠️ Aucun code trouvé dans localStorage, attente des données Firestore')
-          return
+          console.log('⚠️ Aucun code trouvé, génération d\'un nouveau code')
+          // Générer un nouveau code si aucun n'existe
+          const newCode = 'AXML' + Date.now().toString().slice(-6) + Math.random().toString(36).substr(2, 2).toUpperCase()
+          localStorage.setItem(`userReferralCode_${userData.numeroTel}`, newCode)
+          storedCode = newCode
         }
         
         const link = `${window.location.origin}/register-auth?ref=${storedCode}`
+        
+        console.log('🔍 Recherche des filleuls pour le code:', storedCode)
         
         // Récupérer les filleuls et le compteur
         try {
@@ -51,6 +62,8 @@ export default function EquipePage() {
             getReferrals(storedCode),
             getReferralCount(storedCode)
           ])
+          
+          console.log('📊 Filleuls trouvés:', referrals.length, 'Compteur:', count)
           
           setTeamMembers(referrals)
           setReferralStats({
@@ -62,8 +75,14 @@ export default function EquipePage() {
           // Calculate team revenue - 25 FCFA per referral
           const calculatedRevenue = referrals.length * 25
           setTeamRevenue(calculatedRevenue)
+          
+          console.log('✅ Données de parrainage chargées:', {
+            code: storedCode,
+            filleuls: referrals.length,
+            revenus: calculatedRevenue
+          })
         } catch (error) {
-          console.log('Erreur chargement données parrainage:', error)
+          console.log('❌ Erreur chargement données parrainage:', error)
           setReferralStats({
             totalReferrals: 0,
             referralCode: storedCode,
@@ -74,6 +93,27 @@ export default function EquipePage() {
     }
     
     loadReferralData()
+    
+    // Rafraîchir les données quand la page devient visible
+    const handleFocus = () => {
+      console.log('📱 Page Équipe focus - Rafraîchissement des données')
+      loadReferralData()
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('👁️ Page Équipe visible - Rafraîchissement des données')
+        loadReferralData()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [userData])
 
   const handleCopy = async (text: string) => {
