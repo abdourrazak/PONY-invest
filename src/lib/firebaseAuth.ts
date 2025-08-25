@@ -217,6 +217,11 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
   try {
     console.log('🔍 getReferrals appelé avec le code:', referralCode)
     
+    if (!referralCode) {
+      console.log('⚠️ Code de parrainage vide, retour tableau vide')
+      return []
+    }
+    
     const usersRef = collection(db, 'users')
     const q = query(usersRef, where('referredBy', '==', referralCode))
     const querySnapshot = await getDocs(q)
@@ -226,11 +231,33 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
     const referrals: User[] = []
     querySnapshot.forEach((doc) => {
       const userData = { ...doc.data(), uid: doc.id } as User
-      console.log('👤 Filleul trouvé:', userData.numeroTel, 'Parrainé par:', userData.referredBy)
+      console.log('👤 Filleul trouvé:', {
+        numeroTel: userData.numeroTel,
+        referredBy: userData.referredBy,
+        uid: userData.uid,
+        createdAt: userData.createdAt
+      })
       referrals.push(userData)
     })
     
     console.log('✅ Total filleuls retournés:', referrals.length)
+    
+    // Debug: Lister tous les utilisateurs pour vérifier
+    console.log('🔍 Debug: Récupération de tous les utilisateurs pour vérification...')
+    const allUsersQuery = query(usersRef)
+    const allUsersSnapshot = await getDocs(allUsersQuery)
+    console.log('📊 Total utilisateurs en base:', allUsersSnapshot.size)
+    
+    allUsersSnapshot.forEach((doc) => {
+      const userData = doc.data()
+      console.log('👥 Utilisateur en base:', {
+        numeroTel: userData.numeroTel,
+        referredBy: userData.referredBy,
+        referralCode: userData.referralCode,
+        uid: doc.id
+      })
+    })
+    
     return referrals
   } catch (error) {
     console.error('❌ Erreur récupération filleuls:', error)

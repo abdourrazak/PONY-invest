@@ -76,6 +76,12 @@ export default function EquipePage() {
           const calculatedRevenue = referrals.length * 25
           setTeamRevenue(calculatedRevenue)
           
+          console.log('💰 Calcul des revenus:', {
+            nombreFilleuls: referrals.length,
+            revenusCalcules: calculatedRevenue,
+            recompenseParFilleul: 25
+          })
+          
           console.log('✅ Données de parrainage chargées:', {
             code: storedCode,
             filleuls: referrals.length,
