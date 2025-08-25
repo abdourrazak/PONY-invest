@@ -537,11 +537,11 @@ export default function Accueil() {
               </div>
               <span className="text-gray-500 text-xs">Équipe</span>
             </NavigationLink>
-            <NavigationLink href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <NavigationLink href="/mes-gains" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-                <span className="text-gray-500 text-xs">👤</span>
+                <span className="text-gray-500 text-xs">💰</span>
               </div>
-              <span className="text-gray-500 text-xs">Mon Compte</span>
+              <span className="text-gray-500 text-xs">Mes Gains</span>
             </NavigationLink>
           </div>
         </div>
