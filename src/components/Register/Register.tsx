@@ -98,7 +98,12 @@ export default function Register() {
       
       // Forcer l'utilisation du code d'URL si présent
       const finalReferralCode = searchParams.get('ref') || formData.referralCode || undefined
-      console.log('🎯 Code final utilisé pour inscription:', finalReferralCode)
+      console.log('🎯 Code final utilisé pour inscription:', {
+        finalCode: finalReferralCode,
+        urlRef: searchParams.get('ref'),
+        formRef: formData.referralCode,
+        finalCodeType: typeof finalReferralCode
+      })
       
       // Inscription avec Firebase Auth + Firestore
       const result = await registerUser(

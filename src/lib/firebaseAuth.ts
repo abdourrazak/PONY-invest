@@ -255,13 +255,19 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
     const allUsersSnapshot = await getDocs(allUsersQuery)
     console.log('📊 Total utilisateurs en base:', allUsersSnapshot.size)
     
+    console.log('🔍 Recherche spécifique pour le code:', referralCode)
     allUsersSnapshot.forEach((doc) => {
       const userData = doc.data()
+      const isMatch = userData.referredBy === referralCode
       console.log('👥 Utilisateur en base:', {
         numeroTel: userData.numeroTel,
         referredBy: userData.referredBy,
         referralCode: userData.referralCode,
-        uid: doc.id
+        uid: doc.id,
+        matchesSearchCode: isMatch,
+        referredByType: typeof userData.referredBy,
+        searchCodeType: typeof referralCode,
+        exactMatch: userData.referredBy === referralCode
       })
     })
     

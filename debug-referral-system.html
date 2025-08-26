@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Système d'Affiliation AXML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-step {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .success {
+            background: #e8f5e8;
+            border-left-color: #4CAF50;
+        }
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        .code {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .button.secondary {
+            background: #2196F3;
+        }
+        .button.secondary:hover {
+            background: #1976D2;
+        }
+        .logs {
+            background: #263238;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Système d'Affiliation AXML</h1>
+        <p>Outil de diagnostic pour identifier pourquoi les filleuls ne s'affichent pas dans la page Équipe.</p>
+    </div>
+
+    <div class="container">
+        <h2>📋 Test Complet du Système</h2>
+        
+        <div class="test-step">
+            <h3>Étape 1: Créer un Parrain</h3>
+            <div class="input-group">
+                <label>Numéro de téléphone du parrain:</label>
+                <input type="text" id="parrainPhone" value="693000001" placeholder="6XXXXXXXX">
+            </div>
+            <div class="input-group">
+                <label>Mot de passe:</label>
+                <input type="password" id="parrainPassword" value="123456">
+            </div>
+            <button class="button" onclick="createParrain()">Créer Parrain</button>
+            <div id="parrainStatus" class="status pending" style="display: none;">En attente...</div>
+        </div>
+
+        <div class="test-step">
+            <h3>Étape 2: Récupérer le Code d'Invitation</h3>
+            <p>Connectez-vous avec le parrain et récupérez son code d'invitation</p>
+            <button class="button secondary" onclick="loginParrain()">Se connecter comme Parrain</button>
+            <button class="button secondary" onclick="getParrainCode()">Aller à la page Équipe</button>
+            <div class="input-group">
+                <label>Code d'invitation récupéré:</label>
+                <input type="text" id="referralCode" placeholder="AXML...">
+                <button class="button" onclick="setReferralCode()">Définir Code</button>
+            </div>
+            <div id="codeStatus" class="status pending" style="display: none;">Code: <span id="currentCode">Non défini</span></div>
+        </div>
+
+        <div class="test-step">
+            <h3>Étape 3: Créer un Filleul avec le Code</h3>
+            <div class="input-group">
+                <label>Numéro de téléphone du filleul:</label>
+                <input type="text" id="filleulPhone" value="693000002" placeholder="6XXXXXXXX">
+            </div>
+            <div class="input-group">
+                <label>Mot de passe:</label>
+                <input type="password" id="filleulPassword" value="123456">
+            </div>
+            <div class="code">
+                Lien d'inscription: <span id="referralLink">https://axml-global.vercel.app/register-auth?ref=CODE_ICI</span>
+            </div>
+            <button class="button" onclick="createFilleul()">Inscrire Filleul avec Code</button>
+            <div id="filleulStatus" class="status pending" style="display: none;">En attente...</div>
+        </div>
+
+        <div class="test-step">
+            <h3>Étape 4: Vérifier l'Affichage</h3>
+            <p>Retournez sur la page Équipe du parrain pour vérifier si le filleul apparaît</p>
+            <button class="button" onclick="checkEquipePage()">Vérifier Page Équipe</button>
+            <button class="button secondary" onclick="openConsole()">Ouvrir Console Debug</button>
+            <div id="verificationStatus" class="status pending" style="display: none;">Vérification en cours...</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🔧 Outils de Debug</h2>
+        
+        <button class="button secondary" onclick="clearAllData()">Vider Toutes les Données</button>
+        <button class="button secondary" onclick="showLocalStorage()">Afficher LocalStorage</button>
+        <button class="button secondary" onclick="testFirebaseRules()">Tester Règles Firebase</button>
+        
+        <div class="input-group">
+            <label>Code à tester manuellement:</label>
+            <input type="text" id="testCode" placeholder="AXML1234">
+            <button class="button" onclick="testSpecificCode()">Tester ce Code</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📊 Logs de Debug</h2>
+        <button class="button secondary" onclick="clearLogs()">Vider Logs</button>
+        <div id="debugLogs" class="logs">Logs apparaîtront ici...\n</div>
+    </div>
+
+    <div class="container">
+        <h2>📱 Instructions Détaillées</h2>
+        <div class="test-step">
+            <h4>Problème Identifié:</h4>
+            <p>Les filleuls ne s'affichent pas dans la page Équipe malgré l'inscription avec code de parrainage.</p>
+            
+            <h4>Points à vérifier:</h4>
+            <ul>
+                <li>Le champ <code>referredBy</code> est-il bien sauvegardé dans Firestore ?</li>
+                <li>La requête Firebase trouve-t-elle les utilisateurs avec <code>referredBy === codeParrain</code> ?</li>
+                <li>Les types de données correspondent-ils (string vs null vs undefined) ?</li>
+                <li>Le code de parrainage utilisé correspond-il exactement à celui sauvegardé ?</li>
+            </ul>
+            
+            <h4>Étapes de diagnostic:</h4>
+            <ol>
+                <li>Ouvrir la console du navigateur (F12)</li>
+                <li>Suivre les étapes ci-dessus</li>
+                <li>Observer les logs détaillés dans la console</li>
+                <li>Vérifier les données dans Firebase Console</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let currentReferralCode = '';
+        let parrainPhone = '';
+        let filleulPhone = '';
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('debugLogs');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `status ${status}`;
+            element.textContent = message;
+        }
+
+        function createParrain() {
+            parrainPhone = document.getElementById('parrainPhone').value;
+            const password = document.getElementById('parrainPassword').value;
+            
+            if (!parrainPhone || !password) {
+                updateStatus('parrainStatus', 'error', 'Veuillez remplir tous les champs');
+                return;
+            }
+            
+            log(`Création du parrain: ${parrainPhone}`);
+            updateStatus('parrainStatus', 'pending', 'Redirection vers l\'inscription...');
+            
+            const registerUrl = `https://axml-global.vercel.app/register-auth`;
+            window.open(registerUrl, '_blank');
+            
+            setTimeout(() => {
+                updateStatus('parrainStatus', 'success', `Parrain créé: ${parrainPhone} - Récupérez maintenant son code`);
+            }, 2000);
+        }
+
+        function loginParrain() {
+            if (!parrainPhone) {
+                alert('Créez d\'abord un parrain');
+                return;
+            }
+            
+            log(`Connexion du parrain: ${parrainPhone}`);
+            const loginUrl = `https://axml-global.vercel.app/login`;
+            window.open(loginUrl, '_blank');
+        }
+
+        function getParrainCode() {
+            log('Ouverture de la page Équipe pour récupérer le code');
+            const equipeUrl = `https://axml-global.vercel.app/equipe`;
+            window.open(equipeUrl, '_blank');
+            alert('Copiez le code d\'invitation depuis la page Équipe et collez-le dans le champ ci-dessous');
+        }
+
+        function setReferralCode() {
+            const code = document.getElementById('referralCode').value;
+            if (!code) {
+                alert('Veuillez entrer un code d\'invitation');
+                return;
+            }
+            
+            currentReferralCode = code;
+            document.getElementById('currentCode').textContent = code;
+            document.getElementById('codeStatus').style.display = 'block';
+            document.getElementById('codeStatus').className = 'status success';
+            
+            // Mettre à jour le lien d'inscription
+            const link = `https://axml-global.vercel.app/register-auth?ref=${code}`;
+            document.getElementById('referralLink').textContent = link;
+            
+            log(`Code d'invitation défini: ${code}`);
+        }
+
+        function createFilleul() {
+            filleulPhone = document.getElementById('filleulPhone').value;
+            const password = document.getElementById('filleulPassword').value;
+            
+            if (!filleulPhone || !password || !currentReferralCode) {
+                updateStatus('filleulStatus', 'error', 'Veuillez remplir tous les champs et définir le code');
+                return;
+            }
+            
+            log(`Création du filleul: ${filleulPhone} avec code: ${currentReferralCode}`);
+            updateStatus('filleulStatus', 'pending', 'Redirection vers l\'inscription avec code...');
+            
+            const registerUrl = `https://axml-global.vercel.app/register-auth?ref=${currentReferralCode}`;
+            window.open(registerUrl, '_blank');
+            
+            setTimeout(() => {
+                updateStatus('filleulStatus', 'success', `Filleul créé: ${filleulPhone} - Vérifiez maintenant la page Équipe`);
+            }, 3000);
+        }
+
+        function checkEquipePage() {
+            if (!currentReferralCode) {
+                alert('Définissez d\'abord un code d\'invitation');
+                return;
+            }
+            
+            log('Vérification de la page Équipe...');
+            updateStatus('verificationStatus', 'pending', 'Ouverture de la page Équipe - Vérifiez la console');
+            
+            const equipeUrl = `https://axml-global.vercel.app/equipe`;
+            window.open(equipeUrl, '_blank');
+            
+            alert('Ouvrez la console (F12) pour voir les logs de debug détaillés');
+        }
+
+        function openConsole() {
+            alert('Appuyez sur F12 pour ouvrir la console du navigateur et voir les logs détaillés');
+        }
+
+        function clearAllData() {
+            localStorage.clear();
+            sessionStorage.clear();
+            log('Toutes les données locales supprimées');
+            alert('Données supprimées. Rechargez les pages ouvertes.');
+        }
+
+        function showLocalStorage() {
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                storage[key] = localStorage.getItem(key);
+            }
+            log('LocalStorage: ' + JSON.stringify(storage, null, 2));
+        }
+
+        function testFirebaseRules() {
+            log('Test des règles Firebase - Vérifiez la console');
+            alert('Ouvrez la console pour voir les tests Firebase');
+        }
+
+        function testSpecificCode() {
+            const code = document.getElementById('testCode').value;
+            if (!code) {
+                alert('Entrez un code à tester');
+                return;
+            }
+            
+            log(`Test du code spécifique: ${code}`);
+            const testUrl = `https://axml-global.vercel.app/equipe`;
+            window.open(testUrl, '_blank');
+        }
+
+        function clearLogs() {
+            document.getElementById('debugLogs').textContent = 'Logs vidés...\n';
+        }
+
+        // Initialisation
+        log('Outil de debug initialisé');
+        log('Suivez les étapes dans l\'ordre pour diagnostiquer le problème');
+    </script>
+</body>
+</html>

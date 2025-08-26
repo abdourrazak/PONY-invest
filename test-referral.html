@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Système d'Affiliation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .code {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test du Système d'Affiliation AXML</h1>
+        <p>Cette page permet de tester manuellement le système d'affiliation pour identifier le problème.</p>
+    </div>
+
+    <div class="container">
+        <h2>📋 Étapes de Test</h2>
+        
+        <div class="step">
+            <h3>1. Créer un utilisateur parrain</h3>
+            <p>Inscrivez-vous sur l'application avec un nouveau numéro (ex: 693000001)</p>
+            <button class="button" onclick="window.open('https://axml-global.vercel.app/register-auth', '_blank')">
+                S'inscrire comme Parrain
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>2. Récupérer le code d'invitation</h3>
+            <p>Allez sur la page Équipe et copiez votre code d'invitation</p>
+            <button class="button" onclick="window.open('https://axml-global.vercel.app/equipe', '_blank')">
+                Page Équipe
+            </button>
+            <div class="code">
+                Code d'invitation: <span id="referralCode">AXML______</span>
+                <button class="button" onclick="setReferralCode()">Définir Code</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>3. Créer un filleul avec le code</h3>
+            <p>Utilisez le lien généré pour inscrire un filleul</p>
+            <div class="code">
+                Lien d'invitation: <span id="referralLink">https://axml-global.vercel.app/register-auth?ref=AXML______</span>
+            </div>
+            <button class="button" onclick="openReferralLink()">
+                Inscrire un Filleul
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>4. Vérifier l'affichage</h3>
+            <p>Retournez sur la page Équipe du parrain pour voir si le filleul apparaît</p>
+            <button class="button" onclick="checkTeamPage()">
+                Vérifier Page Équipe
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🔧 Outils de Debug</h2>
+        
+        <button class="button" onclick="clearLocalStorage()">
+            Vider LocalStorage
+        </button>
+        
+        <button class="button" onclick="showLocalStorage()">
+            Afficher LocalStorage
+        </button>
+        
+        <button class="button" onclick="testFirebaseConnection()">
+            Tester Firebase
+        </button>
+        
+        <div id="debugResult" class="result" style="display: none;">
+            <h4>Résultats:</h4>
+            <pre id="debugOutput"></pre>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📱 Codes de Test Suggérés</h2>
+        <div class="code">
+            Parrain: 693000001 / password: 123456<br>
+            Filleul: 693000002 / password: 123456<br>
+            Code test: AXML1234
+        </div>
+    </div>
+
+    <script>
+        let currentReferralCode = 'AXML1234';
+
+        function setReferralCode() {
+            const code = prompt('Entrez votre code d\'invitation:', currentReferralCode);
+            if (code) {
+                currentReferralCode = code;
+                document.getElementById('referralCode').textContent = code;
+                document.getElementById('referralLink').textContent = 
+                    `https://axml-global.vercel.app/register-auth?ref=${code}`;
+            }
+        }
+
+        function openReferralLink() {
+            const link = `https://axml-global.vercel.app/register-auth?ref=${currentReferralCode}`;
+            window.open(link, '_blank');
+        }
+
+        function checkTeamPage() {
+            window.open('https://axml-global.vercel.app/equipe', '_blank');
+            alert('Ouvrez la console (F12) pour voir les logs de débogage');
+        }
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            showResult('LocalStorage vidé');
+        }
+
+        function showLocalStorage() {
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                storage[key] = localStorage.getItem(key);
+            }
+            showResult('LocalStorage:\n' + JSON.stringify(storage, null, 2));
+        }
+
+        function testFirebaseConnection() {
+            showResult('Test Firebase - Vérifiez la console du navigateur pour les logs détaillés');
+        }
+
+        function showResult(text) {
+            document.getElementById('debugOutput').textContent = text;
+            document.getElementById('debugResult').style.display = 'block';
+        }
+
+        // Auto-update referral link when code changes
+        document.getElementById('referralCode').textContent = currentReferralCode;
+        document.getElementById('referralLink').textContent = 
+            `https://axml-global.vercel.app/register-auth?ref=${currentReferralCode}`;
+    </script>
+</body>
+</html>
