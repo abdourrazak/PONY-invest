@@ -6,7 +6,7 @@ service cloud.firestore {
       // Seul l'utilisateur authentifié peut lire/écrire ses propres données
       allow read, write: if request.auth != null && request.auth.uid == userId;
       
-      // TEMPORAIRE: Permettre la lecture pour l'outil de réinitialisation
+      // Permettre la lecture pour la validation des codes de parrainage
       allow read: if request.auth != null;
     }
     
