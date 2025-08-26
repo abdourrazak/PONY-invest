@@ -242,6 +242,48 @@ export async function getReferralCount(referralCode: string): Promise<number> {
   }
 }
 
+// Réinitialiser tous les soldes et récompenses des utilisateurs
+export async function resetAllUserRewards(): Promise<void> {
+  try {
+    const usersRef = collection(db, 'users')
+    const allUsersSnapshot = await getDocs(usersRef)
+    
+    // Récupérer tous les numéros de téléphone des utilisateurs
+    const userPhones: string[] = []
+    allUsersSnapshot.forEach((doc) => {
+      const userData = doc.data()
+      if (userData.numeroTel) {
+        userPhones.push(userData.numeroTel)
+      }
+    })
+    
+    // Réinitialiser les données localStorage pour chaque utilisateur
+    userPhones.forEach((phone) => {
+      // Réinitialiser le solde à 1000 XOF
+      localStorage.setItem(`userFunds_${phone}`, '1000')
+      
+      // Réinitialiser les récompenses de parrainage
+      localStorage.setItem(`referralRewards_${phone}`, '0')
+      
+      // Réinitialiser l'historique des récompenses quotidiennes
+      localStorage.setItem(`rewardHistory_${phone}`, '[]')
+      
+      // Réinitialiser les forfaits VIP
+      localStorage.setItem(`forfaitsVipActifs_${phone}`, '0')
+      
+      // Réinitialiser les gains horaires
+      localStorage.setItem(`gainsHoraire_${phone}`, '0')
+      
+      // Réinitialiser les dépenses totales
+      localStorage.setItem(`totalDepense_${phone}`, '0')
+    })
+    
+    console.log(`✅ Réinitialisation terminée pour ${userPhones.length} utilisateurs`)
+  } catch (error) {
+    console.error('❌ Erreur lors de la réinitialisation:', error)
+  }
+}
+
 // Générer le lien d'invitation
 export function getReferralLink(referralCode: string): string {
   // Détection automatique de l'URL selon l'environnement
