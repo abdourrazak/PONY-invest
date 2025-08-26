@@ -133,19 +133,21 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js'
+        import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js'
         import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js'
 
-        // Configuration Firebase - REMPLACEZ PAR VOS VRAIES CLÉS DEPUIS .env.local
+        // Configuration Firebase - VOS VRAIES CLÉS
         const firebaseConfig = {
-            apiKey: "VOTRE_API_KEY_ICI",
-            authDomain: "VOTRE_PROJET.firebaseapp.com", 
-            projectId: "VOTRE_PROJECT_ID",
-            storageBucket: "VOTRE_PROJET.appspot.com",
-            messagingSenderId: "VOTRE_SENDER_ID",
-            appId: "VOTRE_APP_ID"
+            apiKey: "AIzaSyCkf_1ekS90hbAvcUnX709iB6SZECiDjcs",
+            authDomain: "globalplatform-2e94c.firebaseapp.com", 
+            projectId: "globalplatform-2e94c",
+            storageBucket: "globalplatform-2e94c.firebasestorage.app",
+            messagingSenderId: "665288476986",
+            appId: "1:665288476986:web:f51435bbf580bcb1a6a803"
         }
 
         const app = initializeApp(firebaseConfig)
+        const auth = getAuth(app)
         const db = getFirestore(app)
 
         let allUsers = []
@@ -158,9 +160,14 @@
 
             try {
                 loadBtn.disabled = true
-                loadBtn.textContent = '⏳ Chargement...'
+                loadBtn.textContent = '⏳ Connexion...'
                 
-                statusDiv.innerHTML = '<div class="info">📡 Connexion à Firebase...</div>'
+                statusDiv.innerHTML = '<div class="info">🔐 Authentification en cours...</div>'
+
+                // S'authentifier d'abord
+                await signInAnonymously(auth)
+                
+                statusDiv.innerHTML = '<div class="info">📡 Chargement des utilisateurs...</div>'
 
                 const usersRef = collection(db, 'users')
                 const snapshot = await getDocs(usersRef)
