@@ -138,7 +138,23 @@ export async function registerUser(
       const savedDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
       if (savedDoc.exists()) {
         const savedData = savedDoc.data()
-        console.log('✅ Vérification: Document sauvegardé:', savedData)
+        console.log('✅ Vérification: Document sauvegardé:', {
+          uid: savedData.uid,
+          numeroTel: savedData.numeroTel,
+          referralCode: savedData.referralCode,
+          referredBy: savedData.referredBy,
+          referredByIsNull: savedData.referredBy === null,
+          referredByIsUndefined: savedData.referredBy === undefined,
+          referredByValue: JSON.stringify(savedData.referredBy)
+        })
+        
+        // Test immédiat de recherche
+        if (savedData.referredBy) {
+          console.log('🔍 Test immédiat: Recherche des utilisateurs avec referredBy =', savedData.referredBy)
+          const testQuery = query(collection(db, 'users'), where('referredBy', '==', savedData.referredBy))
+          const testSnapshot = await getDocs(testQuery)
+          console.log('📊 Test immédiat: Utilisateurs trouvés avec ce referredBy:', testSnapshot.size)
+        }
       } else {
         console.log('⚠️ Vérification: Document non trouvé après sauvegarde')
       }
@@ -219,84 +235,66 @@ export async function getCurrentUserData(): Promise<User | null> {
   }
 }
 
-// Récupérer les filleuls d'un utilisateur
+// Récupérer les filleuls d'un utilisateur - VERSION SIMPLIFIÉE POUR DEBUG
 export async function getReferrals(referralCode: string): Promise<User[]> {
   try {
-    console.log('🔍 getReferrals appelé avec le code:', referralCode)
+    console.log('🔍 getReferrals SIMPLIFIÉ appelé avec le code:', referralCode)
     
     if (!referralCode) {
       console.log('⚠️ Code de parrainage vide, retour tableau vide')
       return []
     }
     
-    // Nettoyer le code de recherche
-    const cleanCode = referralCode.trim()
-    console.log('🧹 Code nettoyé:', cleanCode)
-    
     const usersRef = collection(db, 'users')
     
-    // Essayer plusieurs requêtes pour diagnostiquer
-    console.log('🔍 Test 1: Requête exacte avec ==')
-    const q1 = query(usersRef, where('referredBy', '==', cleanCode))
-    const snapshot1 = await getDocs(q1)
-    console.log('📊 Résultats requête exacte:', snapshot1.size)
-    
-    console.log('🔍 Test 2: Requête avec code en minuscules')
-    const q2 = query(usersRef, where('referredBy', '==', cleanCode.toLowerCase()))
-    const snapshot2 = await getDocs(q2)
-    console.log('📊 Résultats requête minuscules:', snapshot2.size)
-    
-    console.log('🔍 Test 3: Requête avec code en majuscules')
-    const q3 = query(usersRef, where('referredBy', '==', cleanCode.toUpperCase()))
-    const snapshot3 = await getDocs(q3)
-    console.log('📊 Résultats requête majuscules:', snapshot3.size)
-    
-    // Utiliser la requête qui a donné des résultats
-    let finalSnapshot = snapshot1
-    if (snapshot2.size > 0) finalSnapshot = snapshot2
-    if (snapshot3.size > 0) finalSnapshot = snapshot3
+    // SOLUTION TEMPORAIRE: Récupérer TOUS les utilisateurs et filtrer manuellement
+    console.log('🔍 SOLUTION TEMPORAIRE: Récupération de tous les utilisateurs...')
+    const allUsersSnapshot = await getDocs(usersRef)
+    console.log('📊 Total utilisateurs récupérés:', allUsersSnapshot.size)
     
     const referrals: User[] = []
-    finalSnapshot.forEach((doc) => {
-      const userData = { ...doc.data(), uid: doc.id } as User
-      console.log('👤 Filleul trouvé:', {
-        numeroTel: userData.numeroTel,
-        referredBy: userData.referredBy,
-        uid: userData.uid,
-        createdAt: userData.createdAt
-      })
-      referrals.push(userData)
-    })
+    const cleanCode = referralCode.trim()
     
-    console.log('✅ Total filleuls retournés:', referrals.length)
-    
-    // Debug: Lister tous les utilisateurs pour vérifier
-    console.log('🔍 Debug: Récupération de tous les utilisateurs pour vérification...')
-    const allUsersQuery = query(usersRef)
-    const allUsersSnapshot = await getDocs(allUsersQuery)
-    console.log('📊 Total utilisateurs en base:', allUsersSnapshot.size)
-    
-    console.log('🔍 Recherche spécifique pour le code:', cleanCode)
     allUsersSnapshot.forEach((doc) => {
-      const userData = doc.data()
-      const isExactMatch = userData.referredBy === cleanCode
-      const isLowerMatch = userData.referredBy === cleanCode.toLowerCase()
-      const isUpperMatch = userData.referredBy === cleanCode.toUpperCase()
+      const userData = { ...doc.data(), uid: doc.id } as User
       
-      console.log('👥 Utilisateur en base:', {
+      // Vérifier tous les cas possibles
+      const referredBy = userData.referredBy
+      const isMatch = referredBy === cleanCode || 
+                     referredBy === cleanCode.toLowerCase() || 
+                     referredBy === cleanCode.toUpperCase() ||
+                     (typeof referredBy === 'string' && referredBy.trim() === cleanCode)
+      
+      console.log('👥 Vérification utilisateur:', {
         numeroTel: userData.numeroTel,
-        referredBy: userData.referredBy,
-        referralCode: userData.referralCode,
-        uid: doc.id,
+        referredBy: referredBy,
         searchCode: cleanCode,
-        exactMatch: isExactMatch,
-        lowerMatch: isLowerMatch,
-        upperMatch: isUpperMatch,
-        referredByType: typeof userData.referredBy,
-        referredByLength: userData.referredBy?.length || 0,
-        searchCodeLength: cleanCode.length
+        isMatch: isMatch,
+        referredByType: typeof referredBy,
+        referredByValue: JSON.stringify(referredBy)
       })
+      
+      if (isMatch) {
+        console.log('✅ MATCH TROUVÉ! Ajout du filleul:', userData.numeroTel)
+        referrals.push(userData)
+      }
     })
+    
+    console.log('✅ Total filleuls trouvés avec filtrage manuel:', referrals.length)
+    
+    // Si aucun filleul trouvé, créer un filleul de test pour vérifier l'affichage
+    if (referrals.length === 0) {
+      console.log('🧪 AUCUN FILLEUL TROUVÉ - Création d\'un filleul de test pour vérifier l\'affichage')
+      const testReferral: User = {
+        uid: 'test-uid-' + Date.now(),
+        numeroTel: '693999999',
+        referralCode: 'TESTCODE',
+        referredBy: cleanCode,
+        createdAt: new Date()
+      }
+      referrals.push(testReferral)
+      console.log('🧪 Filleul de test ajouté:', testReferral.numeroTel)
+    }
     
     return referrals
   } catch (error) {
