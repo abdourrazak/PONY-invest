@@ -235,30 +235,31 @@ export default function EquipePage() {
           </div>
         </div>
 
-        {/* Team Members Table */}
-        {teamMembers.length > 0 ? (
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            {/* Table Header */}
-            <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-200">
-              <div className="p-4 text-gray-700 font-bold text-sm text-center">Mobile</div>
-              <div className="p-4 text-gray-700 font-bold text-sm text-center border-l border-gray-200">Niveau</div>
-              <div className="p-4 text-gray-700 font-bold text-sm text-center border-l border-gray-200">Investissement</div>
-            </div>
-            {/* Table Rows */}
-            {teamMembers.map((member, index) => (
+        {/* Team Members Table - TOUJOURS AFFICHER AU MOINS UN EXEMPLE */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          {/* Table Header */}
+          <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-200">
+            <div className="p-4 text-gray-700 font-bold text-sm text-center">Mobile</div>
+            <div className="p-4 text-gray-700 font-bold text-sm text-center border-l border-gray-200">Niveau</div>
+            <div className="p-4 text-gray-700 font-bold text-sm text-center border-l border-gray-200">Investissement</div>
+          </div>
+          {/* Table Rows */}
+          {teamMembers.length > 0 ? (
+            teamMembers.map((member, index) => (
               <div key={member.uid} className="grid grid-cols-3 border-b border-gray-100 last:border-b-0">
                 <div className="p-4 text-gray-800 font-bold text-sm text-center">{member.numeroTel}</div>
                 <div className="p-4 text-gray-600 text-sm text-center border-l border-gray-100">A</div>
                 <div className="p-4 text-gray-600 text-sm text-center border-l border-gray-100">F0.00</div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-200">
-            <div className="text-gray-600 font-bold text-base mb-2">Aucun membre dans votre équipe</div>
-            <div className="text-gray-500 text-sm">Partagez votre code d'invitation pour commencer !</div>
-          </div>
-        )}
+            ))
+          ) : (
+            <div className="grid grid-cols-3 border-b border-gray-100">
+              <div className="p-4 text-gray-400 text-sm text-center italic">Aucun filleul</div>
+              <div className="p-4 text-gray-400 text-sm text-center border-l border-gray-100 italic">-</div>
+              <div className="p-4 text-gray-400 text-sm text-center border-l border-gray-100 italic">-</div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Navigation Bottom */}

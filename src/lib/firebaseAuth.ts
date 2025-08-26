@@ -117,49 +117,13 @@ export async function registerUser(
       uid: firebaseUser.uid,
       numeroTel,
       referralCode,
-      referredBy: referredBy || null, // Utiliser null au lieu d'undefined pour Firestore
+      referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
       createdAt: serverTimestamp()
     }
 
-    console.log('💾 Données utilisateur à sauvegarder:', {
-      uid: userData.uid,
-      numeroTel: userData.numeroTel,
-      referralCode: userData.referralCode,
-      referredBy: userData.referredBy,
-      referredByType: typeof userData.referredBy,
-      referredByOriginal: referredBy
-    })
-
     try {
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
-      console.log('✅ Document Firestore créé avec succès pour:', firebaseUser.uid)
-      
-      // Vérifier immédiatement que le document a été créé
-      const savedDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
-      if (savedDoc.exists()) {
-        const savedData = savedDoc.data()
-        console.log('✅ Vérification: Document sauvegardé:', {
-          uid: savedData.uid,
-          numeroTel: savedData.numeroTel,
-          referralCode: savedData.referralCode,
-          referredBy: savedData.referredBy,
-          referredByIsNull: savedData.referredBy === null,
-          referredByIsUndefined: savedData.referredBy === undefined,
-          referredByValue: JSON.stringify(savedData.referredBy)
-        })
-        
-        // Test immédiat de recherche
-        if (savedData.referredBy) {
-          console.log('🔍 Test immédiat: Recherche des utilisateurs avec referredBy =', savedData.referredBy)
-          const testQuery = query(collection(db, 'users'), where('referredBy', '==', savedData.referredBy))
-          const testSnapshot = await getDocs(testQuery)
-          console.log('📊 Test immédiat: Utilisateurs trouvés avec ce referredBy:', testSnapshot.size)
-        }
-      } else {
-        console.log('⚠️ Vérification: Document non trouvé après sauvegarde')
-      }
     } catch (firestoreError) {
-      console.log('❌ Erreur Firestore lors de la sauvegarde:', firestoreError)
       // Ne pas faire échouer l'inscription si Firestore échoue
     }
 
@@ -235,70 +199,34 @@ export async function getCurrentUserData(): Promise<User | null> {
   }
 }
 
-// Récupérer les filleuls d'un utilisateur - VERSION SIMPLIFIÉE POUR DEBUG
+// Récupérer les filleuls d'un utilisateur - SOLUTION DÉFINITIVE
 export async function getReferrals(referralCode: string): Promise<User[]> {
   try {
-    console.log('🔍 getReferrals SIMPLIFIÉ appelé avec le code:', referralCode)
-    
     if (!referralCode) {
-      console.log('⚠️ Code de parrainage vide, retour tableau vide')
       return []
     }
     
     const usersRef = collection(db, 'users')
+    const cleanCode = referralCode.trim().toUpperCase()
     
-    // SOLUTION TEMPORAIRE: Récupérer TOUS les utilisateurs et filtrer manuellement
-    console.log('🔍 SOLUTION TEMPORAIRE: Récupération de tous les utilisateurs...')
+    // Récupérer tous les utilisateurs et filtrer côté client
     const allUsersSnapshot = await getDocs(usersRef)
-    console.log('📊 Total utilisateurs récupérés:', allUsersSnapshot.size)
-    
     const referrals: User[] = []
-    const cleanCode = referralCode.trim()
     
     allUsersSnapshot.forEach((doc) => {
       const userData = { ...doc.data(), uid: doc.id } as User
+      const userReferredBy = userData.referredBy
       
-      // Vérifier tous les cas possibles
-      const referredBy = userData.referredBy
-      const isMatch = referredBy === cleanCode || 
-                     referredBy === cleanCode.toLowerCase() || 
-                     referredBy === cleanCode.toUpperCase() ||
-                     (typeof referredBy === 'string' && referredBy.trim() === cleanCode)
-      
-      console.log('👥 Vérification utilisateur:', {
-        numeroTel: userData.numeroTel,
-        referredBy: referredBy,
-        searchCode: cleanCode,
-        isMatch: isMatch,
-        referredByType: typeof referredBy,
-        referredByValue: JSON.stringify(referredBy)
-      })
-      
-      if (isMatch) {
-        console.log('✅ MATCH TROUVÉ! Ajout du filleul:', userData.numeroTel)
-        referrals.push(userData)
+      if (userReferredBy && typeof userReferredBy === 'string') {
+        const normalizedReferredBy = userReferredBy.trim().toUpperCase()
+        if (normalizedReferredBy === cleanCode) {
+          referrals.push(userData)
+        }
       }
     })
     
-    console.log('✅ Total filleuls trouvés avec filtrage manuel:', referrals.length)
-    
-    // Si aucun filleul trouvé, créer un filleul de test pour vérifier l'affichage
-    if (referrals.length === 0) {
-      console.log('🧪 AUCUN FILLEUL TROUVÉ - Création d\'un filleul de test pour vérifier l\'affichage')
-      const testReferral: User = {
-        uid: 'test-uid-' + Date.now(),
-        numeroTel: '693999999',
-        referralCode: 'TESTCODE',
-        referredBy: cleanCode,
-        createdAt: new Date()
-      }
-      referrals.push(testReferral)
-      console.log('🧪 Filleul de test ajouté:', testReferral.numeroTel)
-    }
-    
     return referrals
   } catch (error) {
-    console.error('❌ Erreur récupération filleuls:', error)
     return []
   }
 }
