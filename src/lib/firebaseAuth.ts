@@ -229,14 +229,35 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
       return []
     }
     
-    const usersRef = collection(db, 'users')
-    const q = query(usersRef, where('referredBy', '==', referralCode))
-    const querySnapshot = await getDocs(q)
+    // Nettoyer le code de recherche
+    const cleanCode = referralCode.trim()
+    console.log('🧹 Code nettoyé:', cleanCode)
     
-    console.log('📊 Nombre de documents trouvés:', querySnapshot.size)
+    const usersRef = collection(db, 'users')
+    
+    // Essayer plusieurs requêtes pour diagnostiquer
+    console.log('🔍 Test 1: Requête exacte avec ==')
+    const q1 = query(usersRef, where('referredBy', '==', cleanCode))
+    const snapshot1 = await getDocs(q1)
+    console.log('📊 Résultats requête exacte:', snapshot1.size)
+    
+    console.log('🔍 Test 2: Requête avec code en minuscules')
+    const q2 = query(usersRef, where('referredBy', '==', cleanCode.toLowerCase()))
+    const snapshot2 = await getDocs(q2)
+    console.log('📊 Résultats requête minuscules:', snapshot2.size)
+    
+    console.log('🔍 Test 3: Requête avec code en majuscules')
+    const q3 = query(usersRef, where('referredBy', '==', cleanCode.toUpperCase()))
+    const snapshot3 = await getDocs(q3)
+    console.log('📊 Résultats requête majuscules:', snapshot3.size)
+    
+    // Utiliser la requête qui a donné des résultats
+    let finalSnapshot = snapshot1
+    if (snapshot2.size > 0) finalSnapshot = snapshot2
+    if (snapshot3.size > 0) finalSnapshot = snapshot3
     
     const referrals: User[] = []
-    querySnapshot.forEach((doc) => {
+    finalSnapshot.forEach((doc) => {
       const userData = { ...doc.data(), uid: doc.id } as User
       console.log('👤 Filleul trouvé:', {
         numeroTel: userData.numeroTel,
@@ -255,19 +276,25 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
     const allUsersSnapshot = await getDocs(allUsersQuery)
     console.log('📊 Total utilisateurs en base:', allUsersSnapshot.size)
     
-    console.log('🔍 Recherche spécifique pour le code:', referralCode)
+    console.log('🔍 Recherche spécifique pour le code:', cleanCode)
     allUsersSnapshot.forEach((doc) => {
       const userData = doc.data()
-      const isMatch = userData.referredBy === referralCode
+      const isExactMatch = userData.referredBy === cleanCode
+      const isLowerMatch = userData.referredBy === cleanCode.toLowerCase()
+      const isUpperMatch = userData.referredBy === cleanCode.toUpperCase()
+      
       console.log('👥 Utilisateur en base:', {
         numeroTel: userData.numeroTel,
         referredBy: userData.referredBy,
         referralCode: userData.referralCode,
         uid: doc.id,
-        matchesSearchCode: isMatch,
+        searchCode: cleanCode,
+        exactMatch: isExactMatch,
+        lowerMatch: isLowerMatch,
+        upperMatch: isUpperMatch,
         referredByType: typeof userData.referredBy,
-        searchCodeType: typeof referralCode,
-        exactMatch: userData.referredBy === referralCode
+        referredByLength: userData.referredBy?.length || 0,
+        searchCodeLength: cleanCode.length
       })
     })
     
