@@ -1,22 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Règles sécurisées pour les utilisateurs
+    // TEMPORAIRE: Règles ouvertes pour l'outil de réinitialisation
     match /users/{userId} {
-      // Seul l'utilisateur authentifié peut lire/écrire ses propres données
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Permettre la lecture pour la validation des codes de parrainage
-      allow read: if request.auth != null;
+      allow read: if true; // Lecture ouverte temporairement
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
     
     // Règles pour les données publiques (si nécessaire)
     match /public/{document} {
-      allow read: if request.auth != null;
-      allow write: if false; // Pas d'écriture dans public
+      allow read: if true;
+      allow write: if false;
     }
     
-    // Règles par défaut - tout refuser
+    // Règles par défaut - tout refuser sauf users
     match /{document=**} {
       allow read, write: if false;
     }
