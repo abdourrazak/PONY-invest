@@ -26,7 +26,7 @@ const services = [
   { icon: Info, title: 'À propos', color: 'bg-green-500', href: '/propos' },
   { icon: Users, title: 'Équipe', color: 'bg-blue-500', href: '/equipe' },
   { icon: LogOut, title: 'Retrait', color: 'bg-yellow-500', href: '/retrait' },
-  { icon: Gift, title: 'Cadeau', color: 'bg-gradient-to-r from-pink-500 to-purple-600', special: 'gift' },
+  { icon: Gift, title: 'Cadeau', color: 'bg-gradient-to-r from-pink-500 to-purple-600', special: 'gift', href: '/cadeau' },
   { icon: Smartphone, title: 'Mon Adoption', color: 'bg-green-600', href: '/adoption' },
   { icon: CheckCircle, title: 'Check-in Quotidien', color: 'bg-cyan-500', href: '/check-Quotidien' },
   { icon: Headphones, title: 'Support', color: 'bg-red-500', href: '/support' }
