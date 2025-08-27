@@ -14,8 +14,6 @@ export default function Cadeau() {
   const [timeLeft, setTimeLeft] = useState('')
   const [totalBonus, setTotalBonus] = useState(0)
   const [invitedFriends, setInvitedFriends] = useState(0)
-  const [hasDeposited, setHasDeposited] = useState(false)
-  const [showDepositModal, setShowDepositModal] = useState(false)
   const [eventTimeLeft, setEventTimeLeft] = useState('2d 00:00:00')
 
   // Charger les données utilisateur
@@ -25,12 +23,10 @@ export default function Cadeau() {
     const userKey = userData.numeroTel
     const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
     const savedFriends = localStorage.getItem(`invitedFriends_${userKey}`)
-    const savedDeposit = localStorage.getItem(`hasDeposited_${userKey}`)
     const lastSpin = localStorage.getItem(`lastSpin_${userKey}`)
 
     if (savedBonus) setTotalBonus(parseInt(savedBonus))
     if (savedFriends) setInvitedFriends(parseInt(savedFriends))
-    if (savedDeposit) setHasDeposited(true)
 
     // Vérifier si l'utilisateur peut tourner
     if (lastSpin) {
@@ -64,12 +60,6 @@ export default function Cadeau() {
   // Fonction de spin
   const handleSpin = () => {
     if (!canSpin || spinning || !userData?.numeroTel) return
-
-    // Vérifier si c'est le premier spin et si un dépôt est requis
-    if (totalBonus > 0 && !hasDeposited) {
-      setShowDepositModal(true)
-      return
-    }
 
     setSpinning(true)
     
@@ -243,9 +233,7 @@ export default function Cadeau() {
           </div>
           
           <p className="text-sm text-blue-200 mb-4">
-            Chaque ami invité vous donne un tour supplémentaire gratuit ! 
-            <br />
-            <span className="text-yellow-300 font-bold">Il faut 60 amis pour atteindre 5000 XAF.</span>
+            Chaque ami invité vous donne un tour supplémentaire gratuit !
           </p>
           
           <button
@@ -257,47 +245,7 @@ export default function Cadeau() {
           </button>
         </div>
 
-        {/* Règles du jeu */}
-        <div className="bg-black/20 rounded-xl p-4">
-          <h3 className="text-lg font-bold mb-3 text-yellow-300">📋 Règles du jeu</h3>
-          <ul className="text-sm space-y-2 text-gray-300">
-            <li>• Tournez la roue une fois toutes les 24h</li>
-            <li>• Bonus aléatoire entre 4800 et 4998 XAF par tour</li>
-            <li>• Invitez des amis pour débloquer des tours supplémentaires</li>
-            <li>• Atteignez 5000 XAF pour pouvoir retirer vos gains</li>
-            <li>• Un dépôt est requis après le premier tour pour continuer</li>
-          </ul>
-        </div>
       </div>
-
-      {/* Modal de dépôt */}
-      {showDepositModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-xl p-6 max-w-sm w-full">
-            <h3 className="text-xl font-bold mb-4 text-yellow-300">💰 Dépôt requis</h3>
-            <p className="text-gray-300 mb-6">
-              Pour continuer à jouer, vous devez effectuer un dépôt après votre premier tour.
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => {
-                  setShowDepositModal(false)
-                  router.push('/recharge')
-                }}
-                className="flex-1 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700"
-              >
-                Faire un dépôt
-              </button>
-              <button
-                onClick={() => setShowDepositModal(false)}
-                className="flex-1 py-3 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700"
-              >
-                Plus tard
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
