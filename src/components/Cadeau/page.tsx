@@ -16,9 +16,9 @@ export default function Cadeau() {
   const [invitedFriends, setInvitedFriends] = useState(0)
   const [eventTimeLeft, setEventTimeLeft] = useState('2d 00:00:00')
 
-  // Charger les données utilisateur
+  // Charger les données utilisateur et vérifier les nouveaux filleuls
   useEffect(() => {
-    if (!userData?.numeroTel) return
+    if (!userData?.numeroTel || !userData?.referralCode) return
 
     const userKey = userData.numeroTel
     const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
@@ -27,6 +27,9 @@ export default function Cadeau() {
 
     if (savedBonus) setTotalBonus(parseInt(savedBonus))
     if (savedFriends) setInvitedFriends(parseInt(savedFriends))
+
+    // Vérifier les nouveaux filleuls depuis Firebase
+    checkForNewReferrals()
 
     // Vérifier si l'utilisateur peut tourner
     if (lastSpin) {
@@ -41,6 +44,41 @@ export default function Cadeau() {
       }
     }
   }, [userData])
+
+  // Vérifier s'il y a de nouveaux filleuls
+  const checkForNewReferrals = async () => {
+    if (!userData?.referralCode || !userData?.numeroTel) return
+
+    try {
+      // Importer la fonction getReferrals
+      const { getReferrals } = await import('@/lib/firebaseAuth')
+      const referrals = await getReferrals(userData.referralCode)
+      const currentReferralCount = referrals.length
+
+      const userKey = userData.numeroTel
+      const savedCount = localStorage.getItem(`referralCount_${userKey}`)
+      const lastKnownCount = savedCount ? parseInt(savedCount) : 0
+
+      // Si il y a de nouveaux filleuls, débloquer des tours
+      if (currentReferralCount > lastKnownCount) {
+        const newReferrals = currentReferralCount - lastKnownCount
+        
+        // Mettre à jour le compteur d'amis invités
+        setInvitedFriends(currentReferralCount)
+        localStorage.setItem(`invitedFriends_${userKey}`, currentReferralCount.toString())
+        localStorage.setItem(`referralCount_${userKey}`, currentReferralCount.toString())
+
+        // Débloquer un tour pour chaque nouvel ami (jusqu'à 60 max)
+        if (currentReferralCount <= 60) {
+          setCanSpin(true)
+          setTimeLeft('')
+          localStorage.removeItem(`lastSpin_${userKey}`)
+        }
+      }
+    } catch (error) {
+      console.error('Erreur vérification filleuls:', error)
+    }
+  }
 
   // Mettre à jour le compte à rebours
   const updateTimeLeft = (timeRemaining: number) => {
@@ -67,9 +105,15 @@ export default function Cadeau() {
     setTimeout(() => {
       const userKey = userData.numeroTel
       
-      // Générer un bonus aléatoire entre 4800 et 4998 XAF
-      const bonus = Math.floor(Math.random() * (4998 - 4800 + 1)) + 4800
-      const newTotal = totalBonus + bonus
+      // Calculer le bonus basé sur le nombre d'amis invités (max 60 amis = 5000 XAF)
+      // Chaque ami donne environ 83.33 XAF (5000/60)
+      const bonusPerFriend = Math.floor(5000 / 60) // ~83 XAF par ami
+      const randomBonus = Math.floor(Math.random() * 20) - 10 // Variation de ±10 XAF
+      const calculatedBonus = Math.min(bonusPerFriend + randomBonus, 5000 - totalBonus)
+      
+      // S'assurer que le bonus est au moins de 50 XAF et au max ce qui reste pour atteindre 5000
+      const bonus = Math.max(50, calculatedBonus)
+      const newTotal = Math.min(totalBonus + bonus, 5000)
       
       setSpinResult(bonus)
       setTotalBonus(newTotal)
@@ -80,8 +124,10 @@ export default function Cadeau() {
       localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
       localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
 
-      // Démarrer le cooldown de 24h
-      updateTimeLeft(24 * 60 * 60 * 1000)
+      // Démarrer le cooldown de 24h seulement si l'utilisateur n'a pas assez d'amis
+      if (invitedFriends < 60) {
+        updateTimeLeft(24 * 60 * 60 * 1000)
+      }
     }, 3000)
   }
 
@@ -103,19 +149,9 @@ export default function Cadeau() {
     }
   }
 
-  // Fonction pour débloquer un tour via invitation
-  const unlockSpinWithInvite = () => {
-    if (!userData?.numeroTel) return
-
-    const userKey = userData.numeroTel
-    const newFriendsCount = invitedFriends + 1
-    
-    setInvitedFriends(newFriendsCount)
-    setCanSpin(true)
-    setTimeLeft('')
-    
-    localStorage.setItem(`invitedFriends_${userKey}`, newFriendsCount.toString())
-    localStorage.removeItem(`lastSpin_${userKey}`)
+  // Fonction pour forcer la vérification des nouveaux filleuls
+  const forceCheckReferrals = async () => {
+    await checkForNewReferrals()
   }
 
   // Calculer le progrès vers 5000 XAF
@@ -234,15 +270,26 @@ export default function Cadeau() {
           
           <p className="text-sm text-blue-200 mb-4">
             Chaque ami invité vous donne un tour supplémentaire gratuit !
+            <br />
+            <span className="text-yellow-300 font-bold">Il faut 60 amis pour atteindre 5000 XAF.</span>
           </p>
           
-          <button
-            onClick={handleInviteFriends}
-            className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold hover:from-blue-600 hover:to-purple-700 transition-all"
-          >
-            <Share2 className="inline mr-2" size={18} />
-            Partager mon lien d'invitation
-          </button>
+          <div className="space-y-2">
+            <button
+              onClick={handleInviteFriends}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold hover:from-blue-600 hover:to-purple-700 transition-all"
+            >
+              <Share2 className="inline mr-2" size={18} />
+              Partager mon lien d'invitation
+            </button>
+            
+            <button
+              onClick={forceCheckReferrals}
+              className="w-full py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-bold hover:from-green-600 hover:to-green-700 transition-all text-sm"
+            >
+              🔄 Vérifier nouveaux amis
+            </button>
+          </div>
         </div>
 
       </div>
