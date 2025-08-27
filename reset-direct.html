@@ -101,7 +101,7 @@
         <ol>
             <li>Copiez le code JavaScript ci-dessous</li>
             <li>Allez sur votre site : <strong>https://axml-global.vercel.app</strong></li>
-            <li>Ouvrez la console du navigateur (F12)</li>
+            <li>Ouvrez la console du navigateur (Cmd+Option+I ou clic droit → Inspecter → Console)</li>
             <li>Collez et exécutez le code</li>
         </ol>
 
@@ -142,8 +142,8 @@ userPhones.forEach(phone => {
     console.log(`✅ Réinitialisé: ${phone} -> 1000 XOF`);
 });
 
-console.log('✅ Réinitialisation terminée ! Actualisez la page (F5)');
-alert('✅ Réinitialisation terminée ! Actualisez la page (F5)');
+console.log('✅ Réinitialisation terminée ! Actualisez la page (Cmd+R)');
+alert('✅ Réinitialisation terminée ! Actualisez la page (Cmd+R)');
         </div>
 
         <button onclick="copyCode()">📋 Copier le Code</button>
@@ -192,11 +192,11 @@ userPhones.forEach(phone => {
     console.log(\`✅ Réinitialisé: \${phone} -> 1000 XOF\`);
 });
 
-console.log('✅ Réinitialisation terminée ! Actualisez la page (F5)');
-alert('✅ Réinitialisation terminée ! Actualisez la page (F5)');`;
+console.log('✅ Réinitialisation terminée ! Actualisez la page (Cmd+R)');
+alert('✅ Réinitialisation terminée ! Actualisez la page (Cmd+R)');`;
 
             navigator.clipboard.writeText(code).then(() => {
-                document.getElementById('status').innerHTML = '<div class="success">📋 Code copié ! Maintenant allez sur votre site et ouvrez la console (F12)</div>';
+                document.getElementById('status').innerHTML = '<div class="success">📋 Code copié ! Maintenant allez sur votre site et ouvrez la console (Cmd+Option+I)</div>';
             }).catch(() => {
                 document.getElementById('status').innerHTML = '<div class="error">❌ Erreur de copie. Sélectionnez et copiez manuellement le code ci-dessus.</div>';
             });
