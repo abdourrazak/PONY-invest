@@ -4,7 +4,7 @@ import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Bell, CreditCard, Info, Users, LogOut, ArrowLeftRight, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Bell, CreditCard, Info, Users, LogOut, Gift, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { useAuth } from '@/contexts/AuthContext'
@@ -26,7 +26,7 @@ const services = [
   { icon: Info, title: 'À propos', color: 'bg-green-500', href: '/propos' },
   { icon: Users, title: 'Équipe', color: 'bg-blue-500', href: '/equipe' },
   { icon: LogOut, title: 'Retrait', color: 'bg-yellow-500', href: '/retrait' },
-  { icon: ArrowLeftRight, title: 'Échanger', color: 'bg-pink-500' },
+  { icon: Gift, title: 'Cadeau', color: 'bg-gradient-to-r from-pink-500 to-purple-600', special: 'gift' },
   { icon: Smartphone, title: 'Mon Adoption', color: 'bg-green-600', href: '/adoption' },
   { icon: CheckCircle, title: 'Check-in Quotidien', color: 'bg-cyan-500', href: '/check-Quotidien' },
   { icon: Headphones, title: 'Support', color: 'bg-red-500', href: '/support' }
@@ -213,10 +213,16 @@ export default function Accueil() {
             const IconComponent = service.icon
             const ServiceContent = (
               <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-1 sm:p-2 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[95px] sm:h-[85px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
-                <div className={`${service.color} p-2.5 sm:p-3 rounded-lg sm:rounded-xl mb-0.5 sm:mb-1 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl`}>
-                  <IconComponent size={24} className="text-white drop-shadow-sm sm:w-8 sm:h-8" />
+                <div className={`${service.color} p-2.5 sm:p-3 rounded-lg sm:rounded-xl mb-0.5 sm:mb-1 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl ${
+                  service.special === 'gift' ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50' : ''
+                }`}>
+                  <IconComponent size={24} className={`text-white drop-shadow-sm sm:w-8 sm:h-8 ${
+                    service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
+                  }`} />
                 </div>
-                <span className="text-[11px] sm:text-[13px] text-gray-800 text-center font-bold leading-tight">
+                <span className={`text-[11px] sm:text-[13px] text-gray-800 text-center font-bold leading-tight ${
+                  service.special === 'gift' ? 'text-pink-600 animate-pulse' : ''
+                }`}>
                   {service.title}
                 </span>
               </div>
