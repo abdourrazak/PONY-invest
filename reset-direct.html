@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation Directe - AXML</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+        .warning h3 {
+            margin: 0 0 10px 0;
+            color: #d63031;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Réinitialisation Directe</h1>
+        
+        <div class="warning">
+            <h3>⚠️ SOLUTION DIRECTE</h3>
+            <p>L'outil précédent ne fonctionne pas car le localStorage est isolé par domaine.</p>
+            <p><strong>Cette page doit être ouverte depuis votre site web directement.</strong></p>
+        </div>
+
+        <p><strong>📋 Instructions :</strong></p>
+        <ol>
+            <li>Copiez le code JavaScript ci-dessous</li>
+            <li>Allez sur votre site : <strong>https://axml-global.vercel.app</strong></li>
+            <li>Ouvrez la console du navigateur (F12)</li>
+            <li>Collez et exécutez le code</li>
+        </ol>
+
+        <div class="code-block">
+// SCRIPT DE RÉINITIALISATION DIRECTE
+console.log('🔄 Début de la réinitialisation...');
+
+// Trouver toutes les clés localStorage liées aux utilisateurs
+const keysToRemove = [];
+for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.includes('userFunds_') || key.includes('referralRewards_') || 
+               key.includes('rewardHistory_') || key.includes('forfaitsVipActifs_') ||
+               key.includes('gainsHoraire_') || key.includes('totalDepense_'))) {
+        keysToRemove.push(key);
+    }
+}
+
+console.log(`🗑️ ${keysToRemove.length} clés trouvées à supprimer:`, keysToRemove);
+
+// Supprimer toutes les clés
+keysToRemove.forEach(key => {
+    localStorage.removeItem(key);
+    console.log(`❌ Supprimé: ${key}`);
+});
+
+// Réinitialiser pour tous les utilisateurs connus
+// Remplacez les numéros par vos vrais utilisateurs
+const userPhones = ['693123456', '690987654']; // AJOUTEZ VOS NUMÉROS ICI
+
+userPhones.forEach(phone => {
+    localStorage.setItem(`userFunds_${phone}`, '1000');
+    localStorage.setItem(`referralRewards_${phone}`, '0');
+    localStorage.setItem(`rewardHistory_${phone}`, '[]');
+    localStorage.setItem(`forfaitsVipActifs_${phone}`, '0');
+    localStorage.setItem(`gainsHoraire_${phone}`, '0');
+    localStorage.setItem(`totalDepense_${phone}`, '0');
+    console.log(`✅ Réinitialisé: ${phone} -> 1000 XOF`);
+});
+
+console.log('✅ Réinitialisation terminée ! Actualisez la page (F5)');
+alert('✅ Réinitialisation terminée ! Actualisez la page (F5)');
+        </div>
+
+        <button onclick="copyCode()">📋 Copier le Code</button>
+        <button onclick="window.open('https://axml-global.vercel.app', '_blank')" style="background: linear-gradient(135deg, #00b894 0%, #00a085 100%);">
+            🌐 Ouvrir le Site
+        </button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = `// SCRIPT DE RÉINITIALISATION DIRECTE
+console.log('🔄 Début de la réinitialisation...');
+
+// Trouver toutes les clés localStorage liées aux utilisateurs
+const keysToRemove = [];
+for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.includes('userFunds_') || key.includes('referralRewards_') || 
+               key.includes('rewardHistory_') || key.includes('forfaitsVipActifs_') ||
+               key.includes('gainsHoraire_') || key.includes('totalDepense_'))) {
+        keysToRemove.push(key);
+    }
+}
+
+console.log(\`🗑️ \${keysToRemove.length} clés trouvées à supprimer:\`, keysToRemove);
+
+// Supprimer toutes les clés
+keysToRemove.forEach(key => {
+    localStorage.removeItem(key);
+    console.log(\`❌ Supprimé: \${key}\`);
+});
+
+// Réinitialiser pour tous les utilisateurs connus
+// Remplacez les numéros par vos vrais utilisateurs
+const userPhones = ['693123456', '690987654']; // AJOUTEZ VOS NUMÉROS ICI
+
+userPhones.forEach(phone => {
+    localStorage.setItem(\`userFunds_\${phone}\`, '1000');
+    localStorage.setItem(\`referralRewards_\${phone}\`, '0');
+    localStorage.setItem(\`rewardHistory_\${phone}\`, '[]');
+    localStorage.setItem(\`forfaitsVipActifs_\${phone}\`, '0');
+    localStorage.setItem(\`gainsHoraire_\${phone}\`, '0');
+    localStorage.setItem(\`totalDepense_\${phone}\`, '0');
+    console.log(\`✅ Réinitialisé: \${phone} -> 1000 XOF\`);
+});
+
+console.log('✅ Réinitialisation terminée ! Actualisez la page (F5)');
+alert('✅ Réinitialisation terminée ! Actualisez la page (F5)');`;
+
+            navigator.clipboard.writeText(code).then(() => {
+                document.getElementById('status').innerHTML = '<div class="success">📋 Code copié ! Maintenant allez sur votre site et ouvrez la console (F12)</div>';
+            }).catch(() => {
+                document.getElementById('status').innerHTML = '<div class="error">❌ Erreur de copie. Sélectionnez et copiez manuellement le code ci-dessus.</div>';
+            });
+        }
+    </script>
+</body>
+</html>

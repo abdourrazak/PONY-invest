@@ -262,6 +262,15 @@
                     localStorage.setItem(`totalDepense_${phone}`, '0')
                 })
 
+                // Vérifier que la réinitialisation a fonctionné
+                const verificationResults = []
+                allUsers.forEach((user) => {
+                    const phone = user.numeroTel
+                    const funds = localStorage.getItem(`userFunds_${phone}`)
+                    const rewards = localStorage.getItem(`referralRewards_${phone}`)
+                    verificationResults.push(`${phone}: Solde=${funds}, Récompenses=${rewards}`)
+                })
+
                 statusDiv.innerHTML = `
                     <div class="success">
                         ✅ Réinitialisation terminée !<br>
@@ -269,7 +278,15 @@
                         🗑️ ${keysToRemove.length} clés localStorage supprimées<br>
                         💰 Tous les soldes remis à 1000 XOF<br>
                         🎁 Toutes les récompenses effacées<br><br>
-                        <strong>⚠️ IMPORTANT: Actualisez votre plateforme (F5) pour voir les changements</strong>
+                        
+                        <div style="background:#f8f9fa; padding:10px; border-radius:5px; margin:10px 0; max-height:200px; overflow-y:auto;">
+                            <strong>🔍 Vérification:</strong><br>
+                            ${verificationResults.join('<br>')}
+                        </div>
+                        
+                        <strong>⚠️ PROBLÈME POSSIBLE:</strong><br>
+                        Le localStorage de cet outil (fichier local) est différent du localStorage de votre site web.<br>
+                        <strong>Solution:</strong> Ouvrez votre site et utilisez la console du navigateur pour réinitialiser directement.
                     </div>
                 `
                 
