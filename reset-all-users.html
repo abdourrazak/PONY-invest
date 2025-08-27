@@ -222,10 +222,11 @@
                 statusDiv.innerHTML = '<div class="info">🔄 Réinitialisation en cours...</div>'
 
                 let resetCount = 0
+                
+                // MÉTHODE 1: Réinitialiser pour tous les utilisateurs connus
                 allUsers.forEach((user) => {
                     const phone = user.numeroTel
                     
-                    // Réinitialiser toutes les données localStorage
                     localStorage.setItem(`userFunds_${phone}`, '1000')
                     localStorage.setItem(`referralRewards_${phone}`, '0')
                     localStorage.setItem(`rewardHistory_${phone}`, '[]')
@@ -235,13 +236,40 @@
                     
                     resetCount++
                 })
+                
+                // MÉTHODE 2: Nettoyer TOUT le localStorage (plus radical)
+                const keysToRemove = []
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i)
+                    if (key && (key.includes('userFunds_') || key.includes('referralRewards_') || 
+                               key.includes('rewardHistory_') || key.includes('forfaitsVipActifs_') ||
+                               key.includes('gainsHoraire_') || key.includes('totalDepense_'))) {
+                        keysToRemove.push(key)
+                    }
+                }
+                
+                // Supprimer toutes les clés trouvées
+                keysToRemove.forEach(key => localStorage.removeItem(key))
+                
+                // Recréer avec les valeurs par défaut pour tous les utilisateurs
+                allUsers.forEach((user) => {
+                    const phone = user.numeroTel
+                    localStorage.setItem(`userFunds_${phone}`, '1000')
+                    localStorage.setItem(`referralRewards_${phone}`, '0')
+                    localStorage.setItem(`rewardHistory_${phone}`, '[]')
+                    localStorage.setItem(`forfaitsVipActifs_${phone}`, '0')
+                    localStorage.setItem(`gainsHoraire_${phone}`, '0')
+                    localStorage.setItem(`totalDepense_${phone}`, '0')
+                })
 
                 statusDiv.innerHTML = `
                     <div class="success">
                         ✅ Réinitialisation terminée !<br>
                         📊 ${resetCount} utilisateurs réinitialisés<br>
+                        🗑️ ${keysToRemove.length} clés localStorage supprimées<br>
                         💰 Tous les soldes remis à 1000 XOF<br>
-                        🎁 Toutes les récompenses effacées
+                        🎁 Toutes les récompenses effacées<br><br>
+                        <strong>⚠️ IMPORTANT: Actualisez votre plateforme (F5) pour voir les changements</strong>
                     </div>
                 `
                 
