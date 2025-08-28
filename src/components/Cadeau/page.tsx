@@ -22,7 +22,7 @@ export default function Cadeau() {
 
     const userKey = userData.numeroTel
     const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
-    const savedFriends = localStorage.getItem(`invitedFriends_${userKey}`)
+    const savedFriends = localStorage.getItem(`validReferralCount_${userKey}`)
     const lastSpin = localStorage.getItem(`lastSpin_${userKey}`)
 
     if (savedBonus) setTotalBonus(parseInt(savedBonus))
@@ -45,7 +45,7 @@ export default function Cadeau() {
     }
   }, [userData])
 
-  // Vérifier s'il y a de nouveaux filleuls
+  // Vérifier s'il y a de nouveaux filleuls qui ont fait un dépôt
   const checkForNewReferrals = async () => {
     if (!userData?.referralCode || !userData?.numeroTel) return
 
@@ -53,23 +53,32 @@ export default function Cadeau() {
       // Importer la fonction getReferrals
       const { getReferrals } = await import('@/lib/firebaseAuth')
       const referrals = await getReferrals(userData.referralCode)
-      const currentReferralCount = referrals.length
+      
+      // Compter seulement les filleuls qui ont fait un dépôt de 500 XAF
+      let validReferrals = 0
+      referrals.forEach(referral => {
+        const referralDeposit = localStorage.getItem(`userDeposits_${referral.numeroTel}`)
+        const totalDeposited = referralDeposit ? parseInt(referralDeposit) : 0
+        if (totalDeposited >= 500) {
+          validReferrals++
+        }
+      })
 
       const userKey = userData.numeroTel
-      const savedCount = localStorage.getItem(`referralCount_${userKey}`)
+      const savedCount = localStorage.getItem(`validReferralCount_${userKey}`)
       const lastKnownCount = savedCount ? parseInt(savedCount) : 0
 
-      // Si il y a de nouveaux filleuls, débloquer des tours
-      if (currentReferralCount > lastKnownCount) {
-        const newReferrals = currentReferralCount - lastKnownCount
+      // Si il y a de nouveaux filleuls valides, débloquer des tours
+      if (validReferrals > lastKnownCount) {
+        const newValidReferrals = validReferrals - lastKnownCount
         
-        // Mettre à jour le compteur d'amis invités
-        setInvitedFriends(currentReferralCount)
-        localStorage.setItem(`invitedFriends_${userKey}`, currentReferralCount.toString())
-        localStorage.setItem(`referralCount_${userKey}`, currentReferralCount.toString())
+        // Mettre à jour le compteur d'amis invités (seulement ceux qui ont déposé)
+        setInvitedFriends(validReferrals)
+        localStorage.setItem(`invitedFriends_${userKey}`, validReferrals.toString())
+        localStorage.setItem(`validReferralCount_${userKey}`, validReferrals.toString())
 
-        // Débloquer un tour pour chaque nouvel ami (jusqu'à 60 max)
-        if (currentReferralCount <= 60) {
+        // Débloquer un tour pour chaque nouvel ami valide (jusqu'à 60 max)
+        if (validReferrals <= 60) {
           setCanSpin(true)
           setTimeLeft('')
           localStorage.removeItem(`lastSpin_${userKey}`)
@@ -105,14 +114,19 @@ export default function Cadeau() {
     setTimeout(() => {
       const userKey = userData.numeroTel
       
-      // Calculer le bonus basé sur le nombre d'amis invités (max 60 amis = 5000 XAF)
-      // Chaque ami donne environ 83.33 XAF (5000/60)
-      const bonusPerFriend = Math.floor(5000 / 60) // ~83 XAF par ami
-      const randomBonus = Math.floor(Math.random() * 20) - 10 // Variation de ±10 XAF
-      const calculatedBonus = Math.min(bonusPerFriend + randomBonus, 5000 - totalBonus)
+      // Bonus très faible pour rendre le jeu difficile
+      // Tours quotidiens : 10-25 XAF seulement
+      // Tours via parrainage : 75-85 XAF (pour que 60 amis = ~5000 XAF)
+      let bonus
       
-      // S'assurer que le bonus est au moins de 50 XAF et au max ce qui reste pour atteindre 5000
-      const bonus = Math.max(50, calculatedBonus)
+      if (invitedFriends > 0 && totalBonus < invitedFriends * 83) {
+        // Bonus de parrainage (quand un nouvel ami a fait un dépôt)
+        bonus = Math.floor(Math.random() * 11) + 75 // 75-85 XAF
+      } else {
+        // Bonus quotidien normal (très faible)
+        bonus = Math.floor(Math.random() * 16) + 10 // 10-25 XAF
+      }
+      
       const newTotal = Math.min(totalBonus + bonus, 5000)
       
       setSpinResult(bonus)
@@ -270,8 +284,6 @@ export default function Cadeau() {
           
           <p className="text-sm text-blue-200 mb-4">
             Chaque ami invité vous donne un tour supplémentaire gratuit !
-            <br />
-            <span className="text-yellow-300 font-bold">Il faut 60 amis pour atteindre 5000 XAF.</span>
           </p>
           
           <div className="space-y-2">
