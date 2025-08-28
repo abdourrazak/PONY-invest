@@ -3,10 +3,14 @@ import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function RetraitPage() {
+  const { userData } = useAuth()
+  const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
   const [amount, setAmount] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -14,15 +18,55 @@ export default function RetraitPage() {
   const paymentMethods = [
     {
       name: 'Orange Money',
+      value: 'orange',
       color: 'border-orange-200 bg-orange-50',
       selectedColor: 'border-orange-500 bg-orange-100'
     },
     {
       name: 'MTN Money',
+      value: 'mtn',
       color: 'border-yellow-200 bg-yellow-50',
       selectedColor: 'border-yellow-500 bg-yellow-100'
     }
   ]
+
+  const handleSubmit = () => {
+    if (!amount || !phoneNumber) return
+
+    // Validation du montant minimum
+    const numericAmount = parseFloat(amount)
+    if (numericAmount < 5000) {
+      alert('Le montant minimum de retrait est de 5000 FCFA')
+      return
+    }
+
+    // Créer un nouvel objet de retrait
+    const withdrawalRequest = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      amount: amount,
+      paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
+      phoneNumber: phoneNumber,
+      cryptoAddress: '',
+      status: 'pending' as const,
+      submittedAt: new Date().toISOString(),
+      type: 'withdrawal' as const
+    }
+
+    // Sauvegarder dans localStorage avec le numéro de téléphone de l'utilisateur
+    const userKey = userData?.numeroTel || 'anonymous'
+    const existingWithdrawals = localStorage.getItem(`withdrawals_${userKey}`)
+    const withdrawals = existingWithdrawals ? JSON.parse(existingWithdrawals) : []
+    withdrawals.unshift(withdrawalRequest) // Ajouter au début de la liste
+    localStorage.setItem(`withdrawals_${userKey}`, JSON.stringify(withdrawals))
+
+    // Réinitialiser le formulaire
+    setAmount('')
+    setPhoneNumber('')
+    setSelectedPaymentMethod(0)
+    
+    // Rediriger vers le portefeuille
+    router.push('/portefeuille')
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
@@ -68,7 +112,7 @@ export default function RetraitPage() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Minimum 500 FCFA"
+                placeholder="Minimum 5,000 FCFA"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="w-full px-3 py-3 border-2 border-blue-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:bg-blue-50 bg-white shadow-sm font-medium text-base transition-all duration-300"
@@ -143,7 +187,15 @@ export default function RetraitPage() {
           </div>
 
           {/* Submit Button */}
-          <button className="w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg">
+          <button 
+            onClick={handleSubmit}
+            disabled={!amount || !phoneNumber}
+            className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
+              amount && phoneNumber
+                ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💸</span>
               Soumettre la demande

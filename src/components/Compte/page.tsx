@@ -135,11 +135,6 @@ export default function ComptePage() {
                 💼 Portefeuille
               </button>
             </Link>
-            <Link href="/gestion-retrait">
-              <button className="w-full bg-gradient-to-r from-red-500 to-orange-600 text-white py-4 px-6 rounded-xl font-bold hover:from-red-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-                💸 Demander un retrait
-              </button>
-            </Link>
           </div>
         </div>
 
