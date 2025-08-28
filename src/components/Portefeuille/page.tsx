@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { ArrowLeft, Clock, CheckCircle, XCircle, Eye } from 'lucide-react'
+import { ArrowLeft, Clock, CheckCircle, XCircle, Eye, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -20,6 +20,7 @@ export default function Portefeuille() {
   const { userData } = useAuth()
   const [deposits, setDeposits] = useState<DepositRequest[]>([])
   const [selectedDeposit, setSelectedDeposit] = useState<DepositRequest | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
 
   useEffect(() => {
     if (!userData?.numeroTel) return
@@ -30,6 +31,15 @@ export default function Portefeuille() {
       setDeposits(JSON.parse(savedDeposits))
     }
   }, [userData])
+
+  const deleteDeposit = (depositId: string) => {
+    if (!userData?.numeroTel) return
+
+    const updatedDeposits = deposits.filter(d => d.id !== depositId)
+    setDeposits(updatedDeposits)
+    localStorage.setItem(`deposits_${userData.numeroTel}`, JSON.stringify(updatedDeposits))
+    setShowDeleteConfirm(null)
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -62,7 +72,7 @@ export default function Portefeuille() {
     switch (method) {
       case 'orange': return 'Orange Money'
       case 'mtn': return 'MTN Mobile Money'
-      case 'crypto': return 'Cryptomonnaie'
+      case 'crypto': return 'Cryptomonnaie (USDT)'
       default: return method
     }
   }
@@ -165,15 +175,26 @@ export default function Portefeuille() {
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-gray-600">
                       <div className="font-medium text-gray-700">Bénéficiaire</div>
-                      <div className="truncate max-w-40">{deposit.beneficiaryName}</div>
+                      <div className="truncate max-w-32">{deposit.beneficiaryName}</div>
                     </div>
-                    <button
-                      onClick={() => setSelectedDeposit(deposit)}
-                      className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
-                    >
-                      <Eye size={14} />
-                      <span>Voir détails</span>
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setSelectedDeposit(deposit)}
+                        className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
+                      >
+                        <Eye size={14} />
+                        <span>Détails</span>
+                      </button>
+                      {deposit.status === 'pending' && (
+                        <button
+                          onClick={() => setShowDeleteConfirm(deposit.id)}
+                          className="flex items-center space-x-1 text-red-600 hover:text-red-700 text-xs font-medium"
+                        >
+                          <Trash2 size={14} />
+                          <span>Annuler</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -242,6 +263,37 @@ export default function Portefeuille() {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmation de suppression */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-sm w-full">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 size={24} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">Annuler le dépôt</h3>
+              <p className="text-gray-600 mb-6">
+                Êtes-vous sûr de vouloir annuler cette demande de dépôt ? Cette action est irréversible.
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(null)}
+                  className="flex-1 py-3 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300"
+                >
+                  Garder
+                </button>
+                <button
+                  onClick={() => deleteDeposit(showDeleteConfirm)}
+                  className="flex-1 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
+                >
+                  Annuler
+                </button>
               </div>
             </div>
           </div>

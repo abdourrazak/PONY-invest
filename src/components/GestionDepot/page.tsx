@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
 
@@ -11,6 +12,7 @@ interface GestionDepotProps {
 
 export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotProps) {
   const { userData } = useAuth()
+  const router = useRouter()
   const [amount, setAmount] = useState('')
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -98,13 +100,13 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     deposits.unshift(depositRequest) // Ajouter au début de la liste
     localStorage.setItem(`deposits_${userKey}`, JSON.stringify(deposits))
 
-    // Afficher un message de succès
-    alert('Dépôt soumis avec succès ! Vous pouvez suivre son statut dans votre portefeuille.')
-    
     // Réinitialiser le formulaire
     setAmount('')
     setTransactionImage(null)
     setImagePreview(null)
+    
+    // Rediriger vers le portefeuille
+    router.push('/portefeuille')
   }
 
   return (
