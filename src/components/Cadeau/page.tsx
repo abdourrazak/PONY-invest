@@ -118,8 +118,8 @@ export default function Cadeau() {
       let bonus
       
       if (totalBonus === 0) {
-        // Premier tour : montant de base entre 4850-4945 XAF
-        bonus = Math.floor(Math.random() * 96) + 4850 // 4850-4945 XAF
+        // Premier tour : montant de base entre 4850-4900 XAF
+        bonus = Math.floor(Math.random() * 51) + 4850 // 4850-4900 XAF
       } else if (invitedFriends > 0 && totalBonus < 4850 + (invitedFriends * 6)) {
         // Bonus de parrainage (quand un nouvel ami a fait un dépôt)
         bonus = Math.floor(Math.random() * 6) + 1 // 1-6 XAF
