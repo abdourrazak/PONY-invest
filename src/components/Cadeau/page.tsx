@@ -114,17 +114,17 @@ export default function Cadeau() {
     setTimeout(() => {
       const userKey = userData.numeroTel
       
-      // Bonus très faible pour rendre le jeu difficile
-      // Tours quotidiens : 10-25 XAF seulement
-      // Tours via parrainage : 75-85 XAF (pour que 60 amis = ~5000 XAF)
+      // Bonus extrêmement faible pour progression très lente
+      // Tours quotidiens : 1-5 XAF seulement
+      // Tours via parrainage : 1-6 XAF (progression très difficile)
       let bonus
       
-      if (invitedFriends > 0 && totalBonus < invitedFriends * 83) {
+      if (invitedFriends > 0 && totalBonus < invitedFriends * 6) {
         // Bonus de parrainage (quand un nouvel ami a fait un dépôt)
-        bonus = Math.floor(Math.random() * 11) + 75 // 75-85 XAF
+        bonus = Math.floor(Math.random() * 6) + 1 // 1-6 XAF
       } else {
-        // Bonus quotidien normal (très faible)
-        bonus = Math.floor(Math.random() * 16) + 10 // 10-25 XAF
+        // Bonus quotidien normal (extrêmement faible)
+        bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
       }
       
       const newTotal = Math.min(totalBonus + bonus, 5000)
