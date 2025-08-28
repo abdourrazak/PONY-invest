@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
@@ -9,6 +10,7 @@ interface GestionDepotProps {
 }
 
 export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotProps) {
+  const { userData } = useAuth()
   const [amount, setAmount] = useState('')
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -75,8 +77,34 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   }
 
   const handleSubmit = () => {
-    // Logic for submitting the deposit
-    console.log('Submitting deposit:', { amount, transactionImage })
+    if (!amount || !transactionImage) return
+
+    // Créer un nouvel objet de dépôt
+    const depositRequest = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      amount: amount,
+      paymentMethod: paymentMethod,
+      transactionImage: imagePreview!,
+      status: 'pending' as const,
+      submittedAt: new Date().toISOString(),
+      beneficiaryCode: beneficiaryCode,
+      beneficiaryName: beneficiaryName
+    }
+
+    // Sauvegarder dans localStorage avec le numéro de téléphone de l'utilisateur
+    const userKey = userData?.numeroTel || 'anonymous'
+    const existingDeposits = localStorage.getItem(`deposits_${userKey}`)
+    const deposits = existingDeposits ? JSON.parse(existingDeposits) : []
+    deposits.unshift(depositRequest) // Ajouter au début de la liste
+    localStorage.setItem(`deposits_${userKey}`, JSON.stringify(deposits))
+
+    // Afficher un message de succès
+    alert('Dépôt soumis avec succès ! Vous pouvez suivre son statut dans votre portefeuille.')
+    
+    // Réinitialiser le formulaire
+    setAmount('')
+    setTransactionImage(null)
+    setImagePreview(null)
   }
 
   return (
