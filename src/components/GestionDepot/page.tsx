@@ -81,6 +81,15 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const handleSubmit = () => {
     if (!amount || !transactionImage) return
 
+    // Validation du montant minimum
+    const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
+    const numericAmount = parseFloat(amount)
+    
+    if (numericAmount < minAmount) {
+      alert(`Le montant minimum est de ${minAmount} ${isCrypto ? 'USDT' : 'FCFA'}`)
+      return
+    }
+
     // Créer un nouvel objet de dépôt
     const depositRequest = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -137,12 +146,12 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         {/* Amount Section */}
         <div className="mb-4">
           <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
-            Montant à déposer (FCFA)
+            Montant à déposer ({isCrypto ? 'USDT' : 'FCFA'})
           </label>
           <div className="relative">
             <input
               type="text"
-              placeholder="Minimum 3,000 FCFA"
+              placeholder={isCrypto ? "Minimum 10 USDT" : "Minimum 3,000 FCFA"}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}
