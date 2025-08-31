@@ -1,14 +1,22 @@
+'use client'
 import ComptePage from '../../components/Compte/page'
 import AdminDashboard from '@/components/Admin/Dashboard'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Compte() {
-  // Ajouter un paramètre URL pour accéder au dashboard admin
-  if (typeof window !== 'undefined') {
+  const [showAdmin, setShowAdmin] = useState(false)
+
+  useEffect(() => {
+    // Vérifier le paramètre URL côté client
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('admin') === 'true') {
-      return <AdminDashboard />
+      setShowAdmin(true)
     }
+  }, [])
+
+  // Si le paramètre admin=true est présent, afficher le dashboard admin
+  if (showAdmin) {
+    return <AdminDashboard />
   }
   
   return <ComptePage />
