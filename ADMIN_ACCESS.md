@@ -26,7 +26,7 @@ Pour accéder à l'interface admin, un utilisateur doit avoir le rôle `admin` d
 ```json
 {
   "uid": "...",
-  "numeroTel": "+225XXXXXXXXXX",
+  "numeroTel": "+237697058617",
   "referralCode": "...",
   "createdAt": "...",
   "role": "admin",  // ← Champ requis pour l'accès admin

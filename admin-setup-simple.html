@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Admin Simple - AXML Global</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .step {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .step h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .step p {
+            color: #666;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .code {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Configuration Admin AXML - Guide Manuel</h1>
+        
+        <div class="step">
+            <h2>📱 Étape 1: Créer un compte utilisateur</h2>
+            <p>Allez sur votre application et créez un compte normal avec votre numéro +237.</p>
+            <a href="http://localhost:3000" class="button" target="_blank">Ouvrir l'Application</a>
+            <div class="highlight">
+                <strong>Important:</strong> Utilisez votre vrai numéro de téléphone au format +237XXXXXXXXXX
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>🔥 Étape 2: Configurer le rôle admin dans Firebase</h2>
+            <p>1. Ouvrez la console Firebase :</p>
+            <a href="https://console.firebase.google.com/project/globalplatform-2e94c/firestore" class="button" target="_blank">
+                Ouvrir Firebase Console
+            </a>
+            
+            <p>2. Dans Firestore Database :</p>
+            <ul style="margin-left: 20px; color: #666;">
+                <li>Cliquez sur la collection <strong>"users"</strong></li>
+                <li>Trouvez votre utilisateur (par numéro de téléphone)</li>
+                <li>Cliquez sur le document</li>
+                <li>Cliquez sur "Ajouter un champ"</li>
+                <li>Nom du champ: <code>role</code></li>
+                <li>Type: <code>string</code></li>
+                <li>Valeur: <code>admin</code></li>
+                <li>Cliquez "Mettre à jour"</li>
+            </ul>
+            
+            <div class="code">
+                Champ à ajouter :<br>
+                role: "admin"
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>🎯 Étape 3: Tester l'interface admin</h2>
+            <p>Une fois le rôle admin configuré, testez l'accès :</p>
+            <a href="http://localhost:3000/admin-x7k9m2p4" class="button" target="_blank">
+                Accéder au Dashboard Admin
+            </a>
+            <div class="highlight">
+                <strong>Note:</strong> Vous devez être connecté avec le compte qui a le rôle admin
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>💰 Étape 4: Tester le workflow complet</h2>
+            <p>1. Créez un dépôt test :</p>
+            <a href="http://localhost:3000/gestion-depot" class="button" target="_blank">Page Dépôt</a>
+            
+            <p>2. Validez depuis l'admin :</p>
+            <a href="http://localhost:3000/admin-x7k9m2p4" class="button" target="_blank">Dashboard Admin</a>
+            
+            <p>3. Vérifiez la mise à jour :</p>
+            <a href="http://localhost:3000/portefeuille" class="button" target="_blank">Portefeuille</a>
+        </div>
+
+        <div class="success">
+            <h3>✅ Workflow de test complet</h3>
+            <p><strong>1.</strong> Inscription → <strong>2.</strong> Rôle admin → <strong>3.</strong> Dépôt test → <strong>4.</strong> Validation admin → <strong>5.</strong> Solde mis à jour</p>
+        </div>
+
+        <div class="step">
+            <h2>🚀 URLs importantes</h2>
+            <div class="code">
+                Application: http://localhost:3000<br>
+                Admin Dashboard: http://localhost:3000/admin-x7k9m2p4<br>
+                Firebase Console: https://console.firebase.google.com/project/globalplatform-2e94c
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Auto Admin - AXML</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .step.processing {
+            border-left-color: #ffc107;
+        }
+        .step.completed {
+            border-left-color: #28a745;
+        }
+        .step.error {
+            border-left-color: #dc3545;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Configuration Automatique Admin</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Configuration complète pour le numéro +237697058617
+        </p>
+
+        <div id="step1" class="step">
+            <h3>📱 Étape 1: Connexion utilisateur</h3>
+            <p>Connexion avec le compte +237697058617...</p>
+        </div>
+
+        <div id="step2" class="step">
+            <h3>👑 Étape 2: Attribution rôle admin</h3>
+            <p>Configuration du rôle administrateur...</p>
+        </div>
+
+        <div id="step3" class="step">
+            <h3>💰 Étape 3: Création transactions test</h3>
+            <p>Création d'un dépôt et retrait test...</p>
+        </div>
+
+        <div id="step4" class="step">
+            <h3>✅ Étape 4: Validation finale</h3>
+            <p>Vérification de l'accès admin...</p>
+        </div>
+
+        <button id="startBtn" onclick="startAutoConfig()">
+            Démarrer la configuration automatique
+        </button>
+
+        <div id="status"></div>
+
+        <div id="links" style="display: none;">
+            <div class="success">
+                <h3>🎉 Configuration terminée!</h3>
+                <p><strong>Compte admin configuré:</strong> +237697058617</p>
+                <p><strong>Transactions test créées:</strong> 1 dépôt + 1 retrait</p>
+            </div>
+            <button onclick="window.open('/admin-x7k9m2p4', '_blank')">
+                🛡️ Accéder au Dashboard Admin
+            </button>
+            <button onclick="window.open('/portefeuille', '_blank')">
+                💼 Voir le Portefeuille
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc,
+            updateDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Configuration Firebase - remplacez par vos vraies clés
+        const firebaseConfig = {
+            apiKey: "AIzaSyBu6rVHqvKNa7XzXEqLXRa8sMVvIGDfbfE",
+            authDomain: "globalplatform-2e94c.firebaseapp.com",
+            projectId: "globalplatform-2e94c",
+            storageBucket: "globalplatform-2e94c.firebasestorage.app",
+            messagingSenderId: "1025930623059",
+            appId: "1:1025930623059:web:8e2e8e8e8e8e8e8e8e8e8e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function updateStep(stepId, status, message) {
+            const step = document.getElementById(stepId);
+            step.className = `step ${status}`;
+            if (message) {
+                step.querySelector('p').textContent = message;
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = type;
+            statusEl.innerHTML = message;
+        }
+
+        function generateReferralCode() {
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return `AXML${timestamp}${random}`.toUpperCase();
+        }
+
+        window.startAutoConfig = async function() {
+            const btn = document.getElementById('startBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading"></div>Configuration en cours...';
+
+            try {
+                const phone = '+237697058617';
+                const email = '697058617@axml.local';
+                const password = '697058617';
+
+                // Étape 1: Connexion
+                updateStep('step1', 'processing', 'Connexion en cours...');
+                let user;
+                
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    user = userCredential.user;
+                    updateStep('step1', 'completed', 'Connexion réussie!');
+                } catch (error) {
+                    if (error.code === 'auth/user-not-found') {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        user = userCredential.user;
+                        updateStep('step1', 'completed', 'Compte créé et connecté!');
+                    } else {
+                        throw error;
+                    }
+                }
+
+                // Étape 2: Configuration admin
+                updateStep('step2', 'processing', 'Attribution du rôle admin...');
+                
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (!userDoc.exists()) {
+                    await setDoc(doc(db, 'users', user.uid), {
+                        uid: user.uid,
+                        numeroTel: phone,
+                        referralCode: generateReferralCode(),
+                        createdAt: serverTimestamp(),
+                        role: 'admin',
+                        balance: 0
+                    });
+                } else {
+                    await updateDoc(doc(db, 'users', user.uid), {
+                        role: 'admin',
+                        balance: 0,
+                        updatedAt: serverTimestamp()
+                    });
+                }
+                
+                updateStep('step2', 'completed', 'Rôle admin configuré!');
+
+                // Étape 3: Transactions test
+                updateStep('step3', 'processing', 'Création des transactions test...');
+                
+                // Dépôt test
+                const depositId = `test_deposit_${Date.now()}`;
+                await setDoc(doc(db, 'transactions', depositId), {
+                    id: depositId,
+                    userId: user.uid,
+                    userPhone: phone,
+                    type: 'deposit',
+                    amount: 25000,
+                    paymentMethod: 'orange',
+                    status: 'pending',
+                    beneficiaryName: 'Admin Test',
+                    beneficiaryCode: 'ADMIN123',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+
+                // Retrait test
+                const withdrawalId = `test_withdrawal_${Date.now()}`;
+                await setDoc(doc(db, 'transactions', withdrawalId), {
+                    id: withdrawalId,
+                    userId: user.uid,
+                    userPhone: phone,
+                    type: 'withdrawal',
+                    amount: 5000,
+                    paymentMethod: 'mtn',
+                    status: 'pending',
+                    beneficiaryName: 'Admin Test Retrait',
+                    beneficiaryCode: 'WITHDRAW123',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+
+                updateStep('step3', 'completed', 'Transactions test créées!');
+
+                // Étape 4: Validation
+                updateStep('step4', 'processing', 'Validation finale...');
+                
+                // Vérifier l'accès admin
+                const updatedUserDoc = await getDoc(doc(db, 'users', user.uid));
+                const userData = updatedUserDoc.data();
+                
+                if (userData.role === 'admin') {
+                    updateStep('step4', 'completed', 'Accès admin validé!');
+                    showStatus('🎉 Configuration terminée avec succès!', 'success');
+                    document.getElementById('links').style.display = 'block';
+                } else {
+                    throw new Error('Échec de la validation du rôle admin');
+                }
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showStatus(`❌ Erreur: ${error.message}`, 'error');
+                updateStep('step1', 'error', 'Erreur lors de la configuration');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Recommencer la configuration';
+            }
+        };
+    </script>
+</body>
+</html>
