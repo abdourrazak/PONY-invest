@@ -470,10 +470,10 @@ export default function AdminDashboard() {
                         <span className="font-medium">{selectedTransaction.beneficiaryName}</span>
                       </div>
                     )}
-                    {selectedTransaction.beneficiaryCode && (
+                    {selectedTransaction.beneficiaryName && (
                       <div className="bg-green-50 rounded-lg p-3">
                         <span className="text-gray-600 block text-xs mb-1">Code bénéficiaire:</span>
-                        <span className="font-medium">{selectedTransaction.beneficiaryCode}</span>
+                        <span className="font-medium">{selectedTransaction.beneficiaryName}</span>
                       </div>
                     )}
                   </div>

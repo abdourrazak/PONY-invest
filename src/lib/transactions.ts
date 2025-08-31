@@ -487,3 +487,5 @@ export async function initializeUser(
     console.error('Erreur lors de l\'initialisation de l\'utilisateur:', error);
   }
 }
+export type { Transaction };
+
