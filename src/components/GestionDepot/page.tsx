@@ -5,17 +5,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
+import { createTransaction } from '@/lib/transactions'
+import { CreateTransactionData } from '@/types/transactions'
 
 interface GestionDepotProps {
   paymentMethod?: 'orange' | 'mtn' | 'crypto'
 }
 
 export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotProps) {
-  const { userData } = useAuth()
+  const { currentUser, userData } = useAuth()
   const router = useRouter()
   const [amount, setAmount] = useState('')
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const isOrange = paymentMethod === 'orange'
   const isMTN = paymentMethod === 'mtn'
@@ -78,8 +81,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     navigator.clipboard.writeText(text)
   }
 
-  const handleSubmit = () => {
-    if (!amount || !transactionImage) return
+  const handleSubmit = async () => {
+    if (!amount || !transactionImage || !currentUser || !userData) return
 
     // Validation du montant minimum
     const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
@@ -90,32 +93,65 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       return
     }
 
-    // Créer un nouvel objet de dépôt
-    const depositRequest = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      amount: amount,
-      paymentMethod: paymentMethod,
-      transactionImage: imagePreview!,
-      status: 'pending' as const,
-      submittedAt: new Date().toISOString(),
-      beneficiaryCode: beneficiaryCode,
-      beneficiaryName: beneficiaryName
+    setLoading(true)
+
+    try {
+      // Convertir l'image en base64 pour stockage
+      const reader = new FileReader()
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string
+
+        // Créer la transaction dans Firestore
+        const transactionData: CreateTransactionData = {
+          type: 'deposit',
+          amount: numericAmount,
+          paymentMethod: paymentMethod as 'orange' | 'mtn' | 'crypto',
+          phoneNumber: userData.numeroTel,
+          proofImage: base64Image,
+          beneficiaryCode: beneficiaryCode,
+          beneficiaryName: beneficiaryName
+        }
+
+        await createTransaction(
+          currentUser.uid,
+          userData.numeroTel,
+          transactionData
+        )
+
+        // Optionnel: garder une copie locale pour affichage immédiat
+        const depositRequest = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          amount: amount,
+          paymentMethod: paymentMethod,
+          transactionImage: base64Image,
+          status: 'pending' as const,
+          submittedAt: new Date().toISOString(),
+          beneficiaryCode: beneficiaryCode,
+          beneficiaryName: beneficiaryName
+        }
+
+        const userKey = userData.numeroTel
+        const existingDeposits = localStorage.getItem(`deposits_${userKey}`)
+        const deposits = existingDeposits ? JSON.parse(existingDeposits) : []
+        deposits.unshift(depositRequest)
+        localStorage.setItem(`deposits_${userKey}`, JSON.stringify(deposits))
+
+        // Réinitialiser le formulaire
+        setAmount('')
+        setTransactionImage(null)
+        setImagePreview(null)
+        
+        // Rediriger vers le portefeuille
+        router.push('/portefeuille')
+      }
+      
+      reader.readAsDataURL(transactionImage)
+    } catch (error) {
+      console.error('Erreur lors de la soumission du dépôt:', error)
+      alert('Une erreur est survenue lors de la soumission du dépôt')
+    } finally {
+      setLoading(false)
     }
-
-    // Sauvegarder dans localStorage avec le numéro de téléphone de l'utilisateur
-    const userKey = userData?.numeroTel || 'anonymous'
-    const existingDeposits = localStorage.getItem(`deposits_${userKey}`)
-    const deposits = existingDeposits ? JSON.parse(existingDeposits) : []
-    deposits.unshift(depositRequest) // Ajouter au début de la liste
-    localStorage.setItem(`deposits_${userKey}`, JSON.stringify(deposits))
-
-    // Réinitialiser le formulaire
-    setAmount('')
-    setTransactionImage(null)
-    setImagePreview(null)
-    
-    // Rediriger vers le portefeuille
-    router.push('/portefeuille')
   }
 
   return (
@@ -232,9 +268,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={!amount || !transactionImage}
+          disabled={!amount || !transactionImage || loading}
           className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-            amount && transactionImage
+            amount && transactionImage && !loading
               ? isOrange 
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
                 : isMTN
@@ -244,8 +280,20 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           }`}
         >
           <div className="flex items-center justify-center">
-            <span className="text-lg mr-2">📤</span>
-            Soumettre le dépôt
+            {loading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Traitement en cours...
+              </>
+            ) : (
+              <>
+                <span className="text-lg mr-2">📤</span>
+                Soumettre le dépôt
+              </>
+            )}
           </div>
         </button>
 

@@ -2,18 +2,22 @@
 import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
+import { CreateTransactionData } from '@/types/transactions'
 
 export default function RetraitPage() {
-  const { userData } = useAuth()
+  const { currentUser, userData } = useAuth()
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
   const [amount, setAmount] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [balance, setBalance] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const paymentMethods = [
     {
@@ -30,8 +34,20 @@ export default function RetraitPage() {
     }
   ]
 
-  const handleSubmit = () => {
-    if (!amount || !phoneNumber) return
+  // Charger le solde de l'utilisateur
+  useEffect(() => {
+    if (currentUser) {
+      // S'abonner aux changements de solde en temps réel
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        setBalance(newBalance)
+      })
+
+      return () => unsubscribe()
+    }
+  }, [currentUser])
+
+  const handleSubmit = async () => {
+    if (!amount || !phoneNumber || !currentUser || !userData) return
 
     // Validation du montant minimum
     const numericAmount = parseFloat(amount)
@@ -40,32 +56,62 @@ export default function RetraitPage() {
       return
     }
 
-    // Créer un nouvel objet de retrait
-    const withdrawalRequest = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      amount: amount,
-      paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
-      phoneNumber: phoneNumber,
-      cryptoAddress: '',
-      status: 'pending' as const,
-      submittedAt: new Date().toISOString(),
-      type: 'withdrawal' as const
+    // Vérifier le solde
+    if (numericAmount > balance) {
+      alert('Solde insuffisant pour effectuer ce retrait')
+      return
     }
 
-    // Sauvegarder dans localStorage avec le numéro de téléphone de l'utilisateur
-    const userKey = userData?.numeroTel || 'anonymous'
-    const existingWithdrawals = localStorage.getItem(`withdrawals_${userKey}`)
-    const withdrawals = existingWithdrawals ? JSON.parse(existingWithdrawals) : []
-    withdrawals.unshift(withdrawalRequest) // Ajouter au début de la liste
-    localStorage.setItem(`withdrawals_${userKey}`, JSON.stringify(withdrawals))
+    setLoading(true)
 
-    // Réinitialiser le formulaire
-    setAmount('')
-    setPhoneNumber('')
-    setSelectedPaymentMethod(0)
-    
-    // Rediriger vers le portefeuille
-    router.push('/portefeuille')
+    try {
+      // Créer la transaction dans Firestore
+      const transactionData: CreateTransactionData = {
+        type: 'withdrawal',
+        amount: numericAmount,
+        paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
+        phoneNumber: phoneNumber
+      }
+
+      await createTransaction(
+        currentUser.uid,
+        userData.numeroTel,
+        transactionData
+      )
+
+      // Optionnel: garder une copie locale pour affichage immédiat
+      const withdrawalRequest = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        amount: amount,
+        paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
+        phoneNumber: phoneNumber,
+        cryptoAddress: '',
+        status: 'pending' as const,
+        submittedAt: new Date().toISOString(),
+        type: 'withdrawal' as const
+      }
+
+      const userKey = userData?.numeroTel || 'anonymous'
+      const existingWithdrawals = localStorage.getItem(`withdrawals_${userKey}`)
+      const withdrawals = existingWithdrawals ? JSON.parse(existingWithdrawals) : []
+      withdrawals.unshift(withdrawalRequest)
+      localStorage.setItem(`withdrawals_${userKey}`, JSON.stringify(withdrawals))
+
+      // Réinitialiser le formulaire
+      setAmount('')
+      setPhoneNumber('')
+      setSelectedPaymentMethod(0)
+      
+      alert('Demande de retrait soumise avec succès!')
+      
+      // Rediriger vers le portefeuille
+      router.push('/portefeuille')
+    } catch (error) {
+      console.error('Erreur lors de la soumission du retrait:', error)
+      alert('Erreur lors de la soumission du retrait. Veuillez réessayer.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -95,7 +141,7 @@ export default function RetraitPage() {
           <div className="bg-gradient-to-r from-blue-100 to-green-100 px-4 py-2 rounded-xl inline-block shadow-sm border border-white/50">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-gray-800 font-bold text-sm">Solde: 0 FCFA</span>
+              <span className="text-gray-800 font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
             </div>
           </div>
         </div>
@@ -175,7 +221,7 @@ export default function RetraitPage() {
           {/* Phone Number Input */}
           <div className="mb-6">
             <label className="block text-gray-800 font-black text-sm mb-2">
-              📞 Numéro de réception
+              📞 Numéro du destinataire
             </label>
             <input
               type="text"
@@ -189,16 +235,25 @@ export default function RetraitPage() {
           {/* Submit Button */}
           <button 
             onClick={handleSubmit}
-            disabled={!amount || !phoneNumber}
+            disabled={!amount || !phoneNumber || loading}
             className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-              amount && phoneNumber
+              amount && phoneNumber && !loading
                 ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
             <div className="flex items-center justify-center">
-              <span className="text-lg mr-2">💸</span>
-              Soumettre la demande
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                  Traitement...
+                </>
+              ) : (
+                <>
+                  <span className="text-lg mr-2">💸</span>
+                  Soumettre la demande
+                </>
+              )}
             </div>
           </button>
         </div>

@@ -4,53 +4,115 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { subscribeToUserTransactions, subscribeToUserBalance } from '@/lib/transactions'
+import { Transaction } from '@/types/transactions'
 
-interface DepositRequest {
+// Types locaux pour compatibilité avec l'ancien code
+interface LocalTransaction {
   id: string
-  amount: string
+  amount: string | number
   paymentMethod: 'orange' | 'mtn' | 'crypto'
-  transactionImage: string
-  status: 'pending' | 'approved' | 'rejected'
+  transactionImage?: string
+  proofImage?: string
+  status: 'pending' | 'approved' | 'rejected' | 'success'
   submittedAt: string
-  beneficiaryCode: string
-  beneficiaryName: string
-}
-
-interface WithdrawalRequest {
-  id: string
-  amount: string
-  paymentMethod: 'orange' | 'mtn' | 'crypto'
-  phoneNumber: string
-  cryptoAddress: string
-  status: 'pending' | 'approved' | 'rejected'
-  submittedAt: string
-  type: 'withdrawal'
+  beneficiaryCode?: string
+  beneficiaryName?: string
+  phoneNumber?: string
+  cryptoAddress?: string
+  type?: 'deposit' | 'withdrawal'
 }
 
 export default function Portefeuille() {
-  const { userData } = useAuth()
-  const [deposits, setDeposits] = useState<DepositRequest[]>([])
-  const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([])
-  const [selectedDeposit, setSelectedDeposit] = useState<DepositRequest | null>(null)
-  const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawalRequest | null>(null)
+  const { currentUser, userData } = useAuth()
+  const [deposits, setDeposits] = useState<LocalTransaction[]>([])
+  const [withdrawals, setWithdrawals] = useState<LocalTransaction[]>([])
+  const [firestoreTransactions, setFirestoreTransactions] = useState<Transaction[]>([])
+  const [balance, setBalance] = useState(0)
+  const [selectedDeposit, setSelectedDeposit] = useState<LocalTransaction | null>(null)
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<LocalTransaction | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits')
 
   useEffect(() => {
-    if (!userData?.numeroTel) return
+    if (!currentUser) return
 
-    // Charger les dépôts depuis localStorage
-    const savedDeposits = localStorage.getItem(`deposits_${userData.numeroTel}`)
-    if (savedDeposits) {
-      setDeposits(JSON.parse(savedDeposits))
-    }
+    // S'abonner aux transactions Firestore
+    const unsubscribeTransactions = subscribeToUserTransactions(currentUser.uid, (transactions) => {
+      // Séparer les dépôts et retraits depuis Firestore
+      const firestoreDeposits = transactions
+        .filter(t => t.type === 'deposit')
+        .map(t => ({
+          id: t.id,
+          amount: t.amount,
+          paymentMethod: t.paymentMethod,
+          transactionImage: t.proofImage || '',
+          proofImage: t.proofImage,
+          status: t.status === 'success' ? 'approved' : t.status as any,
+          submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+          beneficiaryCode: t.beneficiaryCode || '',
+          beneficiaryName: t.beneficiaryName || '',
+          type: 'deposit' as const
+        }))
 
-    // Charger les retraits depuis localStorage
-    const savedWithdrawals = localStorage.getItem(`withdrawals_${userData.numeroTel}`)
-    if (savedWithdrawals) {
-      setWithdrawals(JSON.parse(savedWithdrawals))
+      const firestoreWithdrawals = transactions
+        .filter(t => t.type === 'withdrawal')
+        .map(t => ({
+          id: t.id,
+          amount: t.amount,
+          paymentMethod: t.paymentMethod,
+          phoneNumber: t.phoneNumber || '',
+          cryptoAddress: t.cryptoAddress || '',
+          status: t.status === 'success' ? 'approved' : t.status as any,
+          submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+          type: 'withdrawal' as const
+        }))
+
+      setFirestoreTransactions(transactions)
+      
+      // Fusionner avec les données localStorage si nécessaire
+      if (userData?.numeroTel) {
+        const savedDeposits = localStorage.getItem(`deposits_${userData.numeroTel}`)
+        const localDeposits = savedDeposits ? JSON.parse(savedDeposits) : []
+        
+        const savedWithdrawals = localStorage.getItem(`withdrawals_${userData.numeroTel}`)
+        const localWithdrawals = savedWithdrawals ? JSON.parse(savedWithdrawals) : []
+        
+        // Combiner les données (Firestore prioritaire)
+        const allDeposits = [...firestoreDeposits]
+        const allWithdrawals = [...firestoreWithdrawals]
+        
+        // Ajouter les transactions locales qui ne sont pas dans Firestore
+        localDeposits.forEach((local: LocalTransaction) => {
+          if (!allDeposits.find(d => d.id === local.id)) {
+            allDeposits.push(local)
+          }
+        })
+        
+        localWithdrawals.forEach((local: LocalTransaction) => {
+          if (!allWithdrawals.find(w => w.id === local.id)) {
+            allWithdrawals.push(local)
+          }
+        })
+        
+        setDeposits(allDeposits)
+        setWithdrawals(allWithdrawals)
+      } else {
+        setDeposits(firestoreDeposits)
+        setWithdrawals(firestoreWithdrawals)
+      }
+    })
+
+    // S'abonner au solde
+    const unsubscribeBalance = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+      setBalance(newBalance)
+    })
+
+    return () => {
+      unsubscribeTransactions()
+      unsubscribeBalance()
     }
-  }, [userData])
+  }, [currentUser, userData])
 
   const deleteDeposit = (depositId: string) => {
     if (!userData?.numeroTel) return
@@ -123,7 +185,12 @@ export default function Portefeuille() {
           <Link href="/compte" className="hover:scale-110 transition-transform duration-200">
             <ArrowLeft className="text-white" size={20} />
           </Link>
-          <h1 className="text-white text-lg font-bold">💼 Mon Portefeuille</h1>
+          <div className="text-center">
+            <h1 className="text-white text-lg font-bold">💼 Mon Portefeuille</h1>
+            <div className="text-white/90 text-sm font-medium mt-1">
+              Solde: {balance.toLocaleString()} FCFA
+            </div>
+          </div>
           <div className="w-5"></div>
         </div>
       </header>
@@ -220,7 +287,7 @@ export default function Portefeuille() {
                           </span>
                         </div>
                         <div>
-                          <div className="font-bold text-gray-800">{parseInt(deposit.amount).toLocaleString()} FCFA</div>
+                          <div className="font-bold text-gray-800">{(typeof deposit.amount === 'string' ? parseInt(deposit.amount) : deposit.amount).toLocaleString()} FCFA</div>
                           <div className="text-sm text-gray-600">{getPaymentMethodName(deposit.paymentMethod)}</div>
                         </div>
                       </div>
@@ -297,7 +364,7 @@ export default function Portefeuille() {
                           </span>
                         </div>
                         <div>
-                          <div className="font-bold text-gray-800">{parseInt(withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
+                          <div className="font-bold text-gray-800">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
                           <div className="text-sm text-gray-600">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
                         </div>
                       </div>
@@ -375,7 +442,7 @@ export default function Portefeuille() {
                   </span>
                 </div>
                 <div>
-                  <div className="text-xl font-bold text-gray-800">{parseInt(selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
+                  <div className="text-xl font-bold text-gray-800">{(typeof selectedWithdrawal.amount === 'string' ? parseInt(selectedWithdrawal.amount) : selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
                   <div className="text-sm text-gray-600">{getPaymentMethodName(selectedWithdrawal.paymentMethod)}</div>
                 </div>
               </div>
@@ -427,7 +494,7 @@ export default function Portefeuille() {
             <div className="p-4 space-y-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-800 mb-1">
-                  {parseInt(selectedDeposit.amount).toLocaleString()} FCFA
+                  {(typeof selectedDeposit.amount === 'string' ? parseInt(selectedDeposit.amount) : selectedDeposit.amount).toLocaleString()} FCFA
                 </div>
                 <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full border text-sm font-bold ${getStatusColor(selectedDeposit.status)}`}>
                   {getStatusIcon(selectedDeposit.status)}
@@ -462,7 +529,7 @@ export default function Portefeuille() {
                   <div className="text-sm font-medium text-gray-700 mb-2">Capture de transaction</div>
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <img
-                      src={selectedDeposit.transactionImage}
+                      src={selectedDeposit.transactionImage || selectedDeposit.proofImage || ''}
                       alt="Transaction capture"
                       className="w-full h-48 object-cover"
                     />

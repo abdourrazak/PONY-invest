@@ -1,10 +1,67 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // TEMPORAIRE: Règles ouvertes pour l'outil de réinitialisation
+    // Règles pour les utilisateurs
     match /users/{userId} {
-      allow read: if true; // Lecture ouverte temporairement
-      allow write: if request.auth != null && request.auth.uid == userId;
+      // Lecture : utilisateur peut lire ses propres données ou admin peut tout lire
+      allow read: if request.auth != null && 
+        (request.auth.uid == userId || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      // Écriture : utilisateur peut mettre à jour ses propres données (sauf role et balance)
+      allow update: if request.auth != null && 
+        request.auth.uid == userId &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'balance']);
+      
+      // Création : seulement lors de l'inscription
+      allow create: if request.auth != null && 
+        request.auth.uid == userId &&
+        !request.resource.data.keys().hasAny(['role']) || 
+        request.resource.data.role == 'user';
+    }
+    
+    // Règles pour les transactions
+    match /transactions/{transactionId} {
+      // Lecture : utilisateur peut lire ses propres transactions ou admin peut tout lire
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      // Création : utilisateur peut créer ses propres transactions (status pending uniquement)
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+      
+      // Mise à jour : seulement admin peut modifier les transactions
+      allow update: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      
+      // Suppression : personne ne peut supprimer
+      allow delete: if false;
+    }
+    
+    // Règles pour les collections de requêtes de retrait (legacy)
+    match /withdrawalRequests/{requestId} {
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow delete: if false;
+    }
+    
+    // Règles pour les collections de requêtes de dépôt (legacy)
+    match /depositRequests/{requestId} {
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow delete: if false;
     }
     
     // Règles pour les données publiques (si nécessaire)

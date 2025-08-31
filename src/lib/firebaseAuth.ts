@@ -24,6 +24,8 @@ export interface User {
   referralCode: string
   referredBy?: string | null
   createdAt: any
+  role?: 'user' | 'admin'
+  balance?: number
 }
 
 // Génère un code d'invitation unique de 8 caractères
