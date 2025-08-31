@@ -8,14 +8,15 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'GLOBAL Platform',
   description: 'Plateforme d\'investissement AXML',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    minimumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  minimumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
