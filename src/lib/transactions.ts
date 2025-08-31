@@ -146,6 +146,39 @@ export async function adminListTransactions(
   }
 }
 
+// Alias pour compatibilité avec Dashboard
+export const updateTransactionStatus = adminUpdateTransactionStatus;
+
+// S'abonner à toutes les transactions pour l'admin
+export function subscribeToAllTransactions(
+  callback: (transactions: Transaction[]) => void
+): () => void {
+  const q = query(
+    transactionsCollection,
+    orderBy('submittedAt', 'desc')
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const transactions: Transaction[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      // Mapper "approved" vers "success" pour compatibilité
+      if (data.status === 'approved') {
+        data.status = 'success';
+      }
+      transactions.push({
+        id: doc.id,
+        ...data
+      } as Transaction);
+    });
+    callback(transactions);
+  }, (error) => {
+    console.error('Erreur lors de l\'écoute des transactions:', error);
+  });
+
+  return unsubscribe;
+}
+
 // Mettre à jour le statut d'une transaction (admin uniquement)
 export async function adminUpdateTransactionStatus(
   transactionId: string,
