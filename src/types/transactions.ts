@@ -8,6 +8,9 @@ export type UserRole = 'user' | 'admin';
 
 // Interface Transaction
 export interface Transaction {
+  createdAt: any;
+  userPhone: string;
+  proofImage: any;
   id: string;
   type: TransactionType;
   amount: number;
