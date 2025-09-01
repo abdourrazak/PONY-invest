@@ -79,23 +79,8 @@ export default function RetraitPage() {
         transactionData
       )
 
-      // Optionnel: garder une copie locale pour affichage immédiat
-      const withdrawalRequest = {
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        amount: amount,
-        paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
-        phoneNumber: phoneNumber,
-        cryptoAddress: '',
-        status: 'pending' as const,
-        submittedAt: new Date().toISOString(),
-        type: 'withdrawal' as const
-      }
-
-      const userKey = userData?.numeroTel || 'anonymous'
-      const existingWithdrawals = localStorage.getItem(`withdrawals_${userKey}`)
-      const withdrawals = existingWithdrawals ? JSON.parse(existingWithdrawals) : []
-      withdrawals.unshift(withdrawalRequest)
-      localStorage.setItem(`withdrawals_${userKey}`, JSON.stringify(withdrawals))
+      // La transaction est créée dans Firestore uniquement
+      // Le portefeuille l'affichera automatiquement via subscribeUserTransactions
 
       // Réinitialiser le formulaire
       setAmount('')
