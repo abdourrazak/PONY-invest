@@ -35,8 +35,11 @@ export default function AdminDashboard() {
   })
 
   useEffect(() => {
+    console.log('🔧 Admin Dashboard: Initialisation de l\'écoute des transactions')
+    
     // S'abonner à toutes les transactions
     const unsubscribe = subscribeToAllTransactions((allTransactions) => {
+      console.log('📊 Admin Dashboard: Transactions reçues:', allTransactions.length, allTransactions)
       setTransactions(allTransactions)
       
       // Calculer les statistiques
@@ -47,10 +50,14 @@ export default function AdminDashboard() {
         approvedCount: allTransactions.filter(t => t.status === 'success').length,
         rejectedCount: allTransactions.filter(t => t.status === 'rejected').length
       }
+      console.log('📈 Admin Dashboard: Statistiques calculées:', stats)
       setStats(stats)
     })
 
-    return () => unsubscribe()
+    return () => {
+      console.log('🔧 Admin Dashboard: Nettoyage de l\'écoute des transactions')
+      unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
