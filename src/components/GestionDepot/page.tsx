@@ -118,24 +118,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           transactionData
         )
 
-        // Optionnel: garder une copie locale pour affichage immédiat
-        const depositRequest = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          amount: amount,
-          paymentMethod: paymentMethod,
-          transactionImage: base64Image,
-          status: 'pending' as const,
-          submittedAt: new Date().toISOString(),
-          beneficiaryCode: beneficiaryCode,
-          beneficiaryName: beneficiaryName
-        }
-
-        const userKey = userData.numeroTel
-        const existingDeposits = localStorage.getItem(`deposits_${userKey}`)
-        const deposits = existingDeposits ? JSON.parse(existingDeposits) : []
-        deposits.unshift(depositRequest)
-        localStorage.setItem(`deposits_${userKey}`, JSON.stringify(deposits))
-
         // Réinitialiser le formulaire
         setAmount('')
         setTransactionImage(null)

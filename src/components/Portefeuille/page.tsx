@@ -4,8 +4,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { subscribeUserTransactions, subscribeToUserBalance } from '@/lib/transactions'
-import { Transaction } from '@/types/transactions'
+import { subscribeUserTransactions, subscribeToUserBalance, Transaction } from '@/lib/transactions'
+import { db } from '@/lib/firebase'
+import { doc, deleteDoc } from 'firebase/firestore'
 
 // Types locaux pour compatibilité avec l'ancien code
 interface LocalTransaction {
@@ -39,6 +40,7 @@ export default function Portefeuille() {
 
     // S'abonner aux transactions Firestore
     const unsubscribeTransactions = subscribeUserTransactions(currentUser.uid, (transactions) => {
+      setFirestoreTransactions(transactions)
       // Séparer les dépôts et retraits depuis Firestore
       const firestoreDeposits = transactions
         .filter(t => t.type === 'deposit')
@@ -126,22 +128,50 @@ export default function Portefeuille() {
     }
   }, [currentUser, userData])
 
-  const deleteDeposit = (depositId: string) => {
+  const deleteDeposit = async (depositId: string) => {
     if (!userData?.numeroTel) return
 
-    const updatedDeposits = deposits.filter(d => d.id !== depositId)
-    setDeposits(updatedDeposits)
-    localStorage.setItem(`deposits_${userData.numeroTel}`, JSON.stringify(updatedDeposits))
-    setShowDeleteConfirm(null)
+    try {
+      // Supprimer de Firestore si c'est une transaction réelle
+      const transactionToDelete = firestoreTransactions.find(t => t.id === depositId)
+      if (transactionToDelete) {
+        const transactionRef = doc(db, 'transactions', depositId)
+        await deleteDoc(transactionRef)
+        console.log('Transaction supprimée de Firestore:', depositId)
+      }
+
+      // Supprimer de localStorage (données locales)
+      const updatedDeposits = deposits.filter(d => d.id !== depositId)
+      setDeposits(updatedDeposits)
+      localStorage.setItem(`deposits_${userData.numeroTel}`, JSON.stringify(updatedDeposits))
+      setShowDeleteConfirm(null)
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      alert('Erreur lors de la suppression de la transaction')
+    }
   }
 
-  const deleteWithdrawal = (withdrawalId: string) => {
+  const deleteWithdrawal = async (withdrawalId: string) => {
     if (!userData?.numeroTel) return
 
-    const updatedWithdrawals = withdrawals.filter(w => w.id !== withdrawalId)
-    setWithdrawals(updatedWithdrawals)
-    localStorage.setItem(`withdrawals_${userData.numeroTel}`, JSON.stringify(updatedWithdrawals))
-    setShowDeleteConfirm(null)
+    try {
+      // Supprimer de Firestore si c'est une transaction réelle  
+      const transactionToDelete = firestoreTransactions.find(t => t.id === withdrawalId)
+      if (transactionToDelete) {
+        const transactionRef = doc(db, 'transactions', withdrawalId)
+        await deleteDoc(transactionRef)
+        console.log('Transaction supprimée de Firestore:', withdrawalId)
+      }
+
+      // Supprimer de localStorage (données locales)
+      const updatedWithdrawals = withdrawals.filter(w => w.id !== withdrawalId)
+      setWithdrawals(updatedWithdrawals)
+      localStorage.setItem(`withdrawals_${userData.numeroTel}`, JSON.stringify(updatedWithdrawals))
+      setShowDeleteConfirm(null)
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      alert('Erreur lors de la suppression de la transaction')
+    }
   }
 
   const getStatusColor = (status: string) => {

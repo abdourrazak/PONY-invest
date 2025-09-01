@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { 
   subscribeToAllTransactions, 
   updateTransactionStatus,
+  adminApproveDeposit,
+  adminApproveWithdrawal,
   Transaction
 } from '@/lib/transactions'
 import { db } from '@/lib/firebase'
@@ -112,11 +114,22 @@ export default function AdminDashboard() {
     
     setProcessing(transaction.id)
     try {
-      await updateTransactionStatus(transaction.id, 'success')
+      // Utiliser la fonction spécialisée qui met à jour le solde automatiquement
+      if (transaction.type === 'deposit') {
+        await adminApproveDeposit(transaction.id)
+        addDebugLog(`✅ Dépôt approuvé: ${transaction.amount} FCFA ajouté au solde`)
+      } else if (transaction.type === 'withdrawal') {
+        await adminApproveWithdrawal(transaction.id)
+        addDebugLog(`✅ Retrait approuvé: ${transaction.amount} FCFA déduit du solde`)
+      }
       setSelectedTransaction(null)
+      
+      // Rafraîchir les données
+      window.location.reload()
     } catch (error) {
       console.error('Erreur lors de l\'approbation:', error)
       alert('Erreur lors de l\'approbation de la transaction')
+      addDebugLog(`❌ Erreur approbation: ${error}`)
     } finally {
       setProcessing(null)
     }
@@ -366,7 +379,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-white/90">
-                      {transaction.userPhone || 'N/A'}
+                      {transaction.userNumeroTel || transaction.numeroTel || transaction.userPhone || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-white">
                       {transaction.amount.toLocaleString()} FCFA
@@ -443,7 +456,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <div className="text-white/60 text-xs mb-1">Utilisateur</div>
-                    <div className="text-white font-medium">{transaction.userPhone || 'N/A'}</div>
+                    <div className="text-white font-medium">{transaction.userNumeroTel || transaction.numeroTel || transaction.userPhone || 'N/A'}</div>
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Montant</div>
@@ -526,7 +539,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 gap-3 text-sm">
                   <div className="bg-blue-50 rounded-lg p-3">
                     <span className="text-gray-600 block text-xs mb-1">Téléphone:</span>
-                    <span className="font-medium text-lg">{selectedTransaction.userPhone}</span>
+                    <span className="font-medium text-lg">{selectedTransaction.userNumeroTel || selectedTransaction.numeroTel || selectedTransaction.userPhone}</span>
                   </div>
                   <div className="bg-blue-50 rounded-lg p-3">
                     <span className="text-gray-600 block text-xs mb-1">ID Utilisateur:</span>
