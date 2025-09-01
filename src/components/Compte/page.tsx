@@ -42,9 +42,8 @@ export default function ComptePage() {
       const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
       setCheckInRewards(checkInRewardsTotal)
 
-      // Le solde total = solde Firestore + récompenses (qui sont des bonus locaux)
-      const totalFunds = firestoreBalance + referralRewards + checkInRewardsTotal
-      setFunds(totalFunds)
+      // Le solde affiché = seulement le solde Firestore (cohérent avec toutes les pages)
+      setFunds(firestoreBalance)
 
       // Générer un ID utilisateur unique si pas encore fait
       if (!localStorage.getItem('userId')) {
