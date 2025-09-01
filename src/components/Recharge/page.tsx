@@ -2,14 +2,30 @@
 import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import { useAuth } from '@/contexts/AuthContext'
+import { subscribeToUserBalance } from '@/lib/transactions'
 
 export default function RechargePage() {
+  const { currentUser } = useAuth()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
+  const [balance, setBalance] = useState(0)
   const router = useRouter()
+
+  // Charger le solde de l'utilisateur
+  useEffect(() => {
+    if (currentUser) {
+      // S'abonner aux changements de solde en temps réel
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        setBalance(newBalance)
+      })
+
+      return () => unsubscribe()
+    }
+  }, [currentUser])
 
   const paymentMethods = [
     {
@@ -56,7 +72,7 @@ export default function RechargePage() {
           <div className="bg-gradient-to-r from-blue-100 to-green-100 px-4 py-2 rounded-xl inline-block shadow-sm border border-white/50">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-gray-800 font-bold text-sm">Solde: 0 FCFA</span>
+              <span className="text-gray-800 font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
             </div>
           </div>
         </div>

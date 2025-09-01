@@ -18,13 +18,10 @@ export default function ComptePage() {
       if (!userData?.numeroTel) return
       
       const userKey = userData.numeroTel
-      const savedBalance = localStorage.getItem(`userBalance_${userKey}`)
       
-      if (savedBalance) {
-        setBalance(parseInt(savedBalance))
-      } else {
-        localStorage.setItem(`userBalance_${userKey}`, '1000')
-      }
+      // Utiliser le solde Firestore comme source de vérité
+      const firestoreBalance = userData.balance || 1000
+      setBalance(firestoreBalance)
 
       // Calculer les récompenses de parrainage spécifiques à l'utilisateur
       const storedCode = localStorage.getItem(`userReferralCode_${userKey}`)
@@ -45,10 +42,9 @@ export default function ComptePage() {
       const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
       setCheckInRewards(checkInRewardsTotal)
 
-      // Calculer le solde total (1000 XOF de base + récompenses parrainage + récompenses check-in)
-      const totalFunds = 1000 + referralRewards + checkInRewardsTotal
+      // Le solde total = solde Firestore + récompenses (qui sont des bonus locaux)
+      const totalFunds = firestoreBalance + referralRewards + checkInRewardsTotal
       setFunds(totalFunds)
-      localStorage.setItem(`userFunds_${userKey}`, totalFunds.toString())
 
       // Générer un ID utilisateur unique si pas encore fait
       if (!localStorage.getItem('userId')) {
