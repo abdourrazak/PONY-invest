@@ -4,13 +4,13 @@ import { useAuth } from '@/contexts/AuthContext'
 import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { subscribeToUserTransactions, subscribeToUserBalance } from '@/lib/transactions'
+import { subscribeUserTransactions, subscribeToUserBalance } from '@/lib/transactions'
 import { Transaction } from '@/types/transactions'
 
 // Types locaux pour compatibilité avec l'ancien code
 interface LocalTransaction {
   id: string
-  amount: string | number
+  amount: number
   paymentMethod: 'orange' | 'mtn' | 'crypto'
   transactionImage?: string
   proofImage?: string
@@ -38,7 +38,7 @@ export default function Portefeuille() {
     if (!currentUser) return
 
     // S'abonner aux transactions Firestore
-    const unsubscribeTransactions = subscribeToUserTransactions(currentUser.uid, (transactions) => {
+    const unsubscribeTransactions = subscribeUserTransactions(currentUser.uid, (transactions) => {
       // Séparer les dépôts et retraits depuis Firestore
       const firestoreDeposits = transactions
         .filter(t => t.type === 'deposit')
@@ -50,7 +50,7 @@ export default function Portefeuille() {
           proofImage: t.proofImage,
           status: t.status === 'success' ? 'approved' : t.status as any,
           submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-          beneficiaryCode: t.beneficiaryCode || '',
+          beneficiaryCode: t.beneficiaryName || '',
           beneficiaryName: t.beneficiaryName || '',
           type: 'deposit' as const
         }))
@@ -85,13 +85,25 @@ export default function Portefeuille() {
         // Ajouter les transactions locales qui ne sont pas dans Firestore
         localDeposits.forEach((local: LocalTransaction) => {
           if (!allDeposits.find(d => d.id === local.id)) {
-            allDeposits.push(local)
+            allDeposits.push({
+              ...local,
+              transactionImage: local.transactionImage || '',
+              proofImage: local.proofImage || '',
+              beneficiaryCode: local.beneficiaryCode || '',
+              beneficiaryName: local.beneficiaryName || '',
+              type: 'deposit' as const
+            })
           }
         })
         
         localWithdrawals.forEach((local: LocalTransaction) => {
           if (!allWithdrawals.find(w => w.id === local.id)) {
-            allWithdrawals.push(local)
+            allWithdrawals.push({
+              ...local,
+              phoneNumber: local.phoneNumber || '',
+              cryptoAddress: local.cryptoAddress || '',
+              type: 'withdrawal' as const
+            })
           }
         })
         
