@@ -379,7 +379,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-white/90">
-                      {transaction.userNumeroTel || transaction.numeroTel || transaction.userPhone || 'N/A'}
+                      {transaction.userNumeroTel || transaction.userPhone || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-white">
                       {transaction.amount.toLocaleString()} FCFA
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <div className="text-white/60 text-xs mb-1">Utilisateur</div>
-                    <div className="text-white font-medium">{transaction.userNumeroTel || transaction.numeroTel || transaction.userPhone || 'N/A'}</div>
+                    <div className="text-white font-medium">{transaction.userNumeroTel || transaction.userPhone || 'N/A'}</div>
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Montant</div>
@@ -539,7 +539,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 gap-3 text-sm">
                   <div className="bg-blue-50 rounded-lg p-3">
                     <span className="text-gray-600 block text-xs mb-1">Téléphone:</span>
-                    <span className="font-medium text-lg">{selectedTransaction.userNumeroTel || selectedTransaction.numeroTel || selectedTransaction.userPhone}</span>
+                    <span className="font-medium text-lg">{selectedTransaction.userNumeroTel || selectedTransaction.userPhone}</span>
                   </div>
                   <div className="bg-blue-50 rounded-lg p-3">
                     <span className="text-gray-600 block text-xs mb-1">ID Utilisateur:</span>
