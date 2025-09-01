@@ -487,12 +487,12 @@ export async function initializeUser(
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      // Créer le nouvel utilisateur
+      // Créer le nouvel utilisateur avec solde de base 1000 XAF
       await updateDoc(userRef, {
         uid,
         numeroTel,
         displayName,
-        balance: 0,
+        balance: 1000,
         role: 'user',
         createdAt: serverTimestamp()
       });
@@ -507,5 +507,33 @@ export async function initializeUser(
     console.error('Erreur lors de l\'initialisation de l\'utilisateur:', error);
   }
 }
+
+// Ajouter une récompense check-in au solde Firestore
+export async function addCheckInReward(
+  uid: string,
+  rewardAmount: number
+): Promise<void> {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await runTransaction(db, async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      
+      if (!userDoc.exists()) {
+        throw new Error('Utilisateur non trouvé');
+      }
+
+      const currentBalance = userDoc.data().balance || 0;
+      transaction.update(userRef, {
+        balance: currentBalance + rewardAmount
+      });
+    });
+    
+    console.log(`Récompense check-in de ${rewardAmount} FCFA ajoutée au solde`);
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout de la récompense check-in:', error);
+    throw error;
+  }
+}
+
 export type { Transaction };
 

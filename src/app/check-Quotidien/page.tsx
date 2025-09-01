@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Gift } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { addCheckInReward, subscribeToUserBalance } from '@/lib/transactions'
 
 interface DailyReward {
   day: number
@@ -13,7 +14,7 @@ interface DailyReward {
 }
 
 export default function CheckQuotidien() {
-  const { userData } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [rewards, setRewards] = useState<DailyReward[]>([
     { day: 1, amount: 75, claimed: false, available: true },
     { day: 2, amount: 100, claimed: false, available: false },
@@ -25,21 +26,20 @@ export default function CheckQuotidien() {
   ])
 
   const [currentDay, setCurrentDay] = useState(1)
-  const [balance, setBalance] = useState(1000) // Solde de base
+  const [balance, setBalance] = useState(0) // Solde Firestore temps réel
   const [nextCheckIn, setNextCheckIn] = useState<Date | null>(null)
   const [timeRemaining, setTimeRemaining] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
 
   // Initialiser les données depuis localStorage spécifiques à l'utilisateur
   useEffect(() => {
-    if (!userData?.numeroTel) return
+    if (!userData?.numeroTel || !currentUser) return
     
     const userKey = userData.numeroTel
     setUserId(userKey)
     
     const savedRewards = localStorage.getItem(`dailyRewards_${userKey}`)
     const savedCurrentDay = localStorage.getItem(`currentDay_${userKey}`)
-    const savedBalance = localStorage.getItem(`userBalance_${userKey}`)
     const savedNextCheckIn = localStorage.getItem(`nextCheckIn_${userKey}`)
 
     if (savedRewards) {
@@ -48,16 +48,17 @@ export default function CheckQuotidien() {
     if (savedCurrentDay) {
       setCurrentDay(parseInt(savedCurrentDay))
     }
-    if (savedBalance) {
-      setBalance(parseInt(savedBalance))
-    } else {
-      // Premier accès - définir le solde de base pour cet utilisateur
-      localStorage.setItem(`userBalance_${userKey}`, '1000')
-    }
     if (savedNextCheckIn) {
       setNextCheckIn(new Date(savedNextCheckIn))
     }
-  }, [userData])
+    
+    // S'abonner au solde Firestore temps réel
+    const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+      setBalance(newBalance)
+    })
+    
+    return () => unsubscribe()
+  }, [userData, currentUser])
 
   // Timer pour le prochain check-in
   useEffect(() => {
@@ -94,50 +95,50 @@ export default function CheckQuotidien() {
     return () => clearInterval(interval)
   }, [nextCheckIn, rewards, currentDay])
 
-  const claimReward = (day: number) => {
-    if (!userId) return
+  const claimReward = async (day: number) => {
+    if (!userId || !currentUser) return
     
     const reward = rewards.find(r => r.day === day)
     if (!reward || reward.claimed || !reward.available) return
 
-    // Récupérer la récompense
-    const newBalance = balance + reward.amount
-    setBalance(newBalance)
-    localStorage.setItem(`userBalance_${userId}`, newBalance.toString())
-
-    // Mettre à jour le solde de fonds (Mes atouts)
-    const currentFunds = parseInt(localStorage.getItem(`userFunds_${userId}`) || '1000')
-    const newFunds = currentFunds + reward.amount
-    localStorage.setItem(`userFunds_${userId}`, newFunds.toString())
-
-    // Sauvegarder l'historique des récompenses pour synchronisation future
-    const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userId}`) || '[]')
-    rewardHistory.push({
-      day,
-      amount: reward.amount,
-      timestamp: new Date().toISOString(),
-      userId: userId
-    })
-    localStorage.setItem(`rewardHistory_${userId}`, JSON.stringify(rewardHistory))
-
-    // Marquer comme récupérée
-    const newRewards = rewards.map(r => 
-      r.day === day ? { ...r, claimed: true, available: false } : r
-    )
-
-    // Débloquer le prochain jour après 24h
-    if (day < 7) {
-      const nextDay = new Date()
-      nextDay.setHours(nextDay.getHours() + 24)
-      setNextCheckIn(nextDay)
-      localStorage.setItem(`nextCheckIn_${userId}`, nextDay.toISOString())
+    try {
+      // Ajouter la récompense au solde Firestore
+      await addCheckInReward(currentUser.uid, reward.amount)
       
-      setCurrentDay(day + 1)
-      localStorage.setItem(`currentDay_${userId}`, (day + 1).toString())
-    }
+      // Le solde sera mis à jour automatiquement via subscribeToUserBalance
+      
+      // Sauvegarder l'historique des récompenses pour synchronisation future
+      const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userId}`) || '[]')
+      rewardHistory.push({
+        day,
+        amount: reward.amount,
+        timestamp: new Date().toISOString(),
+        userId: userId
+      })
+      localStorage.setItem(`rewardHistory_${userId}`, JSON.stringify(rewardHistory))
 
-    setRewards(newRewards)
-    localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
+      // Marquer comme récupérée
+      const newRewards = rewards.map(r => 
+        r.day === day ? { ...r, claimed: true, available: false } : r
+      )
+
+      // Débloquer le prochain jour après 24h
+      if (day < 7) {
+        const nextDay = new Date()
+        nextDay.setHours(nextDay.getHours() + 24)
+        setNextCheckIn(nextDay)
+        localStorage.setItem(`nextCheckIn_${userId}`, nextDay.toISOString())
+        
+        setCurrentDay(day + 1)
+        localStorage.setItem(`currentDay_${userId}`, (day + 1).toString())
+      }
+
+      setRewards(newRewards)
+      localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la récompense:', error)
+      alert('Erreur lors de la récupération de la récompense')
+    }
   }
 
   return (
