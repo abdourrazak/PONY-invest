@@ -9,7 +9,7 @@ import {
   Transaction
 } from '@/lib/transactions'
 import { db } from '@/lib/firebase'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -169,6 +169,31 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleDeleteTransaction = async (transactionId: string) => {
+    if (processing) return
+    
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?')) {
+      return
+    }
+    
+    setProcessing(transactionId)
+    try {
+      const transactionRef = doc(db, 'transactions', transactionId)
+      await deleteDoc(transactionRef)
+      
+      // Supprimer de l'état local
+      setTransactions(prev => prev.filter(t => t.id !== transactionId))
+      
+      alert('Transaction supprimée avec succès')
+    } catch (error: any) {
+      console.error('Erreur lors de la suppression:', error)
+      const errorMessage = error?.message || 'Erreur inconnue'
+      alert(`Erreur lors de la suppression: ${errorMessage}`)
+    } finally {
+      setProcessing(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
       {/* Header - Optimisé mobile */}
@@ -249,58 +274,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Debug Panel - Visible sur mobile */}
-        <div className="bg-red-900/20 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 border border-red-500/30 mb-4 sm:mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-white font-semibold text-sm">🔧 Status Debug</h3>
-            <button 
-              onClick={() => setShowDebug(!showDebug)}
-              className="text-xs bg-white/10 text-white px-2 py-1 rounded"
-            >
-              {showDebug ? 'Masquer' : 'Afficher'}
-            </button>
-          </div>
-          
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">Connexion:</span>
-              <span className="text-white">{connectionStatus}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">Transactions totales:</span>
-              <span className="text-white font-bold">{transactions.length}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">Dépôts en attente:</span>
-              <span className="text-yellow-400 font-bold">
-                {transactions.filter(t => t.type === 'deposit' && t.status === 'pending').length}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">Retraits en attente:</span>
-              <span className="text-yellow-400 font-bold">
-                {transactions.filter(t => t.type === 'withdrawal' && t.status === 'pending').length}
-              </span>
-            </div>
-          </div>
-
-          {showDebug && (
-            <div className="mt-3 pt-3 border-t border-white/10">
-              <h4 className="text-white/70 text-xs mb-2">Logs récents:</h4>
-              <div className="bg-black/30 rounded p-2 max-h-32 overflow-y-auto">
-                {debugInfo.length === 0 ? (
-                  <p className="text-white/50 text-xs">Aucun log disponible</p>
-                ) : (
-                  debugInfo.map((log, index) => (
-                    <div key={index} className="text-white/80 text-xs mb-1 font-mono">
-                      {log}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Filtres - Optimisés pour mobile */}
         <div className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 mb-4 sm:mb-6">
@@ -405,12 +378,23 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => setSelectedTransaction(transaction)}
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
-                      >
-                        <Eye size={18} />
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setSelectedTransaction(transaction)}
+                          className="text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          <Eye size={18} />
+                        </button>
+                        {(transaction.status === 'success' || transaction.status === 'rejected') && (
+                          <button
+                            onClick={() => handleDeleteTransaction(transaction.id)}
+                            className="text-red-400 hover:text-red-300 transition-colors"
+                            title="Supprimer"
+                          >
+                            <XCircle size={18} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -446,12 +430,23 @@ export default function AdminDashboard() {
                       </span>
                     </span>
                   </div>
-                  <button
-                    onClick={() => setSelectedTransaction(transaction)}
-                    className="text-blue-400 hover:text-blue-300 transition-colors p-2"
-                  >
-                    <Eye size={18} />
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setSelectedTransaction(transaction)}
+                      className="text-blue-400 hover:text-blue-300 transition-colors p-2"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    {(transaction.status === 'success' || transaction.status === 'rejected') && (
+                      <button
+                        onClick={() => handleDeleteTransaction(transaction.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors p-2"
+                        title="Supprimer"
+                      >
+                        <XCircle size={18} />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3 text-sm">
