@@ -6,6 +6,8 @@ import {
   updateTransactionStatus,
   Transaction
 } from '@/lib/transactions'
+import { db } from '@/lib/firebase'
+import { collection, getDocs } from 'firebase/firestore'
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -43,39 +45,54 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    addDebugLog('🔧 Initialisation de l\'écoute des transactions')
+    addDebugLog('🔧 Initialisation directe de la récupération')
     setConnectionStatus('🔄 Connexion à Firestore...')
     
-    // S'abonner à toutes les transactions
-    const unsubscribe = subscribeToAllTransactions((allTransactions) => {
-      addDebugLog(`📊 Transactions reçues: ${allTransactions.length}`)
-      setConnectionStatus('✅ Connecté - Écoute active')
-      setTransactions(allTransactions)
-      
-      // Calculer les statistiques
-      const stats = {
-        totalDeposits: allTransactions.filter(t => t.type === 'deposit').reduce((sum, t) => sum + t.amount, 0),
-        totalWithdrawals: allTransactions.filter(t => t.type === 'withdrawal').reduce((sum, t) => sum + t.amount, 0),
-        pendingCount: allTransactions.filter(t => t.status === 'pending').length,
-        approvedCount: allTransactions.filter(t => t.status === 'success').length,
-        rejectedCount: allTransactions.filter(t => t.status === 'rejected').length
+    // Récupération directe similaire à la page de debug qui fonctionne
+    const fetchTransactions = async () => {
+      try {
+        addDebugLog('🔍 Récupération directe des transactions...')
+        const transactionsRef = collection(db, 'transactions')
+        const snapshot = await getDocs(transactionsRef)
+        
+        const allTransactions: any[] = []
+        snapshot.forEach((doc) => {
+          const data = doc.data()
+          allTransactions.push({
+            id: doc.id,
+            ...data
+          })
+        })
+        
+        addDebugLog(`📊 Transactions récupérées: ${allTransactions.length}`)
+        setConnectionStatus('✅ Connecté - Données récupérées')
+        setTransactions(allTransactions)
+        
+        // Calculer les statistiques
+        const stats = {
+          totalDeposits: allTransactions.filter(t => t.type === 'deposit').reduce((sum, t) => sum + t.amount, 0),
+          totalWithdrawals: allTransactions.filter(t => t.type === 'withdrawal').reduce((sum, t) => sum + t.amount, 0),
+          pendingCount: allTransactions.filter(t => t.status === 'pending').length,
+          approvedCount: allTransactions.filter(t => t.status === 'success').length,
+          rejectedCount: allTransactions.filter(t => t.status === 'rejected').length
+        }
+        addDebugLog(`📈 Stats: ${stats.pendingCount} en attente, ${stats.approvedCount} approuvées`)
+        setStats(stats)
+        
+        // Configurer un polling toutes les 10 secondes pour les mises à jour
+        setInterval(fetchTransactions, 10000)
+        
+      } catch (error) {
+        addDebugLog(`❌ Erreur: ${error}`)
+        setConnectionStatus('❌ Erreur de connexion')
       }
-      addDebugLog(`📈 Stats: ${stats.pendingCount} en attente, ${stats.approvedCount} approuvées`)
-      setStats(stats)
-    })
+    }
 
-    // Timeout pour détecter les problèmes de connexion
-    const timeout = setTimeout(() => {
-      if (transactions.length === 0) {
-        setConnectionStatus('❌ Problème de connexion détecté')
-        addDebugLog('❌ Aucune donnée reçue après 10 secondes')
-      }
-    }, 10000)
+    fetchTransactions()
 
+    // Pas de cleanup nécessaire pour cette approche simple
     return () => {
-      addDebugLog('🔧 Nettoyage de l\'écoute')
-      clearTimeout(timeout)
-      unsubscribe()
+      addDebugLog('🔧 Nettoyage')
     }
   }, [])
 
