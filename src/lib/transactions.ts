@@ -153,15 +153,17 @@ export const updateTransactionStatus = adminUpdateTransactionStatus;
 export function subscribeToAllTransactions(
   callback: (transactions: Transaction[]) => void
 ): () => void {
-  const q = query(
-    transactionsCollection,
-    orderBy('submittedAt', 'desc')
-  );
-
-  const unsubscribe = onSnapshot(q, (snapshot) => {
+  console.log('🔧 subscribeToAllTransactions: Initialisation de l\'écoute');
+  
+  // Écoute simple sans orderBy pour éviter les erreurs d'index
+  const unsubscribe = onSnapshot(transactionsCollection, (snapshot) => {
+    console.log('📊 subscribeToAllTransactions: Snapshot reçu, nombre de docs:', snapshot.size);
+    
     const transactions: Transaction[] = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
+      console.log('📄 Document reçu:', doc.id, data);
+      
       // Mapper "approved" vers "success" pour compatibilité
       if (data.status === 'approved') {
         data.status = 'success';
@@ -171,9 +173,27 @@ export function subscribeToAllTransactions(
         ...data
       } as Transaction);
     });
+    
+    // Trier manuellement par date de soumission (si elle existe)
+    transactions.sort((a, b) => {
+      const getTimestamp = (date: any) => {
+        if (!date) return 0;
+        if (typeof date === 'object' && 'seconds' in date) return date.seconds;
+        if (date instanceof Date) return date.getTime() / 1000;
+        return 0;
+      };
+      
+      const dateA = getTimestamp(a.submittedAt);
+      const dateB = getTimestamp(b.submittedAt);
+      return dateB - dateA;
+    });
+    
+    console.log('✅ subscribeToAllTransactions: Envoi de', transactions.length, 'transactions');
     callback(transactions);
   }, (error) => {
-    console.error('Erreur lors de l\'écoute des transactions:', error);
+    console.error('❌ subscribeToAllTransactions: Erreur:', error);
+    // En cas d'erreur, appeler le callback avec un tableau vide
+    callback([]);
   });
 
   return unsubscribe;
