@@ -126,10 +126,11 @@ export default function AdminDashboard() {
       
       // Rafraîchir les données
       window.location.reload()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'approbation:', error)
-      alert('Erreur lors de l\'approbation de la transaction')
-      addDebugLog(`❌ Erreur approbation: ${error}`)
+      const errorMessage = error?.message || 'Erreur inconnue'
+      alert(`Erreur lors de l'approbation: ${errorMessage}`)
+      addDebugLog(`❌ Erreur approbation: ${errorMessage}`)
     } finally {
       setProcessing(null)
     }
