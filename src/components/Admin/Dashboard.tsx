@@ -26,6 +26,9 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'success' | 'rejected'>('pending')
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
+  const [showDebug, setShowDebug] = useState(true)
+  const [connectionStatus, setConnectionStatus] = useState('🔄 Initialisation...')
   const [stats, setStats] = useState({
     totalDeposits: 0,
     totalWithdrawals: 0,
@@ -34,12 +37,19 @@ export default function AdminDashboard() {
     rejectedCount: 0
   })
 
+  const addDebugLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString('fr-FR')
+    setDebugInfo(prev => [...prev.slice(-9), `${timestamp}: ${message}`])
+  }
+
   useEffect(() => {
-    console.log('🔧 Admin Dashboard: Initialisation de l\'écoute des transactions')
+    addDebugLog('🔧 Initialisation de l\'écoute des transactions')
+    setConnectionStatus('🔄 Connexion à Firestore...')
     
     // S'abonner à toutes les transactions
     const unsubscribe = subscribeToAllTransactions((allTransactions) => {
-      console.log('📊 Admin Dashboard: Transactions reçues:', allTransactions.length, allTransactions)
+      addDebugLog(`📊 Transactions reçues: ${allTransactions.length}`)
+      setConnectionStatus('✅ Connecté - Écoute active')
       setTransactions(allTransactions)
       
       // Calculer les statistiques
@@ -50,12 +60,21 @@ export default function AdminDashboard() {
         approvedCount: allTransactions.filter(t => t.status === 'success').length,
         rejectedCount: allTransactions.filter(t => t.status === 'rejected').length
       }
-      console.log('📈 Admin Dashboard: Statistiques calculées:', stats)
+      addDebugLog(`📈 Stats: ${stats.pendingCount} en attente, ${stats.approvedCount} approuvées`)
       setStats(stats)
     })
 
+    // Timeout pour détecter les problèmes de connexion
+    const timeout = setTimeout(() => {
+      if (transactions.length === 0) {
+        setConnectionStatus('❌ Problème de connexion détecté')
+        addDebugLog('❌ Aucune donnée reçue après 10 secondes')
+      }
+    }, 10000)
+
     return () => {
-      console.log('🔧 Admin Dashboard: Nettoyage de l\'écoute des transactions')
+      addDebugLog('🔧 Nettoyage de l\'écoute')
+      clearTimeout(timeout)
       unsubscribe()
     }
   }, [])
@@ -197,6 +216,59 @@ export default function AdminDashboard() {
               {stats.rejectedCount}
             </div>
           </div>
+        </div>
+
+        {/* Debug Panel - Visible sur mobile */}
+        <div className="bg-red-900/20 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 border border-red-500/30 mb-4 sm:mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-white font-semibold text-sm">🔧 Status Debug</h3>
+            <button 
+              onClick={() => setShowDebug(!showDebug)}
+              className="text-xs bg-white/10 text-white px-2 py-1 rounded"
+            >
+              {showDebug ? 'Masquer' : 'Afficher'}
+            </button>
+          </div>
+          
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-white/70">Connexion:</span>
+              <span className="text-white">{connectionStatus}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/70">Transactions totales:</span>
+              <span className="text-white font-bold">{transactions.length}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/70">Dépôts en attente:</span>
+              <span className="text-yellow-400 font-bold">
+                {transactions.filter(t => t.type === 'deposit' && t.status === 'pending').length}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/70">Retraits en attente:</span>
+              <span className="text-yellow-400 font-bold">
+                {transactions.filter(t => t.type === 'withdrawal' && t.status === 'pending').length}
+              </span>
+            </div>
+          </div>
+
+          {showDebug && (
+            <div className="mt-3 pt-3 border-t border-white/10">
+              <h4 className="text-white/70 text-xs mb-2">Logs récents:</h4>
+              <div className="bg-black/30 rounded p-2 max-h-32 overflow-y-auto">
+                {debugInfo.length === 0 ? (
+                  <p className="text-white/50 text-xs">Aucun log disponible</p>
+                ) : (
+                  debugInfo.map((log, index) => (
+                    <div key={index} className="text-white/80 text-xs mb-1 font-mono">
+                      {log}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filtres - Optimisés pour mobile */}
