@@ -20,20 +20,34 @@ export default function DebugTransactions() {
   const fetchManualTransactions = async () => {
     try {
       console.log('🔍 Debug: Récupération manuelle des transactions...')
-      const transactionsRef = collection(db, 'transactions')
-      const q = query(transactionsRef, orderBy('submittedAt', 'desc'))
-      const snapshot = await getDocs(q)
       
-      const transactions: any[] = []
-      snapshot.forEach((doc) => {
-        transactions.push({
-          id: doc.id,
-          ...doc.data()
-        })
-      })
+      // Test de toutes les collections possibles
+      const collections = ['transactions', 'deposits', 'withdrawals', 'depositRequests', 'withdrawalRequests']
+      let allData: any[] = []
       
-      console.log('📊 Debug: Transactions manuelles récupérées:', transactions)
-      setManualTransactions(transactions)
+      for (const collectionName of collections) {
+        try {
+          const collectionRef = collection(db, collectionName)
+          const snapshot = await getDocs(collectionRef)
+          
+          const collectionData: any[] = []
+          snapshot.forEach((doc) => {
+            collectionData.push({
+              id: doc.id,
+              collection: collectionName,
+              ...doc.data()
+            })
+          })
+          
+          console.log(`📊 Collection ${collectionName}:`, collectionData.length, 'documents')
+          allData = [...allData, ...collectionData]
+        } catch (err) {
+          console.log(`❌ Erreur collection ${collectionName}:`, err)
+        }
+      }
+      
+      console.log('📊 Debug: Toutes données récupérées:', allData)
+      setManualTransactions(allData)
     } catch (err) {
       console.error('❌ Debug: Erreur récupération manuelle:', err)
       setError(err?.toString() || 'Erreur inconnue')
@@ -87,13 +101,13 @@ export default function DebugTransactions() {
               {manualTransactions.map((transaction, index) => (
                 <div key={transaction.id} className="border-b pb-2 mb-2">
                   <div className="text-sm">
-                    <strong>#{index + 1}</strong> - {transaction.type} - {transaction.amount}€
+                    <strong>#{index + 1}</strong> - {transaction.collection} - {transaction.type || 'N/A'} - {transaction.amount || 'N/A'}€
                   </div>
                   <div className="text-xs text-gray-500">
-                    Status: {transaction.status} | User: {transaction.userNumeroTel}
+                    Status: {transaction.status || 'N/A'} | User: {transaction.userNumeroTel || transaction.numeroTel || 'N/A'}
                   </div>
                   <div className="text-xs text-gray-400">
-                    ID: {transaction.id}
+                    ID: {transaction.id} | Collection: {transaction.collection}
                   </div>
                 </div>
               ))}
