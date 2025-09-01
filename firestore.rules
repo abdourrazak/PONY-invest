@@ -20,23 +20,18 @@ service cloud.firestore {
         request.resource.data.role == 'user';
     }
     
-    // Règles pour les transactions
+    // Règles pour les transactions - ACCÈS LIBRE POUR ADMIN DASHBOARD
     match /transactions/{transactionId} {
-      // Lecture : utilisateur peut lire ses propres transactions OU lecture libre pour dashboard admin
-      allow read: if (request.auth != null && 
-        (resource.data.userId == request.auth.uid || 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')) ||
-        request.auth == null; // Accès libre pour dashboard admin
+      // Lecture libre pour tous (dashboard admin non authentifié)
+      allow read: if true;
       
       // Création : utilisateur peut créer ses propres transactions (status pending uniquement)
       allow create: if request.auth != null && 
         request.resource.data.userId == request.auth.uid &&
         request.resource.data.status == 'pending';
       
-      // Mise à jour : seulement admin peut modifier OU accès libre pour dashboard admin
-      allow update: if (request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
-        request.auth == null; // Accès libre pour dashboard admin
+      // Mise à jour libre pour dashboard admin
+      allow update: if true;
       
       // Suppression : personne ne peut supprimer
       allow delete: if false;
