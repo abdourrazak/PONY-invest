@@ -67,18 +67,19 @@ export function subscribeUserTransactions(
   );
 
   const unsubscribe = onSnapshot(q, (snapshot) => {
+    console.log(`📊 subscribeUserTransactions: ${snapshot.size} transactions reçues pour utilisateur ${userId}`);
     const transactions: Transaction[] = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
-      // Mapper "approved" vers "success" pour compatibilité
-      if (data.status === 'approved') {
-        data.status = 'success';
-      }
+      console.log(`📄 Transaction ${doc.id}: statut=${data.status}, type=${data.type}, montant=${data.amount}`);
+      
+      // NE PAS mapper "approved" vers "success" - garder le statut original
       transactions.push({
         id: doc.id,
         ...data
       } as Transaction);
     });
+    console.log(`✅ subscribeUserTransactions: Envoi de ${transactions.length} transactions à l'interface`);
     callback(transactions);
   }, (error) => {
     console.error('Erreur lors de l\'écoute des transactions:', error);
