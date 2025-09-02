@@ -60,29 +60,67 @@ export function subscribeUserTransactions(
   userId: string,
   callback: (transactions: Transaction[]) => void
 ): () => void {
+  // Requête simple sans orderBy pour éviter les problèmes d'index
   const q = query(
     transactionsCollection,
-    where('userId', '==', userId),
-    orderBy('submittedAt', 'desc')
+    where('userId', '==', userId)
   );
 
   const unsubscribe = onSnapshot(q, (snapshot) => {
     console.log(`📊 subscribeUserTransactions: ${snapshot.size} transactions reçues pour utilisateur ${userId}`);
     const transactions: Transaction[] = [];
+    
     snapshot.forEach((doc) => {
       const data = doc.data();
       console.log(`📄 Transaction ${doc.id}: statut=${data.status}, type=${data.type}, montant=${data.amount}`);
       
-      // NE PAS mapper "approved" vers "success" - garder le statut original
-      transactions.push({
+      // Assurer que tous les champs requis sont présents
+      const transaction: Transaction = {
         id: doc.id,
-        ...data
-      } as Transaction);
+        type: data.type || 'deposit',
+        amount: data.amount || 0,
+        paymentMethod: data.paymentMethod || 'orange',
+        status: data.status || 'pending',
+        userId: data.userId || userId,
+        userNumeroTel: data.userNumeroTel || '',
+        userPhone: data.userPhone || data.userNumeroTel || '',
+        beneficiaryName: data.beneficiaryName || '',
+        phoneNumber: data.phoneNumber || '',
+        cryptoAddress: data.cryptoAddress || '',
+        proofImage: data.proofImage || '',
+        transactionImage: data.transactionImage || data.proofImage || '',
+        submittedAt: data.submittedAt || data.createdAt || new Date(),
+        createdAt: data.createdAt || data.submittedAt || new Date(),
+        adminNotes: data.adminNotes || '',
+        updatedAt: data.updatedAt || null
+      };
+      
+      transactions.push(transaction);
     });
-    console.log(`✅ subscribeUserTransactions: Envoi de ${transactions.length} transactions à l'interface`);
+    
+    // Trier manuellement par date
+    transactions.sort((a, b) => {
+      const getTime = (date: any) => {
+        if (!date) return 0;
+        if (typeof date === 'object' && date.seconds) return date.seconds * 1000;
+        if (date instanceof Date) return date.getTime();
+        if (typeof date === 'string') return new Date(date).getTime();
+        return 0;
+      };
+      
+      const timeA = getTime(a.submittedAt) || getTime(a.createdAt);
+      const timeB = getTime(b.submittedAt) || getTime(b.createdAt);
+      return timeB - timeA; // Plus récent en premier
+    });
+    
+    console.log(`✅ subscribeUserTransactions: Envoi de ${transactions.length} transactions triées`);
+    console.log('📋 Détail transactions:', transactions.map(t => `${t.id.slice(-4)}:${t.status}:${t.type}`));
+    
     callback(transactions);
   }, (error) => {
-    console.error('Erreur lors de l\'écoute des transactions:', error);
+    console.error('❌ Erreur lors de l\'écoute des transactions:', error);
+    // En cas d'erreur, essayer de récupérer les transactions sans orderBy
+    callback([]);
   });
 
   return unsubscribe;
