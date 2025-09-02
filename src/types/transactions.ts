@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
 // Types de base
-export type TransactionStatus = 'pending' | 'success' | 'rejected';
+export type TransactionStatus = 'pending' | 'success' | 'rejected' | 'approved';
 export type TransactionType = 'deposit' | 'withdrawal';
 export type PaymentMethod = 'orange' | 'mtn' | 'crypto';
 export type UserRole = 'user' | 'admin';

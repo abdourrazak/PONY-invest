@@ -5,6 +5,7 @@ import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle }
 import Link from 'next/link'
 import Image from 'next/image'
 import { subscribeUserTransactions, subscribeToUserBalance, Transaction } from '@/lib/transactions'
+import { TransactionStatus, PaymentMethod } from '@/types/transactions'
 import { db } from '@/lib/firebase'
 import { doc, deleteDoc } from 'firebase/firestore'
 
@@ -12,10 +13,10 @@ import { doc, deleteDoc } from 'firebase/firestore'
 interface LocalTransaction {
   id: string
   amount: number
-  paymentMethod: 'orange' | 'mtn' | 'crypto'
+  paymentMethod: PaymentMethod
   transactionImage?: string
   proofImage?: string
-  status: 'pending' | 'approved' | 'rejected' | 'success'
+  status: TransactionStatus
   submittedAt: string
   beneficiaryCode?: string
   beneficiaryName?: string
@@ -50,7 +51,7 @@ export default function Portefeuille() {
           paymentMethod: t.paymentMethod,
           transactionImage: t.proofImage || '',
           proofImage: t.proofImage,
-          status: t.status === 'success' ? 'approved' : t.status as any,
+          status: t.status,  // Garder le statut Firestore original
           submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
           beneficiaryCode: t.beneficiaryName || '',
           beneficiaryName: t.beneficiaryName || '',
@@ -65,56 +66,15 @@ export default function Portefeuille() {
           paymentMethod: t.paymentMethod,
           phoneNumber: t.phoneNumber || '',
           cryptoAddress: t.cryptoAddress || '',
-          status: t.status === 'success' ? 'approved' : t.status as any,
+          status: t.status,  // Garder le statut Firestore original
           submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
           type: 'withdrawal' as const
         }))
 
+      // Utiliser directement les données Firestore pour la synchronisation temps réel
+      setDeposits(firestoreDeposits)
+      setWithdrawals(firestoreWithdrawals)
       setFirestoreTransactions(transactions)
-      
-      // Fusionner avec les données localStorage si nécessaire
-      if (userData?.numeroTel) {
-        const savedDeposits = localStorage.getItem(`deposits_${userData.numeroTel}`)
-        const localDeposits = savedDeposits ? JSON.parse(savedDeposits) : []
-        
-        const savedWithdrawals = localStorage.getItem(`withdrawals_${userData.numeroTel}`)
-        const localWithdrawals = savedWithdrawals ? JSON.parse(savedWithdrawals) : []
-        
-        // Combiner les données (Firestore prioritaire)
-        const allDeposits = [...firestoreDeposits]
-        const allWithdrawals = [...firestoreWithdrawals]
-        
-        // Ajouter les transactions locales qui ne sont pas dans Firestore
-        localDeposits.forEach((local: LocalTransaction) => {
-          if (!allDeposits.find(d => d.id === local.id)) {
-            allDeposits.push({
-              ...local,
-              transactionImage: local.transactionImage || '',
-              proofImage: local.proofImage || '',
-              beneficiaryCode: local.beneficiaryCode || '',
-              beneficiaryName: local.beneficiaryName || '',
-              type: 'deposit' as const
-            })
-          }
-        })
-        
-        localWithdrawals.forEach((local: LocalTransaction) => {
-          if (!allWithdrawals.find(w => w.id === local.id)) {
-            allWithdrawals.push({
-              ...local,
-              phoneNumber: local.phoneNumber || '',
-              cryptoAddress: local.cryptoAddress || '',
-              type: 'withdrawal' as const
-            })
-          }
-        })
-        
-        setDeposits(allDeposits)
-        setWithdrawals(allWithdrawals)
-      } else {
-        setDeposits(firestoreDeposits)
-        setWithdrawals(firestoreWithdrawals)
-      }
     })
 
     // S'abonner au solde
@@ -176,10 +136,11 @@ export default function Portefeuille() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-300'
-      case 'approved': return 'bg-green-100 text-green-800 border-green-300'
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-300'
-      default: return 'bg-gray-100 text-gray-800 border-gray-300'
+      case 'pending': return 'bg-yellow-50 border-yellow-200 text-yellow-800'
+      case 'approved': return 'bg-green-50 border-green-200 text-green-800'
+      case 'success': return 'bg-green-50 border-green-200 text-green-800'  // Firestore status
+      case 'rejected': return 'bg-red-50 border-red-200 text-red-800'
+      default: return 'bg-gray-50 border-gray-200 text-gray-800'
     }
   }
 
@@ -187,6 +148,7 @@ export default function Portefeuille() {
     switch (status) {
       case 'pending': return <Clock size={16} className="text-yellow-600" />
       case 'approved': return <CheckCircle size={16} className="text-green-600" />
+      case 'success': return <CheckCircle size={16} className="text-green-600" />  // Firestore status
       case 'rejected': return <XCircle size={16} className="text-red-600" />
       default: return <Clock size={16} className="text-gray-600" />
     }
@@ -196,6 +158,7 @@ export default function Portefeuille() {
     switch (status) {
       case 'pending': return 'En attente'
       case 'approved': return 'Approuvé'
+      case 'success': return 'Approuvé'  // Ajouter mapping pour Firestore
       case 'rejected': return 'Rejeté'
       default: return 'Inconnu'
     }
@@ -279,8 +242,8 @@ export default function Portefeuille() {
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
                 {activeTab === 'deposits' 
-                  ? deposits.filter(d => d.status === 'approved').length
-                  : withdrawals.filter(w => w.status === 'approved').length
+                  ? deposits.filter(d => d.status === 'approved' || d.status === 'success').length
+                  : withdrawals.filter(w => w.status === 'approved' || w.status === 'success').length
                 }
               </div>
               <div className="text-xs text-gray-600 font-medium">Approuvés</div>
