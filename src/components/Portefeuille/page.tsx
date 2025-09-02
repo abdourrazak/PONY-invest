@@ -41,35 +41,80 @@ export default function Portefeuille() {
 
     // S'abonner aux transactions Firestore
     const unsubscribeTransactions = subscribeUserTransactions(currentUser.uid, (transactions) => {
-      setFirestoreTransactions(transactions)
+      console.log('🔄 Portefeuille: Nouvelles transactions reçues:', transactions.length)
+      
       // Séparer les dépôts et retraits depuis Firestore
       const firestoreDeposits = transactions
         .filter(t => t.type === 'deposit')
-        .map(t => ({
-          id: t.id,
-          amount: t.amount,
-          paymentMethod: t.paymentMethod,
-          transactionImage: t.proofImage || '',
-          proofImage: t.proofImage,
-          status: t.status,  // Garder le statut Firestore original
-          submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-          beneficiaryCode: t.beneficiaryName || '',
-          beneficiaryName: t.beneficiaryName || '',
-          type: 'deposit' as const
-        }))
+        .map(t => {
+          // Gérer les différents formats de date
+          let submittedAt = new Date().toISOString()
+          if (t.submittedAt) {
+            if (typeof t.submittedAt === 'object' && t.submittedAt.toDate) {
+              submittedAt = t.submittedAt.toDate().toISOString()
+            } else if (t.submittedAt instanceof Date) {
+              submittedAt = t.submittedAt.toISOString()
+            }
+          } else if (t.createdAt) {
+            if (typeof t.createdAt === 'object' && t.createdAt.toDate) {
+              submittedAt = t.createdAt.toDate().toISOString()
+            } else if (t.createdAt instanceof Date) {
+              submittedAt = t.createdAt.toISOString()
+            }
+          }
+
+          console.log(`📥 Dépôt ${t.id}: statut=${t.status}, montant=${t.amount}`)
+          
+          return {
+            id: t.id,
+            amount: t.amount,
+            paymentMethod: t.paymentMethod,
+            transactionImage: t.proofImage || '',
+            proofImage: t.proofImage,
+            status: t.status,
+            submittedAt,
+            beneficiaryCode: t.beneficiaryName || '',
+            beneficiaryName: t.beneficiaryName || '',
+            type: 'deposit' as const
+          }
+        })
 
       const firestoreWithdrawals = transactions
         .filter(t => t.type === 'withdrawal')
-        .map(t => ({
-          id: t.id,
-          amount: t.amount,
-          paymentMethod: t.paymentMethod,
-          phoneNumber: t.phoneNumber || '',
-          cryptoAddress: t.cryptoAddress || '',
-          status: t.status,  // Garder le statut Firestore original
-          submittedAt: t.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-          type: 'withdrawal' as const
-        }))
+        .map(t => {
+          // Gérer les différents formats de date
+          let submittedAt = new Date().toISOString()
+          if (t.submittedAt) {
+            if (typeof t.submittedAt === 'object' && t.submittedAt.toDate) {
+              submittedAt = t.submittedAt.toDate().toISOString()
+            } else if (t.submittedAt instanceof Date) {
+              submittedAt = t.submittedAt.toISOString()
+            }
+          } else if (t.createdAt) {
+            if (typeof t.createdAt === 'object' && t.createdAt.toDate) {
+              submittedAt = t.createdAt.toDate().toISOString()
+            } else if (t.createdAt instanceof Date) {
+              submittedAt = t.createdAt.toISOString()
+            }
+          }
+
+          console.log(`💸 Retrait ${t.id}: statut=${t.status}, montant=${t.amount}`)
+          
+          return {
+            id: t.id,
+            amount: t.amount,
+            paymentMethod: t.paymentMethod,
+            phoneNumber: t.phoneNumber || '',
+            cryptoAddress: t.cryptoAddress || '',
+            status: t.status,
+            submittedAt,
+            type: 'withdrawal' as const
+          }
+        })
+
+      console.log(`✅ Portefeuille: ${firestoreDeposits.length} dépôts, ${firestoreWithdrawals.length} retraits`)
+      console.log('📊 Statuts dépôts:', firestoreDeposits.map(d => `${d.id.slice(-4)}:${d.status}`))
+      console.log('📊 Statuts retraits:', firestoreWithdrawals.map(w => `${w.id.slice(-4)}:${w.status}`))
 
       // Utiliser directement les données Firestore pour la synchronisation temps réel
       setDeposits(firestoreDeposits)
