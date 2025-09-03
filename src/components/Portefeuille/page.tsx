@@ -50,14 +50,14 @@ export default function Portefeuille() {
           // Gérer les différents formats de date
           let submittedAt = new Date().toISOString()
           if (t.submittedAt) {
-            if (typeof t.submittedAt === 'object' && t.submittedAt.toDate) {
-              submittedAt = t.submittedAt.toDate().toISOString()
+            if (typeof t.submittedAt === 'object' && 'toDate' in t.submittedAt) {
+              submittedAt = (t.submittedAt as any).toDate().toISOString()
             } else if (t.submittedAt instanceof Date) {
               submittedAt = t.submittedAt.toISOString()
             }
           } else if (t.createdAt) {
-            if (typeof t.createdAt === 'object' && t.createdAt.toDate) {
-              submittedAt = t.createdAt.toDate().toISOString()
+            if (typeof t.createdAt === 'object' && 'toDate' in t.createdAt) {
+              submittedAt = (t.createdAt as any).toDate().toISOString()
             } else if (t.createdAt instanceof Date) {
               submittedAt = t.createdAt.toISOString()
             }
@@ -85,14 +85,14 @@ export default function Portefeuille() {
           // Gérer les différents formats de date
           let submittedAt = new Date().toISOString()
           if (t.submittedAt) {
-            if (typeof t.submittedAt === 'object' && t.submittedAt.toDate) {
-              submittedAt = t.submittedAt.toDate().toISOString()
+            if (typeof t.submittedAt === 'object' && 'toDate' in t.submittedAt) {
+              submittedAt = (t.submittedAt as any).toDate().toISOString()
             } else if (t.submittedAt instanceof Date) {
               submittedAt = t.submittedAt.toISOString()
             }
           } else if (t.createdAt) {
-            if (typeof t.createdAt === 'object' && t.createdAt.toDate) {
-              submittedAt = t.createdAt.toDate().toISOString()
+            if (typeof t.createdAt === 'object' && 'toDate' in t.createdAt) {
+              submittedAt = (t.createdAt as any).toDate().toISOString()
             } else if (t.createdAt instanceof Date) {
               submittedAt = t.createdAt.toISOString()
             }
@@ -270,42 +270,6 @@ export default function Portefeuille() {
           </button>
         </div>
 
-        {/* Stats Summary */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">
-                {activeTab === 'deposits' 
-                  ? deposits.filter(d => d.status === 'pending').length
-                  : withdrawals.filter(w => w.status === 'pending').length
-                }
-              </div>
-              <div className="text-xs text-gray-600 font-medium">En attente</div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {activeTab === 'deposits' 
-                  ? deposits.filter(d => d.status === 'approved' || d.status === 'success').length
-                  : withdrawals.filter(w => w.status === 'approved' || w.status === 'success').length
-                }
-              </div>
-              <div className="text-xs text-gray-600 font-medium">Approuvés</div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {activeTab === 'deposits' 
-                  ? deposits.filter(d => d.status === 'rejected').length
-                  : withdrawals.filter(w => w.status === 'rejected').length
-                }
-              </div>
-              <div className="text-xs text-gray-600 font-medium">Rejetés</div>
-            </div>
-          </div>
-        </div>
 
         {/* Content Lists */}
         <div className="space-y-4">
