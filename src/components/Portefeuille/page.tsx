@@ -228,52 +228,52 @@ export default function Portefeuille() {
   }
 
   return (
-  <div className="min-h-screen bg-gray-50">
-    {/* Header moderne */}
-    <div className="bg-white shadow-sm border-b border-gray-100">
-      <div className="flex items-center justify-between p-6">
+  <div className="min-h-screen bg-gray-100">
+    {/* Header premium style */}
+    <div className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 shadow-xl">
+      <div className="flex items-center justify-between px-4 py-4">
         <button
           onClick={() => window.history.back()}
-          className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+          className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm"
         >
-          <ArrowLeft size={20} className="text-gray-600" />
+          <ArrowLeft size={18} className="text-white" />
         </button>
         <div className="text-center flex-1">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">Mon Portefeuille</h1>
-          <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-sm font-semibold shadow-sm">
-            <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
+          <h1 className="text-lg font-bold text-white mb-1 tracking-wide drop-shadow-md">Mon Portefeuille</h1>
+          <div className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-semibold shadow-lg border border-white/30">
+            <span className="w-1.5 h-1.5 bg-white rounded-full mr-2 animate-pulse"></span>
             {balance.toLocaleString()} FCFA
           </div>
         </div>
-        <div className="w-10"></div>
-        </div>
+        <div className="w-9"></div>
       </div>
 
-      {/* Navigation Tabs moderne */}
-      <div className="px-6 py-4 bg-white border-b border-gray-100">
-        <div className="flex bg-gray-100 rounded-xl p-1">
+      {/* Navigation Tabs premium */}
+      <div className="px-4 pb-4">
+        <div className="flex bg-white/20 backdrop-blur-sm rounded-lg p-1 border border-white/30">
           <button
             onClick={() => setActiveTab('deposits')}
-            className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
+            className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-sm transition-all ${
               activeTab === 'deposits'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'bg-white text-green-700 shadow-sm'
+                : 'text-white hover:bg-white/10'
             }`}
           >
             📥 Dépôts ({deposits.length})
           </button>
           <button
             onClick={() => setActiveTab('withdrawals')}
-            className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
+            className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-sm transition-all ${
               activeTab === 'withdrawals'
-                ? 'bg-white text-purple-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'bg-white text-blue-700 shadow-sm'
+                : 'text-white hover:bg-white/10'
             }`}
           >
             💸 Retraits ({withdrawals.length})
           </button>
         </div>
       </div>
+    </div>
 
 
         {/* Content Lists */}
@@ -297,21 +297,21 @@ export default function Portefeuille() {
               </div>
             ) : (
               deposits.map((deposit, index) => (
-                <div key={deposit.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${getPaymentMethodColor(deposit.paymentMethod)} flex items-center justify-center shadow-lg`}>
-                        <span className="text-white font-bold text-xl">
+                <div key={deposit.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${getPaymentMethodColor(deposit.paymentMethod)} flex items-center justify-center shadow-md`}>
+                        <span className="text-white font-bold text-lg">
                           {deposit.paymentMethod === 'orange' ? 'O' : 
                            deposit.paymentMethod === 'mtn' ? 'M' : '₿'}
                         </span>
                       </div>
                       <div>
-                        <div className="font-bold text-gray-900 text-xl">{deposit.amount.toLocaleString()} FCFA</div>
+                        <div className="font-bold text-gray-900 text-lg">{deposit.amount.toLocaleString()} FCFA</div>
                         <div className="text-sm text-gray-500 font-medium">{getPaymentMethodName(deposit.paymentMethod)}</div>
                       </div>
                     </div>
-                    <div className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center space-x-2 shadow-sm ${
+                    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
                       deposit.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                       deposit.status === 'approved' || deposit.status === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
                       'bg-red-50 text-red-700 border border-red-200'
@@ -321,32 +321,39 @@ export default function Portefeuille() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <div className="text-gray-500 text-xs font-medium mb-1">Date de soumission</div>
+                        <div className="text-gray-500 text-xs font-medium mb-0.5">Date de soumission</div>
                         <div className="text-gray-800 font-medium">{new Date(deposit.submittedAt).toLocaleDateString('fr-FR')}</div>
                         <div className="text-gray-600 text-xs">{new Date(deposit.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
                       </div>
                       <div>
-                        <div className="text-gray-500 text-xs font-medium mb-1">ID de transaction</div>
-                        <div className="font-mono text-gray-800 font-bold">#{deposit.id.slice(-8).toUpperCase()}</div>
+                        <div className="text-gray-500 text-xs font-medium mb-0.5">ID de transaction</div>
+                        <div className="font-mono text-gray-800 font-bold text-xs">#{deposit.id.slice(-8).toUpperCase()}</div>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                       <div>
                         <div className="text-gray-500 text-xs font-medium">Bénéficiaire</div>
-                        <div className="text-gray-800 font-medium truncate max-w-32">{deposit.beneficiaryName}</div>
+                        <div className="text-gray-800 font-medium truncate max-w-28 text-sm">{deposit.beneficiaryName}</div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <button className="flex items-center space-x-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-medium transition-colors">
-                          <Eye size={14} />
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          onClick={() => setSelectedDeposit(deposit)}
+                          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-xs font-medium transition-colors"
+                        >
+                          <Eye size={12} />
                           <span>Détails</span>
                         </button>
                         {(deposit.status === 'success' || deposit.status === 'approved' || deposit.status === 'rejected') && (
-                          <button className="w-8 h-8 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group">
-                            <Trash2 size={14} className="text-gray-500 group-hover:text-red-500" />
+                          <button 
+                            onClick={() => setShowDeleteConfirm(deposit.id)}
+                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
+                            title="Supprimer cette transaction"
+                          >
+                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
                           </button>
                         )}
                       </div>
@@ -373,50 +380,55 @@ export default function Portefeuille() {
               </div>
             ) : (
               withdrawals.map((withdrawal) => (
-                <div key={withdrawal.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 bg-gradient-to-r ${getPaymentMethodColor(withdrawal.paymentMethod)} rounded-lg flex items-center justify-center`}>
-                          <span className="text-white font-bold text-sm">
-                            {withdrawal.paymentMethod === 'orange' ? 'O' : withdrawal.paymentMethod === 'mtn' ? 'M' : '₿'}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-bold text-gray-800">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
-                          <div className="text-sm text-gray-600">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
-                        </div>
+                <div key={withdrawal.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${getPaymentMethodColor(withdrawal.paymentMethod)} flex items-center justify-center shadow-md`}>
+                        <span className="text-white font-bold text-lg">
+                          {withdrawal.paymentMethod === 'orange' ? 'O' : withdrawal.paymentMethod === 'mtn' ? 'M' : '₿'}
+                        </span>
                       </div>
-                      <div className={`px-3 py-1 rounded-full border text-xs font-bold flex items-center space-x-1 ${getStatusColor(withdrawal.status)}`}>
-                        {getStatusIcon(withdrawal.status)}
-                        <span>{getStatusText(withdrawal.status)}</span>
+                      <div>
+                        <div className="font-bold text-gray-900 text-lg">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
+                        <div className="text-sm text-gray-500 font-medium">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
+                      </div>
+                    </div>
+                    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
+                      withdrawal.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                      withdrawal.status === 'approved' || withdrawal.status === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                      'bg-red-50 text-red-700 border border-red-200'
+                    }`}>
+                      {getStatusIcon(withdrawal.status)}
+                      <span>{getStatusText(withdrawal.status)}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <div className="text-gray-500 text-xs font-medium mb-0.5">Date de soumission</div>
+                        <div className="text-gray-800 font-medium">{new Date(withdrawal.submittedAt).toLocaleDateString('fr-FR')}</div>
+                        <div className="text-gray-600 text-xs">{new Date(withdrawal.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500 text-xs font-medium mb-0.5">ID de transaction</div>
+                        <div className="font-mono text-gray-800 font-bold text-xs">#{withdrawal.id.slice(-8).toUpperCase()}</div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-xs text-gray-600 mb-3">
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                       <div>
-                        <div className="font-medium text-gray-700">Date de soumission</div>
-                        <div>{new Date(withdrawal.submittedAt).toLocaleDateString('fr-FR')} à {new Date(withdrawal.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-700">ID de transaction</div>
-                        <div className="font-mono">#{withdrawal.id.slice(-8).toUpperCase()}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-600">
-                        <div className="font-medium text-gray-700">Destination</div>
-                        <div className="truncate max-w-32">
+                        <div className="text-gray-500 text-xs font-medium">Destination</div>
+                        <div className="text-gray-800 font-medium truncate max-w-28 text-sm">
                           {withdrawal.paymentMethod === 'crypto' ? withdrawal.cryptoAddress : withdrawal.phoneNumber}
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedWithdrawal(withdrawal)}
-                          className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
+                          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-xs font-medium transition-colors"
                         >
-                          <Eye size={14} />
+                          <Eye size={12} />
                           <span>Détails</span>
                         </button>
                         {(withdrawal.status === 'success' || withdrawal.status === 'approved' || withdrawal.status === 'rejected') && (
