@@ -187,6 +187,26 @@ export default function ComptePage() {
             </div>
           </button>
 
+          <Link href="/centre-membre" className="block w-full">
+            <button className="w-full bg-gradient-to-r from-emerald-50/40 via-green-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-emerald-200/50 hover:border-emerald-400 group backdrop-blur-sm transform hover:scale-[1.02]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-600 to-emerald-700 rounded-xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                  <svg className="w-6 h-6 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                  </svg>
+                </div>
+                <span className="text-gray-800 text-base font-black tracking-wide group-hover:text-emerald-700 transition-colors duration-300">Centre membre</span>
+              </div>
+              <div className="text-gray-400 group-hover:text-emerald-500 transition-colors duration-300 transform group-hover:translate-x-2">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            </button>
+          </Link>
+
           <Link href="/register-auth" className="block w-full">
             <button className="w-full bg-gradient-to-r from-white via-red-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-red-200/50 hover:border-red-400 group backdrop-blur-sm transform hover:scale-[1.02]">
             <div className="flex items-center justify-between">
