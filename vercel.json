@@ -1,6 +1,10 @@
 {
-  "buildCommand": "yarn build",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "FORCE_REBUILD": "2025-01-03-01:03"
+  },
   "installCommand": "yarn install"
 }
