@@ -50,11 +50,6 @@ export default function MotDePasseConnexionPage() {
       return
     }
 
-    if (formData.newPassword.length < 6) {
-      toast.error('Le nouveau mot de passe doit contenir au moins 6 caractères')
-      return
-    }
-
     if (formData.newPassword !== formData.confirmPassword) {
       toast.error('Les mots de passe ne correspondent pas')
       return
@@ -89,12 +84,14 @@ export default function MotDePasseConnexionPage() {
     } catch (error: any) {
       console.error('Erreur lors de la mise à jour du mot de passe:', error)
       
-      if (error.code === 'auth/wrong-password') {
-        toast.error('Mot de passe actuel incorrect')
+      if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        toast.error('Le mot de passe actuel est incorrect. Veuillez réessayer.')
       } else if (error.code === 'auth/weak-password') {
         toast.error('Le nouveau mot de passe est trop faible')
       } else if (error.code === 'auth/requires-recent-login') {
         toast.error('Veuillez vous reconnecter pour effectuer cette action')
+      } else if (error.code === 'auth/too-many-requests') {
+        toast.error('Trop de tentatives. Veuillez patienter avant de réessayer.')
       } else {
         toast.error('Erreur lors de la mise à jour du mot de passe')
       }
@@ -178,7 +175,6 @@ export default function MotDePasseConnexionPage() {
                   placeholder="Entrez votre nouveau mot de passe"
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   required
-                  minLength={6}
                 />
                 <button
                   type="button"
@@ -205,7 +201,6 @@ export default function MotDePasseConnexionPage() {
                   placeholder="Confirmez votre nouveau mot de passe"
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   required
-                  minLength={6}
                 />
                 <button
                   type="button"
@@ -237,17 +232,6 @@ export default function MotDePasseConnexionPage() {
             </button>
           </form>
 
-          {/* Conseils de sécurité */}
-          <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-            <h3 className="font-semibold text-yellow-800 mb-2">🔒 Conseils de sécurité</h3>
-            <ul className="text-sm text-yellow-700 space-y-1">
-              <li>• Utilisez au moins 8 caractères</li>
-              <li>• Mélangez lettres majuscules, minuscules et chiffres</li>
-              <li>• Évitez les mots du dictionnaire</li>
-              <li>• N'utilisez pas d'informations personnelles</li>
-              <li>• Ne partagez jamais votre mot de passe</li>
-            </ul>
-          </div>
         </div>
       </div>
 
