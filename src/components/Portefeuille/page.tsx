@@ -335,13 +335,13 @@ export default function Portefeuille() {
                           <Eye size={14} />
                           <span>Détails</span>
                         </button>
-                        {deposit.status === 'pending' && (
+                        {(deposit.status === 'success' || deposit.status === 'approved' || deposit.status === 'rejected') && (
                           <button
                             onClick={() => setShowDeleteConfirm(deposit.id)}
-                            className="flex items-center space-x-1 text-red-600 hover:text-red-700 text-xs font-medium"
+                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
+                            title="Supprimer cette transaction"
                           >
-                            <Trash2 size={14} />
-                            <span>Annuler</span>
+                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
                           </button>
                         )}
                       </div>
@@ -414,13 +414,13 @@ export default function Portefeuille() {
                           <Eye size={14} />
                           <span>Détails</span>
                         </button>
-                        {withdrawal.status === 'pending' && (
+                        {(withdrawal.status === 'success' || withdrawal.status === 'approved' || withdrawal.status === 'rejected') && (
                           <button
                             onClick={() => setShowDeleteConfirm(withdrawal.id)}
-                            className="flex items-center space-x-1 text-red-600 hover:text-red-700 text-xs font-medium"
+                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
+                            title="Supprimer cette transaction"
                           >
-                            <Trash2 size={14} />
-                            <span>Annuler</span>
+                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
                           </button>
                         )}
                       </div>
