@@ -228,50 +228,56 @@ export default function Portefeuille() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 px-4 py-4 shadow-lg">
-        <div className="flex items-center justify-between">
-          <Link href="/compte" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </Link>
-          <div className="text-center">
-            <h1 className="text-white text-lg font-bold">💼 Mon Portefeuille</h1>
-            <div className="text-white/90 text-sm font-medium mt-1">
-              Solde: {balance.toLocaleString()} FCFA
-            </div>
+  <div className="min-h-screen bg-gray-50">
+    {/* Header moderne */}
+    <div className="bg-white shadow-sm border-b border-gray-100">
+      <div className="flex items-center justify-between p-6">
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+        >
+          <ArrowLeft size={20} className="text-gray-600" />
+        </button>
+        <div className="text-center flex-1">
+          <h1 className="text-xl font-bold text-gray-900 mb-1">Mon Portefeuille</h1>
+          <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-sm font-semibold shadow-sm">
+            <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
+            {balance.toLocaleString()} FCFA
           </div>
-          <div className="w-5"></div>
         </div>
-      </header>
+        <div className="w-10"></div>
+        </div>
+      </div>
 
-      <div className="px-4 py-6 max-w-2xl mx-auto">
-        {/* Tabs */}
-        <div className="flex bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+      {/* Navigation Tabs moderne */}
+      <div className="px-6 py-4 bg-white border-b border-gray-100">
+        <div className="flex bg-gray-100 rounded-xl p-1">
           <button
             onClick={() => setActiveTab('deposits')}
-            className={`flex-1 py-3 px-4 font-bold text-sm transition-all ${
+            className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
               activeTab === 'deposits'
-                ? 'bg-blue-500 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
             }`}
           >
             📥 Dépôts ({deposits.length})
           </button>
           <button
             onClick={() => setActiveTab('withdrawals')}
-            className={`flex-1 py-3 px-4 font-bold text-sm transition-all ${
+            className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
               activeTab === 'withdrawals'
-                ? 'bg-purple-500 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-white text-purple-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
             }`}
           >
             💸 Retraits ({withdrawals.length})
           </button>
         </div>
+      </div>
 
 
         {/* Content Lists */}
+      <div className="px-6 py-6">
         <div className="space-y-4">
           {activeTab === 'deposits' ? (
             deposits.length === 0 ? (
@@ -290,58 +296,57 @@ export default function Portefeuille() {
                 </Link>
               </div>
             ) : (
-              deposits.map((deposit) => (
-                <div key={deposit.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-3">
+              deposits.map((deposit, index) => (
+                <div key={deposit.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${getPaymentMethodColor(deposit.paymentMethod)} flex items-center justify-center shadow-lg`}>
+                        <span className="text-white font-bold text-xl">
+                          {deposit.paymentMethod === 'orange' ? 'O' : 
+                           deposit.paymentMethod === 'mtn' ? 'M' : '₿'}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900 text-xl">{deposit.amount.toLocaleString()} FCFA</div>
+                        <div className="text-sm text-gray-500 font-medium">{getPaymentMethodName(deposit.paymentMethod)}</div>
+                      </div>
+                    </div>
+                    <div className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center space-x-2 shadow-sm ${
+                      deposit.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                      deposit.status === 'approved' || deposit.status === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                      'bg-red-50 text-red-700 border border-red-200'
+                    }`}>
+                      {getStatusIcon(deposit.status)}
+                      <span>{getStatusText(deposit.status)}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="text-gray-500 text-xs font-medium mb-1">Date de soumission</div>
+                        <div className="text-gray-800 font-medium">{new Date(deposit.submittedAt).toLocaleDateString('fr-FR')}</div>
+                        <div className="text-gray-600 text-xs">{new Date(deposit.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500 text-xs font-medium mb-1">ID de transaction</div>
+                        <div className="font-mono text-gray-800 font-bold">#{deposit.id.slice(-8).toUpperCase()}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                      <div>
+                        <div className="text-gray-500 text-xs font-medium">Bénéficiaire</div>
+                        <div className="text-gray-800 font-medium truncate max-w-32">{deposit.beneficiaryName}</div>
+                      </div>
                       <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 bg-gradient-to-r ${getPaymentMethodColor(deposit.paymentMethod)} rounded-lg flex items-center justify-center`}>
-                          <span className="text-white font-bold text-sm">
-                            {deposit.paymentMethod === 'orange' ? 'O' : deposit.paymentMethod === 'mtn' ? 'M' : '₿'}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-bold text-gray-800">{(typeof deposit.amount === 'string' ? parseInt(deposit.amount) : deposit.amount).toLocaleString()} FCFA</div>
-                          <div className="text-sm text-gray-600">{getPaymentMethodName(deposit.paymentMethod)}</div>
-                        </div>
-                      </div>
-                      <div className={`px-3 py-1 rounded-full border text-xs font-bold flex items-center space-x-1 ${getStatusColor(deposit.status)}`}>
-                        {getStatusIcon(deposit.status)}
-                        <span>{getStatusText(deposit.status)}</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 text-xs text-gray-600 mb-3">
-                      <div>
-                        <div className="font-medium text-gray-700">Date de soumission</div>
-                        <div>{new Date(deposit.submittedAt).toLocaleDateString('fr-FR')} à {new Date(deposit.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-700">ID de transaction</div>
-                        <div className="font-mono">#{deposit.id.slice(-8).toUpperCase()}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-600">
-                        <div className="font-medium text-gray-700">Bénéficiaire</div>
-                        <div className="truncate max-w-32">{deposit.beneficiaryName}</div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setSelectedDeposit(deposit)}
-                          className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs font-medium"
-                        >
+                        <button className="flex items-center space-x-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-medium transition-colors">
                           <Eye size={14} />
                           <span>Détails</span>
                         </button>
                         {(deposit.status === 'success' || deposit.status === 'approved' || deposit.status === 'rejected') && (
-                          <button
-                            onClick={() => setShowDeleteConfirm(deposit.id)}
-                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
-                            title="Supprimer cette transaction"
-                          >
-                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
+                          <button className="w-8 h-8 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group">
+                            <Trash2 size={14} className="text-gray-500 group-hover:text-red-500" />
                           </button>
                         )}
                       </div>
