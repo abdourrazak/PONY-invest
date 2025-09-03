@@ -18,7 +18,7 @@ const hashPIN = async (pin: string): Promise<string> => {
 }
 
 export default function MotDePasseFondsPage() {
-  const { userData, user } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [showPins, setShowPins] = useState({
     new: false,
@@ -33,10 +33,10 @@ export default function MotDePasseFondsPage() {
   // Vérifier s'il y a déjà un PIN
   useEffect(() => {
     const checkExistingPin = async () => {
-      if (!user?.uid) return
+      if (!currentUser?.uid) return
       
       try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid))
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
         if (userDoc.exists()) {
           const data = userDoc.data()
           if (data.fundsPin?.hash) {
@@ -49,7 +49,7 @@ export default function MotDePasseFondsPage() {
     }
 
     checkExistingPin()
-  }, [user?.uid])
+  }, [currentUser?.uid])
 
   const togglePinVisibility = (field: 'new' | 'confirm') => {
     setShowPins(prev => ({
@@ -71,7 +71,7 @@ export default function MotDePasseFondsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!user?.uid) {
+    if (!currentUser?.uid) {
       toast.error('Utilisateur non connecté')
       return
     }
@@ -115,7 +115,7 @@ export default function MotDePasseFondsPage() {
         updatedAt: new Date()
       }
 
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, 'users', currentUser.uid), {
         fundsPin: pinData
       }, { merge: true })
 

@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast'
 import SupportFloat from '@/components/SupportFloat/SupportFloat'
 
 export default function MotDePasseConnexionPage() {
-  const { userData, user } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -40,7 +40,7 @@ export default function MotDePasseConnexionPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!user?.email) {
+    if (!currentUser?.email) {
       toast.error('Utilisateur non connecté')
       return
     }
@@ -69,13 +69,13 @@ export default function MotDePasseConnexionPage() {
 
     try {
       // Créer les credentials pour la ré-authentification
-      const credential = EmailAuthProvider.credential(user.email, formData.currentPassword)
+      const credential = EmailAuthProvider.credential(currentUser.email, formData.currentPassword)
       
       // Ré-authentifier l'utilisateur
-      await reauthenticateWithCredential(user, credential)
+      await reauthenticateWithCredential(currentUser, credential)
       
       // Mettre à jour le mot de passe
-      await updatePassword(user, formData.newPassword)
+      await updatePassword(currentUser, formData.newPassword)
       
       toast.success('Mot de passe mis à jour avec succès')
       

@@ -16,7 +16,7 @@ interface WithdrawalAccount {
 }
 
 export default function CompteRetraitPage() {
-  const { userData, user } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<WithdrawalAccount>({
     operator: '',
@@ -35,10 +35,10 @@ export default function CompteRetraitPage() {
   // Charger les données existantes
   useEffect(() => {
     const loadExistingData = async () => {
-      if (!user?.uid) return
+      if (!currentUser?.uid) return
       
       try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid))
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
         if (userDoc.exists()) {
           const data = userDoc.data()
           if (data.withdrawalAccount) {
@@ -51,7 +51,7 @@ export default function CompteRetraitPage() {
     }
 
     loadExistingData()
-  }, [user?.uid])
+  }, [currentUser?.uid])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -64,7 +64,7 @@ export default function CompteRetraitPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!user?.uid) {
+    if (!currentUser?.uid) {
       toast.error('Vous devez être connecté')
       return
     }
@@ -88,7 +88,7 @@ export default function CompteRetraitPage() {
         updatedAt: new Date()
       }
 
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, 'users', currentUser.uid), {
         withdrawalAccount: withdrawalData
       }, { merge: true })
 
