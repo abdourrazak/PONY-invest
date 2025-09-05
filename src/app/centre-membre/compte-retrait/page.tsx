@@ -25,9 +25,9 @@ export default function CompteRetraitPage() {
   })
 
   const operators = [
-    { value: 'moov', label: 'Moov Money' },
     { value: 'orange', label: 'Orange Money' },
     { value: 'mtn', label: 'MTN Mobile Money' },
+    { value: 'moov', label: 'Moov Money' },
     { value: 'wave', label: 'Wave' },
     { value: 'bank', label: 'Compte bancaire' }
   ]

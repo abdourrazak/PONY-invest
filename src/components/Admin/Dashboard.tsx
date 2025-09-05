@@ -549,10 +549,31 @@ export default function AdminDashboard() {
                 <div className="border-t pt-4">
                   <h3 className="font-medium text-gray-800 mb-3">💸 Détails du retrait</h3>
                   <div className="space-y-3 text-sm">
+                    <div className="bg-red-50 rounded-lg p-3">
+                      <span className="text-gray-600 block text-xs mb-1">Date de transaction:</span>
+                      <span className="font-medium">{selectedTransaction.createdAt?.toDate?.()?.toLocaleString('fr-FR') || 'N/A'}</span>
+                    </div>
                     {selectedTransaction.phoneNumber && (
                       <div className="bg-red-50 rounded-lg p-3">
                         <span className="text-gray-600 block text-xs mb-1">Numéro de téléphone:</span>
                         <span className="font-medium">{selectedTransaction.phoneNumber}</span>
+                      </div>
+                    )}
+                    {selectedTransaction.withdrawalAccount && (
+                      <div className="bg-red-50 rounded-lg p-3">
+                        <span className="text-gray-600 block text-xs mb-1">Informations de retrait configurées:</span>
+                        <div className="mt-2 space-y-1">
+                          <div><strong>Opérateur:</strong> {
+                            selectedTransaction.withdrawalAccount.operator === 'bank' ? 'Compte bancaire' : 
+                            selectedTransaction.withdrawalAccount.operator === 'orange' ? 'Orange Money' :
+                            selectedTransaction.withdrawalAccount.operator === 'mtn' ? 'MTN Mobile Money' :
+                            selectedTransaction.withdrawalAccount.operator === 'moov' ? 'Moov Money' :
+                            selectedTransaction.withdrawalAccount.operator === 'wave' ? 'Wave' : 
+                            selectedTransaction.withdrawalAccount.operator
+                          }</div>
+                          <div><strong>Numéro de compte:</strong> {selectedTransaction.withdrawalAccount.accountNumber}</div>
+                          <div><strong>Nom du titulaire:</strong> {selectedTransaction.withdrawalAccount.holderName}</div>
+                        </div>
                       </div>
                     )}
                     {selectedTransaction.cryptoAddress && (
@@ -569,16 +590,20 @@ export default function AdminDashboard() {
                 <div className="border-t pt-4">
                   <h3 className="font-medium text-gray-800 mb-3">💰 Détails du dépôt</h3>
                   <div className="space-y-3 text-sm">
+                    <div className="bg-green-50 rounded-lg p-3">
+                      <span className="text-gray-600 block text-xs mb-1">Date de transaction:</span>
+                      <span className="font-medium">{selectedTransaction.createdAt?.toDate?.()?.toLocaleString('fr-FR') || 'N/A'}</span>
+                    </div>
                     {selectedTransaction.beneficiaryName && (
                       <div className="bg-green-50 rounded-lg p-3">
                         <span className="text-gray-600 block text-xs mb-1">Nom du bénéficiaire:</span>
                         <span className="font-medium">{selectedTransaction.beneficiaryName}</span>
                       </div>
                     )}
-                    {selectedTransaction.beneficiaryName && (
+                    {selectedTransaction.beneficiaryCode && (
                       <div className="bg-green-50 rounded-lg p-3">
                         <span className="text-gray-600 block text-xs mb-1">Code bénéficiaire:</span>
-                        <span className="font-medium">{selectedTransaction.beneficiaryName}</span>
+                        <span className="font-medium">{selectedTransaction.beneficiaryCode}</span>
                       </div>
                     )}
                   </div>
