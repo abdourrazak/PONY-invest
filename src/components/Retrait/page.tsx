@@ -31,6 +31,8 @@ export default function RetraitPage() {
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(false)
   const [hasConfiguredPassword, setHasConfiguredPassword] = useState(false)
+  const [hasWithdrawalAccount, setHasWithdrawalAccount] = useState(false)
+  const [withdrawalAccountInfo, setWithdrawalAccountInfo] = useState<any>(null)
 
   const paymentMethods = [
     {
@@ -62,6 +64,14 @@ export default function RetraitPage() {
           if (userDoc.exists()) {
             const data = userDoc.data()
             setHasConfiguredPassword(!!data.fundsPassword?.hash)
+            
+            // Vérifier les informations de retrait
+            if (data.withdrawalAccount) {
+              setHasWithdrawalAccount(true)
+              setWithdrawalAccountInfo(data.withdrawalAccount)
+            } else {
+              setHasWithdrawalAccount(false)
+            }
           }
         } catch (error) {
           console.error('Erreur lors de la vérification du mot de passe:', error)
@@ -80,6 +90,13 @@ export default function RetraitPage() {
     if (!hasConfiguredPassword) {
       alert('Vous devez d\'abord configurer un mot de passe des fonds dans le Centre membre')
       router.push('/centre-membre/mot-de-passe-fonds')
+      return
+    }
+
+    // Vérifier si l'utilisateur a configuré ses informations de retrait
+    if (!hasWithdrawalAccount) {
+      alert('Vous devez d\'abord configurer vos informations de retrait dans le Centre membre')
+      router.push('/centre-membre/compte-retrait')
       return
     }
 
@@ -124,7 +141,8 @@ export default function RetraitPage() {
         type: 'withdrawal',
         amount: numericAmount,
         paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
-        phoneNumber: phoneNumber
+        phoneNumber: phoneNumber,
+        withdrawalAccount: withdrawalAccountInfo // Inclure les informations de retrait pour l'admin
       }
 
       await createTransaction(
@@ -255,6 +273,26 @@ export default function RetraitPage() {
             </div>
           </div>
 
+          {/* Informations de retrait configurées */}
+          {hasWithdrawalAccount && withdrawalAccountInfo && (
+            <div className="mb-4">
+              <label className="block text-gray-800 font-black text-sm mb-2">
+                💳 Informations de retrait configurées
+              </label>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+                <div className="text-green-800 text-sm">
+                  <div className="font-bold">{withdrawalAccountInfo.operator === 'bank' ? 'Compte bancaire' : 
+                    withdrawalAccountInfo.operator === 'orange' ? 'Orange Money' :
+                    withdrawalAccountInfo.operator === 'mtn' ? 'MTN Mobile Money' :
+                    withdrawalAccountInfo.operator === 'moov' ? 'Moov Money' :
+                    withdrawalAccountInfo.operator === 'wave' ? 'Wave' : withdrawalAccountInfo.operator}</div>
+                  <div>Compte: {withdrawalAccountInfo.accountNumber}</div>
+                  <div>Titulaire: {withdrawalAccountInfo.holderName}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Phone Number Input */}
           <div className="mb-6">
             <label className="block text-gray-800 font-black text-sm mb-2">
@@ -295,12 +333,27 @@ export default function RetraitPage() {
             )}
           </div>
 
+          {/* Informations de retrait manquantes */}
+          {!hasWithdrawalAccount && (
+            <div className="mb-6">
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                <p className="text-red-700 text-sm mb-2">Vous devez configurer vos informations de retrait</p>
+                <button 
+                  onClick={() => router.push('/centre-membre/compte-retrait')}
+                  className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                >
+                  Configurer maintenant
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Submit Button */}
           <button 
             onClick={handleSubmit}
-            disabled={!amount || !phoneNumber || !hasConfiguredPassword || !fundsPassword || loading}
+            disabled={!amount || !phoneNumber || !hasConfiguredPassword || !fundsPassword || !hasWithdrawalAccount || loading}
             className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-              amount && phoneNumber && hasConfiguredPassword && fundsPassword && !loading
+              amount && phoneNumber && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
                 ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}

@@ -70,6 +70,7 @@ export interface CreateTransactionData {
   proofImage?: string; // Base64 image pour les dépôts
   cryptoAddress?: string;
   transactionImage?: string;
+  withdrawalAccount?: any; // Informations du compte de retrait pour l'admin
 }
 
 // Options pour mise à jour admin
