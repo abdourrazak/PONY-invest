@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -7,6 +7,17 @@ import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
 import { createTransaction } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+
+// Fonction pour hasher le mot de passe avec SHA-256
+const hashPassword = async (password: string): Promise<string> => {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 interface GestionDepotProps {
   paymentMethod?: 'orange' | 'mtn' | 'crypto'
@@ -18,7 +29,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const [amount, setAmount] = useState('')
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [fundsPassword, setFundsPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [hasConfiguredPassword, setHasConfiguredPassword] = useState(false)
 
   const isOrange = paymentMethod === 'orange'
   const isMTN = paymentMethod === 'mtn'
@@ -60,6 +73,24 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? { primary: "yellow", secondary: "red" }
     : { primary: "blue", secondary: "purple" }
 
+  // Vérifier si l'utilisateur a configuré un mot de passe des fonds
+  useEffect(() => {
+    if (currentUser) {
+      const checkFundsPassword = async () => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
+          if (userDoc.exists()) {
+            const data = userDoc.data()
+            setHasConfiguredPassword(!!data.fundsPassword?.hash)
+          }
+        } catch (error) {
+          console.error('Erreur lors de la vérification du mot de passe:', error)
+        }
+      }
+      checkFundsPassword()
+    }
+  }, [currentUser])
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -84,6 +115,19 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const handleSubmit = async () => {
     if (!amount || !transactionImage || !currentUser || !userData) return
 
+    // Vérifier si l'utilisateur a configuré un mot de passe des fonds
+    if (!hasConfiguredPassword) {
+      alert('Vous devez d\'abord configurer un mot de passe des fonds dans le Centre membre')
+      router.push('/centre-membre/mot-de-passe-fonds')
+      return
+    }
+
+    // Vérifier le mot de passe des fonds
+    if (!fundsPassword) {
+      alert('Veuillez entrer votre mot de passe des fonds')
+      return
+    }
+
     // Validation du montant minimum
     const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
     const numericAmount = parseFloat(amount)
@@ -96,6 +140,20 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     setLoading(true)
 
     try {
+      // Vérifier le mot de passe des fonds
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
+      if (userDoc.exists()) {
+        const data = userDoc.data()
+        const storedPasswordHash = data.fundsPassword?.hash
+        const enteredPasswordHash = await hashPassword(fundsPassword)
+        
+        if (storedPasswordHash !== enteredPasswordHash) {
+          alert('Mot de passe des fonds incorrect')
+          setLoading(false)
+          return
+        }
+      }
+
       // Convertir l'image en base64 pour stockage
       const reader = new FileReader()
       reader.onloadend = async () => {
@@ -122,6 +180,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         setAmount('')
         setTransactionImage(null)
         setImagePreview(null)
+        setFundsPassword('')
         
         // Rediriger vers le portefeuille
         router.push('/portefeuille')
@@ -247,12 +306,38 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           )}
         </div>
 
+        {/* Mot de passe des fonds */}
+        <div className="mb-6">
+          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+            🔐 Mot de passe des fonds
+          </label>
+          {!hasConfiguredPassword ? (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+              <p className="text-red-700 text-sm mb-2">Vous devez configurer un mot de passe des fonds</p>
+              <button 
+                onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
+                className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+              >
+                Configurer maintenant
+              </button>
+            </div>
+          ) : (
+            <input
+              type="password"
+              placeholder="Entrez votre mot de passe des fonds"
+              value={fundsPassword}
+              onChange={(e) => setFundsPassword(e.target.value)}
+              className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}
+            />
+          )}
+        </div>
+
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={!amount || !transactionImage || loading}
+          disabled={!amount || !transactionImage || !hasConfiguredPassword || !fundsPassword || loading}
           className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-            amount && transactionImage && !loading
+            amount && transactionImage && hasConfiguredPassword && fundsPassword && !loading
               ? isOrange 
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
                 : isMTN

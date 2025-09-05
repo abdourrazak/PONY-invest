@@ -9,6 +9,17 @@ import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+
+// Fonction pour hasher le mot de passe avec SHA-256
+const hashPassword = async (password: string): Promise<string> => {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 export default function RetraitPage() {
   const { currentUser, userData } = useAuth()
@@ -16,8 +27,10 @@ export default function RetraitPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
   const [amount, setAmount] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [fundsPassword, setFundsPassword] = useState('')
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [hasConfiguredPassword, setHasConfiguredPassword] = useState(false)
 
   const paymentMethods = [
     {
@@ -42,12 +55,39 @@ export default function RetraitPage() {
         setBalance(newBalance)
       })
 
+      // Vérifier si l'utilisateur a configuré un mot de passe des fonds
+      const checkFundsPassword = async () => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
+          if (userDoc.exists()) {
+            const data = userDoc.data()
+            setHasConfiguredPassword(!!data.fundsPassword?.hash)
+          }
+        } catch (error) {
+          console.error('Erreur lors de la vérification du mot de passe:', error)
+        }
+      }
+
+      checkFundsPassword()
       return () => unsubscribe()
     }
   }, [currentUser])
 
   const handleSubmit = async () => {
     if (!amount || !phoneNumber || !currentUser || !userData) return
+
+    // Vérifier si l'utilisateur a configuré un mot de passe des fonds
+    if (!hasConfiguredPassword) {
+      alert('Vous devez d\'abord configurer un mot de passe des fonds dans le Centre membre')
+      router.push('/centre-membre/mot-de-passe-fonds')
+      return
+    }
+
+    // Vérifier le mot de passe des fonds
+    if (!fundsPassword) {
+      alert('Veuillez entrer votre mot de passe des fonds')
+      return
+    }
 
     // Validation du montant minimum
     const numericAmount = parseFloat(amount)
@@ -65,6 +105,20 @@ export default function RetraitPage() {
     setLoading(true)
 
     try {
+      // Vérifier le mot de passe des fonds
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
+      if (userDoc.exists()) {
+        const data = userDoc.data()
+        const storedPasswordHash = data.fundsPassword?.hash
+        const enteredPasswordHash = await hashPassword(fundsPassword)
+        
+        if (storedPasswordHash !== enteredPasswordHash) {
+          alert('Mot de passe des fonds incorrect')
+          setLoading(false)
+          return
+        }
+      }
+
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'withdrawal',
@@ -79,12 +133,10 @@ export default function RetraitPage() {
         transactionData
       )
 
-      // La transaction est créée dans Firestore uniquement
-      // Le portefeuille l'affichera automatiquement via subscribeUserTransactions
-
       // Réinitialiser le formulaire
       setAmount('')
       setPhoneNumber('')
+      setFundsPassword('')
       setSelectedPaymentMethod(0)
       
       alert('Demande de retrait soumise avec succès!')
@@ -217,12 +269,38 @@ export default function RetraitPage() {
             />
           </div>
 
+          {/* Mot de passe des fonds */}
+          <div className="mb-6">
+            <label className="block text-gray-800 font-black text-sm mb-2">
+              🔐 Mot de passe des fonds
+            </label>
+            {!hasConfiguredPassword ? (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                <p className="text-red-700 text-sm mb-2">Vous devez configurer un mot de passe des fonds</p>
+                <button 
+                  onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
+                  className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                >
+                  Configurer maintenant
+                </button>
+              </div>
+            ) : (
+              <input
+                type="password"
+                placeholder="Entrez votre mot de passe des fonds"
+                value={fundsPassword}
+                onChange={(e) => setFundsPassword(e.target.value)}
+                className="w-full px-3 py-3 border-2 border-blue-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:bg-blue-50 bg-white shadow-sm font-medium text-base transition-all duration-300"
+              />
+            )}
+          </div>
+
           {/* Submit Button */}
           <button 
             onClick={handleSubmit}
-            disabled={!amount || !phoneNumber || loading}
+            disabled={!amount || !phoneNumber || !hasConfiguredPassword || !fundsPassword || loading}
             className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-              amount && phoneNumber && !loading
+              amount && phoneNumber && hasConfiguredPassword && fundsPassword && !loading
                 ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
