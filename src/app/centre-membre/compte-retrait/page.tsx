@@ -166,7 +166,7 @@ export default function CompteRetraitPage() {
                 name="accountNumber"
                 value={formData.accountNumber}
                 onChange={handleInputChange}
-                placeholder={formData.operator === 'bank' ? 'Ex: 1234567890123456' : 'Ex: 01234567'}
+                placeholder={formData.operator === 'bank' ? 'Ex: 1234567890123456' : 'Ex: 6******'}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 required
               />
@@ -214,8 +214,6 @@ export default function CompteRetraitPage() {
             <h3 className="font-semibold text-blue-800 mb-2">ℹ️ Informations importantes</h3>
             <ul className="text-sm text-blue-700 space-y-1">
               <li>• Assurez-vous que les informations sont exactes</li>
-              <li>• Le nom du titulaire doit correspondre à votre pièce d'identité</li>
-              <li>• Vous pouvez modifier ces informations à tout moment</li>
               <li>• Les retraits seront effectués sur ce compte uniquement</li>
             </ul>
           </div>
