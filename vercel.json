@@ -3,8 +3,5 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "env": {
-    "FORCE_REBUILD": "2025-09-05-18:17"
-  },
   "installCommand": "yarn install"
 }
