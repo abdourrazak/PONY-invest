@@ -8,10 +8,10 @@ import { db } from '@/lib/firebase'
 import { toast } from 'react-hot-toast'
 import SupportFloat from '@/components/SupportFloat/SupportFloat'
 
-// Fonction pour hasher le PIN avec SHA-256
-const hashPIN = async (pin: string): Promise<string> => {
+// Fonction pour hasher le mot de passe avec SHA-256
+const hashPassword = async (password: string): Promise<string> => {
   const encoder = new TextEncoder()
-  const data = encoder.encode(pin)
+  const data = encoder.encode(password)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
@@ -20,39 +20,39 @@ const hashPIN = async (pin: string): Promise<string> => {
 export default function MotDePasseFondsPage() {
   const { userData, currentUser } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [showPins, setShowPins] = useState({
+  const [showPasswords, setShowPasswords] = useState({
     new: false,
     confirm: false
   })
   const [formData, setFormData] = useState({
-    newPin: '',
-    confirmPin: ''
+    newPassword: '',
+    confirmPassword: ''
   })
-  const [hasExistingPin, setHasExistingPin] = useState(false)
+  const [hasExistingPassword, setHasExistingPassword] = useState(false)
 
-  // Vérifier s'il y a déjà un PIN
+  // Vérifier s'il y a déjà un mot de passe
   useEffect(() => {
-    const checkExistingPin = async () => {
+    const checkExistingPassword = async () => {
       if (!currentUser?.uid) return
       
       try {
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
         if (userDoc.exists()) {
           const data = userDoc.data()
-          if (data.fundsPin?.hash) {
-            setHasExistingPin(true)
+          if (data.fundsPassword?.hash) {
+            setHasExistingPassword(true)
           }
         }
       } catch (error) {
-        console.error('Erreur lors de la vérification du PIN:', error)
+        console.error('Erreur lors de la vérification du mot de passe:', error)
       }
     }
 
-    checkExistingPin()
+    checkExistingPassword()
   }, [currentUser?.uid])
 
-  const togglePinVisibility = (field: 'new' | 'confirm') => {
-    setShowPins(prev => ({
+  const togglePasswordVisibility = (field: 'new' | 'confirm') => {
+    setShowPasswords(prev => ({
       ...prev,
       [field]: !prev[field]
     }))
@@ -60,11 +60,9 @@ export default function MotDePasseFondsPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    // Limiter à 6 chiffres maximum
-    const numericValue = value.replace(/[^0-9]/g, '').slice(0, 6)
     setFormData(prev => ({
       ...prev,
-      [name]: numericValue
+      [name]: value
     }))
   }
 
@@ -76,61 +74,44 @@ export default function MotDePasseFondsPage() {
       return
     }
 
-    if (!formData.newPin || !formData.confirmPin) {
+    if (!formData.newPassword || !formData.confirmPassword) {
       toast.error('Veuillez remplir tous les champs')
       return
     }
 
-    if (formData.newPin.length < 4) {
-      toast.error('Le PIN doit contenir au moins 4 chiffres')
-      return
-    }
-
-    if (formData.newPin.length > 6) {
-      toast.error('Le PIN ne peut pas dépasser 6 chiffres')
-      return
-    }
-
-    if (formData.newPin !== formData.confirmPin) {
-      toast.error('Les PINs ne correspondent pas')
-      return
-    }
-
-    // Vérifier que ce ne sont pas des chiffres trop simples
-    const simplePatterns = ['1234', '0000', '1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888', '9999', '1212', '1010']
-    if (simplePatterns.includes(formData.newPin)) {
-      toast.error('Veuillez choisir un PIN plus sécurisé')
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error('Les mots de passe ne correspondent pas')
       return
     }
 
     setLoading(true)
 
     try {
-      // Hasher le PIN
-      const hashedPin = await hashPIN(formData.newPin)
+      // Hasher le mot de passe
+      const hashedPassword = await hashPassword(formData.newPassword)
       
-      const pinData = {
-        hash: hashedPin,
+      const passwordData = {
+        hash: hashedPassword,
         createdAt: new Date(),
         updatedAt: new Date()
       }
 
       await setDoc(doc(db, 'users', currentUser.uid), {
-        fundsPin: pinData
+        fundsPassword: passwordData
       }, { merge: true })
 
-      toast.success(hasExistingPin ? 'PIN modifié avec succès' : 'PIN créé avec succès')
+      toast.success(hasExistingPassword ? 'Mot de passe modifié avec succès' : 'Mot de passe créé avec succès')
       
       // Réinitialiser le formulaire
       setFormData({
-        newPin: '',
-        confirmPin: ''
+        newPassword: '',
+        confirmPassword: ''
       })
-      setHasExistingPin(true)
+      setHasExistingPassword(true)
       
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du PIN:', error)
-      toast.error('Erreur lors de la mise à jour du PIN')
+      console.error('Erreur lors de la mise à jour du mot de passe:', error)
+      toast.error('Erreur lors de la mise à jour du mot de passe')
     } finally {
       setLoading(false)
     }
@@ -146,7 +127,7 @@ export default function MotDePasseFondsPage() {
           </Link>
           <div className="text-center flex-1">
             <div className="text-white text-lg font-bold tracking-wide drop-shadow-md">
-              Mot de passe des fonds
+              Nouveau mot de passe des fonds
             </div>
             <div className="text-green-100 text-sm font-medium drop-shadow-sm">
               Sécurisez vos transactions
@@ -165,109 +146,74 @@ export default function MotDePasseFondsPage() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800">
-                {hasExistingPin ? 'Modifier le PIN' : 'Créer un PIN'}
+                {hasExistingPassword ? 'Modifier le mot de passe' : 'Créer un mot de passe des fonds'}
               </h2>
               <p className="text-sm text-gray-600">
-                {hasExistingPin ? 'Modifiez votre PIN de sécurité' : 'Créez un PIN pour sécuriser vos fonds'}
+                {hasExistingPassword ? 'Modifiez votre mot de passe de sécurité' : 'Créez un mot de passe pour sécuriser vos fonds'}
               </p>
             </div>
           </div>
 
-          {hasExistingPin && (
+          {hasExistingPassword && (
             <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
               <p className="text-green-800 text-sm">
-                ✅ Vous avez déjà configuré un PIN de sécurité. Vous pouvez le modifier ci-dessous.
+                ✅ Vous avez déjà configuré un mot de passe de sécurité. Vous pouvez le modifier ci-dessous.
               </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Nouveau PIN */}
+            {/* Nouveau mot de passe */}
             <div>
-              <label htmlFor="newPin" className="block text-sm font-medium text-gray-700 mb-2">
-                {hasExistingPin ? 'Nouveau PIN (4-6 chiffres)' : 'PIN de sécurité (4-6 chiffres)'}
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                {hasExistingPassword ? 'Nouveau mot de passe' : 'Mot de passe des fonds'}
               </label>
               <div className="relative">
                 <input
-                  type={showPins.new ? 'text' : 'password'}
-                  id="newPin"
-                  name="newPin"
-                  value={formData.newPin}
+                  type={showPasswords.new ? 'text' : 'password'}
+                  id="newPassword"
+                  name="newPassword"
+                  value={formData.newPassword}
                   onChange={handleInputChange}
-                  placeholder="Entrez votre PIN"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-center text-2xl tracking-wider"
+                  placeholder="Entrez votre mot de passe"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   required
-                  minLength={4}
-                  maxLength={6}
-                  pattern="[0-9]{4,6}"
                 />
                 <button
                   type="button"
-                  onClick={() => togglePinVisibility('new')}
+                  onClick={() => togglePasswordVisibility('new')}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPins.new ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPasswords.new ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            {/* Confirmer le PIN */}
+            {/* Confirmer le mot de passe */}
             <div>
-              <label htmlFor="confirmPin" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirmer le PIN
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Confirmer le mot de passe
               </label>
               <div className="relative">
                 <input
-                  type={showPins.confirm ? 'text' : 'password'}
-                  id="confirmPin"
-                  name="confirmPin"
-                  value={formData.confirmPin}
+                  type={showPasswords.confirm ? 'text' : 'password'}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  placeholder="Confirmez votre PIN"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-center text-2xl tracking-wider"
+                  placeholder="Confirmez votre mot de passe"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                   required
-                  minLength={4}
-                  maxLength={6}
-                  pattern="[0-9]{4,6}"
                 />
                 <button
                   type="button"
-                  onClick={() => togglePinVisibility('confirm')}
+                  onClick={() => togglePasswordVisibility('confirm')}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPins.confirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPasswords.confirm ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
-
-            {/* Indicateur de force du PIN */}
-            {formData.newPin && (
-              <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-700">Sécurité du PIN:</div>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4].map((level) => {
-                    let isActive = false
-                    let color = 'bg-gray-200'
-                    
-                    if (formData.newPin.length >= 4) {
-                      if (level === 1) { isActive = true; color = 'bg-red-400' }
-                      if (formData.newPin.length >= 5 && level <= 2) { isActive = true; color = 'bg-yellow-400' }
-                      if (formData.newPin.length >= 6 && level <= 3) { isActive = true; color = 'bg-orange-400' }
-                      if (formData.newPin.length === 6 && !/^(.)\1+$/.test(formData.newPin) && level <= 4) { 
-                        isActive = true; color = 'bg-green-400' 
-                      }
-                    }
-                    
-                    return (
-                      <div
-                        key={level}
-                        className={`h-2 flex-1 rounded ${isActive ? color : 'bg-gray-200'} transition-colors`}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Bouton de soumission */}
             <button
@@ -278,28 +224,16 @@ export default function MotDePasseFondsPage() {
               {loading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  {hasExistingPin ? 'Modification...' : 'Création...'}
+                  {hasExistingPassword ? 'Modification...' : 'Création...'}
                 </div>
               ) : (
                 <div className="flex items-center">
                   <Shield className="w-5 h-5 mr-2" />
-                  {hasExistingPin ? 'Modifier le PIN' : 'Créer le PIN'}
+                  {hasExistingPassword ? 'Modifier le mot de passe' : 'Créer le mot de passe'}
                 </div>
               )}
             </button>
           </form>
-
-          {/* Informations importantes */}
-          <div className="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
-            <h3 className="font-semibold text-red-800 mb-2">🔐 Informations importantes</h3>
-            <ul className="text-sm text-red-700 space-y-1">
-              <li>• Ce PIN sera demandé pour toutes vos transactions financières</li>
-              <li>• Utilisez un PIN unique et difficile à deviner</li>
-              <li>• Évitez les suites simples (1234, 0000, etc.)</li>
-              <li>• Ne partagez jamais votre PIN avec qui que ce soit</li>
-              <li>• Votre PIN est stocké de manière sécurisée et chiffrée</li>
-            </ul>
-          </div>
         </div>
       </div>
 
