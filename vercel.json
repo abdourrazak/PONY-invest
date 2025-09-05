@@ -4,7 +4,7 @@
   "framework": "nextjs",
   "regions": ["iad1"],
   "env": {
-    "FORCE_REBUILD": "2025-01-03-01:03"
+    "FORCE_REBUILD": "2025-01-05-17:30"
   },
   "installCommand": "yarn install"
 }
