@@ -25,6 +25,11 @@ export interface Transaction {
   submittedAt: Timestamp | Date;
   adminNotes?: string;
   updatedAt?: Timestamp | Date;
+  withdrawalAccount?: {
+    operator: string;
+    accountNumber: string;
+    holderName: string;
+  };
 }
 
 // Interface User
