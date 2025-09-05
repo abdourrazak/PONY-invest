@@ -40,8 +40,9 @@ export default function MotDePasseConnexionPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!currentUser?.email) {
-      toast.error('Utilisateur non connecté')
+    // Vérifier si l'utilisateur est connecté via Firebase Auth (pas juste localStorage)
+    if (!currentUser || !currentUser.email) {
+      toast.error('Vous devez être connecté avec un compte email pour changer votre mot de passe. Veuillez vous reconnecter.')
       return
     }
 
@@ -63,14 +64,20 @@ export default function MotDePasseConnexionPage() {
     setLoading(true)
 
     try {
+      console.log('Tentative de changement de mot de passe pour:', currentUser.email)
+      
       // Créer les credentials pour la ré-authentification
       const credential = EmailAuthProvider.credential(currentUser.email, formData.currentPassword)
       
       // Ré-authentifier l'utilisateur
+      console.log('Ré-authentification en cours...')
       await reauthenticateWithCredential(currentUser, credential)
+      console.log('Ré-authentification réussie')
       
       // Mettre à jour le mot de passe
+      console.log('Mise à jour du mot de passe...')
       await updatePassword(currentUser, formData.newPassword)
+      console.log('Mot de passe mis à jour avec succès')
       
       toast.success('Mot de passe mis à jour avec succès')
       
@@ -82,18 +89,24 @@ export default function MotDePasseConnexionPage() {
       })
       
     } catch (error: any) {
-      console.error('Erreur lors de la mise à jour du mot de passe:', error)
+      console.error('Erreur détaillée:', error)
+      console.error('Code d\'erreur:', error.code)
+      console.error('Message d\'erreur:', error.message)
       
       if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        toast.error('Le mot de passe actuel est incorrect. Veuillez réessayer.')
+        toast.error('Le mot de passe actuel est incorrect. Vérifiez votre saisie.')
       } else if (error.code === 'auth/weak-password') {
         toast.error('Le nouveau mot de passe est trop faible')
       } else if (error.code === 'auth/requires-recent-login') {
-        toast.error('Veuillez vous reconnecter pour effectuer cette action')
+        toast.error('Session expirée. Veuillez vous reconnecter pour effectuer cette action.')
       } else if (error.code === 'auth/too-many-requests') {
         toast.error('Trop de tentatives. Veuillez patienter avant de réessayer.')
+      } else if (error.code === 'auth/user-not-found') {
+        toast.error('Utilisateur non trouvé. Veuillez vous reconnecter.')
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error('Email invalide. Veuillez vous reconnecter.')
       } else {
-        toast.error('Erreur lors de la mise à jour du mot de passe')
+        toast.error(`Erreur: ${error.message || 'Erreur inconnue'}`)
       }
     } finally {
       setLoading(false)
