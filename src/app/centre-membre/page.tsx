@@ -69,24 +69,6 @@ export default function CentreMembrePage() {
             </div>
           </Link>
 
-          {/* Mot de passe de connexion */}
-          <Link href="/centre-membre/mot-de-passe-connexion" className="block w-full">
-            <div className="bg-gradient-to-r from-purple-50/40 via-violet-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-200/50 hover:border-purple-400 group backdrop-blur-sm transform hover:scale-[1.02]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 rounded-xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
-                    <span className="text-white text-lg font-bold drop-shadow-lg">🔒</span>
-                  </div>
-                  <span className="text-gray-800 text-base font-black tracking-wide group-hover:text-purple-700 transition-colors duration-300">Mot de passe de connexion</span>
-                </div>
-                <div className="text-gray-400 group-hover:text-purple-500 transition-colors duration-300 transform group-hover:translate-x-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </Link>
 
           {/* Mot de passe des fonds */}
           <Link href="/centre-membre/mot-de-passe-fonds" className="block w-full">
