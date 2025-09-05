@@ -592,7 +592,20 @@ export default function AdminDashboard() {
                   <div className="space-y-3 text-sm">
                     <div className="bg-green-50 rounded-lg p-3">
                       <span className="text-gray-600 block text-xs mb-1">Date de transaction:</span>
-                      <span className="font-medium">{selectedTransaction.createdAt?.toDate?.()?.toLocaleString('fr-FR') || 'N/A'}</span>
+                      <span className="font-medium">{
+                        (() => {
+                          const date = selectedTransaction.submittedAt || selectedTransaction.createdAt;
+                          if (!date) return 'N/A';
+                          
+                          // Si c'est un Timestamp Firestore, utiliser toDate()
+                          if (date && typeof date === 'object' && 'toDate' in date) {
+                            return date.toDate().toLocaleString('fr-FR');
+                          }
+                          
+                          // Si c'est déjà un Date ou un string, le convertir en Date
+                          return new Date(date).toLocaleString('fr-FR');
+                        })()
+                      }</span>
                     </div>
                     {selectedTransaction.beneficiaryName && (
                       <div className="bg-green-50 rounded-lg p-3">
