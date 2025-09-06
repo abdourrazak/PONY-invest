@@ -154,13 +154,23 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
 
-      // TEST: Créer transaction sans image d'abord pour tester
+      // Convertir l'image en base64 correctement
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(transactionImage)
+      })
+
+      console.log('✅ Image convertie en base64')
+
+      // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'deposit',
         amount: numericAmount,
         paymentMethod: paymentMethod as 'orange' | 'mtn' | 'crypto',
         phoneNumber: userData.numeroTel,
-        proofImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', // Image placeholder
+        proofImage: base64Image,
         beneficiaryCode: beneficiaryCode,
         beneficiaryName: beneficiaryName
       }
