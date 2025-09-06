@@ -140,6 +140,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     setLoading(true)
 
     try {
+      alert('DEBUG 1: Début vérification mot de passe')
+      
       // Vérifier le mot de passe des fonds
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
       if (userDoc.exists()) {
@@ -153,6 +155,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           return
         }
       }
+      
+      alert('DEBUG 2: Mot de passe OK, conversion image...')
 
       // Convertir l'image en base64 correctement
       const base64Image = await new Promise<string>((resolve, reject) => {
@@ -162,7 +166,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         reader.readAsDataURL(transactionImage)
       })
 
-      console.log('✅ Image convertie en base64')
+      alert('DEBUG 3: Image convertie, création données...')
 
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
@@ -175,7 +179,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         beneficiaryName: beneficiaryName
       }
 
-      console.log('🔥 Création transaction dépôt:', transactionData)
+      alert('DEBUG 4: Données OK, sauvegarde Firestore...')
 
       await createTransaction(
         currentUser.uid,
@@ -183,7 +187,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         transactionData
       )
 
-      console.log('✅ Transaction créée, réinitialisation...')
+      alert('DEBUG 5: Transaction sauvée avec succès!')
 
       // Réinitialiser le formulaire
       setAmount('')
@@ -191,17 +195,14 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       setImagePreview(null)
       setFundsPassword('')
       
-      console.log('✅ Formulaire réinitialisé, affichage alerte...')
       alert('Demande de dépôt soumise avec succès!')
       
-      console.log('✅ Redirection vers portefeuille...')
       // Rediriger vers le portefeuille (exactement comme retrait)
       router.push('/portefeuille')
     } catch (error) {
+      alert(`ERREUR À L'ÉTAPE: ${error instanceof Error ? error.message : String(error)}`)
       console.error('❌ Erreur lors de la soumission du dépôt:', error)
-      alert('Une erreur est survenue lors de la soumission du dépôt')
     } finally {
-      console.log('🔄 setLoading(false)')
       setLoading(false)
     }
   }
