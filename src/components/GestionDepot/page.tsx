@@ -183,8 +183,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     setLoading(true)
 
     try {
-      alert('DEBUG 1: Début vérification mot de passe')
-      
       // Vérifier le mot de passe des fonds
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
       if (userDoc.exists()) {
@@ -199,12 +197,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
       
-      alert('DEBUG 2: Mot de passe OK, compression image...')
-      
       // Compresser l'image si elle dépasse 1MB
       const compressedImage = await compressImage(transactionImage)
-      
-      alert('DEBUG 3: Image compressée, création données...')
       
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
@@ -217,15 +211,11 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         beneficiaryName: beneficiaryName
       }
 
-      alert('DEBUG 4: Données OK, sauvegarde Firestore...')
-      
       await createTransaction(
         currentUser.uid,
         userData.numeroTel,
         transactionData
       )
-
-      alert('DEBUG 5: Transaction sauvée avec succès!')
 
       // Réinitialiser le formulaire
       setAmount('')
@@ -238,8 +228,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       // Rediriger vers le portefeuille (exactement comme retrait)
       router.push('/portefeuille')
     } catch (error) {
-      alert(`ERREUR À L'ÉTAPE: ${error instanceof Error ? error.message : String(error)}`)
       console.error('❌ Erreur lors de la soumission du dépôt:', error)
+      alert('Une erreur est survenue lors de la soumission du dépôt')
     } finally {
       setLoading(false)
     }
