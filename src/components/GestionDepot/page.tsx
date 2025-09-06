@@ -19,6 +19,49 @@ const hashPassword = async (password: string): Promise<string> => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
+// Fonction pour compresser une image si elle dépasse 1MB
+const compressImage = (file: File, maxSizeBytes: number = 1048487): Promise<string> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const img = document.createElement('img')
+    
+    img.onload = () => {
+      // Calculer les nouvelles dimensions (réduire si nécessaire)
+      let { width, height } = img
+      const maxDimension = 1200 // Dimension maximale
+      
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = (height * maxDimension) / width
+          width = maxDimension
+        } else {
+          width = (width * maxDimension) / height
+          height = maxDimension
+        }
+      }
+      
+      canvas.width = width
+      canvas.height = height
+      ctx.drawImage(img, 0, 0, width, height)
+      
+      // Commencer avec une qualité élevée et réduire si nécessaire
+      let quality = 0.8
+      let compressedDataUrl = canvas.toDataURL('image/jpeg', quality)
+      
+      // Réduire la qualité jusqu'à ce que l'image soit sous la limite
+      while (compressedDataUrl.length > maxSizeBytes && quality > 0.1) {
+        quality -= 0.1
+        compressedDataUrl = canvas.toDataURL('image/jpeg', quality)
+      }
+      
+      resolve(compressedDataUrl)
+    }
+    
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 interface GestionDepotProps {
   paymentMethod?: 'orange' | 'mtn' | 'crypto'
 }
@@ -156,31 +199,26 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
       
-      alert('DEBUG 2: Mot de passe OK, conversion image...')
-
-      // Convertir l'image en base64 correctement
-      const base64Image = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onloadend = () => resolve(reader.result as string)
-        reader.onerror = reject
-        reader.readAsDataURL(transactionImage)
-      })
-
-      alert('DEBUG 3: Image convertie, création données...')
-
+      alert('DEBUG 2: Mot de passe OK, compression image...')
+      
+      // Compresser l'image si elle dépasse 1MB
+      const compressedImage = await compressImage(transactionImage)
+      
+      alert('DEBUG 3: Image compressée, création données...')
+      
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'deposit',
         amount: numericAmount,
         paymentMethod: paymentMethod as 'orange' | 'mtn' | 'crypto',
         phoneNumber: userData.numeroTel,
-        proofImage: base64Image,
+        proofImage: compressedImage,
         beneficiaryCode: beneficiaryCode,
         beneficiaryName: beneficiaryName
       }
 
       alert('DEBUG 4: Données OK, sauvegarde Firestore...')
-
+      
       await createTransaction(
         currentUser.uid,
         userData.numeroTel,
