@@ -335,9 +335,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={!amount || !transactionImage || !hasConfiguredPassword || !fundsPassword || loading}
+          disabled={!amount || !transactionImage || !hasConfiguredPassword || !fundsPassword || loading || parseFloat(amount) < (isCrypto ? 10 : 3000)}
           className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-            amount && transactionImage && hasConfiguredPassword && fundsPassword && !loading
+            amount && transactionImage && hasConfiguredPassword && fundsPassword && !loading && parseFloat(amount) >= (isCrypto ? 10 : 3000)
               ? isOrange 
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
                 : isMTN
