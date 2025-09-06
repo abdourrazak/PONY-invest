@@ -154,43 +154,44 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
 
-      // Convertir l'image en base64 pour stockage
-      const reader = new FileReader()
-      reader.onloadend = async () => {
-        const base64Image = reader.result as string
-
-        // Créer la transaction dans Firestore
-        const transactionData: CreateTransactionData = {
-          type: 'deposit',
-          amount: numericAmount,
-          paymentMethod: paymentMethod as 'orange' | 'mtn' | 'crypto',
-          phoneNumber: userData.numeroTel,
-          proofImage: base64Image,
-          beneficiaryCode: beneficiaryCode,
-          beneficiaryName: beneficiaryName
-        }
-
-        await createTransaction(
-          currentUser.uid,
-          userData.numeroTel,
-          transactionData
-        )
-
-        // Réinitialiser le formulaire
-        setAmount('')
-        setTransactionImage(null)
-        setImagePreview(null)
-        setFundsPassword('')
-        
-        // Forcer la redirection vers le portefeuille avec rechargement
-        window.location.href = '/portefeuille'
+      // TEST: Créer transaction sans image d'abord pour tester
+      const transactionData: CreateTransactionData = {
+        type: 'deposit',
+        amount: numericAmount,
+        paymentMethod: paymentMethod as 'orange' | 'mtn' | 'crypto',
+        phoneNumber: userData.numeroTel,
+        proofImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', // Image placeholder
+        beneficiaryCode: beneficiaryCode,
+        beneficiaryName: beneficiaryName
       }
+
+      console.log('🔥 Création transaction dépôt:', transactionData)
+
+      await createTransaction(
+        currentUser.uid,
+        userData.numeroTel,
+        transactionData
+      )
+
+      console.log('✅ Transaction créée, réinitialisation...')
+
+      // Réinitialiser le formulaire
+      setAmount('')
+      setTransactionImage(null)
+      setImagePreview(null)
+      setFundsPassword('')
       
-      reader.readAsDataURL(transactionImage)
+      console.log('✅ Formulaire réinitialisé, affichage alerte...')
+      alert('Demande de dépôt soumise avec succès!')
+      
+      console.log('✅ Redirection vers portefeuille...')
+      // Rediriger vers le portefeuille (exactement comme retrait)
+      router.push('/portefeuille')
     } catch (error) {
-      console.error('Erreur lors de la soumission du dépôt:', error)
+      console.error('❌ Erreur lors de la soumission du dépôt:', error)
       alert('Une erreur est survenue lors de la soumission du dépôt')
     } finally {
+      console.log('🔄 setLoading(false)')
       setLoading(false)
     }
   }
