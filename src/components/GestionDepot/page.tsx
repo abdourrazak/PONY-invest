@@ -335,15 +335,39 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={!amount || !transactionImage || !hasConfiguredPassword || !fundsPassword || loading || parseFloat(amount) < (isCrypto ? 10 : 3000)}
+          disabled={(() => {
+            const numericAmount = parseFloat(amount);
+            const minAmount = isCrypto ? 10 : 3000;
+            
+            return !amount || 
+                   !transactionImage || 
+                   !hasConfiguredPassword || 
+                   !fundsPassword || 
+                   loading || 
+                   isNaN(numericAmount) || 
+                   numericAmount < minAmount;
+          })()}
           className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-            amount && transactionImage && hasConfiguredPassword && fundsPassword && !loading && parseFloat(amount) >= (isCrypto ? 10 : 3000)
-              ? isOrange 
-                ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
-                : isMTN
-                ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white'
-                : 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            (() => {
+              const numericAmount = parseFloat(amount);
+              const minAmount = isCrypto ? 10 : 3000;
+              
+              const isEnabled = amount && 
+                               transactionImage && 
+                               hasConfiguredPassword && 
+                               fundsPassword && 
+                               !loading && 
+                               !isNaN(numericAmount) && 
+                               numericAmount >= minAmount;
+              
+              return isEnabled
+                ? isOrange 
+                  ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
+                  : isMTN
+                  ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed';
+            })()
           }`}
         >
           <div className="flex items-center justify-center">
