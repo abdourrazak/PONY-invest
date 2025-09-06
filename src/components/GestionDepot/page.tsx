@@ -113,7 +113,13 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   }
 
   const handleSubmit = async () => {
-    if (!amount || !transactionImage || !currentUser || !userData) return
+    console.log('🔥 handleSubmit appelé')
+    alert('DEBUG: handleSubmit démarré')
+    
+    if (!amount || !transactionImage || !currentUser || !userData) {
+      alert('DEBUG: Conditions initiales échouées')
+      return
+    }
 
     // Vérifier si l'utilisateur a configuré un mot de passe des fonds
     if (!hasConfiguredPassword) {
@@ -132,11 +138,12 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
     const numericAmount = parseFloat(amount)
     
-    if (numericAmount < minAmount) {
+    if (isNaN(numericAmount) || numericAmount < minAmount) {
       alert(`Le montant minimum est de ${minAmount} ${isCrypto ? 'USDT' : 'FCFA'}`)
       return
     }
 
+    alert('DEBUG: Toutes validations passées, début traitement...')
     setLoading(true)
 
     try {
@@ -154,9 +161,12 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
 
+      alert('DEBUG: Mot de passe validé, conversion image...')
+
       // Convertir l'image en base64 pour stockage
       const reader = new FileReader()
       reader.onloadend = async () => {
+        alert('DEBUG: Image convertie, création transaction...')
         const base64Image = reader.result as string
 
         // Créer la transaction dans Firestore
@@ -176,12 +186,15 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           transactionData
         )
 
+        alert('DEBUG: Transaction créée avec succès!')
+
         // Réinitialiser le formulaire
         setAmount('')
         setTransactionImage(null)
         setImagePreview(null)
         setFundsPassword('')
         
+        alert('DEBUG: Redirection vers portefeuille...')
         // Rediriger vers le portefeuille
         router.push('/portefeuille')
       }
@@ -189,7 +202,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       reader.readAsDataURL(transactionImage)
     } catch (error) {
       console.error('Erreur lors de la soumission du dépôt:', error)
-      alert('Une erreur est survenue lors de la soumission du dépôt')
+      alert(`Une erreur est survenue lors de la soumission du dépôt: ${error}`)
     } finally {
       setLoading(false)
     }
