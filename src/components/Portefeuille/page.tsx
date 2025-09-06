@@ -134,21 +134,14 @@ export default function Portefeuille() {
   }, [currentUser, userData])
 
   const deleteDeposit = async (depositId: string) => {
-    if (!userData?.numeroTel) return
-
     try {
-      // Supprimer de Firestore si c'est une transaction réelle
+      // Supprimer uniquement de Firestore - pas de localStorage
       const transactionToDelete = firestoreTransactions.find(t => t.id === depositId)
       if (transactionToDelete) {
         const transactionRef = doc(db, 'transactions', depositId)
         await deleteDoc(transactionRef)
         console.log('Transaction supprimée de Firestore:', depositId)
       }
-
-      // Supprimer de localStorage (données locales)
-      const updatedDeposits = deposits.filter(d => d.id !== depositId)
-      setDeposits(updatedDeposits)
-      localStorage.setItem(`deposits_${userData.numeroTel}`, JSON.stringify(updatedDeposits))
       setShowDeleteConfirm(null)
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
@@ -157,21 +150,14 @@ export default function Portefeuille() {
   }
 
   const deleteWithdrawal = async (withdrawalId: string) => {
-    if (!userData?.numeroTel) return
-
     try {
-      // Supprimer de Firestore si c'est une transaction réelle  
+      // Supprimer uniquement de Firestore - pas de localStorage
       const transactionToDelete = firestoreTransactions.find(t => t.id === withdrawalId)
       if (transactionToDelete) {
         const transactionRef = doc(db, 'transactions', withdrawalId)
         await deleteDoc(transactionRef)
         console.log('Transaction supprimée de Firestore:', withdrawalId)
       }
-
-      // Supprimer de localStorage (données locales)
-      const updatedWithdrawals = withdrawals.filter(w => w.id !== withdrawalId)
-      setWithdrawals(updatedWithdrawals)
-      localStorage.setItem(`withdrawals_${userData.numeroTel}`, JSON.stringify(updatedWithdrawals))
       setShowDeleteConfirm(null)
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)

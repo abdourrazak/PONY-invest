@@ -113,13 +113,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   }
 
   const handleSubmit = async () => {
-    console.log('🔥 handleSubmit appelé')
-    alert('DEBUG: handleSubmit démarré')
-    
-    if (!amount || !transactionImage || !currentUser || !userData) {
-      alert('DEBUG: Conditions initiales échouées')
-      return
-    }
+    if (!amount || !transactionImage || !currentUser || !userData) return
 
     // Vérifier si l'utilisateur a configuré un mot de passe des fonds
     if (!hasConfiguredPassword) {
@@ -143,7 +137,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       return
     }
 
-    alert('DEBUG: Toutes validations passées, début traitement...')
     setLoading(true)
 
     try {
@@ -161,12 +154,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         }
       }
 
-      alert('DEBUG: Mot de passe validé, conversion image...')
-
       // Convertir l'image en base64 pour stockage
       const reader = new FileReader()
       reader.onloadend = async () => {
-        alert('DEBUG: Image convertie, création transaction...')
         const base64Image = reader.result as string
 
         // Créer la transaction dans Firestore
@@ -186,23 +176,20 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           transactionData
         )
 
-        alert('DEBUG: Transaction créée avec succès!')
-
         // Réinitialiser le formulaire
         setAmount('')
         setTransactionImage(null)
         setImagePreview(null)
         setFundsPassword('')
         
-        alert('DEBUG: Redirection vers portefeuille...')
-        // Rediriger vers le portefeuille
-        router.push('/portefeuille')
+        // Forcer la redirection vers le portefeuille avec rechargement
+        window.location.href = '/portefeuille'
       }
       
       reader.readAsDataURL(transactionImage)
     } catch (error) {
       console.error('Erreur lors de la soumission du dépôt:', error)
-      alert(`Une erreur est survenue lors de la soumission du dépôt: ${error}`)
+      alert('Une erreur est survenue lors de la soumission du dépôt')
     } finally {
       setLoading(false)
     }
