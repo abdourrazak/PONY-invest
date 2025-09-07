@@ -141,7 +141,7 @@ export default function Accueil() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-100" style={{ 
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white" style={{ 
       minHeight: '100vh',
       width: '100%',
       maxWidth: '100%',
@@ -151,11 +151,11 @@ export default function Accueil() {
       overscrollBehavior: 'none'
     }}>
       {/* Header - Optimisé pour mobile */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-3 sm:px-4 py-3 sm:py-4 shadow-xl">
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-xl border-2 sm:border-3 border-white flex items-center justify-center relative animate-pulse">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+            <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-400 via-green-400 to-purple-500 rounded-full shadow-xl border-2 sm:border-3 border-white/20 flex items-center justify-center relative animate-pulse">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-purple-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
               <div className="relative z-10 flex flex-col items-center">
                 <div className="text-white text-xs mb-0.5">🌍</div>
                 <span className="text-white font-bold text-[8px] sm:text-xs leading-none">Global</span>
@@ -167,7 +167,7 @@ export default function Accueil() {
             <span className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md">Accueil</span>
           </div>
 
-          <button className="relative p-2 sm:p-3 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200 transform hover:scale-110 shadow-lg">
+          <button className="relative p-2 sm:p-3 text-white hover:bg-white/10 rounded-full transition-all duration-200 transform hover:scale-110">
             <Bell size={18} className="drop-shadow-sm sm:w-5 sm:h-5" />
           </button>
         </div>
@@ -175,7 +175,7 @@ export default function Accueil() {
 
       <main className="px-3 sm:px-4 py-3 sm:py-4" style={{ touchAction: 'pan-y' }}>
         {/* Banner Slider */}
-        <div className="relative w-full h-40 sm:h-52 overflow-hidden rounded-xl shadow-2xl mb-4 border border-gray-200">
+        <div className="relative w-full h-40 sm:h-52 overflow-hidden rounded-2xl shadow-2xl mb-6 border border-white/20">
           {banners.map((banner, index) => (
             <div
               key={index}
@@ -187,17 +187,17 @@ export default function Accueil() {
                 src={banner}
                 alt={`Banner ${index + 1}`}
                 fill
-                className="object-cover"
+                className="object-cover rounded-2xl"
                 priority={index === 0}
               />
             </div>
           ))}
         </div>
 
-        {/* Scrolling Text - Exactement comme sur l'image */}
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-3 mb-6 overflow-hidden rounded-r-lg shadow-sm">
+        {/* Scrolling Text */}
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-6 overflow-hidden">
           <div 
-            className="whitespace-nowrap text-green-800 text-sm font-bold animate-pulse"
+            className="whitespace-nowrap text-white text-sm font-bold animate-pulse"
             style={{
               transform: `translateX(${scrollText}px)`,
               animation: 'scroll-left 15s linear infinite'
@@ -212,15 +212,15 @@ export default function Accueil() {
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-1 sm:p-2 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[95px] sm:h-[85px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 border border-gray-100">
-                <div className={`${service.color} p-2.5 sm:p-3 rounded-lg sm:rounded-xl mb-0.5 sm:mb-1 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl ${
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-md p-1 sm:p-2 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[95px] sm:h-[85px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20 border border-white/20">
+                <div className={`${service.color} p-2.5 sm:p-3 rounded-2xl mb-0.5 sm:mb-1 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl ${
                   service.special === 'gift' ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50' : ''
                 }`}>
                   <IconComponent size={24} className={`text-white drop-shadow-sm sm:w-8 sm:h-8 ${
                     service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
                   }`} />
                 </div>
-                <span className={`text-[11px] sm:text-[13px] text-gray-800 text-center font-bold leading-tight ${
+                <span className={`text-white text-[11px] sm:text-[13px] text-center font-bold leading-tight ${
                   service.special === 'gift' ? 'text-pink-600 animate-pulse' : ''
                 }`}>
                   {service.title}
@@ -243,7 +243,7 @@ export default function Accueil() {
         {/* Section Produits d'investissement */}
         <div className="mt-8 pb-20">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center">
+            <h2 className="text-xl font-bold text-white flex items-center">
               <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">💎</span>
               <span className="ml-2">Produits d'Investissement</span>
             </h2>
@@ -253,29 +253,29 @@ export default function Accueil() {
           </div>
           
           {/* LV1 */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4 mb-3 relative shadow-sm hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
               <span className="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p1.png" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">3 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+600 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -291,29 +291,29 @@ export default function Accueil() {
           </div>
 
           {/* LV2 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p2.png" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">5 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+1 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -329,29 +329,29 @@ export default function Accueil() {
           </div>
 
           {/* LV3 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p3.png" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">7 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+2 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -367,29 +367,29 @@ export default function Accueil() {
           </div>
 
           {/* LV4 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p4.png" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">12 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+2 400 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -405,29 +405,29 @@ export default function Accueil() {
           </div>
 
           {/* LV5 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p5.png" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">20 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+4 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -443,29 +443,29 @@ export default function Accueil() {
           </div>
 
           {/* LV6 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p6.png" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">50 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+10 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -481,29 +481,29 @@ export default function Accueil() {
           </div>
 
           {/* LV7 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-green-600 rounded-lg flex-shrink-0 overflow-hidden">
+              <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
                 <Image src="/p7.png" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-gray-50 px-3 py-2 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-600 text-xs sm:text-sm font-black">95 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-600 text-xs sm:text-sm font-black">+19 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-gray-800 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -520,7 +520,7 @@ export default function Accueil() {
         </div>
 
         {/* Navigation Bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-sm border-t border-white/10 px-4 py-2">
           <div className="flex justify-around items-center">
             <NavigationLink href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
@@ -529,7 +529,7 @@ export default function Accueil() {
                   <path d="M9 22V12H15V22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="text-green-600 text-xs font-medium">Accueil</span>
+              <span className="text-white text-xs font-medium">Accueil</span>
             </NavigationLink>
             <NavigationLink href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
