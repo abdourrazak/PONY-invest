@@ -287,31 +287,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">3 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">3 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+600 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+600 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">3 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">3 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV2 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -325,31 +325,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">5 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">5 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+1 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+1 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">5 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">5 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV3 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -363,31 +363,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">7 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">7 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+2 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+2 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">7 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">7 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV4 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -401,31 +401,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">12 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">12 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+2 400 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+2 400 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">12 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">12 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV5 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -439,31 +439,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">20 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">20 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+4 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+4 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">20 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">20 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV6 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -477,31 +477,31 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">50 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">50 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+10 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+10 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">50 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">50 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
           </div>
 
           {/* LV7 */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-3 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
               <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
@@ -515,24 +515,24 @@ export default function Accueil() {
               <div className="flex-1 space-y-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Prix :</span>
-                    <span className="text-blue-600 text-xs sm:text-sm font-black">95 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">95 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Par jour :</span>
-                    <span className="text-green-600 text-xs sm:text-sm font-black">+19 000 FCFA</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">+19 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white text-xs sm:text-sm font-bold">Durée :</span>
-                    <span className="text-purple-600 text-xs sm:text-sm font-black">30 jours</span>
+                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-red-600 font-bold text-lg">95 000 FCFA</span>
-              <button className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <span className="text-yellow-400 font-bold text-lg">95 000 FCFA</span>
+              <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
             </div>
