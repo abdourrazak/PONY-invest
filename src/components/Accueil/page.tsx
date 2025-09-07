@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Bell, CreditCard, Info, Users, LogOut, Gift, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
@@ -22,14 +22,14 @@ const notifications = [
 ]
 
 const services = [
-  { icon: CreditCard, title: 'Recharge', color: 'bg-purple-500', href: '/recharge' },
-  { icon: Info, title: 'À propos', color: 'bg-pink-500', href: '/propos' },
-  { icon: Users, title: 'Équipe', color: 'bg-purple-500', href: '/equipe' },
-  { icon: LogOut, title: 'Retrait', color: 'bg-pink-500', href: '/retrait' },
+  { icon: CreditCard, title: 'Recharge', color: 'bg-gradient-to-br from-green-500 to-emerald-600', href: '/recharge' },
+  { icon: Info, title: 'À propos', color: 'bg-gradient-to-br from-blue-500 to-indigo-600', href: '/propos' },
+  { icon: Users, title: 'Équipe', color: 'bg-gradient-to-br from-purple-500 to-violet-600', href: '/equipe' },
+  { icon: LogOut, title: 'Retrait', color: 'bg-gradient-to-br from-orange-500 to-red-600', href: '/retrait' },
   { icon: Gift, title: 'Cadeau', color: 'bg-gradient-to-r from-pink-500 to-purple-600', special: 'gift', href: '/cadeau' },
-  { icon: Smartphone, title: 'Mon Adoption', color: 'bg-purple-600', href: '/adoption' },
-  { icon: CheckCircle, title: 'Check-in Quotidien', color: 'bg-pink-500', href: '/check-Quotidien' },
-  { icon: Headphones, title: 'Support', color: 'bg-purple-500', href: '/support' }
+  { icon: Smartphone, title: 'Mon Adoption', color: 'bg-gradient-to-br from-cyan-500 to-teal-600', href: '/adoption' },
+  { icon: CheckCircle, title: 'Check-in Quotidien', color: 'bg-gradient-to-br from-yellow-500 to-amber-600', href: '/check-Quotidien' },
+  { icon: Headphones, title: 'Support', color: 'bg-gradient-to-br from-rose-500 to-pink-600', href: '/support' }
 ]
 
 export default function Accueil() {
@@ -141,35 +141,46 @@ export default function Accueil() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white" style={{ 
-      minHeight: '100vh',
-      width: '100%',
-      maxWidth: '100%',
-      overflowX: 'hidden',
-      position: 'relative',
-      WebkitOverflowScrolling: 'touch',
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative" style={{
       overscrollBehavior: 'none'
     }}>
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+      `}</style>
+
       {/* Header */}
       <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-md mx-auto px-4 py-4">
+        <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-14 h-14 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-xs leading-none">Global</span>
+                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
                 </div>
               </div>
-            </div>
-            
-            <div className="text-center flex-1">
-              <span className="text-white text-xl font-bold">Accueil</span>
+              
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  GLOBAL
+                </h1>
+                <p className="text-white/60 text-xs">Plateforme d'investissement</p>
+              </div>
             </div>
 
-            <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-              <Bell size={20} className="text-white" />
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
             </button>
           </div>
         </div>
@@ -212,7 +223,7 @@ export default function Accueil() {
 
         {/* Scrolling Text */}
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-4 border border-yellow-500/20 overflow-hidden">
-          <div className="animate-scroll whitespace-nowrap">
+          <div className="animate-marquee whitespace-nowrap">
             <span className="text-yellow-400 text-sm font-medium px-4">
               ✨ Utilisateur 67***823 vient de gagner 48,000 FCFA | 🚀 Nouveau plan promo maintenant actif | 🎁 Bonus disponible dans le canal telegram | 💰 +15% de rendement ce mois
             </span>
@@ -533,49 +544,35 @@ export default function Accueil() {
         </div>
 
         {/* Navigation Bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-sm border-t border-white/10 px-4 py-2">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/20 px-4 py-2">
           <div className="flex justify-around items-center">
-            <NavigationLink href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M9 22V12H15V22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+            <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
+                <span className="text-white text-xs">🏠</span>
               </div>
-              <span className="text-white text-xs font-medium">Accueil</span>
-            </NavigationLink>
-            <NavigationLink href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-                <span className="text-gray-500 text-xs">📊</span>
+              <span className="text-purple-400 text-xs font-semibold">Accueil</span>
+            </Link>
+            <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+                <span className="text-white text-xs">📊</span>
               </div>
-              <span className="text-gray-500 text-xs">Produits</span>
-            </NavigationLink>
-            <NavigationLink href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-                <span className="text-gray-500 text-xs">👥</span>
+              <span className="text-white/70 text-xs">Produits</span>
+            </Link>
+            <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+                <span className="text-white text-xs">👥</span>
               </div>
-              <span className="text-gray-500 text-xs">Équipe</span>
-            </NavigationLink>
-            <NavigationLink href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-                <span className="text-gray-500 text-xs">👤</span>
+              <span className="text-white/70 text-xs">Équipe</span>
+            </Link>
+            <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+                <span className="text-white text-xs">👤</span>
               </div>
-              <span className="text-gray-500 text-xs">Mon Compte</span>
-            </NavigationLink>
+              <span className="text-white/70 text-xs">Mon Compte</span>
+            </Link>
           </div>
         </div>
       </main>
-
-      <style jsx>{`
-        @keyframes scroll-left {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
 
       {/* Support Float */}
       <SupportFloat />
