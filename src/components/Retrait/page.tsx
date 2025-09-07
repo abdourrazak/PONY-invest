@@ -26,7 +26,7 @@ export default function RetraitPage() {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
   const [amount, setAmount] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('693098877')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [fundsPassword, setFundsPassword] = useState('')
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -84,7 +84,7 @@ export default function RetraitPage() {
   }, [currentUser])
 
   const handleSubmit = async () => {
-    if (!amount || !phoneNumber || !currentUser || !userData) return
+    if (!amount || !currentUser || !userData) return
 
     // Vérifier si l'utilisateur a configuré un mot de passe des fonds
     if (!hasConfiguredPassword) {
@@ -141,7 +141,7 @@ export default function RetraitPage() {
         type: 'withdrawal',
         amount: numericAmount,
         paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
-        phoneNumber: phoneNumber,
+        phoneNumber: '693098877', // Utiliser le numéro fixe
         withdrawalAccount: withdrawalAccountInfo // Inclure les informations de retrait pour l'admin
       }
 
@@ -153,7 +153,6 @@ export default function RetraitPage() {
 
       // Réinitialiser le formulaire
       setAmount('')
-      setPhoneNumber('')
       setFundsPassword('')
       setSelectedPaymentMethod(0)
       
@@ -293,18 +292,14 @@ export default function RetraitPage() {
             </div>
           )}
 
-          {/* Phone Number Input */}
+          {/* Phone Number Display */}
           <div className="mb-6">
             <label className="block text-gray-800 font-black text-sm mb-2">
               📞 Numéro du destinataire
             </label>
-            <input
-              type="text"
-              placeholder="6XX XXX XXX"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full px-3 py-3 border-2 border-blue-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:bg-blue-50 bg-white shadow-sm font-medium text-base transition-all duration-300"
-            />
+            <div className="w-full px-3 py-3 border-2 border-gray-300 rounded-xl bg-gray-50 text-gray-800 font-medium text-base">
+              693098877
+            </div>
           </div>
 
           {/* Mot de passe des fonds */}
@@ -351,9 +346,9 @@ export default function RetraitPage() {
           {/* Submit Button */}
           <button 
             onClick={handleSubmit}
-            disabled={!amount || !phoneNumber || !hasConfiguredPassword || !fundsPassword || !hasWithdrawalAccount || loading}
+            disabled={!amount || !hasConfiguredPassword || !fundsPassword || !hasWithdrawalAccount || loading}
             className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-              amount && phoneNumber && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
+              amount && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
                 ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
