@@ -150,26 +150,26 @@ export default function Accueil() {
       WebkitOverflowScrolling: 'touch',
       overscrollBehavior: 'none'
     }}>
-      {/* Header - Optimisé pour mobile */}
-      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 px-3 sm:px-4 py-3 sm:py-4">
+      {/* Header */}
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 px-4 py-4 shadow-xl">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-400 via-green-400 to-purple-500 rounded-full shadow-xl border-2 sm:border-3 border-white/20 flex items-center justify-center relative animate-pulse">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-purple-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="text-white text-xs mb-0.5">🌍</div>
-                <span className="text-white font-bold text-[8px] sm:text-xs leading-none">Global</span>
-              </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
+              <span className="text-white font-bold text-lg">A</span>
+            </div>
+            <div>
+              <h1 className="text-white font-bold text-lg">AXML</h1>
+              <p className="text-white/70 text-xs">Plateforme d'investissement</p>
             </div>
           </div>
-          
-          <div className="text-center flex-1">
-            <span className="text-white text-lg sm:text-xl font-bold tracking-wide drop-shadow-md">Accueil</span>
+          <div className="flex items-center space-x-2">
+            <div className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full border border-white/20">
+              <span className="text-white/90 text-sm font-medium">0 FCFA</span>
+            </div>
+            <button className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-colors">
+              <span className="text-white text-lg">🔔</span>
+            </button>
           </div>
-
-          <button className="relative p-2 sm:p-3 text-white hover:bg-white/10 rounded-full transition-all duration-200 transform hover:scale-110">
-            <Bell size={18} className="drop-shadow-sm sm:w-5 sm:h-5" />
-          </button>
         </div>
       </header>
 
@@ -209,15 +209,11 @@ export default function Accueil() {
         </div>
 
         {/* Scrolling Text */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 mb-6 overflow-hidden">
-          <div 
-            className="whitespace-nowrap text-white text-sm font-bold animate-pulse"
-            style={{
-              transform: `translateX(${scrollText}px)`,
-              animation: 'scroll-left 15s linear infinite'
-            }}
-          >
-            ✨ Utilisateur 67***823 vient de gagner 48,000 FCFA | 🚀 Nouveau plan promo maintenant actif | 🎁 Bonus disponible dans le canal telegram | 💰 +15% de rendement ce mois
+        <div className="bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-red-400/20 backdrop-blur-sm border-y border-white/10 py-2 overflow-hidden">
+          <div className="animate-scroll whitespace-nowrap">
+            <span className="text-white/90 text-sm font-medium px-4">
+              ✨ Utilisateur 67***823 vient de gagner 48,000 FCFA | 🚀 Nouveau plan promo maintenant actif | 🎁 Bonus disponible dans le canal telegram | 💰 +15% de rendement ce mois
+            </span>
           </div>
         </div>
 
@@ -285,17 +281,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">3 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+600 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -323,17 +319,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">5 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+1 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -361,17 +357,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">7 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+2 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -399,17 +395,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">12 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+2 400 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -437,17 +433,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">20 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+4 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -475,17 +471,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">50 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+10 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
@@ -513,17 +509,17 @@ export default function Accueil() {
               </div>
               
               <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-white/15 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Prix :</span>
                     <span className="text-blue-400 text-xs sm:text-sm font-black">95 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Par jour :</span>
                     <span className="text-green-400 text-xs sm:text-sm font-black">+19 000 FCFA</span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                    <span className="text-white/90 text-xs sm:text-sm font-bold">Durée :</span>
                     <span className="text-purple-400 text-xs sm:text-sm font-black">30 jours</span>
                   </div>
                 </div>
