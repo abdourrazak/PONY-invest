@@ -115,10 +115,10 @@ export default function Accueil() {
   // Afficher un loader pendant la vérification d'auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+          <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">Chargement...</p>
         </div>
       </div>
     )
@@ -190,8 +190,22 @@ export default function Accueil() {
                 className="object-cover rounded-2xl"
                 priority={index === 0}
               />
+              {/* Overlay gradient pour améliorer la lisibilité */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent rounded-2xl"></div>
             </div>
           ))}
+          
+          {/* Indicateurs de slide */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {banners.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === currentSlide ? 'bg-white' : 'bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Scrolling Text */}
@@ -212,16 +226,22 @@ export default function Accueil() {
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-md p-1 sm:p-2 flex flex-col items-center justify-center hover:shadow-xl transition-all duration-300 cursor-pointer min-h-[95px] sm:h-[85px] transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20 border border-white/20">
-                <div className={`${service.color} p-2.5 sm:p-3 rounded-2xl mb-0.5 sm:mb-1 transition-all duration-200 hover:rotate-6 shadow-lg hover:shadow-xl ${
-                  service.special === 'gift' ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50' : ''
+              <div className={`bg-white/10 backdrop-blur-sm rounded-2xl shadow-md p-1 sm:p-2 flex flex-col items-center justify-center min-h-[95px] sm:h-[85px] cursor-pointer border border-white/20 ${
+                service.special === 'gift' 
+                  ? 'hover:shadow-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20' 
+                  : 'transition-colors duration-200'
+              }`}>
+                <div className={`${service.color} p-2.5 sm:p-3 rounded-2xl mb-0.5 sm:mb-1 shadow-lg ${
+                  service.special === 'gift' 
+                    ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50 transition-all duration-200 hover:rotate-6 hover:shadow-xl' 
+                    : ''
                 }`}>
                   <IconComponent size={24} className={`text-white drop-shadow-sm sm:w-8 sm:h-8 ${
                     service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
                   }`} />
                 </div>
                 <span className={`text-white text-[11px] sm:text-[13px] text-center font-bold leading-tight ${
-                  service.special === 'gift' ? 'text-pink-600 animate-pulse' : ''
+                  service.special === 'gift' ? 'text-pink-300 animate-pulse' : ''
                 }`}>
                   {service.title}
                 </span>
@@ -244,10 +264,10 @@ export default function Accueil() {
         <div className="mt-8 pb-20">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-white flex items-center">
-              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">💎</span>
-              <span className="ml-2">Produits d'Investissement</span>
+              <span className="text-2xl mr-2">💎</span>
+              <span className="bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Produits d'Investissement</span>
             </h2>
-            <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+            <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm text-yellow-300 px-3 py-1 rounded-full text-xs font-bold shadow-lg border border-yellow-500/30">
               7 Offres
             </div>
           </div>
