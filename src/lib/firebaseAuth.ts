@@ -315,3 +315,162 @@ export async function getReferralStats(user: User): Promise<ReferralStats> {
     referralLink: getReferralLink(user.referralCode)
   }
 }
+
+// Récupérer les filleuls multi-niveaux d'un utilisateur
+export async function getMultiLevelReferrals(referralCode: string): Promise<{
+  equipeA: User[],
+  equipeB: User[],
+  equipeC: User[]
+}> {
+  try {
+    if (!referralCode) {
+      return { equipeA: [], equipeB: [], equipeC: [] }
+    }
+    
+    const usersRef = collection(db, 'users')
+    const cleanCode = referralCode.trim().toUpperCase()
+    
+    // Récupérer tous les utilisateurs
+    const allUsersSnapshot = await getDocs(usersRef)
+    const allUsers: User[] = []
+    
+    allUsersSnapshot.forEach((doc) => {
+      const userData = { ...doc.data(), uid: doc.id } as User
+      allUsers.push(userData)
+    })
+    
+    // Équipe A : filleuls directs
+    const equipeA = allUsers.filter(user => {
+      const userReferredBy = user.referredBy
+      if (userReferredBy && typeof userReferredBy === 'string') {
+        return userReferredBy.trim().toUpperCase() === cleanCode
+      }
+      return false
+    })
+    
+    // Équipe B : filleuls des filleuls directs
+    const equipeB: User[] = []
+    for (const directReferral of equipeA) {
+      const secondLevelReferrals = allUsers.filter(user => {
+        const userReferredBy = user.referredBy
+        if (userReferredBy && typeof userReferredBy === 'string') {
+          return userReferredBy.trim().toUpperCase() === directReferral.referralCode.trim().toUpperCase()
+        }
+        return false
+      })
+      equipeB.push(...secondLevelReferrals)
+    }
+    
+    // Équipe C : filleuls des filleuls de niveau 2
+    const equipeC: User[] = []
+    for (const secondLevelReferral of equipeB) {
+      const thirdLevelReferrals = allUsers.filter(user => {
+        const userReferredBy = user.referredBy
+        if (userReferredBy && typeof userReferredBy === 'string') {
+          return userReferredBy.trim().toUpperCase() === secondLevelReferral.referralCode.trim().toUpperCase()
+        }
+        return false
+      })
+      equipeC.push(...thirdLevelReferrals)
+    }
+    
+    return { equipeA, equipeB, equipeC }
+  } catch (error) {
+    console.error('Erreur récupération filleuls multi-niveaux:', error)
+    return { equipeA: [], equipeB: [], equipeC: [] }
+  }
+}
+
+// Calculer les revenus de parrainage basés sur les gains des filleuls
+export async function calculateReferralRevenue(referralCode: string): Promise<{
+  equipeARevenue: number,
+  equipeBRevenue: number,
+  equipeCRevenue: number,
+  totalRevenue: number
+}> {
+  try {
+    const { equipeA, equipeB, equipeC } = await getMultiLevelReferrals(referralCode)
+    
+    // Pour l'instant, utiliser un gain moyen simulé par filleul
+    // TODO: Intégrer avec le système de transactions réelles
+    const averageEarningsPerUser = 1000 // 1000 FCFA de gains moyens par utilisateur
+    
+    const equipeARevenue = equipeA.length * averageEarningsPerUser * 0.10 // 10%
+    const equipeBRevenue = equipeB.length * averageEarningsPerUser * 0.05 // 5%
+    const equipeCRevenue = equipeC.length * averageEarningsPerUser * 0.03 // 3%
+    
+    const totalRevenue = equipeARevenue + equipeBRevenue + equipeCRevenue
+    
+    return {
+      equipeARevenue,
+      equipeBRevenue,
+      equipeCRevenue,
+      totalRevenue
+    }
+  } catch (error) {
+    console.error('Erreur calcul revenus parrainage:', error)
+    return {
+      equipeARevenue: 0,
+      equipeBRevenue: 0,
+      equipeCRevenue: 0,
+      totalRevenue: 0
+    }
+  }
+}
+
+// Interface pour les statistiques de parrainage multi-niveaux
+export interface MultiLevelReferralStats {
+  equipeA: {
+    count: number
+    members: User[]
+    revenue: number
+    percentage: number
+  }
+  equipeB: {
+    count: number
+    members: User[]
+    revenue: number
+    percentage: number
+  }
+  equipeC: {
+    count: number
+    members: User[]
+    revenue: number
+    percentage: number
+  }
+  totalReferrals: number
+  totalRevenue: number
+  referralCode: string
+  referralLink: string
+}
+
+// Récupérer les statistiques complètes de parrainage multi-niveaux
+export async function getMultiLevelReferralStats(user: User): Promise<MultiLevelReferralStats> {
+  const { equipeA, equipeB, equipeC } = await getMultiLevelReferrals(user.referralCode)
+  const { equipeARevenue, equipeBRevenue, equipeCRevenue, totalRevenue } = await calculateReferralRevenue(user.referralCode)
+  
+  return {
+    equipeA: {
+      count: equipeA.length,
+      members: equipeA,
+      revenue: equipeARevenue,
+      percentage: 10
+    },
+    equipeB: {
+      count: equipeB.length,
+      members: equipeB,
+      revenue: equipeBRevenue,
+      percentage: 5
+    },
+    equipeC: {
+      count: equipeC.length,
+      members: equipeC,
+      revenue: equipeCRevenue,
+      percentage: 3
+    },
+    totalReferrals: equipeA.length + equipeB.length + equipeC.length,
+    totalRevenue,
+    referralCode: user.referralCode,
+    referralLink: getReferralLink(user.referralCode)
+  }
+}
