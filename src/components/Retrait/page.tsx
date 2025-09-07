@@ -26,7 +26,7 @@ export default function RetraitPage() {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(0)
   const [amount, setAmount] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('693098877')
   const [fundsPassword, setFundsPassword] = useState('')
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(false)
