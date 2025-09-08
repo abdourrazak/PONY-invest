@@ -240,14 +240,14 @@ export default function RetraitPage() {
                   onClick={() => setSelectedPaymentMethod(index)}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
                     selectedPaymentMethod === index
-                      ? 'border-purple-400 bg-purple-500/20 backdrop-blur-sm shadow-lg'
-                      : 'border-white/20 bg-white/10 backdrop-blur-sm hover:border-white/30'
+                      ? 'border-purple-400 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm shadow-xl'
+                      : 'border-white/20 bg-black/30 backdrop-blur-sm hover:border-purple-300 hover:bg-black/40'
                   }`}
                 >
                   <div className="flex items-center justify-center">
                     {index === 0 && (
                       <div className="flex items-center">
-                        <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center mr-2 border border-orange-400/30">
+                        <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-2 border border-orange-400/50 shadow-lg">
                           <Image src="/org.png" alt="Orange Money" width={16} height={16} className="object-contain" />
                         </div>
                         <span className="font-bold text-xs text-white">Orange Money</span>
@@ -255,7 +255,7 @@ export default function RetraitPage() {
                     )}
                     {index === 1 && (
                       <div className="flex items-center">
-                        <div className="w-6 h-6 bg-yellow-500/20 rounded-lg flex items-center justify-center mr-2 border border-yellow-400/30">
+                        <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-2 border border-yellow-400/50 shadow-lg">
                           <Image src="/mtn.png" alt="MTN Money" width={16} height={16} className="object-contain" />
                         </div>
                         <span className="font-bold text-xs text-white">MTN Money</span>
@@ -264,7 +264,7 @@ export default function RetraitPage() {
                   </div>
                   {selectedPaymentMethod === index && (
                     <div className="flex items-center justify-center mt-2">
-                      <div className="w-3 h-3 bg-purple-400 rounded-full flex items-center justify-center">
+                      <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
