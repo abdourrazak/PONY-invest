@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Bell } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
@@ -169,60 +169,65 @@ export default function RetraitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-4 shadow-lg relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={18} />
-          </NavigationLink>
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-base">💸</span>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white text-xs mb-0.5">🌍</div>
+                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <p className="text-white/60 text-xs">Retrait</p>
+              </div>
             </div>
-            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Retrait</h1>
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
+            </button>
           </div>
-          <div className="w-5"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-4 max-w-md mx-auto">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Title & Balance */}
-        <div className="text-center mb-6">
-          <h1 className="text-xl font-black text-gray-800 mb-3">Retirer mes fonds</h1>
-          <div className="bg-gradient-to-r from-blue-100 to-green-100 px-4 py-2 rounded-xl inline-block shadow-sm border border-white/50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent mb-4">Retirer mes fonds</h1>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-gray-800 font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
+              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
             </div>
           </div>
         </div>
 
         {/* Withdrawal Form */}
-        <div className="mb-6">
-          <h2 className="text-gray-800 font-black text-base mb-4 text-center">Formulaire de retrait</h2>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <h2 className="text-white font-bold text-lg mb-6 text-center">Formulaire de retrait</h2>
           
           {/* Amount Input */}
-          <div className="mb-4">
-            <label className="block text-gray-800 font-black text-sm mb-2">
+          <div className="mb-6">
+            <label className="block text-white/70 font-medium text-sm mb-2">
               💰 Montant à retirer (FCFA)
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Minimum 5,000 FCFA"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-3 py-3 border-2 border-blue-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:bg-blue-50 bg-white shadow-sm font-medium text-base transition-all duration-300"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Minimum 5,000 FCFA"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
+            />
           </div>
 
           {/* Payment Method Selection */}
-          <div className="mb-4">
-            <label className="block text-gray-800 font-black text-sm mb-2">
+          <div className="mb-6">
+            <label className="block text-white/70 font-medium text-sm mb-3">
               📱 Mode de paiement
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -230,10 +235,10 @@ export default function RetraitPage() {
                 <button
                   key={index}
                   onClick={() => setSelectedPaymentMethod(index)}
-                  className={`p-3 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-[1.01] active:scale-[0.99] shadow-sm ${
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
                     selectedPaymentMethod === index
-                      ? 'border-green-500 bg-gradient-to-r from-green-50 to-blue-50 shadow-green-200'
-                      : 'border-gray-300 bg-white hover:border-blue-400 hover:shadow-blue-200'
+                      ? 'border-purple-400 bg-white/20 backdrop-blur-sm shadow-lg'
+                      : 'border-white/20 bg-white/10 backdrop-blur-sm hover:border-white/30'
                   }`}
                 >
                   <div className="flex items-center justify-center">
@@ -242,9 +247,7 @@ export default function RetraitPage() {
                         <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center mr-2">
                           <Image src="/org.png" alt="Orange Money" width={16} height={16} className="object-contain" />
                         </div>
-                        <span className={`font-bold text-xs ${
-                          selectedPaymentMethod === index ? 'text-green-700' : 'text-orange-600'
-                        }`}>Orange Money</span>
+                        <span className="font-bold text-xs text-white">Orange Money</span>
                       </div>
                     )}
                     {index === 1 && (
@@ -252,15 +255,13 @@ export default function RetraitPage() {
                         <div className="w-6 h-6 bg-yellow-100 rounded-lg flex items-center justify-center mr-2">
                           <Image src="/mtn.png" alt="MTN Money" width={16} height={16} className="object-contain" />
                         </div>
-                        <span className={`font-bold text-xs ${
-                          selectedPaymentMethod === index ? 'text-green-700' : 'text-yellow-600'
-                        }`}>MTN Money</span>
+                        <span className="font-bold text-xs text-white">MTN Money</span>
                       </div>
                     )}
                   </div>
                   {selectedPaymentMethod === index && (
-                    <div className="flex items-center justify-center mt-1">
-                      <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="flex items-center justify-center mt-2">
+                      <div className="w-3 h-3 bg-purple-400 rounded-full flex items-center justify-center">
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -274,19 +275,19 @@ export default function RetraitPage() {
 
           {/* Informations de retrait configurées */}
           {hasWithdrawalAccount && withdrawalAccountInfo && (
-            <div className="mb-4">
-              <label className="block text-gray-800 font-black text-sm mb-2">
+            <div className="mb-6">
+              <label className="block text-white/70 font-medium text-sm mb-2">
                 💳 Informations de retrait configurées
               </label>
-              <div className="bg-green-50 border border-green-200 rounded-xl p-3">
-                <div className="text-green-800 text-sm">
+              <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                <div className="text-green-400 text-sm">
                   <div className="font-bold">{withdrawalAccountInfo.operator === 'bank' ? 'Compte bancaire' : 
                     withdrawalAccountInfo.operator === 'orange' ? 'Orange Money' :
                     withdrawalAccountInfo.operator === 'mtn' ? 'MTN Mobile Money' :
                     withdrawalAccountInfo.operator === 'moov' ? 'Moov Money' :
                     withdrawalAccountInfo.operator === 'wave' ? 'Wave' : withdrawalAccountInfo.operator}</div>
-                  <div>Compte: {withdrawalAccountInfo.accountNumber}</div>
-                  <div>Titulaire: {withdrawalAccountInfo.holderName}</div>
+                  <div className="text-white/70">Compte: {withdrawalAccountInfo.accountNumber}</div>
+                  <div className="text-white/70">Titulaire: {withdrawalAccountInfo.holderName}</div>
                 </div>
               </div>
             </div>
@@ -294,25 +295,25 @@ export default function RetraitPage() {
 
           {/* Phone Number Display */}
           <div className="mb-6">
-            <label className="block text-gray-800 font-black text-sm mb-2">
+            <label className="block text-white/70 font-medium text-sm mb-2">
               📞 Numéro du destinataire
             </label>
-            <div className="w-full px-3 py-3 border-2 border-gray-300 rounded-xl bg-gray-50 text-gray-800 font-medium text-base">
+            <div className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white font-medium text-base">
               693098877
             </div>
           </div>
 
           {/* Mot de passe des fonds */}
           <div className="mb-6">
-            <label className="block text-gray-800 font-black text-sm mb-2">
+            <label className="block text-white/70 font-medium text-sm mb-2">
               🔐 Mot de passe des fonds
             </label>
             {!hasConfiguredPassword ? (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-                <p className="text-red-700 text-sm mb-2">Vous devez configurer un mot de passe des fonds</p>
+              <div className="bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-xl p-4">
+                <p className="text-red-300 text-sm mb-3">Vous devez configurer un mot de passe des fonds</p>
                 <button 
                   onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
-                  className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                  className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
                   Configurer maintenant
                 </button>
@@ -323,7 +324,7 @@ export default function RetraitPage() {
                 placeholder="Entrez votre mot de passe des fonds"
                 value={fundsPassword}
                 onChange={(e) => setFundsPassword(e.target.value)}
-                className="w-full px-3 py-3 border-2 border-blue-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500 focus:bg-blue-50 bg-white shadow-sm font-medium text-base transition-all duration-300"
+                className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
               />
             )}
           </div>
@@ -331,11 +332,11 @@ export default function RetraitPage() {
           {/* Informations de retrait manquantes */}
           {!hasWithdrawalAccount && (
             <div className="mb-6">
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-                <p className="text-red-700 text-sm mb-2">Vous devez configurer vos informations de retrait</p>
+              <div className="bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-xl p-4">
+                <p className="text-red-300 text-sm mb-3">Vous devez configurer vos informations de retrait</p>
                 <button 
                   onClick={() => router.push('/centre-membre/compte-retrait')}
-                  className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                  className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
                   Configurer maintenant
                 </button>
@@ -347,10 +348,10 @@ export default function RetraitPage() {
           <button 
             onClick={handleSubmit}
             disabled={!amount || !hasConfiguredPassword || !fundsPassword || !hasWithdrawalAccount || loading}
-            className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
+            className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
               amount && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
-                ? 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
+                : 'bg-white/20 text-white/50 cursor-not-allowed'
             }`}
           >
             <div className="flex items-center justify-center">
@@ -368,7 +369,7 @@ export default function RetraitPage() {
             </div>
           </button>
         </div>
-      </div>
+      </main>
 
       {/* Support Float */}
       <SupportFloat />

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Minus, Smartphone, Wallet, ArrowLeft, TrendingUp, Users, FileText, Shield, LogOut } from 'lucide-react'
+import { Plus, Minus, Smartphone, Wallet, ArrowLeft, TrendingUp, Users, FileText, Shield, LogOut, Bell } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { useAuth } from '@/contexts/AuthContext'
 import { getReferralCount } from '@/lib/firebaseAuth'
@@ -55,200 +55,205 @@ export default function ComptePage() {
   }, [userData])
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <Link 
-            href="/" 
-            className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors duration-200"
-          >
-            <ArrowLeft size={20} />
-          </Link>
-          <div className="text-center flex-1">
-            <h1 className="text-xl font-bold text-white tracking-wide">Mon Compte</h1>
-            <p className="text-green-100 text-sm font-medium">{userData?.numeroTel || 'Utilisateur'}</p>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white text-xs mb-0.5">🌍</div>
+                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <p className="text-white/60 text-xs">Mon Compte</p>
+              </div>
+            </div>
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
+            </button>
           </div>
-          <div className="w-10"></div>
         </div>
       </header>
 
-      <div className="px-4 py-6 pb-20">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Balance Card */}
-        <div className="mx-2 mb-6">
-          <div className="bg-gradient-to-br from-green-600 via-green-700 to-blue-600 rounded-2xl p-5 shadow-2xl border border-white/30 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-white text-xl font-black tracking-wide">Mes atouts</h3>
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-3 rounded-xl shadow-xl border border-white/20 backdrop-blur-sm">
-                  <span className="text-yellow-900 text-lg font-black">💎</span>
-                </div>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white text-xl font-bold">Mes atouts</h3>
+              <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-3 rounded-xl shadow-xl border border-white/20">
+                <span className="text-yellow-900 text-lg font-bold">💎</span>
               </div>
-              <div className="text-center">
-                <div className="text-white text-4xl font-black mb-2 tracking-wide">
-                  {funds.toLocaleString('fr-FR')} XOF
-                </div>
-                <div className="text-green-100 text-sm font-black">Solde disponible</div>
+            </div>
+            <div className="text-center">
+              <div className="text-white text-4xl font-bold mb-2">
+                {funds.toLocaleString('fr-FR')} XOF
               </div>
+              <div className="text-white/70 text-sm">Solde disponible</div>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="px-2 py-5">
-          <div className="grid grid-cols-2 gap-3">
-            <Link href="/recharge">
-              <button className="bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl font-bold shadow-xl hover:from-green-600 hover:to-green-700 transition-colors duration-300 border border-green-400/30 w-full">
-                <div className="flex items-center justify-center space-x-2">
-                  <Plus size={18} />
-                  <span>Recharge</span>
-                </div>
-              </button>
-            </Link>
-            <Link href="/retrait">
-              <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-bold shadow-xl hover:from-blue-600 hover:to-blue-700 transition-colors duration-300 border border-blue-400/30 w-full">
-                <div className="flex items-center justify-center space-x-2">
-                  <Minus size={18} />
-                  <span>Retrait</span>
-                </div>
-              </button>
-            </Link>
-            <Link href="/mes-gains">
-              <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-xl font-bold shadow-xl hover:from-purple-600 hover:to-purple-700 transition-colors duration-300 border border-purple-400/30 w-full">
-                <div className="flex items-center justify-center space-x-2">
-                  <Smartphone size={18} />
-                  <span>Appareil</span>
-                </div>
-              </button>
-            </Link>
-            <Link href="/portefeuille">
-              <button className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-4 px-6 rounded-xl font-bold hover:from-purple-600 hover:to-pink-700 transition-colors shadow-lg">
-                💼 Portefeuille
-              </button>
-            </Link>
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Link href="/recharge">
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+              <div className="flex items-center justify-center space-x-2">
+                <Plus size={18} />
+                <span>Recharge</span>
+              </div>
+            </button>
+          </Link>
+          <Link href="/retrait">
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+              <div className="flex items-center justify-center space-x-2">
+                <Minus size={18} />
+                <span>Retrait</span>
+              </div>
+            </button>
+          </Link>
+          <Link href="/mes-gains">
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+              <div className="flex items-center justify-center space-x-2">
+                <Smartphone size={18} />
+                <span>Appareil</span>
+              </div>
+            </button>
+          </Link>
+          <Link href="/portefeuille">
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+              💼 Portefeuille
+            </button>
+          </Link>
         </div>
 
         {/* Stats */}
-        <div className="mx-2 mb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-3 shadow-lg border border-green-400/30 hover:shadow-xl transition-shadow duration-300">
-              <div className="text-center">
-                <div className="text-green-100 text-xs font-medium mb-1">Gains aujourd'hui</div>
-                <div className="text-white text-lg font-black">0 XOF</div>
-                <div className="text-green-200 text-xs mt-1">📈 +0%</div>
-              </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
+            <div className="text-center">
+              <div className="text-white/70 text-xs mb-1">Gains aujourd'hui</div>
+              <div className="text-green-400 text-lg font-bold">0 XOF</div>
+              <div className="text-white/60 text-xs mt-1">📈 +0%</div>
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl p-3 shadow-lg border border-blue-400/30 hover:shadow-xl transition-shadow duration-300">
-              <div className="text-center">
-                <div className="text-blue-100 text-xs font-medium mb-1">Gains totaux</div>
-                <div className="text-white text-lg font-black">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
-                <div className="text-blue-200 text-xs mt-1">💰 Parrainage + Check-in</div>
-              </div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
+            <div className="text-center">
+              <div className="text-white/70 text-xs mb-1">Gains totaux</div>
+              <div className="text-yellow-400 text-lg font-bold">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
+              <div className="text-white/60 text-xs mt-1">💰 Parrainage + Check-in</div>
             </div>
           </div>
         </div>
 
         {/* Menu Options */}
-        <div className="space-y-3 mb-6">
-          <Link href="/equipe" className="block w-full bg-gradient-to-r from-white via-purple-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-purple-200/50 hover:border-purple-400 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                  <Users size={20} className="text-white" />
+        <div className="space-y-4">
+          <Link href="/equipe" className="block w-full">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                    <Users size={20} className="text-white" />
+                  </div>
+                  <span className="text-white text-base font-medium">Liste des Parrainés</span>
                 </div>
-                <span className="text-gray-800 text-base font-black tracking-wide">Liste des Parrainés</span>
-              </div>
-              <div className="text-gray-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
+                <div className="text-white/60">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             </div>
           </Link>
 
-          <button className="w-full bg-gradient-to-r from-white via-indigo-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-indigo-200/50 hover:border-indigo-400 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 via-blue-600 to-indigo-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                  <FileText size={20} className="text-white" />
+          <button className="w-full">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                    <FileText size={20} className="text-white" />
+                  </div>
+                  <span className="text-white text-base font-medium">Mes Reçus</span>
                 </div>
-                <span className="text-gray-800 text-base font-black tracking-wide">Mes Reçus</span>
-              </div>
-              <div className="text-gray-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
+                <div className="text-white/60">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             </div>
           </button>
 
           <Link href="/centre-membre" className="block w-full">
-            <button className="w-full bg-gradient-to-r from-emerald-50/40 via-green-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-emerald-200/50 hover:border-emerald-400 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-600 to-emerald-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                  <Shield size={20} className="text-white" />
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                    <Shield size={20} className="text-white" />
+                  </div>
+                  <span className="text-white text-base font-medium">Centre membre</span>
                 </div>
-                <span className="text-gray-800 text-base font-black tracking-wide">Centre membre</span>
-              </div>
-              <div className="text-gray-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
+                <div className="text-white/60">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             </div>
-            </button>
           </Link>
 
           <Link href="/register-auth" className="block w-full">
-            <button className="w-full bg-gradient-to-r from-white via-red-50/40 to-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-red-200/50 hover:border-red-400 backdrop-blur-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                  <LogOut size={20} className="text-white" />
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                    <LogOut size={20} className="text-white" />
+                  </div>
+                  <span className="text-white text-base font-medium">Déconnexion</span>
                 </div>
-                <span className="text-gray-800 text-base font-black tracking-wide">Déconnexion</span>
-              </div>
-              <div className="text-gray-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
+                <div className="text-white/60">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             </div>
-            </button>
           </Link>
         </div>
-      </div>
+      </main>
 
       {/* Navigation Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/20 px-4 py-2">
         <div className="flex justify-around items-center">
-          <Link href="/" className="flex flex-col items-center hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">🏠</span>
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">🏠</span>
             </div>
-            <span className="text-gray-500 text-xs">Accueil</span>
+            <span className="text-white/70 text-xs">Accueil</span>
           </Link>
-          <Link href="/produits" className="flex flex-col items-center hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">📊</span>
+          <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">📊</span>
             </div>
-            <span className="text-gray-500 text-xs">Produits</span>
+            <span className="text-white/70 text-xs">Produits</span>
           </Link>
-          <Link href="/equipe" className="flex flex-col items-center hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">👥</span>
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">👥</span>
             </div>
-            <span className="text-gray-500 text-xs">Équipe</span>
+            <span className="text-white/70 text-xs">Équipe</span>
           </Link>
-          <Link href="/compte" className="flex flex-col items-center">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
               <span className="text-white text-xs">👤</span>
             </div>
-            <span className="text-green-600 text-xs font-medium">Mon Compte</span>
+            <span className="text-purple-400 text-xs font-semibold">Mon Compte</span>
           </Link>
         </div>
       </div>

@@ -4,7 +4,7 @@ import NavigationLink from '../NavigationLink/NavigationLink'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Bell } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { useAuth } from '@/contexts/AuthContext'
 import { subscribeToUserBalance } from '@/lib/transactions'
@@ -46,75 +46,80 @@ export default function RechargePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-5 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </NavigationLink>
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-base">💳</span>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white text-xs mb-0.5">🌍</div>
+                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <p className="text-white/60 text-xs">Recharge</p>
+              </div>
             </div>
-            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Recharge</h1>
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
+            </button>
           </div>
-          <div className="w-5"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-4 max-w-md mx-auto">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Title & Balance */}
-        <div className="text-center mb-6">
-          <h1 className="text-xl font-black text-gray-800 mb-3">Recharger mon compte</h1>
-          <div className="bg-gradient-to-r from-blue-100 to-green-100 px-4 py-2 rounded-xl inline-block shadow-sm border border-white/50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent mb-4">Recharger mon compte</h1>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-gray-800 font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
+              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
             </div>
           </div>
         </div>
 
         {/* Payment Methods Section */}
-        <div className="mb-6">
-          <h2 className="text-gray-800 font-black text-base mb-4 text-center">Méthodes de paiement</h2>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <h2 className="text-white font-bold text-lg mb-6 text-center">Méthodes de paiement</h2>
           
           {/* Payment Options Grid */}
-          <div className="grid grid-cols-1 gap-3">
+          <div className="space-y-4">
             {paymentMethods.map((method, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedPaymentMethod(index)}
-                className={`p-3 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-[1.01] active:scale-[0.99] ${
+                className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:scale-105 active:scale-95 ${
                   selectedPaymentMethod === index
-                    ? 'border-green-500 bg-gradient-to-r from-green-50 to-blue-50 shadow-md'
-                    : 'border-gray-200 bg-white hover:border-blue-300 shadow-sm'
+                    ? 'border-purple-400 bg-white/20 backdrop-blur-sm shadow-lg'
+                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:border-white/30'
                 }`}
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center mr-3 shadow-sm">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center mr-4 shadow-lg">
                     {index === 0 && (
-                      <Image src="/org.png" alt="Orange Money" width={20} height={20} className="object-contain" />
+                      <Image src="/org.png" alt="Orange Money" width={24} height={24} className="object-contain" />
                     )}
                     {index === 1 && (
-                      <Image src="/mtn.png" alt="MTN Money" width={20} height={20} className="object-contain" />
+                      <Image src="/mtn.png" alt="MTN Money" width={24} height={24} className="object-contain" />
                     )}
                     {index === 2 && (
-                      <div className="text-blue-600 text-lg font-bold">₿</div>
+                      <div className="text-yellow-400 text-xl font-bold">₿</div>
                     )}
                   </div>
                   <div className="flex-1">
-                    <span className={`font-bold text-sm ${
-                      selectedPaymentMethod === index ? 'text-green-700' : 'text-gray-800'
-                    }`}>
+                    <span className="font-medium text-sm text-white">
                       {method.name}
                     </span>
                   </div>
                   {selectedPaymentMethod === index && (
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="w-6 h-6 bg-purple-400 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -126,26 +131,24 @@ export default function RechargePage() {
         </div>
         
         {/* Action Button */}
-        <div className="mt-6">
-          <button 
-            onClick={() => {
-              if (selectedPaymentMethod === 0) {
-                router.push('/gestion-depot?method=orange')
-              } else if (selectedPaymentMethod === 1) {
-                router.push('/gestion-depot?method=mtn')
-              } else if (selectedPaymentMethod === 2) {
-                router.push('/gestion-depot?method=crypto')
-              }
-            }}
-            className="w-full bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 text-white py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg"
-          >
-            <div className="flex items-center justify-center">
-              <span className="text-lg mr-2">💳</span>
-              Continuer vers le paiement
-            </div>
-          </button>
-        </div>
-      </div>
+        <button 
+          onClick={() => {
+            if (selectedPaymentMethod === 0) {
+              router.push('/gestion-depot?method=orange')
+            } else if (selectedPaymentMethod === 1) {
+              router.push('/gestion-depot?method=mtn')
+            } else if (selectedPaymentMethod === 2) {
+              router.push('/gestion-depot?method=crypto')
+            }
+          }}
+          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+        >
+          <div className="flex items-center justify-center">
+            <span className="text-lg mr-2">💳</span>
+            Continuer vers le paiement
+          </div>
+        </button>
+      </main>
 
       {/* Support Float */}
       <SupportFloat />

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowLeft, Eye, Trash2, X, AlertTriangle, Clock, CheckCircle, XCircle, Bell } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { subscribeUserTransactions, subscribeToUserBalance, Transaction } from '@/lib/transactions'
@@ -167,21 +167,21 @@ export default function Portefeuille() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-50 border-yellow-200 text-yellow-800'
-      case 'approved': return 'bg-green-50 border-green-200 text-green-800'
-      case 'success': return 'bg-green-50 border-green-200 text-green-800'  // Firestore status
-      case 'rejected': return 'bg-red-50 border-red-200 text-red-800'
-      default: return 'bg-gray-50 border-gray-200 text-gray-800'
+      case 'pending': return 'bg-yellow-500/20 border-yellow-400/30 text-yellow-300'
+      case 'approved': return 'bg-green-500/20 border-green-400/30 text-green-300'
+      case 'success': return 'bg-green-500/20 border-green-400/30 text-green-300'
+      case 'rejected': return 'bg-red-500/20 border-red-400/30 text-red-300'
+      default: return 'bg-white/20 border-white/30 text-white/70'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock size={16} className="text-yellow-600" />
-      case 'approved': return <CheckCircle size={16} className="text-green-600" />
-      case 'success': return <CheckCircle size={16} className="text-green-600" />  // Firestore status
-      case 'rejected': return <XCircle size={16} className="text-red-600" />
-      default: return <Clock size={16} className="text-gray-600" />
+      case 'pending': return <Clock size={16} className="text-yellow-400" />
+      case 'approved': return <CheckCircle size={16} className="text-green-400" />
+      case 'success': return <CheckCircle size={16} className="text-green-400" />
+      case 'rejected': return <XCircle size={16} className="text-red-400" />
+      default: return <Clock size={16} className="text-white/60" />
     }
   }
 
@@ -189,7 +189,7 @@ export default function Portefeuille() {
     switch (status) {
       case 'pending': return 'En attente'
       case 'approved': return 'Approuvé'
-      case 'success': return 'Approuvé'  // Ajouter mapping pour Firestore
+      case 'success': return 'Réussi'
       case 'rejected': return 'Rejeté'
       default: return 'Inconnu'
     }
@@ -209,342 +209,340 @@ export default function Portefeuille() {
       case 'orange': return 'from-orange-500 to-red-500'
       case 'mtn': return 'from-yellow-500 to-orange-500'
       case 'crypto': return 'from-blue-500 to-purple-500'
-      default: return 'from-gray-500 to-gray-600'
+      default: return 'from-purple-500 to-pink-500'
     }
   }
 
   return (
-  <div className="min-h-screen bg-gray-100">
-    {/* Header premium style */}
-    <div className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 shadow-xl">
-      <div className="flex items-center justify-between px-4 py-4">
-        <button
-          onClick={() => window.history.back()}
-          className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm"
-        >
-          <ArrowLeft size={18} className="text-white" />
-        </button>
-        <div className="text-center flex-1">
-          <h1 className="text-lg font-bold text-white mb-1 tracking-wide drop-shadow-md">Mon Portefeuille</h1>
-          <div className="inline-flex items-center px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-semibold shadow-lg border border-white/30">
-            <span className="w-1.5 h-1.5 bg-white rounded-full mr-2 animate-pulse"></span>
-            {balance.toLocaleString()} FCFA
+  <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
+    {/* Header */}
+    <header className="bg-black/20 backdrop-blur-md px-4 py-5 border-b border-white/10">
+      <div className="flex items-center justify-between max-w-md mx-auto">
+        <Link href="/" className="hover:scale-110 transition-transform duration-200">
+          <ArrowLeft className="text-white" size={20} />
+        </Link>
+        <div className="flex items-center">
+          <div className="w-8 h-8 mr-3">
+            <Image
+              src="/asml_logo_.png"
+              alt="Global Logo"
+              width={32}
+              height={32}
+              className="w-full h-full object-contain animate-spin"
+              style={{ animationDuration: '3s' }}
+            />
           </div>
+          <h1 className="text-lg font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+            Mon Portefeuille
+          </h1>
         </div>
-        <div className="w-9"></div>
+        <div className="w-5"></div>
       </div>
 
-      {/* Navigation Tabs premium */}
-      <div className="px-4 pb-4">
-        <div className="flex bg-white/20 backdrop-blur-sm rounded-lg p-1 border border-white/30">
+      {/* Balance Display */}
+      <div className="max-w-md mx-auto px-4 pt-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center">
+          <div className="text-white/70 text-sm mb-1">Solde disponible</div>
+          <div className="text-white text-2xl font-bold">{balance.toLocaleString()} FCFA</div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="max-w-md mx-auto px-4 pt-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1 flex">
           <button
             onClick={() => setActiveTab('deposits')}
-            className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-sm transition-all ${
+            className={`flex-1 py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
               activeTab === 'deposits'
-                ? 'bg-white text-green-700 shadow-sm'
-                : 'text-white hover:bg-white/10'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                : 'text-white/70 hover:text-white hover:bg-white/10'
             }`}
           >
             📥 Dépôts ({deposits.length})
           </button>
           <button
             onClick={() => setActiveTab('withdrawals')}
-            className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-sm transition-all ${
+            className={`flex-1 py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
               activeTab === 'withdrawals'
-                ? 'bg-white text-blue-700 shadow-sm'
-                : 'text-white hover:bg-white/10'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                : 'text-white/70 hover:text-white hover:bg-white/10'
             }`}
           >
             💸 Retraits ({withdrawals.length})
           </button>
         </div>
       </div>
-    </div>
+    </header>
 
-
-        {/* Content Lists */}
-      <div className="px-6 py-6">
-        <div className="space-y-4">
-          {activeTab === 'deposits' ? (
-            deposits.length === 0 ? (
-              <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-200">
-                <div className="text-gray-400 mb-4">
-                  <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
+    {/* Content Lists */}
+    <main className="max-w-md mx-auto px-4 py-6 space-y-4">
+      {activeTab === 'deposits' ? (
+        deposits.length === 0 ? (
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center">
+            <div className="text-white/40 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Aucun dépôt</h3>
+            <p className="text-white/70 text-sm mb-4">Vous n'avez encore effectué aucun dépôt.</p>
+            <Link href="/recharge">
+              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+                Effectuer un dépôt
+              </button>
+            </Link>
+          </div>
+        ) : (
+          deposits.map((deposit, index) => (
+            <div key={deposit.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getPaymentMethodColor(deposit.paymentMethod)} flex items-center justify-center shadow-lg`}>
+                    <span className="text-white font-bold text-lg">
+                      {deposit.paymentMethod === 'orange' ? 'O' : 
+                       deposit.paymentMethod === 'mtn' ? 'M' : '₿'}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-bold text-white text-lg">{deposit.amount.toLocaleString()} FCFA</div>
+                    <div className="text-sm text-white/70 font-medium">{getPaymentMethodName(deposit.paymentMethod)}</div>
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold text-gray-700 mb-2">Aucun dépôt</h3>
-                <p className="text-gray-500 text-sm mb-4">Vous n'avez encore effectué aucun dépôt.</p>
-                <Link href="/recharge">
-                  <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-600 hover:to-purple-700 transition-all">
-                    Effectuer un dépôt
-                  </button>
-                </Link>
+                <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center space-x-1.5 backdrop-blur-sm border ${getStatusColor(deposit.status)}`}>
+                  {getStatusIcon(deposit.status)}
+                  <span>{getStatusText(deposit.status)}</span>
+                </div>
               </div>
-            ) : (
-              deposits.map((deposit, index) => (
-                <div key={deposit.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${getPaymentMethodColor(deposit.paymentMethod)} flex items-center justify-center shadow-md`}>
-                        <span className="text-white font-bold text-lg">
-                          {deposit.paymentMethod === 'orange' ? 'O' : 
-                           deposit.paymentMethod === 'mtn' ? 'M' : '₿'}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-900 text-lg">{deposit.amount.toLocaleString()} FCFA</div>
-                        <div className="text-sm text-gray-500 font-medium">{getPaymentMethodName(deposit.paymentMethod)}</div>
-                      </div>
-                    </div>
-                    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
-                      deposit.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                      deposit.status === 'approved' || deposit.status === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                      'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                      {getStatusIcon(deposit.status)}
-                      <span>{getStatusText(deposit.status)}</span>
-                    </div>
-                  </div>
 
-                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium mb-0.5">Date de soumission</div>
-                        <div className="text-gray-800 font-medium">{new Date(deposit.submittedAt).toLocaleDateString('fr-FR')}</div>
-                        <div className="text-gray-600 text-xs">{new Date(deposit.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium mb-0.5">ID de transaction</div>
-                        <div className="font-mono text-gray-800 font-bold text-xs">#{deposit.id.slice(-8).toUpperCase()}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium">Bénéficiaire</div>
-                        <div className="text-gray-800 font-medium truncate max-w-28 text-sm">{deposit.beneficiaryName}</div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button 
-                          onClick={() => setSelectedDeposit(deposit)}
-                          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-xs font-medium transition-colors"
-                        >
-                          <Eye size={12} />
-                          <span>Détails</span>
-                        </button>
-                        {(deposit.status === 'success' || deposit.status === 'approved' || deposit.status === 'rejected') && (
-                          <button 
-                            onClick={() => setShowDeleteConfirm(deposit.id)}
-                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
-                            title="Supprimer cette transaction"
-                          >
-                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+              <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <div className="text-white/70 text-xs font-medium mb-0.5">Date de soumission</div>
+                    <div className="text-white font-medium">{new Date(deposit.submittedAt).toLocaleDateString('fr-FR')}</div>
+                    <div className="text-white/60 text-xs">{new Date(deposit.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                  <div>
+                    <div className="text-white/70 text-xs font-medium mb-0.5">ID de transaction</div>
+                    <div className="font-mono text-white font-bold text-xs">#{deposit.id.slice(-8).toUpperCase()}</div>
                   </div>
                 </div>
-              ))
-            )
-          ) : (
-            withdrawals.length === 0 ? (
-              <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-200">
-                <div className="text-gray-400 mb-4">
-                  <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-gray-700 mb-2">Aucun retrait</h3>
-                <p className="text-gray-500 text-sm mb-4">Vous n'avez encore effectué aucune demande de retrait.</p>
-                <Link href="/retrait">
-                  <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-pink-700 transition-all">
-                    Demander un retrait
-                  </button>
-                </Link>
-              </div>
-            ) : (
-              withdrawals.map((withdrawal) => (
-                <div key={withdrawal.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${getPaymentMethodColor(withdrawal.paymentMethod)} flex items-center justify-center shadow-md`}>
-                        <span className="text-white font-bold text-lg">
-                          {withdrawal.paymentMethod === 'orange' ? 'O' : withdrawal.paymentMethod === 'mtn' ? 'M' : '₿'}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-900 text-lg">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
-                        <div className="text-sm text-gray-500 font-medium">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
-                      </div>
-                    </div>
-                    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center space-x-1.5 ${
-                      withdrawal.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                      withdrawal.status === 'approved' || withdrawal.status === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                      'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                      {getStatusIcon(withdrawal.status)}
-                      <span>{getStatusText(withdrawal.status)}</span>
-                    </div>
+                
+                <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                  <div>
+                    <div className="text-white/70 text-xs font-medium">Bénéficiaire</div>
+                    <div className="text-white font-medium truncate max-w-28 text-sm">{deposit.beneficiaryName}</div>
                   </div>
-
-                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium mb-0.5">Date de soumission</div>
-                        <div className="text-gray-800 font-medium">{new Date(withdrawal.submittedAt).toLocaleDateString('fr-FR')}</div>
-                        <div className="text-gray-600 text-xs">{new Date(withdrawal.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium mb-0.5">ID de transaction</div>
-                        <div className="font-mono text-gray-800 font-bold text-xs">#{withdrawal.id.slice(-8).toUpperCase()}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                      <div>
-                        <div className="text-gray-500 text-xs font-medium">Destination</div>
-                        <div className="text-gray-800 font-medium truncate max-w-28 text-sm">
-                          {withdrawal.paymentMethod === 'crypto' ? withdrawal.cryptoAddress : withdrawal.phoneNumber}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setSelectedWithdrawal(withdrawal)}
-                          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-xs font-medium transition-colors"
-                        >
-                          <Eye size={12} />
-                          <span>Détails</span>
-                        </button>
-                        {(withdrawal.status === 'success' || withdrawal.status === 'approved' || withdrawal.status === 'rejected') && (
-                          <button
-                            onClick={() => setShowDeleteConfirm(withdrawal.id)}
-                            className="w-7 h-7 bg-gray-100 hover:bg-red-100 border border-gray-300 hover:border-red-300 rounded-full flex items-center justify-center transition-all duration-200 group"
-                            title="Supprimer cette transaction"
-                          >
-                            <Trash2 size={12} className="text-gray-500 group-hover:text-red-500" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => setSelectedDeposit(deposit)}
+                      className="flex items-center space-x-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-medium transition-all duration-200 backdrop-blur-sm border border-white/20"
+                    >
+                      <Eye size={12} />
+                      <span>Détails</span>
+                    </button>
+                    {(deposit.status === 'success' || deposit.status === 'approved' || deposit.status === 'rejected') && (
+                      <button 
+                        onClick={() => setShowDeleteConfirm(deposit.id)}
+                        className="w-8 h-8 bg-white/20 hover:bg-red-500/30 border border-white/20 hover:border-red-400/30 rounded-xl flex items-center justify-center transition-all duration-200 group backdrop-blur-sm"
+                        title="Supprimer cette transaction"
+                      >
+                        <Trash2 size={12} className="text-white/70 group-hover:text-red-400" />
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Modal for withdrawal details */}
-      {selectedWithdrawal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800">Détails du retrait</h3>
-                <button
-                  onClick={() => setSelectedWithdrawal(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X size={20} />
-                </button>
               </div>
             </div>
-            <div className="p-4 space-y-4">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-r ${getPaymentMethodColor(selectedWithdrawal.paymentMethod)} rounded-lg flex items-center justify-center`}>
-                  <span className="text-white font-bold">
-                    {selectedWithdrawal.paymentMethod === 'orange' ? 'O' : selectedWithdrawal.paymentMethod === 'mtn' ? 'M' : '₿'}
-                  </span>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-gray-800">{(typeof selectedWithdrawal.amount === 'string' ? parseInt(selectedWithdrawal.amount) : selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
-                  <div className="text-sm text-gray-600">{getPaymentMethodName(selectedWithdrawal.paymentMethod)}</div>
-                </div>
-              </div>
-
-              <div className={`px-4 py-3 rounded-lg border ${getStatusColor(selectedWithdrawal.status)}`}>
-                <div className="flex items-center space-x-2">
-                  {getStatusIcon(selectedWithdrawal.status)}
-                  <span className="font-bold">{getStatusText(selectedWithdrawal.status)}</span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Date de soumission</div>
-                  <div className="text-gray-600">{new Date(selectedWithdrawal.submittedAt).toLocaleDateString('fr-FR')} à {new Date(selectedWithdrawal.submittedAt).toLocaleTimeString('fr-FR')}</div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">ID de transaction</div>
-                  <div className="font-mono text-gray-600">#{selectedWithdrawal.id.slice(-8).toUpperCase()}</div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Destination</div>
-                  <div className="text-gray-600 break-all">
-                    {selectedWithdrawal.paymentMethod === 'crypto' ? selectedWithdrawal.cryptoAddress : selectedWithdrawal.phoneNumber}
+          ))
+        )
+      ) : (
+        withdrawals.length === 0 ? (
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center">
+            <div className="text-white/40 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Aucun retrait</h3>
+            <p className="text-white/70 text-sm mb-4">Vous n'avez encore effectué aucune demande de retrait.</p>
+            <Link href="/retrait">
+              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+                Demander un retrait
+              </button>
+            </Link>
+          </div>
+        ) : (
+          withdrawals.map((withdrawal) => (
+            <div key={withdrawal.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getPaymentMethodColor(withdrawal.paymentMethod)} flex items-center justify-center shadow-lg`}>
+                    <span className="text-white font-bold text-lg">
+                      {withdrawal.paymentMethod === 'orange' ? 'O' : withdrawal.paymentMethod === 'mtn' ? 'M' : '₿'}
+                    </span>
                   </div>
+                  <div>
+                    <div className="font-bold text-white text-lg">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
+                    <div className="text-sm text-white/70 font-medium">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
+                  </div>
+                </div>
+                <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center space-x-1.5 backdrop-blur-sm border ${getStatusColor(withdrawal.status)}`}>
+                  {getStatusIcon(withdrawal.status)}
+                  <span>{getStatusText(withdrawal.status)}</span>
+                </div>
+              </div>
+
+              <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <div className="text-white/70 text-xs font-medium mb-0.5">Date de soumission</div>
+                    <div className="text-white font-medium">{new Date(withdrawal.submittedAt).toLocaleDateString('fr-FR')}</div>
+                    <div className="text-white/60 text-xs">{new Date(withdrawal.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                  <div>
+                    <div className="text-white/70 text-xs font-medium mb-0.5">ID de transaction</div>
+                    <div className="font-mono text-white font-bold text-xs">#{withdrawal.id.slice(-8).toUpperCase()}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                  <div>
+                    <div className="text-white/70 text-xs font-medium">Destination</div>
+                    <div className="text-white font-medium truncate max-w-28 text-sm">
+                      {withdrawal.paymentMethod === 'crypto' ? withdrawal.cryptoAddress : withdrawal.phoneNumber}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setSelectedWithdrawal(withdrawal)}
+                      className="flex items-center space-x-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-medium transition-all duration-200 backdrop-blur-sm border border-white/20"
+                    >
+                      <Eye size={12} />
+                      <span>Détails</span>
+                    </button>
+                    {(withdrawal.status === 'success' || withdrawal.status === 'approved' || withdrawal.status === 'rejected') && (
+                      <button
+                        onClick={() => setShowDeleteConfirm(withdrawal.id)}
+                        className="w-8 h-8 bg-white/20 hover:bg-red-500/30 border border-white/20 hover:border-red-400/30 rounded-xl flex items-center justify-center transition-all duration-200 group backdrop-blur-sm"
+                        title="Supprimer cette transaction"
+                      >
+                        <Trash2 size={12} className="text-white/70 group-hover:text-red-400" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )
+      )}
+    </main>
+
+    {/* Modal for withdrawal details */}
+    {selectedWithdrawal && (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-4 border-b border-white/10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Détails du retrait</h3>
+              <button
+                onClick={() => setSelectedWithdrawal(null)}
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200"
+              >
+                <X size={16} className="text-white" />
+              </button>
+            </div>
+          </div>
+          <div className="p-4 space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white mb-1">
+                {(typeof selectedWithdrawal.amount === 'string' ? parseInt(selectedWithdrawal.amount) : selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}
+              </div>
+              <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full backdrop-blur-sm border text-sm font-bold ${getStatusColor(selectedWithdrawal.status)}`}>
+                {getStatusIcon(selectedWithdrawal.status)}
+                <span>{getStatusText(selectedWithdrawal.status)}</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Méthode de paiement</div>
+                <div className="text-white">{getPaymentMethodName(selectedWithdrawal.paymentMethod)}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Date de soumission</div>
+                <div className="text-white">{new Date(selectedWithdrawal.submittedAt).toLocaleDateString('fr-FR')} à {new Date(selectedWithdrawal.submittedAt).toLocaleTimeString('fr-FR')}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">ID de transaction</div>
+                <div className="font-mono text-white">#{selectedWithdrawal.id.slice(-8).toUpperCase()}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Destination</div>
+                <div className="text-white break-all">
+                  {selectedWithdrawal.paymentMethod === 'crypto' ? selectedWithdrawal.cryptoAddress : selectedWithdrawal.phoneNumber}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      {/* Modal for deposit details */}
-      {selectedDeposit && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800">Détails du dépôt</h3>
-                <button
-                  onClick={() => setSelectedDeposit(null)}
-                  className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center"
-                >
-                  <XCircle size={16} className="text-gray-600" />
-                </button>
+    {/* Modal for deposit details */}
+    {selectedDeposit && (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-4 border-b border-white/10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white">Détails du dépôt</h3>
+              <button
+                onClick={() => setSelectedDeposit(null)}
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200"
+              >
+                <X size={16} className="text-white" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="p-4 space-y-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white mb-1">
+                {(typeof selectedDeposit.amount === 'string' ? parseInt(selectedDeposit.amount) : selectedDeposit.amount).toLocaleString()} FCFA
+              </div>
+              <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full backdrop-blur-sm border text-sm font-bold ${getStatusColor(selectedDeposit.status)}`}>
+                {getStatusIcon(selectedDeposit.status)}
+                <span>{getStatusText(selectedDeposit.status)}</span>
               </div>
             </div>
-            
-            <div className="p-4 space-y-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-800 mb-1">
-                  {(typeof selectedDeposit.amount === 'string' ? parseInt(selectedDeposit.amount) : selectedDeposit.amount).toLocaleString()} FCFA
-                </div>
-                <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full border text-sm font-bold ${getStatusColor(selectedDeposit.status)}`}>
-                  {getStatusIcon(selectedDeposit.status)}
-                  <span>{getStatusText(selectedDeposit.status)}</span>
+
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Méthode de paiement</div>
+                <div className="text-white">{getPaymentMethodName(selectedDeposit.paymentMethod)}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Code bénéficiaire</div>
+                <div className="text-white font-mono text-sm">{selectedDeposit.beneficiaryCode}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Nom du bénéficiaire</div>
+                <div className="text-white">{selectedDeposit.beneficiaryName}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm font-medium text-white/70 mb-1">Date de soumission</div>
+                <div className="text-white">
+                  {new Date(selectedDeposit.submittedAt).toLocaleDateString('fr-FR')} à {new Date(selectedDeposit.submittedAt).toLocaleTimeString('fr-FR')}
                 </div>
               </div>
 
-              <div className="space-y-3">
+              {selectedDeposit.transactionImage && (
                 <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Méthode de paiement</div>
-                  <div className="text-gray-600">{getPaymentMethodName(selectedDeposit.paymentMethod)}</div>
-                </div>
-                
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Code bénéficiaire</div>
-                  <div className="text-gray-600 font-mono text-sm">{selectedDeposit.beneficiaryCode}</div>
-                </div>
-                
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Nom du bénéficiaire</div>
-                  <div className="text-gray-600">{selectedDeposit.beneficiaryName}</div>
-                </div>
-                
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">Date de soumission</div>
-                  <div className="text-gray-600">
-                    {new Date(selectedDeposit.submittedAt).toLocaleDateString('fr-FR')} à {new Date(selectedDeposit.submittedAt).toLocaleTimeString('fr-FR')}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-2">Capture de transaction</div>
-                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="text-sm font-medium text-white/70 mb-2">Capture de transaction</div>
+                  <div className="border border-white/20 rounded-xl overflow-hidden">
                     <img
                       src={selectedDeposit.transactionImage || selectedDeposit.proofImage || ''}
                       alt="Transaction capture"
@@ -552,48 +550,79 @@ export default function Portefeuille() {
                     />
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-sm w-full p-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="text-red-600" size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Confirmer la suppression</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Êtes-vous sûr de vouloir annuler cette {activeTab === 'deposits' ? 'demande de dépôt' : 'demande de retrait'} ? Cette action est irréversible.
-              </p>
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setShowDeleteConfirm(null)}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={() => {
-                    if (activeTab === 'deposits') {
-                      deleteDeposit(showDeleteConfirm)
-                    } else {
-                      deleteWithdrawal(showDeleteConfirm)
-                    }
-                  }}
-                  className="flex-1 py-2 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
-                >
-                  Supprimer
-                </button>
-              </div>
+    {/* Delete Confirmation Modal */}
+    {showDeleteConfirm && (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl max-w-sm w-full p-6">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="text-red-400" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Confirmer la suppression</h3>
+            <p className="text-white/70 text-sm mb-6">
+              Êtes-vous sûr de vouloir annuler cette {activeTab === 'deposits' ? 'demande de dépôt' : 'demande de retrait'} ? Cette action est irréversible.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="flex-1 py-2 px-4 bg-white/20 hover:bg-white/30 border border-white/20 rounded-xl text-white font-medium transition-all duration-200"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  if (activeTab === 'deposits') {
+                    deleteDeposit(showDeleteConfirm)
+                  } else {
+                    deleteWithdrawal(showDeleteConfirm)
+                  }
+                }}
+                className="flex-1 py-2 px-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-medium transition-all duration-200"
+              >
+                Supprimer
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
+
+    {/* Navigation Bottom */}
+    <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">
+      <div className="flex justify-around items-center max-w-md mx-auto">
+        <Link href="/" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+          <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+            <span className="text-white text-xs">🏠</span>
+          </div>
+          <span className="text-white/70 text-xs">Accueil</span>
+        </Link>
+        <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+          <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+            <span className="text-white text-xs">📊</span>
+          </div>
+          <span className="text-white/70 text-xs">Produits</span>
+        </Link>
+        <Link href="/portefeuille" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
+            <span className="text-white text-xs">💼</span>
+          </div>
+          <span className="text-purple-400 text-xs font-semibold">Portefeuille</span>
+        </Link>
+        <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+          <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+            <span className="text-white text-xs">👤</span>
+          </div>
+          <span className="text-white/70 text-xs">Compte</span>
+        </Link>
+      </div>
     </div>
+  </div>
   )
 }
