@@ -175,6 +175,9 @@ export default function RetraitPage() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <Link href="/compte" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95">
+                <ArrowLeft size={18} className="text-white" />
+              </Link>
               <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
                 <div className="relative z-10 flex flex-col items-center">
@@ -237,14 +240,14 @@ export default function RetraitPage() {
                   onClick={() => setSelectedPaymentMethod(index)}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
                     selectedPaymentMethod === index
-                      ? 'border-purple-400 bg-white/20 backdrop-blur-sm shadow-lg'
+                      ? 'border-purple-400 bg-purple-500/20 backdrop-blur-sm shadow-lg'
                       : 'border-white/20 bg-white/10 backdrop-blur-sm hover:border-white/30'
                   }`}
                 >
                   <div className="flex items-center justify-center">
                     {index === 0 && (
                       <div className="flex items-center">
-                        <div className="w-6 h-6 bg-orange-100 rounded-lg flex items-center justify-center mr-2">
+                        <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center mr-2 border border-orange-400/30">
                           <Image src="/org.png" alt="Orange Money" width={16} height={16} className="object-contain" />
                         </div>
                         <span className="font-bold text-xs text-white">Orange Money</span>
@@ -252,7 +255,7 @@ export default function RetraitPage() {
                     )}
                     {index === 1 && (
                       <div className="flex items-center">
-                        <div className="w-6 h-6 bg-yellow-100 rounded-lg flex items-center justify-center mr-2">
+                        <div className="w-6 h-6 bg-yellow-500/20 rounded-lg flex items-center justify-center mr-2 border border-yellow-400/30">
                           <Image src="/mtn.png" alt="MTN Money" width={16} height={16} className="object-contain" />
                         </div>
                         <span className="font-bold text-xs text-white">MTN Money</span>

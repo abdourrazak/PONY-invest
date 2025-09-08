@@ -61,15 +61,11 @@ export default function ComptePage() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
-                </div>
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center">
+                <span className="text-white text-lg">👤</span>
               </div>
               <div>
-                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <h1 className="text-white font-bold text-lg">{userData?.numeroTel || 'Utilisateur'}</h1>
                 <p className="text-white/60 text-xs">Mon Compte</p>
               </div>
             </div>
@@ -80,17 +76,14 @@ export default function ComptePage() {
         </div>
       </header>
 
-      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
         {/* Balance Card */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white text-xl font-bold">Mes atouts</h3>
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-3 rounded-xl shadow-xl border border-white/20">
-                <span className="text-yellow-900 text-lg font-bold">💎</span>
-              </div>
+              <h3 className="text-white text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Mes atouts</h3>
             </div>
             <div className="text-center">
               <div className="text-white text-4xl font-bold mb-2">
