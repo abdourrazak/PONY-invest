@@ -100,11 +100,11 @@ export default function RechargePage() {
                 className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:scale-105 active:scale-95 ${
                   selectedPaymentMethod === index
                     ? 'border-purple-400 bg-purple-500/20 backdrop-blur-sm shadow-lg'
-                    : 'border-white/20 bg-white/10 backdrop-blur-sm hover:border-white/30'
+                    : 'border-white/20 bg-black/30 backdrop-blur-sm hover:border-white/30'
                 }`}
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                  <div className="w-12 h-12 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center mr-4 shadow-lg">
                     {index === 0 && (
                       <Image src="/org.png" alt="Orange Money" width={24} height={24} className="object-contain" />
                     )}

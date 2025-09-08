@@ -55,7 +55,7 @@ export default function ProduitsPage() {
                 className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
                   activeTab === tab
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-xl'
-                    : 'bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 border border-white/20'
+                    : 'bg-black/30 backdrop-blur-sm text-white/70 hover:bg-black/40 border border-white/20'
                 }`}
               >
                 {tab === 'Fixe' ? '💰 Fixe' : '⚡ Activité'}

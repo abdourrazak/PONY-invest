@@ -270,12 +270,13 @@ export default function Accueil() {
         {/* Section Produits d'investissement */}
         <div className="mt-8 pb-20">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-yellow-400">Produits d'investissement</h2>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">Produits d'investissement</h2>
             <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm text-yellow-300 px-3 py-1 rounded-full text-xs font-bold shadow-lg border border-yellow-500/30">
               7 Offres
             </div>
           </div>
           
+          <div className="space-y-4">
           {/* LV1 */}
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
@@ -540,6 +541,7 @@ export default function Accueil() {
                 Louer Maintenant
               </button>
             </div>
+          </div>
           </div>
         </div>
 
