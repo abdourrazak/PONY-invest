@@ -171,10 +171,10 @@ export default function CheckQuotidien() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           {/* Title */}
           <div className="bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 mb-6 text-center shadow-xl">
-            <h2 className="text-white text-2xl font-black tracking-wide">
+            <h2 className="text-blue-300 text-2xl font-black tracking-wide">
               RÉCOMPENSE
             </h2>
-            <h3 className="text-purple-400 text-2xl font-black tracking-wide">
+            <h3 className="text-pink-300 text-2xl font-black tracking-wide">
               QUOTIDIENNE
             </h3>
           </div>

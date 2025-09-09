@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Bell } from 'lucide-react'
 
 export default function AdoptionPage() {
   const [activeTab, setActiveTab] = useState('valide')
@@ -13,16 +13,22 @@ export default function AdoptionPage() {
       <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-              <ArrowLeft className="text-white" size={20} />
-            </NavigationLink>
-            <div className="flex items-center">
-              <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3 border border-white/30">
-                <span className="text-white text-base">📊</span>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white text-xs mb-0.5">🌍</div>
+                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                </div>
               </div>
-              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Mon Produit</h1>
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">MON PRODUIT</h1>
+                <p className="text-white/60 text-xs">Gestion des investissements</p>
+              </div>
             </div>
-            <div className="w-5"></div>
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
+            </button>
           </div>
         </div>
       </header>
