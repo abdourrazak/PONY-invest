@@ -164,17 +164,17 @@ export default function CheckQuotidien() {
         {/* Balance Display */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center shadow-xl">
           <div className="text-white/70 text-sm font-medium mb-1">Solde Actuel</div>
-          <div className="text-yellow-400 text-2xl font-black">{balance} XOF</div>
+          <div className="text-green-400 text-2xl font-black">{balance} XOF</div>
         </div>
 
         {/* Reward Container */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           {/* Title */}
           <div className="bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 mb-6 text-center shadow-xl">
-            <h2 className="text-yellow-400 text-2xl font-black tracking-wide">
+            <h2 className="text-white text-2xl font-black tracking-wide">
               RÉCOMPENSE
             </h2>
-            <h3 className="text-yellow-400 text-2xl font-black tracking-wide">
+            <h3 className="text-purple-400 text-2xl font-black tracking-wide">
               QUOTIDIENNE
             </h3>
           </div>
@@ -182,57 +182,48 @@ export default function CheckQuotidien() {
           {/* Next Check-in Timer */}
           {timeRemaining && (
             <div className="text-center mb-6">
-              <div className="text-yellow-400 text-lg font-bold mb-2 flex items-center justify-center">
+              <div className="text-blue-400 text-lg font-bold mb-2 flex items-center justify-center">
                 <Clock className="mr-2" size={20} />
                 Prochain check-in dans:
               </div>
-              <div className="text-yellow-300 text-xl font-black">{timeRemaining}</div>
+              <div className="text-white text-xl font-black">{timeRemaining}</div>
             </div>
           )}
 
-          {/* Rewards Grid - Rectangles horizontaux */}
-          <div className="space-y-3 mb-4">
+          {/* Rewards Grid */}
+          <div className="space-y-3">
             {rewards.map((reward) => (
               <button
                 key={reward.day}
                 onClick={() => claimReward(reward.day)}
                 disabled={!reward.available || reward.claimed}
-                className={`
-                  w-full rounded-xl p-4 border-2 transition-all duration-200 transform min-h-[80px] flex flex-row items-center justify-between
-                  ${reward.claimed 
-                    ? 'bg-black/30 backdrop-blur-sm border-white/10 opacity-60' 
-                    : reward.available 
-                      ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-sm border-yellow-400/50 hover:scale-[1.02] hover:shadow-xl cursor-pointer shadow-lg' 
-                      : 'bg-black/20 backdrop-blur-sm border-white/10 opacity-50'
-                  }
-                `}
+                className={`w-full p-4 rounded-2xl border transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+                  reward.claimed
+                    ? 'bg-green-500/20 border-green-400/30 cursor-not-allowed'
+                    : reward.available
+                    ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:from-purple-500/30 hover:to-pink-500/30 cursor-pointer shadow-lg hover:shadow-xl'
+                    : 'bg-gray-500/20 border-gray-400/30 cursor-not-allowed opacity-50'
+                }`}
               >
                 <div className="flex items-center space-x-4">
                   <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2">
-                    <div className="text-yellow-400 text-lg font-bold">
+                    <div className="text-blue-400 text-lg font-bold">
                       Jour {reward.day}
                     </div>
                   </div>
-                  <div className="bg-yellow-400/20 backdrop-blur-sm border border-yellow-400/30 rounded-lg px-4 py-2">
-                    <div className="text-yellow-300 text-xl font-black">
+                  <div className="bg-purple-400/20 backdrop-blur-sm border border-purple-400/30 rounded-lg px-4 py-2">
+                    <div className="text-white text-xl font-black">
                       {reward.amount} FCFA
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center">
                   {reward.claimed && (
                     <div className="bg-green-500/30 backdrop-blur-sm border border-green-400/30 rounded-full px-3 py-2">
                       <div className="text-green-400 text-sm font-bold">✓ Récupéré</div>
                     </div>
                   )}
-                  {!reward.available && !reward.claimed && (
-                    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-2">
-                      <div className="text-white/70 text-sm font-bold">🔒 Verrouillé</div>
-                    </div>
-                  )}
                   {reward.available && !reward.claimed && (
-                    <div className="bg-yellow-500/30 backdrop-blur-sm border border-yellow-400/30 rounded-full px-3 py-2">
-                      <div className="text-yellow-300 text-sm font-bold">👆 Récupérer</div>
+                    <div className="bg-purple-500/30 backdrop-blur-sm border border-purple-400/30 rounded-full px-3 py-2">
+                      <div className="text-white text-sm font-bold">👆 Récupérer</div>
                     </div>
                   )}
                 </div>
@@ -242,10 +233,10 @@ export default function CheckQuotidien() {
 
           {/* Instructions */}
           <div className="mt-6 text-center">
-            <p className="text-yellow-400 text-sm font-medium">
+            <p className="text-purple-400 text-sm font-medium">
               Récupérez votre récompense quotidienne !
             </p>
-            <p className="text-yellow-300 text-xs mt-1">
+            <p className="text-white/70 text-xs mt-1">
               Revenez chaque jour pour débloquer la prochaine récompense
             </p>
           </div>

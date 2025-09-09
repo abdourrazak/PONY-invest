@@ -43,7 +43,7 @@ export default function AdoptionPage() {
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
                 <span className="text-2xl mr-2">💰</span>
-                <div className="text-yellow-400 text-3xl font-black">F0.00</div>
+                <div className="text-green-400 text-3xl font-black">F0.00</div>
               </div>
               <div className="text-white/70 text-sm font-bold">Revenu Total</div>
             </div>
@@ -118,26 +118,26 @@ export default function AdoptionPage() {
       {/* Navigation Bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">
         <div className="flex justify-around items-center max-w-md mx-auto">
-          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
               <span className="text-white text-xs">🏠</span>
             </div>
             <span className="text-white/70 text-xs">Accueil</span>
           </Link>
-          <Link href="/adoption" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+          <Link href="/adoption" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
               <span className="text-white text-xs">📊</span>
             </div>
             <span className="text-purple-400 text-xs font-semibold">Mon Produit</span>
           </Link>
-          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
               <span className="text-white text-xs">👥</span>
             </div>
             <span className="text-white/70 text-xs">Équipe</span>
           </Link>
-          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
               <span className="text-white text-xs">👤</span>
             </div>
             <span className="text-white/70 text-xs">Mon Compte</span>
