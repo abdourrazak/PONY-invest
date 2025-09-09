@@ -200,3 +200,47 @@ body {
     overscroll-behavior: none;
   }
 }
+
+/* Disable automatic phone number styling on mobile */
+a[href^="tel:"] {
+  text-decoration: none !important;
+  color: inherit !important;
+  -webkit-text-decoration-skip: none;
+  text-decoration-skip: none;
+}
+
+/* Prevent browser auto-detection of phone numbers */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Specifically target phone number patterns */
+span[data-phone], 
+div[data-phone],
+.phone-number {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  color: inherit !important;
+}
+
+/* Override Chrome mobile phone number detection */
+@media screen and (max-width: 768px) {
+  a[href^="tel:"] {
+    text-decoration: none !important;
+    color: inherit !important;
+    border-bottom: none !important;
+    background: none !important;
+  }
+  
+  /* Prevent auto-linking of phone numbers */
+  .no-phone-link {
+    pointer-events: none;
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}
