@@ -8,108 +8,139 @@ export default function AdoptionPage() {
   const [activeTab, setActiveTab] = useState('valide')
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-5 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </NavigationLink>
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-base">📊</span>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
+              <ArrowLeft className="text-white" size={20} />
+            </NavigationLink>
+            <div className="flex items-center">
+              <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3 border border-white/30">
+                <span className="text-white text-base">📊</span>
+              </div>
+              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Mon Produit</h1>
             </div>
-            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Mon Produit</h1>
+            <div className="w-5"></div>
           </div>
-          <div className="w-5"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-5 py-5">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
         {/* Stats Card */}
-        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-5 mb-5 shadow-xl">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           <div className="flex justify-between items-center">
             <div className="text-center">
-              <div className="text-white text-3xl font-black mb-1">0</div>
-              <div className="text-green-100 text-sm font-medium">Total des Actifs</div>
+              <div className="flex items-center justify-center mb-2">
+                <span className="text-2xl mr-2">📈</span>
+                <div className="text-white text-3xl font-black">0</div>
+              </div>
+              <div className="text-white/70 text-sm font-bold">Total des Actifs</div>
             </div>
+            <div className="w-px h-12 bg-white/30"></div>
             <div className="text-center">
-              <div className="text-white text-3xl font-black mb-1">F0.00</div>
-              <div className="text-green-100 text-sm font-medium">Revenu Total</div>
+              <div className="flex items-center justify-center mb-2">
+                <span className="text-2xl mr-2">💰</span>
+                <div className="text-yellow-400 text-3xl font-black">F0.00</div>
+              </div>
+              <div className="text-white/70 text-sm font-bold">Revenu Total</div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex mb-5 gap-3">
+        <div className="flex gap-4">
           <button
             onClick={() => setActiveTab('valide')}
-            className={`flex-1 py-3 px-5 rounded-full font-bold text-sm transition-all duration-300 ${
+            className={`flex-1 py-4 px-6 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
               activeTab === 'valide'
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
-                : 'bg-white text-green-600 border-2 border-green-200 hover:border-green-400'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-200'
+                : 'bg-white/10 backdrop-blur-sm text-white/70 border border-white/20 hover:border-white/40 hover:bg-white/20'
             }`}
           >
-            Valide
+            <div className="flex items-center justify-center">
+              <span className="mr-2">✅</span>
+              Valide
+            </div>
           </button>
           <button
             onClick={() => setActiveTab('expire')}
-            className={`flex-1 py-3 px-5 rounded-full font-bold text-sm transition-all duration-300 ${
+            className={`flex-1 py-4 px-6 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
               activeTab === 'expire'
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
-                : 'bg-white text-green-600 border-2 border-green-200 hover:border-green-400'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-200'
+                : 'bg-white/10 backdrop-blur-sm text-white/70 border border-white/20 hover:border-white/40 hover:bg-white/20'
             }`}
           >
-            Expiré
+            <div className="flex items-center justify-center">
+              <span className="mr-2">❌</span>
+              Expiré
+            </div>
           </button>
         </div>
 
         {/* Content */}
-        <div className="text-center py-10">
-          <div className="text-gray-600 text-base font-medium mb-3">Plus de Données.</div>
-          
-          {activeTab === 'valide' && (
-            <div className="text-gray-500 text-xs">
-              Aucun produit valide pour le moment.
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 shadow-xl">
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-gradient-to-br from-white/20 to-white/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/30">
+              <span className="text-4xl">📊</span>
             </div>
-          )}
-          
-          {activeTab === 'expire' && (
-            <div className="text-gray-500 text-xs">
-              Aucun produit expiré pour le moment.
-            </div>
-          )}
+            <div className="text-white text-lg font-black mb-4">Plus de Données</div>
+            
+            {activeTab === 'valide' && (
+              <div className="bg-green-500/20 border border-green-400/30 rounded-xl p-4">
+                <div className="flex items-center justify-center mb-2">
+                  <span className="text-xl mr-2">✅</span>
+                  <span className="text-green-400 font-bold text-sm">Produits Valides</span>
+                </div>
+                <div className="text-green-300 text-xs font-medium">
+                  Aucun produit valide pour le moment.
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'expire' && (
+              <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-4">
+                <div className="flex items-center justify-center mb-2">
+                  <span className="text-xl mr-2">❌</span>
+                  <span className="text-red-400 font-bold text-sm">Produits Expirés</span>
+                </div>
+                <div className="text-red-300 text-xs font-medium">
+                  Aucun produit expiré pour le moment.
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* Navigation Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex justify-around items-center">
-          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">🏠</span>
+      <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">🏠</span>
             </div>
-            <span className="text-gray-500 text-xs">Accueil</span>
+            <span className="text-white/70 text-xs">Accueil</span>
           </Link>
-          <Link href="/adoption" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-1">
+          <Link href="/adoption" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
               <span className="text-white text-xs">📊</span>
             </div>
-            <span className="text-green-600 text-xs font-medium">Mon Produit</span>
+            <span className="text-purple-400 text-xs font-semibold">Mon Produit</span>
           </Link>
-          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">👥</span>
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">👥</span>
             </div>
-            <span className="text-gray-500 text-xs">Équipe</span>
+            <span className="text-white/70 text-xs">Équipe</span>
           </Link>
-          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
-              <span className="text-gray-500 text-xs">👤</span>
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">👤</span>
             </div>
-            <span className="text-gray-500 text-xs">Mon Compte</span>
+            <span className="text-white/70 text-xs">Mon Compte</span>
           </Link>
         </div>
       </div>

@@ -6,26 +6,27 @@ import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function SupportPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-5 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </NavigationLink>
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-base">🎧</span>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
+              <ArrowLeft className="text-white" size={20} />
+            </NavigationLink>
+            <div className="flex items-center">
+              <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3 border border-white/30">
+                <span className="text-white text-base">🎧</span>
+              </div>
+              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Support</h1>
             </div>
-            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">Support</h1>
+            <div className="w-5"></div>
           </div>
-          <div className="w-5"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6 pb-20">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
         {/* Support Icon and Title */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -33,8 +34,8 @@ export default function SupportPage() {
               <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-black mb-3">Support Client</h2>
-          <p className="text-gray-600 text-sm leading-relaxed px-4">
+          <h2 className="text-2xl font-bold text-white mb-3">Support Client</h2>
+          <p className="text-gray-300 text-sm leading-relaxed px-4">
             Notre équipe de support est disponible 24h/24 pour vous aider avec toutes vos 
             questions
           </p>
@@ -43,7 +44,7 @@ export default function SupportPage() {
         {/* Support Options */}
         <div className="space-y-4">
           {/* Support Telegram */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white/10 rounded-xl shadow-sm p-4">
             <div className="flex items-start space-x-3">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -51,14 +52,14 @@ export default function SupportPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-base font-semibold text-black mb-1">Support Telegram</h3>
-                <p className="text-gray-600 text-xs">Rejoignez notre groupe</p>
+                <h3 className="text-base font-semibold text-white mb-1">Support Telegram</h3>
+                <p className="text-gray-300 text-xs">Rejoignez notre groupe</p>
               </div>
             </div>
           </div>
 
           {/* Groupe Communautaire */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4">
+          <div className="bg-blue-50/10 border border-blue-200/10 rounded-xl p-3 mb-4">
             <div className="flex items-center mb-3">
               <Users className="w-5 h-5 text-blue-600 mr-2" />
               <h4 className="text-blue-600 font-semibold text-sm">Groupe Communautaire</h4>
@@ -73,7 +74,7 @@ export default function SupportPage() {
           </div>
 
           {/* Support WhatsApp */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white/10 rounded-xl shadow-sm p-4">
             <div className="flex items-start space-x-3">
               <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -81,14 +82,14 @@ export default function SupportPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-base font-semibold text-black mb-1">Support WhatsApp</h3>
-                <p className="text-gray-600 text-xs">Contactez nos agents</p>
+                <h3 className="text-base font-semibold text-white mb-1">Support WhatsApp</h3>
+                <p className="text-gray-300 text-xs">Contactez nos agents</p>
               </div>
             </div>
           </div>
 
           {/* Agent Support 1 */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+          <div className="bg-green-50/10 border border-green-200/10 rounded-xl p-3">
             <h4 className="text-green-600 font-semibold text-xs mb-1">Agent Support 1</h4>
             <p className="text-green-600 text-xs mb-3 leading-relaxed">
               Contactez directement notre premier agent
@@ -102,7 +103,7 @@ export default function SupportPage() {
           </div>
 
           {/* Agent Support 2 */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+          <div className="bg-green-50/10 border border-green-200/10 rounded-xl p-3">
             <h4 className="text-green-600 font-semibold text-xs mb-1">Agent Support 2</h4>
             <p className="text-green-600 text-xs mb-3 leading-relaxed">
               Contactez directement notre deuxième agent
@@ -124,42 +125,42 @@ export default function SupportPage() {
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-black">Questions Fréquentes</h3>
+              <h3 className="text-lg font-bold text-white">Questions Fréquentes</h3>
             </div>
 
             <div className="space-y-3">
               {/* Problèmes de dépôt */}
-              <div className="bg-white rounded-lg shadow-sm p-3 border-l-4 border-blue-500">
+              <div className="bg-white/10 rounded-lg shadow-sm p-3 border-l-4 border-blue-500">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-black font-semibold text-sm mb-1">Problèmes de dépôt</h4>
-                    <p className="text-gray-600 text-xs">Dépôts non crédités, erreurs de paiement</p>
+                    <h4 className="text-white font-semibold text-sm mb-1">Problèmes de dépôt</h4>
+                    <p className="text-gray-300 text-xs">Dépôts non crédités, erreurs de paiement</p>
                   </div>
                 </div>
               </div>
 
               {/* Problèmes de retrait */}
-              <div className="bg-white rounded-lg shadow-sm p-3 border-l-4 border-green-500">
+              <div className="bg-white/10 rounded-lg shadow-sm p-3 border-l-4 border-green-500">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2a1 1 0 002 0z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-black font-semibold text-sm mb-1">Problèmes de retrait</h4>
-                    <p className="text-gray-600 text-xs">Retraits rejetés, délais de traitement</p>
+                    <h4 className="text-white font-semibold text-sm mb-1">Problèmes de retrait</h4>
+                    <p className="text-gray-300 text-xs">Retraits rejetés, délais de traitement</p>
                   </div>
                 </div>
               </div>
 
               {/* Problèmes de compte */}
-              <div className="bg-white rounded-lg shadow-sm p-3 border-l-4 border-purple-500">
+              <div className="bg-white/10 rounded-lg shadow-sm p-3 border-l-4 border-purple-500">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -167,14 +168,14 @@ export default function SupportPage() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-black font-semibold text-sm mb-1">Problèmes de compte</h4>
-                    <p className="text-gray-600 text-xs">Connexion, sécurité, vérification</p>
+                    <h4 className="text-white font-semibold text-sm mb-1">Problèmes de compte</h4>
+                    <p className="text-gray-300 text-xs">Connexion, sécurité, vérification</p>
                   </div>
                 </div>
               </div>
 
               {/* Problèmes techniques */}
-              <div className="bg-white rounded-lg shadow-sm p-3 border-l-4 border-orange-500">
+              <div className="bg-white/10 rounded-lg shadow-sm p-3 border-l-4 border-orange-500">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -182,8 +183,8 @@ export default function SupportPage() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-black font-semibold text-sm mb-1">Problèmes techniques</h4>
-                    <p className="text-gray-600 text-xs">Erreurs de site, problèmes d'affichage</p>
+                    <h4 className="text-white font-semibold text-sm mb-1">Problèmes techniques</h4>
+                    <p className="text-gray-300 text-xs">Erreurs de site, problèmes d'affichage</p>
                   </div>
                 </div>
               </div>
@@ -198,11 +199,11 @@ export default function SupportPage() {
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-black">Horaires de Support</h3>
+              <h3 className="text-lg font-bold text-white">Horaires de Support</h3>
             </div>
 
             {/* Jours de Support */}
-            <div className="bg-blue-50 rounded-xl p-4 mb-4">
+            <div className="bg-blue-50/10 rounded-xl p-4 mb-4">
               <div className="flex items-center mb-3">
                 <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center mr-2">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -222,7 +223,7 @@ export default function SupportPage() {
             </div>
 
             {/* Horaires de Retrait */}
-            <div className="bg-green-50 rounded-xl p-4">
+            <div className="bg-green-50/10 rounded-xl p-4">
               <div className="flex items-center mb-3">
                 <div className="w-5 h-5 bg-green-600 rounded flex items-center justify-center mr-2">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -248,31 +249,31 @@ export default function SupportPage() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Navigation Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/10 border-t border-gray-200/10 px-4 py-2">
         <div className="flex justify-around items-center">
           <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+            <div className="w-8 h-8 bg-gray-200/10 rounded-full flex items-center justify-center mb-1">
               <span className="text-gray-500 text-xs">🏠</span>
             </div>
             <span className="text-gray-500 text-xs">Accueil</span>
           </Link>
           <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+            <div className="w-8 h-8 bg-gray-200/10 rounded-full flex items-center justify-center mb-1">
               <span className="text-gray-500 text-xs">📊</span>
             </div>
             <span className="text-gray-500 text-xs">Produits</span>
           </Link>
           <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+            <div className="w-8 h-8 bg-gray-200/10 rounded-full flex items-center justify-center mb-1">
               <span className="text-gray-500 text-xs">👤</span>
             </div>
             <span className="text-gray-500 text-xs">Compte</span>
           </Link>
           <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-1">
+            <div className="w-8 h-8 bg-gray-200/10 rounded-full flex items-center justify-center mb-1">
               <span className="text-gray-500 text-xs">👥</span>
             </div>
             <span className="text-gray-500 text-xs">Équipe</span>

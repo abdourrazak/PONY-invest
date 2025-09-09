@@ -6,32 +6,33 @@ import SupportFloat from '../SupportFloat/SupportFloat'
 
 export default function ProposPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 px-4 py-5 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-green-400/20 to-blue-500/20 animate-pulse"></div>
-        <div className="relative z-10 flex items-center justify-between">
-          <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
-            <ArrowLeft className="text-white" size={20} />
-          </NavigationLink>
-          <div className="flex items-center">
-            <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-base">ℹ️</span>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <NavigationLink href="/" className="hover:scale-110 transition-transform duration-200">
+              <ArrowLeft className="text-white" size={20} />
+            </NavigationLink>
+            <div className="flex items-center">
+              <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3 border border-white/30">
+                <span className="text-white text-base">ℹ️</span>
+              </div>
+              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">À propos de Global</h1>
             </div>
-            <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">À propos de Global</h1>
+            <div className="w-5"></div>
           </div>
-          <div className="w-5"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6 pb-20">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
         {/* Company Title */}
-        <div className="text-center mb-8">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-6 rounded-2xl shadow-xl mb-6">
-            <h1 className="text-3xl font-black mb-3 drop-shadow-lg">Global Holdings</h1>
+        <div className="text-center">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-6 shadow-xl">
+            <h1 className="text-3xl font-black mb-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">Global Holdings</h1>
             <div className="w-20 h-1 bg-white/50 mx-auto mb-3 rounded-full"></div>
-            <p className="text-blue-100 text-sm leading-relaxed font-medium">
+            <p className="text-white/80 text-sm leading-relaxed font-medium">
               <span className="font-bold text-white">Advanced Semiconductor Materials Lithography</span> - Le leader mondial dans la fabrication 
               de machines de lithographie ultra-sophistiquées pour la production de puces 
               électroniques de nouvelle génération.
@@ -40,7 +41,7 @@ export default function ProposPage() {
         </div>
 
         {/* Company Overview Section */}
-        <div className="mb-8">
+        <div>
           <div className="flex items-center mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
               <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -49,70 +50,70 @@ export default function ProposPage() {
             </div>
             <div>
               <div className="w-16 h-1.5 bg-gradient-to-r from-green-500 to-blue-500 mb-2 rounded-full"></div>
-              <h2 className="text-xl font-black text-gray-800">Aperçu de l'Entreprise</h2>
+              <h2 className="text-xl font-black text-white">Aperçu de l'Entreprise</h2>
             </div>
           </div>
 
           {/* Info Cards Grid */}
           <div className="grid grid-cols-2 gap-4 mb-8">
             {/* Siège Social */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
                 </svg>
               </div>
-              <div className="text-blue-600 text-xs font-bold mb-2">Siège Social</div>
-              <div className="text-blue-800 text-sm font-black">Veldhoven, Pays-Bas</div>
+              <div className="text-blue-400 text-xs font-bold mb-2">Siège Social</div>
+              <div className="text-white text-sm font-black">Veldhoven, Pays-Bas</div>
             </div>
 
             {/* Fondation */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" />
                 </svg>
               </div>
-              <div className="text-green-600 text-xs font-bold mb-2">Fondation</div>
-              <div className="text-green-800 text-sm font-black">1984</div>
+              <div className="text-green-400 text-xs font-bold mb-2">Fondation</div>
+              <div className="text-white text-sm font-black">1984</div>
             </div>
 
             {/* Employés */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
               </div>
-              <div className="text-purple-600 text-xs font-bold mb-2">Employés</div>
-              <div className="text-purple-800 text-sm font-black">+40 000</div>
+              <div className="text-purple-400 text-xs font-bold mb-2">Employés</div>
+              <div className="text-white text-sm font-black">+40 000</div>
             </div>
 
             {/* Secteur */}
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-200 rounded-xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-center shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="text-orange-600 text-xs font-bold mb-2">Secteur</div>
-              <div className="text-orange-800 text-sm font-black">Semi-conducteurs</div>
+              <div className="text-yellow-400 text-xs font-bold mb-2">Secteur</div>
+              <div className="text-white text-sm font-black">Semi-conducteurs</div>
             </div>
           </div>
         </div>
 
         {/* Description */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-white/50 mb-8">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
               <span className="text-white text-lg">🔬</span>
             </div>
-            <h3 className="text-lg font-black text-gray-800">Notre Spécialité</h3>
+            <h3 className="text-lg font-black text-white">Notre Spécialité</h3>
           </div>
-          <p className="text-gray-700 text-sm leading-relaxed font-medium">
-            Global est spécialisée dans la <span className="font-black text-blue-600">fabrication de machines de lithographie ultra-sophistiquées</span> qui 
+          <p className="text-white/80 text-sm leading-relaxed font-medium">
+            Global est spécialisée dans la <span className="font-black text-blue-400">fabrication de machines de lithographie ultra-sophistiquées</span> qui 
             permettent de graver des circuits microscopiques sur les microprocesseurs. Ces équipements sont 
-            <span className="font-black text-green-600">indispensables</span> pour la production de puces électroniques modernes.
+            <span className="font-black text-green-400">indispensables</span> pour la production de puces électroniques modernes.
           </p>
         </div>
 
@@ -260,7 +261,7 @@ export default function ProposPage() {
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3 mt-1">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.414 14.586 7H12z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h5V2a1 1 0 011-1h2.586a1 1 0 011.707.293l2.586 2.586a1 1 0 010 1.414l-2.586 2.586a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="flex-1">
@@ -277,7 +278,7 @@ export default function ProposPage() {
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3 mt-1">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="flex-1">
@@ -362,7 +363,7 @@ export default function ProposPage() {
             <div className="flex items-center mb-2">
               <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9.5 9.293 10.793a1 1 0 101.414 1.414l2-2a1 1 0 000-1.414z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
               <h3 className="text-base font-semibold text-white">Perspectives d'Avenir</h3>
@@ -392,7 +393,7 @@ export default function ProposPage() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Navigation Bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">

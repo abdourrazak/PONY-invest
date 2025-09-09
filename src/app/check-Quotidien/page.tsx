@@ -142,37 +142,39 @@ export default function CheckQuotidien() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
-            <ArrowLeft size={24} className="drop-shadow-sm" />
-          </Link>
-          <h1 className="text-white text-xl font-bold tracking-wide drop-shadow-md flex items-center">
-            <Gift className="mr-2" size={24} />
-            Check-in Quotidien
-          </h1>
-          <div className="w-10"></div>
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
+              <ArrowLeft size={24} className="drop-shadow-sm" />
+            </Link>
+            <h1 className="text-white text-xl font-bold tracking-wide drop-shadow-md flex items-center">
+              <Gift className="mr-2" size={24} />
+              Check-in Quotidien
+            </h1>
+            <div className="w-10"></div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="p-6">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
         {/* Balance Display */}
-        <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl p-4 mb-6 text-center shadow-2xl">
-          <div className="text-white text-sm font-medium mb-1">Solde Actuel</div>
-          <div className="text-white text-2xl font-black">{balance} XOF</div>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center shadow-xl">
+          <div className="text-white/70 text-sm font-medium mb-1">Solde Actuel</div>
+          <div className="text-yellow-400 text-2xl font-black">{balance} XOF</div>
         </div>
 
         {/* Reward Container */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-6 border-4 border-yellow-400 shadow-2xl">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           {/* Title */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl px-6 py-4 mb-6 text-center shadow-xl">
-            <h2 className="text-yellow-300 text-2xl font-black tracking-wide">
+          <div className="bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 mb-6 text-center shadow-xl">
+            <h2 className="text-yellow-400 text-2xl font-black tracking-wide">
               RÉCOMPENSE
             </h2>
-            <h3 className="text-yellow-300 text-2xl font-black tracking-wide">
+            <h3 className="text-yellow-400 text-2xl font-black tracking-wide">
               QUOTIDIENNE
             </h3>
           </div>
@@ -180,11 +182,11 @@ export default function CheckQuotidien() {
           {/* Next Check-in Timer */}
           {timeRemaining && (
             <div className="text-center mb-6">
-              <div className="text-yellow-300 text-lg font-bold mb-2 flex items-center justify-center">
+              <div className="text-yellow-400 text-lg font-bold mb-2 flex items-center justify-center">
                 <Clock className="mr-2" size={20} />
                 Prochain check-in dans:
               </div>
-              <div className="text-yellow-400 text-xl font-black">{timeRemaining}</div>
+              <div className="text-yellow-300 text-xl font-black">{timeRemaining}</div>
             </div>
           )}
 
@@ -196,41 +198,41 @@ export default function CheckQuotidien() {
                 onClick={() => claimReward(reward.day)}
                 disabled={!reward.available || reward.claimed}
                 className={`
-                  w-full rounded-xl p-4 border-3 transition-all duration-200 transform min-h-[80px] flex flex-row items-center justify-between
+                  w-full rounded-xl p-4 border-2 transition-all duration-200 transform min-h-[80px] flex flex-row items-center justify-between
                   ${reward.claimed 
-                    ? 'bg-gradient-to-r from-gray-600 to-gray-700 border-gray-500 opacity-60' 
+                    ? 'bg-black/30 backdrop-blur-sm border-white/10 opacity-60' 
                     : reward.available 
-                      ? 'bg-gradient-to-r from-red-500 to-red-600 border-yellow-400 hover:scale-[1.02] hover:shadow-xl cursor-pointer shadow-lg' 
-                      : 'bg-gradient-to-r from-gray-700 to-gray-800 border-gray-600 opacity-50'
+                      ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-sm border-yellow-400/50 hover:scale-[1.02] hover:shadow-xl cursor-pointer shadow-lg' 
+                      : 'bg-black/20 backdrop-blur-sm border-white/10 opacity-50'
                   }
                 `}
               >
                 <div className="flex items-center space-x-4">
-                  <div className="bg-black bg-opacity-20 rounded-lg px-4 py-2">
-                    <div className="text-yellow-300 text-lg font-bold">
+                  <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2">
+                    <div className="text-yellow-400 text-lg font-bold">
                       Jour {reward.day}
                     </div>
                   </div>
-                  <div className="bg-yellow-400 bg-opacity-20 rounded-lg px-4 py-2">
-                    <div className="text-yellow-100 text-xl font-black">
+                  <div className="bg-yellow-400/20 backdrop-blur-sm border border-yellow-400/30 rounded-lg px-4 py-2">
+                    <div className="text-yellow-300 text-xl font-black">
                       {reward.amount} FCFA
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center">
                   {reward.claimed && (
-                    <div className="bg-green-500 bg-opacity-30 rounded-full px-3 py-2">
-                      <div className="text-green-300 text-sm font-bold">✓ Récupéré</div>
+                    <div className="bg-green-500/30 backdrop-blur-sm border border-green-400/30 rounded-full px-3 py-2">
+                      <div className="text-green-400 text-sm font-bold">✓ Récupéré</div>
                     </div>
                   )}
                   {!reward.available && !reward.claimed && (
-                    <div className="bg-gray-500 bg-opacity-30 rounded-full px-3 py-2">
-                      <div className="text-gray-300 text-sm font-bold">🔒 Verrouillé</div>
+                    <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-2">
+                      <div className="text-white/70 text-sm font-bold">🔒 Verrouillé</div>
                     </div>
                   )}
                   {reward.available && !reward.claimed && (
-                    <div className="bg-yellow-500 bg-opacity-30 rounded-full px-3 py-2">
-                      <div className="text-yellow-200 text-sm font-bold">👆 Récupérer</div>
+                    <div className="bg-yellow-500/30 backdrop-blur-sm border border-yellow-400/30 rounded-full px-3 py-2">
+                      <div className="text-yellow-300 text-sm font-bold">👆 Récupérer</div>
                     </div>
                   )}
                 </div>
@@ -240,13 +242,43 @@ export default function CheckQuotidien() {
 
           {/* Instructions */}
           <div className="mt-6 text-center">
-            <p className="text-yellow-300 text-sm font-medium">
+            <p className="text-yellow-400 text-sm font-medium">
               Récupérez votre récompense quotidienne !
             </p>
-            <p className="text-yellow-400 text-xs mt-1">
+            <p className="text-yellow-300 text-xs mt-1">
               Revenez chaque jour pour débloquer la prochaine récompense
             </p>
           </div>
+        </div>
+      </main>
+
+      {/* Navigation Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">🏠</span>
+            </div>
+            <span className="text-white/70 text-xs">Accueil</span>
+          </Link>
+          <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">📊</span>
+            </div>
+            <span className="text-white/70 text-xs">Produits</span>
+          </Link>
+          <Link href="/check-Quotidien" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
+              <span className="text-white text-xs">🎁</span>
+            </div>
+            <span className="text-purple-400 text-xs font-semibold">Check-in</span>
+          </Link>
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <span className="text-white text-xs">👤</span>
+            </div>
+            <span className="text-white/70 text-xs">Compte</span>
+          </Link>
         </div>
       </div>
     </div>
