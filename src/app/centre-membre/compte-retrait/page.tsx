@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
-import { ArrowLeft, Save, CreditCard } from 'lucide-react'
+import { ArrowLeft, Save, CreditCard, Bell } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -102,42 +102,51 @@ export default function CompteRetraitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header premium */}
-      <header className="bg-gradient-to-r from-green-600 via-green-700 to-blue-600 px-4 py-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <Link href="/centre-membre" className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200 transform hover:scale-110">
-            <ArrowLeft size={20} className="drop-shadow-sm" />
-          </Link>
-          <div className="text-center flex-1">
-            <div className="text-white text-lg font-bold tracking-wide drop-shadow-md">
-              Compte de retrait
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
+      {/* Header */}
+      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link href="/centre-membre" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95">
+                <ArrowLeft size={18} className="text-white" />
+              </Link>
+              <div className="w-10 h-10 bg-gradient-to-r from-green-400 via-emerald-500 to-green-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-green-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-white text-xs mb-0.5">💳</div>
+                  <span className="text-white font-bold text-[8px] leading-none">Retrait</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">COMPTE RETRAIT</h1>
+                <p className="text-white/60 text-xs">Configuration de votre compte</p>
+              </div>
             </div>
-            <div className="text-green-100 text-sm font-medium drop-shadow-sm">
-              Configuration de votre compte
-            </div>
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+              <Bell size={18} className="text-white" />
+            </button>
           </div>
-          <div className="w-10"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-6 pb-20">
-        <div className="bg-white rounded-xl shadow-lg p-6">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-600 to-emerald-700 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-              <CreditCard className="w-6 h-6 text-white drop-shadow-lg" />
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+              <CreditCard className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">Informations de retrait</h2>
-              <p className="text-sm text-gray-600">Configurez votre compte pour recevoir vos retraits</p>
+              <h2 className="text-xl font-bold text-white">Informations de retrait</h2>
+              <p className="text-sm text-white/70">Configurez votre compte pour recevoir vos retraits</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Opérateur */}
             <div>
-              <label htmlFor="operator" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="operator" className="block text-sm font-medium text-white/80 mb-2">
                 Opérateur / Banque
               </label>
               <select
@@ -145,19 +154,19 @@ export default function CompteRetraitPage() {
                 name="operator"
                 value={formData.operator}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
                 required
               >
-                <option value="">Sélectionnez votre opérateur</option>
+                <option value="" className="bg-gray-800 text-white">Sélectionnez votre opérateur</option>
                 {operators.map(op => (
-                  <option key={op.value} value={op.value}>{op.label}</option>
+                  <option key={op.value} value={op.value} className="bg-gray-800 text-white">{op.label}</option>
                 ))}
               </select>
             </div>
 
             {/* Numéro de compte */}
             <div>
-              <label htmlFor="accountNumber" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="accountNumber" className="block text-sm font-medium text-white/80 mb-2">
                 {formData.operator === 'bank' ? 'Numéro de compte bancaire' : 'Numéro de téléphone'}
               </label>
               <input
@@ -167,14 +176,14 @@ export default function CompteRetraitPage() {
                 value={formData.accountNumber}
                 onChange={handleInputChange}
                 placeholder={formData.operator === 'bank' ? 'Ex: 1234567890123456' : 'Ex: 6******'}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
                 required
               />
             </div>
 
             {/* Nom du titulaire */}
             <div>
-              <label htmlFor="holderName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="holderName" className="block text-sm font-medium text-white/80 mb-2">
                 Nom du titulaire du compte
               </label>
               <input
@@ -184,7 +193,7 @@ export default function CompteRetraitPage() {
                 value={formData.holderName}
                 onChange={handleInputChange}
                 placeholder="Nom complet du titulaire"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
                 required
               />
             </div>
@@ -193,7 +202,7 @@ export default function CompteRetraitPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-emerald-500 via-green-600 to-emerald-700 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -210,17 +219,46 @@ export default function CompteRetraitPage() {
           </form>
 
           {/* Informations importantes */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="font-semibold text-blue-800 mb-2">ℹ️ Informations importantes</h3>
-            <ul className="text-sm text-blue-700 space-y-1">
+          <div className="mt-6 p-4 bg-blue-500/20 backdrop-blur-sm rounded-xl border border-blue-400/30">
+            <h3 className="font-semibold text-blue-300 mb-2">ℹ️ Informations importantes</h3>
+            <ul className="text-sm text-blue-200 space-y-1">
               <li>• Assurez-vous que les informations sont exactes</li>
               <li>• Les retraits seront effectués sur ce compte uniquement</li>
             </ul>
           </div>
         </div>
+      </main>
+
+      {/* Navigation Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/20 backdrop-blur-md border-t border-white/10 px-4 py-2">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+              <span className="text-white text-xs">🏠</span>
+            </div>
+            <span className="text-white/70 text-xs">Accueil</span>
+          </Link>
+          <Link href="/adoption" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+              <span className="text-white text-xs">📊</span>
+            </div>
+            <span className="text-white/70 text-xs">Mon Produit</span>
+          </Link>
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center mb-1">
+              <span className="text-white text-xs">👥</span>
+            </div>
+            <span className="text-white/70 text-xs">Équipe</span>
+          </Link>
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:scale-110 transition-all duration-200">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
+              <span className="text-white text-xs">👤</span>
+            </div>
+            <span className="text-purple-400 text-xs font-semibold">Mon Compte</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Support Float */}
       <SupportFloat />
     </div>
   )
