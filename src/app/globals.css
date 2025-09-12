@@ -244,3 +244,181 @@ div[data-phone],
     color: inherit !important;
   }
 }
+
+/* iOS Safari Color Compatibility Fixes */
+@supports (-webkit-appearance: none) {
+  /* Force color rendering on iOS */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Fix gradient text on iOS */
+  .bg-clip-text {
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+  }
+  
+  /* Ensure backdrop-blur works on iOS */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+  
+  /* Fix semi-transparent colors on iOS */
+  .text-white\/70 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  .text-white\/60 {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  .text-white\/50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  .bg-white\/10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .bg-white\/20 {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .bg-black\/20 {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .bg-black\/30 {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .border-white\/10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+}
+
+/* Specific iOS Safari fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  /* High DPI iPhone screens */
+  .text-blue-400 {
+    color: #60a5fa !important;
+  }
+  
+  .text-green-400 {
+    color: #4ade80 !important;
+  }
+  
+  .text-purple-400 {
+    color: #c084fc !important;
+  }
+  
+  .text-pink-400 {
+    color: #f472b6 !important;
+  }
+  
+  .text-yellow-400 {
+    color: #facc15 !important;
+  }
+  
+  .text-orange-400 {
+    color: #fb923c !important;
+  }
+  
+  /* Force gradient backgrounds */
+  .bg-gradient-to-br {
+    background: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+  }
+  
+  .bg-gradient-to-r {
+    background: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+  }
+}
+
+/* Force color values for iOS compatibility */
+:root {
+  --blue-400: #60a5fa;
+  --green-400: #4ade80;
+  --purple-400: #c084fc;
+  --pink-400: #f472b6;
+  --yellow-400: #facc15;
+  --orange-400: #fb923c;
+  --white-70: rgba(255, 255, 255, 0.7);
+  --white-60: rgba(255, 255, 255, 0.6);
+  --white-50: rgba(255, 255, 255, 0.5);
+  --white-10: rgba(255, 255, 255, 0.1);
+  --white-20: rgba(255, 255, 255, 0.2);
+  --black-20: rgba(0, 0, 0, 0.2);
+  --black-30: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile-specific color fixes */
+@media screen and (max-width: 768px) {
+  /* Ensure text is visible on mobile */
+  .text-white {
+    color: #ffffff !important;
+  }
+  
+  /* Force opacity values */
+  .text-white\/70 {
+    color: var(--white-70) !important;
+    opacity: 1 !important;
+  }
+  
+  .text-white\/60 {
+    color: var(--white-60) !important;
+    opacity: 1 !important;
+  }
+  
+  .text-white\/50 {
+    color: var(--white-50) !important;
+    opacity: 1 !important;
+  }
+  
+  /* Ensure colored text is visible */
+  .text-blue-400 {
+    color: var(--blue-400) !important;
+  }
+  
+  .text-green-400 {
+    color: var(--green-400) !important;
+  }
+  
+  .text-purple-400 {
+    color: var(--purple-400) !important;
+  }
+  
+  .text-pink-400 {
+    color: var(--pink-400) !important;
+  }
+  
+  .text-yellow-400 {
+    color: var(--yellow-400) !important;
+  }
+  
+  /* Fix background transparency */
+  .bg-white\/10 {
+    background-color: var(--white-10) !important;
+  }
+  
+  .bg-white\/20 {
+    background-color: var(--white-20) !important;
+  }
+  
+  .bg-black\/20 {
+    background-color: var(--black-20) !important;
+  }
+  
+  .bg-black\/30 {
+    background-color: var(--black-30) !important;
+  }
+}
