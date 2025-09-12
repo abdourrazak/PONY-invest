@@ -9,7 +9,6 @@ import { getMultiLevelReferralStats, MultiLevelReferralStats } from '@/lib/fireb
 export default function EquipePage() {
   const { userData } = useAuth()
   const [multiLevelStats, setMultiLevelStats] = useState<MultiLevelReferralStats | null>(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadMultiLevelReferralData()
@@ -19,13 +18,10 @@ export default function EquipePage() {
     if (!userData) return
 
     try {
-      setLoading(true)
       const stats = await getMultiLevelReferralStats(userData)
       setMultiLevelStats(stats)
     } catch (error) {
       console.error('Erreur chargement données parrainage multi-niveaux:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -46,14 +42,6 @@ export default function EquipePage() {
     } else {
       copyReferralLink()
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="text-white text-xl">Chargement...</div>
-      </div>
-    )
   }
 
   return (
