@@ -83,22 +83,22 @@ export default function ProduitsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">3 000 FCFA</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">6 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+600 FCFA</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+500 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">3 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
@@ -161,22 +161,22 @@ export default function ProduitsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">7 000 FCFA</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">35 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+2 000 FCFA</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+3 400 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">7 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
@@ -239,22 +239,22 @@ export default function ProduitsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">20 000 FCFA</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">110 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+4 000 FCFA</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+10 800 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">20 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
@@ -317,22 +317,22 @@ export default function ProduitsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">95 000 FCFA</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">400 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+19 000 FCFA</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+38 500 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">95 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
