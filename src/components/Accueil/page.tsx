@@ -304,6 +304,13 @@ export default function Accueil() {
                     <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                   </div>
                 </div>
+                
+                <div className="bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">60 000 FCFA</span>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -378,6 +385,13 @@ export default function Accueil() {
                   <div className="flex justify-between sm:flex-col sm:items-center">
                     <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
                     <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                  </div>
+                </div>
+                
+                <div className="bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">408 000 FCFA</span>
                   </div>
                 </div>
               </div>
@@ -456,6 +470,13 @@ export default function Accueil() {
                     <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                   </div>
                 </div>
+                
+                <div className="bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">1 296 000 FCFA</span>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -530,6 +551,13 @@ export default function Accueil() {
                   <div className="flex justify-between sm:flex-col sm:items-center">
                     <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
                     <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                  </div>
+                </div>
+                
+                <div className="bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-black">4 620 000 FCFA</span>
                   </div>
                 </div>
               </div>
