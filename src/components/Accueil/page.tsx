@@ -308,7 +308,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">3 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -346,7 +346,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">5 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -384,7 +384,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">7 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -422,7 +422,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">12 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -460,7 +460,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">20 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -498,7 +498,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">50 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
@@ -536,7 +536,7 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">95 000 FCFA</span>
+              <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
