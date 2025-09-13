@@ -236,7 +236,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
       {/* Header */}
       <header className={`bg-gradient-to-r ${headerColors} px-4 py-4 shadow-lg relative overflow-hidden`}>
         <div className={`absolute inset-0 bg-gradient-to-r ${isOrange ? 'from-orange-400/20 via-red-400/20 to-orange-500/20' : isMTN ? 'from-yellow-400/20 via-orange-400/20 to-yellow-500/20' : 'from-blue-400/20 via-purple-400/20 to-indigo-500/20'} animate-pulse`}></div>
@@ -259,35 +259,33 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       </header>
 
       {/* Main Content */}
-      <div className="px-4 py-4 max-w-md mx-auto">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Amount Section */}
-        <div className="mb-4">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <label className="block text-white/70 font-medium text-sm mb-3">
             Montant à déposer ({isCrypto ? 'USDT' : 'FCFA'})
           </label>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder={isCrypto ? "Minimum 10 USDT" : "Minimum 3,000 FCFA"}
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}
-            />
-          </div>
+          <input
+            type="text"
+            placeholder={isCrypto ? "Minimum 10 USDT" : "Minimum 3,000 FCFA"}
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-200"
+          />
         </div>
 
         {/* Beneficiary Code Section */}
-        <div className="mb-4">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <label className="block text-white/70 font-medium text-sm mb-3">
             Code ou adresse du compte bénéficiaire
           </label>
-          <div className="flex items-center gap-2">
-            <div className={`flex-1 ${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-3 py-3`}>
-              <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-xs' : 'text-sm'}`}>{beneficiaryCode}</span>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3">
+              <span className="text-blue-400 font-mono text-sm break-all">{beneficiaryCode}</span>
             </div>
             <button
               onClick={() => copyToClipboard(beneficiaryCode)}
-              className={`w-10 h-10 ${isOrange ? 'bg-blue-500 hover:bg-blue-600' : isMTN ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'} rounded-xl flex items-center justify-center transition-colors duration-200 shadow-sm`}
+              className="p-3 bg-purple-500 hover:bg-purple-600 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
             >
               <Copy className="w-4 h-4 text-white" />
             </button>
@@ -295,23 +293,23 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         </div>
 
         {/* Beneficiary Name Section */}
-        <div className="mb-4">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <label className="block text-white/70 font-medium text-sm mb-3">
             Compte bénéficiaire
           </label>
-          <div className={`${isOrange ? 'bg-blue-50 border-blue-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border-2 rounded-xl px-3 py-3`}>
-            <span className={`${isOrange ? 'text-blue-800' : isMTN ? 'text-yellow-800' : 'text-blue-800'} font-black ${isCrypto ? 'text-xs break-all' : 'text-sm'}`}>{beneficiaryName}</span>
+          <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3">
+            <span className="text-green-400 font-mono text-sm break-all">{beneficiaryName}</span>
           </div>
         </div>
 
         {/* Transaction Capture Section */}
-        <div className="mb-6">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <label className="block text-white/70 font-medium text-sm mb-3">
             Capture de transaction
           </label>
           
           {!imagePreview ? (
-            <div className={`border-2 border-dashed ${isOrange ? 'border-blue-300 bg-blue-50/50 hover:bg-blue-50' : isMTN ? 'border-yellow-300 bg-yellow-50/50 hover:bg-yellow-50' : 'border-blue-300 bg-blue-50/50 hover:bg-blue-50'} rounded-xl p-4 text-center transition-colors duration-200`}>
+            <div className="border-2 border-dashed border-white/30 bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-black/30 transition-colors duration-200">
               <input
                 type="file"
                 accept="image/*"
@@ -320,16 +318,16 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                 id="transaction-image"
               />
               <label htmlFor="transaction-image" className="cursor-pointer">
-                <div className={`w-12 h-12 ${isOrange ? 'bg-blue-500' : isMTN ? 'bg-yellow-500' : 'bg-blue-500'} rounded-full flex items-center justify-center mx-auto mb-3`}>
+                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Upload className="w-6 h-6 text-white" />
                 </div>
-                <p className={`${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-bold text-xs mb-1`}>Ajouter une capture</p>
-                <p className={`${isOrange ? 'text-blue-500' : isMTN ? 'text-yellow-500' : 'text-blue-500'} text-xs`}>Cliquez pour sélectionner</p>
+                <p className="text-white font-medium text-sm mb-1">Ajouter une capture</p>
+                <p className="text-white/60 text-xs">Cliquez pour sélectionner</p>
               </label>
             </div>
           ) : (
             <div className="relative">
-              <div className={`border-2 ${isOrange ? 'border-blue-300' : isMTN ? 'border-yellow-300' : 'border-blue-300'} rounded-xl overflow-hidden bg-white shadow-sm`}>
+              <div className="border-2 border-white/20 rounded-xl overflow-hidden bg-black/20 backdrop-blur-sm">
                 <img
                   src={imagePreview}
                   alt="Transaction capture"
@@ -347,16 +345,16 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         </div>
 
         {/* Mot de passe des fonds */}
-        <div className="mb-6">
-          <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+          <label className="block text-white/70 font-medium text-sm mb-3">
             🔐 Mot de passe des fonds
           </label>
           {!hasConfiguredPassword ? (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-              <p className="text-red-700 text-sm mb-2">Vous devez configurer un mot de passe des fonds</p>
+            <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-4">
+              <p className="text-red-300 text-sm mb-3">Vous devez configurer un mot de passe des fonds</p>
               <button 
                 onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
-                className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
               >
                 Configurer maintenant
               </button>
@@ -367,7 +365,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               placeholder="Entrez votre mot de passe des fonds"
               value={fundsPassword}
               onChange={(e) => setFundsPassword(e.target.value)}
-              className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}
+              className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-200"
             />
           )}
         </div>
@@ -387,7 +385,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                    isNaN(numericAmount) || 
                    numericAmount < minAmount;
           })()}
-          className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
+          className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
             (() => {
               const numericAmount = parseFloat(amount);
               const minAmount = isCrypto ? 10 : 3000;
@@ -401,12 +399,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                                numericAmount >= minAmount;
               
               return isEnabled
-                ? isOrange 
-                  ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
-                  : isMTN
-                  ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white'
-                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed';
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
+                : 'bg-white/20 text-white/50 cursor-not-allowed';
             })()
           }`}
         >
@@ -429,15 +423,15 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         </button>
 
         {/* Instructions */}
-        <div className={`mt-4 ${isOrange ? 'bg-orange-50 border-orange-200' : isMTN ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'} border rounded-xl p-3`}>
-          <h3 className={`${isOrange ? 'text-orange-700' : isMTN ? 'text-yellow-700' : 'text-blue-700'} font-black text-xs mb-2`}>Instructions :</h3>
-          <ul className={`${isOrange ? 'text-orange-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} text-xs space-y-1 font-medium`}>
+        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20">
+          <h3 className="text-yellow-400 font-medium text-sm mb-3">Instructions :</h3>
+          <ul className="text-white/70 text-sm space-y-2">
             <li>• {isCrypto ? 'Envoyez USDT TRC20 vers l\'adresse ci-dessus' : 'Effectuez le transfert vers le code ci-dessus'}</li>
             <li>• Prenez une capture d'écran de la confirmation</li>
             <li>• Ajoutez la capture et soumettez</li>
           </ul>
         </div>
-      </div>
+      </main>
     </div>
   )
 }
