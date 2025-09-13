@@ -119,25 +119,25 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">5 000 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">15 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+1 000 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+1 400 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">5 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
@@ -197,25 +197,25 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">12 000 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">80 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+2 400 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+7 900 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">12 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
@@ -275,25 +275,25 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">50 000 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">250 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+10 000 FCFA</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                  <span className="text-purple-400 text-xs sm:text-sm font-black">+24 900 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">30 jours</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">50 000 FCFA</span>
+            <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
               Louer Maintenant
             </button>
