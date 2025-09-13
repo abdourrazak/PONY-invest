@@ -80,7 +80,7 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
                   <span className="text-blue-400 text-xs sm:text-sm font-black">6 000 FCFA</span>
@@ -92,6 +92,10 @@ export default function ProduitsPage() {
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
                   <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                </div>
+                <div className="flex justify-between sm:flex-col sm:items-center">
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                  <span className="text-green-400 text-xs sm:text-sm font-black">60 000 FCFA</span>
                 </div>
               </div>
             </div>
@@ -275,7 +279,7 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
                   <span className="text-blue-400 text-xs sm:text-sm font-black">250 000 FCFA</span>
@@ -287,6 +291,10 @@ export default function ProduitsPage() {
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
                   <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                </div>
+                <div className="flex justify-between sm:flex-col sm:items-center">
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                  <span className="text-green-400 text-xs sm:text-sm font-black">2 998 000 FCFA</span>
                 </div>
               </div>
             </div>
