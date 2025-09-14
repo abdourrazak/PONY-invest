@@ -323,11 +323,11 @@ export default function Register() {
                 style={{ fontSize: '16px' }}
                 className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${
                   searchParams.get('ref')
-                    ? 'border-green-400 bg-green-50'
+                    ? 'border-green-400 bg-green-500/10 text-white/90'
                     : errors.referralCode 
                       ? 'border-red-400' 
                       : isValidReferral === true
-                        ? 'border-green-400 bg-green-50'
+                        ? 'border-green-400 bg-green-500/10 text-white/90'
                         : isValidReferral === false
                           ? 'border-red-400'
                           : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
