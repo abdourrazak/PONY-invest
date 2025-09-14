@@ -71,7 +71,7 @@ export default function ProduitsPage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-            <span className="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+            <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -80,17 +80,17 @@ export default function ProduitsPage() {
             </div>
             
             <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
                   <span className="text-blue-400 text-xs sm:text-sm font-black">6 000 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
                   <span className="text-purple-400 text-xs sm:text-sm font-black">+500 FCFA</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
+                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
                   <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
