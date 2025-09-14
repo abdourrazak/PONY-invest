@@ -312,7 +312,10 @@ export default function Accueil() {
             </div>
             
             <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
+              <div className="flex flex-col">
+                <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
+                <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+              </div>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
                 Louer Maintenant
               </button>
