@@ -71,7 +71,7 @@ export default function ProduitsPage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-            <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+            <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -114,7 +114,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -157,7 +157,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -200,7 +200,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -243,7 +243,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -286,7 +286,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -329,7 +329,7 @@ export default function ProduitsPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
-            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
           </div>
           
           <div className="flex items-start space-x-3">
