@@ -197,9 +197,9 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-green-400/10 to-purple-400/10 animate-pulse"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 animate-pulse"></div>
       
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
         {/* Logo Section */}
@@ -217,18 +217,18 @@ export default function Register() {
         </div>
 
         {/* Form Card */}
-        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 overflow-hidden">
+        <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-4 text-center">
-            <h1 className="text-lg font-black text-white mb-1">Créer un compte Global</h1>
-            <p className="text-green-100 text-xs font-bold">Rejoignez notre plateforme d'investissement</p>
+          <div className="bg-black/30 backdrop-blur-sm p-4 text-center border-b border-white/10">
+            <h1 className="text-lg font-black text-white/90 mb-1">Créer un compte Global</h1>
+            <p className="text-white/70 text-xs font-bold">Rejoignez notre plateforme d'investissement</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-4 space-y-4">
             {/* Phone Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Smartphone className="w-3 h-3 mr-1" />
                 Numéro de téléphone
               </label>
@@ -238,19 +238,19 @@ export default function Register() {
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                   errors.phone 
-                    ? 'border-red-400 bg-red-50 shadow-red-100' 
-                    : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
+                    ? 'border-red-400' 
+                    : 'border-white/20 focus:border-blue-400'
+                } focus:outline-none`}
               />
-              {errors.phone && <p className="text-red-500 text-xs mt-1 font-bold">{errors.phone}</p>}
-              <p className="text-blue-500 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
+              {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
+              <p className="text-blue-400 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Lock className="w-3 h-3 mr-1" />
                 Mot de passe
               </label>
@@ -261,26 +261,26 @@ export default function Register() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Minimum 6 caractères"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                     errors.password 
-                      ? 'border-red-400 bg-red-50 shadow-red-100' 
-                      : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                  } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
+                      ? 'border-red-400' 
+                      : 'border-white/20 focus:border-blue-400'
+                  } focus:outline-none`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1 font-bold">{errors.password}</p>}
+              {errors.password && <p className="text-red-400 text-xs mt-1 font-bold">{errors.password}</p>}
             </div>
 
             {/* Confirm Password Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Lock className="w-3 h-3 mr-1" />
                 Confirmation du mot de passe
               </label>
@@ -291,28 +291,28 @@ export default function Register() {
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   placeholder="Confirmez votre mot de passe"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                     errors.confirmPassword 
-                      ? 'border-red-400 bg-red-50 shadow-red-100' 
-                      : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                  } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
+                      ? 'border-red-400' 
+                      : 'border-white/20 focus:border-blue-400'
+                  } focus:outline-none`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-bold">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-red-400 text-xs mt-1 font-bold">{errors.confirmPassword}</p>}
             </div>
 
             {/* Referral Code Field */}
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Users className="w-3 h-3 mr-1" />
-                Code d'invitation {searchParams.get('ref') ? <span className="text-red-500 ml-1 font-black">*</span> : <span className="text-gray-500 ml-1 font-bold">(optionnel)</span>}
+                Code d'invitation {searchParams.get('ref') ? <span className="text-red-400 ml-1 font-black">*</span> : <span className="text-white/50 ml-1 font-bold">(optionnel)</span>}
               </label>
               <input
                 type="text"
@@ -321,30 +321,30 @@ export default function Register() {
                 placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "AXML... (optionnel)"}
                 disabled={!!searchParams.get('ref')}
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-mono font-bold ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${
                   searchParams.get('ref')
-                    ? 'border-green-400 bg-green-50 shadow-green-100'
+                    ? 'border-green-400'
                     : errors.referralCode 
-                      ? 'border-red-400 bg-red-50 shadow-red-100' 
+                      ? 'border-red-400' 
                       : isValidReferral === true
-                        ? 'border-green-400 bg-green-50 shadow-green-100'
+                        ? 'border-green-400'
                         : isValidReferral === false
-                          ? 'border-red-400 bg-red-50 shadow-red-100'
-                          : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
+                          ? 'border-red-400'
+                          : 'border-white/20 focus:border-blue-400'
+                } focus:outline-none ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
               />
-              {errors.referralCode && <p className="text-red-500 text-xs mt-1 font-bold">{errors.referralCode}</p>}
+              {errors.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">{errors.referralCode}</p>}
               {searchParams.get('ref') && (
-                <p className="text-green-600 text-xs mt-1 font-bold">✅ Code d'invitation valide du lien</p>
+                <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide du lien</p>
               )}
               {!searchParams.get('ref') && isValidReferral === true && (
-                <p className="text-green-600 text-xs mt-1 font-bold">✅ Code d'invitation valide</p>
+                <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide</p>
               )}
               {!searchParams.get('ref') && isValidReferral === false && formData.referralCode && (
-                <p className="text-red-500 text-xs mt-1 font-bold">❌ Code d'invitation invalide</p>
+                <p className="text-red-400 text-xs mt-1 font-bold">❌ Code d'invitation invalide</p>
               )}
               {!searchParams.get('ref') && (
-                <p className="text-blue-500 text-xs mt-1 font-bold">Laissez vide si vous êtes le premier utilisateur</p>
+                <p className="text-blue-400 text-xs mt-1 font-bold">Laissez vide si vous êtes le premier utilisateur</p>
               )}
             </div>
 
@@ -354,8 +354,8 @@ export default function Register() {
               disabled={isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)}
               className={`w-full py-3 text-sm rounded-lg font-black text-white transition-all duration-300 transform ${
                 isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                  ? 'bg-gray-600/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
               } flex items-center justify-center`}
             >
               {isLoading ? (
@@ -372,12 +372,12 @@ export default function Register() {
             </button>
 
             {/* Login Link */}
-            <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-gray-600">
+            <div className="text-center pt-4 border-t border-white/10">
+              <p className="text-white/70">
                 Déjà un compte ?{' '}
                 <Link 
                   href={searchParams.get('ref') ? `/login?ref=${searchParams.get('ref')}` : '/login'} 
-                  className="text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                  className="text-blue-400 font-semibold hover:text-blue-300 transition-colors"
                 >
                   Connexion
                 </Link>
@@ -388,22 +388,22 @@ export default function Register() {
 
         {/* Benefits */}
         <div className="mt-8 max-w-md w-full">
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/50">
-            <h3 className="font-bold text-gray-800 mb-3 text-center">🎁 Avantages de l'inscription</h3>
+          <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+            <h3 className="font-bold text-white/90 mb-3 text-center">🎁 Avantages de l'inscription</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center text-green-700">
+              <div className="flex items-center text-green-400">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Solde de départ : 1000 FCFA
               </div>
-              <div className="flex items-center text-blue-700">
+              <div className="flex items-center text-blue-400">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                 Récompenses quotidiennes
               </div>
-              <div className="flex items-center text-purple-700">
+              <div className="flex items-center text-purple-400">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 Système de parrainage
               </div>
-              <div className="flex items-center text-orange-700">
+              <div className="flex items-center text-orange-400">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
                 Investissements rentables
               </div>

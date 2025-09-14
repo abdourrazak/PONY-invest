@@ -104,8 +104,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-green-400/10 to-purple-400/10 animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 animate-pulse"></div>
       
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
         <div className="mb-8 text-center">
@@ -141,15 +141,15 @@ export default function Login() {
           </div>
         )}
 
-        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 overflow-hidden">
-          <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 p-4 text-center">
-            <h1 className="text-lg font-black text-white mb-1">Connexion</h1>
-            <p className="text-green-100 text-xs font-bold">Accédez à votre compte Global</p>
+        <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+          <div className="bg-black/30 backdrop-blur-sm p-4 text-center border-b border-white/10">
+            <h1 className="text-lg font-black text-white/90 mb-1">Connexion</h1>
+            <p className="text-white/70 text-xs font-bold">Accédez à votre compte Global</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-4 space-y-4">
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Smartphone className="w-3 h-3 mr-1" />
                 Numéro de téléphone
               </label>
@@ -159,18 +159,18 @@ export default function Login() {
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                   errors.phone 
-                    ? 'border-red-400 bg-red-50 shadow-red-100' 
-                    : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
+                    ? 'border-red-400' 
+                    : 'border-white/20 focus:border-blue-400'
+                } focus:outline-none`}
               />
-              {errors.phone && <p className="text-red-500 text-xs mt-1 font-bold">{errors.phone}</p>}
-              <p className="text-blue-500 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
+              {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
+              <p className="text-blue-400 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
             </div>
 
             <div>
-              <label className="flex items-center text-blue-700 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
                 <Lock className="w-3 h-3 mr-1" />
                 Mot de passe
               </label>
@@ -181,21 +181,21 @@ export default function Login() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Votre mot de passe"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border-2 transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                     errors.password 
-                      ? 'border-red-400 bg-red-50 shadow-red-100' 
-                      : 'border-blue-300 bg-white focus:border-blue-500 focus:bg-blue-50 shadow-blue-100'
-                  } focus:outline-none focus:ring-1 focus:ring-blue-300 shadow-sm`}
+                      ? 'border-red-400' 
+                      : 'border-white/20 focus:border-blue-400'
+                  } focus:outline-none`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1 font-bold">{errors.password}</p>}
+              {errors.password && <p className="text-red-400 text-xs mt-1 font-bold">{errors.password}</p>}
             </div>
 
             <button
@@ -203,8 +203,8 @@ export default function Login() {
               disabled={isLoading}
               className={`w-full py-3 text-sm rounded-lg font-black text-white transition-all duration-300 transform ${
                 isLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 hover:from-green-600 hover:via-blue-600 hover:to-purple-600 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                  ? 'bg-gray-600/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
               } flex items-center justify-center`}
             >
               {isLoading ? (
@@ -220,12 +220,12 @@ export default function Login() {
               )}
             </button>
 
-            <div className="text-center pt-3 border-t border-gray-200">
-              <p className="text-gray-600 text-sm font-bold">
+            <div className="text-center pt-3 border-t border-white/10">
+              <p className="text-white/70 text-sm font-bold">
                 Pas encore de compte ?{' '}
                 <Link 
                   href={searchParams.get('ref') ? `/register-auth?ref=${searchParams.get('ref')}` : '/register-auth'} 
-                  className="text-blue-600 font-black hover:text-blue-700 transition-colors"
+                  className="text-blue-400 font-black hover:text-blue-300 transition-colors"
                 >
                   Créer un compte
                 </Link>
@@ -235,22 +235,22 @@ export default function Login() {
         </div>
 
         <div className="mt-8 max-w-md w-full">
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/50">
-            <h3 className="font-bold text-gray-800 mb-3 text-center">🎯 Accès à votre compte</h3>
+          <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+            <h3 className="font-bold text-white/90 mb-3 text-center">🎯 Accès à votre compte</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center text-green-700">
+              <div className="flex items-center text-green-400">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Vos investissements
               </div>
-              <div className="flex items-center text-blue-700">
+              <div className="flex items-center text-blue-400">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                 Historique des gains
               </div>
-              <div className="flex items-center text-purple-700">
+              <div className="flex items-center text-purple-400">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                 Système de parrainage
               </div>
-              <div className="flex items-center text-orange-700">
+              <div className="flex items-center text-orange-400">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
                 Retraits sécurisés
               </div>
