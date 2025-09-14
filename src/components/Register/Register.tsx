@@ -238,11 +238,11 @@ export default function Register() {
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium bg-white/90 backdrop-blur-sm ${
                   errors.phone 
                     ? 'border-red-400' 
-                    : 'border-white/20 focus:border-blue-400'
-                } focus:outline-none`}
+                    : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                } focus:outline-none shadow-sm`}
               />
               {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
               <p className="text-blue-400 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
@@ -261,16 +261,16 @@ export default function Register() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Minimum 6 caractères"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium bg-white/90 backdrop-blur-sm ${
                     errors.password 
                       ? 'border-red-400' 
-                      : 'border-white/20 focus:border-blue-400'
-                  } focus:outline-none`}
+                      : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                  } focus:outline-none shadow-sm`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -291,16 +291,16 @@ export default function Register() {
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   placeholder="Confirmez votre mot de passe"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium bg-white/90 backdrop-blur-sm ${
                     errors.confirmPassword 
                       ? 'border-red-400' 
-                      : 'border-white/20 focus:border-blue-400'
-                  } focus:outline-none`}
+                      : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                  } focus:outline-none shadow-sm`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -321,17 +321,17 @@ export default function Register() {
                 placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "AXML... (optionnel)"}
                 disabled={!!searchParams.get('ref')}
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-mono font-bold bg-white/90 backdrop-blur-sm ${
                   searchParams.get('ref')
-                    ? 'border-green-400'
+                    ? 'border-green-400 bg-green-50'
                     : errors.referralCode 
                       ? 'border-red-400' 
                       : isValidReferral === true
-                        ? 'border-green-400'
+                        ? 'border-green-400 bg-green-50'
                         : isValidReferral === false
                           ? 'border-red-400'
-                          : 'border-white/20 focus:border-blue-400'
-                } focus:outline-none ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
+                          : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                } focus:outline-none shadow-sm ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
               />
               {errors.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">{errors.referralCode}</p>}
               {searchParams.get('ref') && (

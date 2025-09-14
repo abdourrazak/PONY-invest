@@ -92,50 +92,50 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
           {/* Welcome Items */}
           <div className="space-y-3 mb-5">
             {/* Bonus d'inscription */}
-            <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-              <div className="w-8 h-8 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0 border border-green-400/30">
+            <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-xl border border-white/20 shadow-sm">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-base">🎁</span>
               </div>
               <div>
-                <p className="text-white/90 text-xs font-bold">
-                  <span className="font-black text-green-400">1000 FCFA</span> bonus d'inscription
+                <p className="text-gray-800 text-xs font-bold">
+                  <span className="font-black text-green-600">1000 FCFA</span> bonus d'inscription
                 </p>
-                <p className="text-white/70 text-xs">Utilisable pour retrait</p>
+                <p className="text-gray-600 text-xs">Utilisable pour retrait</p>
               </div>
             </div>
 
             {/* Parrainage */}
-            <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-              <div className="w-8 h-8 bg-blue-500/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0 border border-blue-400/30">
+            <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-xl border border-white/20 shadow-sm">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-base">👥</span>
               </div>
               <div>
-                <p className="text-white/90 text-xs font-bold">Parrainage</p>
-                <p className="text-white/70 text-xs">
-                  <span className="font-black text-blue-400">25%</span> du dépôt de l'ami
+                <p className="text-gray-800 text-xs font-bold">Parrainage</p>
+                <p className="text-gray-600 text-xs">
+                  <span className="font-black text-blue-600">25%</span> du dépôt de l'ami
                 </p>
               </div>
             </div>
 
             {/* Retrait quotidien */}
-            <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-              <div className="w-8 h-8 bg-purple-500/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0 border border-purple-400/30">
+            <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-xl border border-white/20 shadow-sm">
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-base">💰</span>
               </div>
               <div>
-                <p className="text-white/90 text-xs font-bold">Retraits quotidiens</p>
-                <p className="text-white/70 text-xs">7j/7 à toute heure</p>
+                <p className="text-gray-800 text-xs font-bold">Retraits quotidiens</p>
+                <p className="text-gray-600 text-xs">7j/7 à toute heure</p>
               </div>
             </div>
 
             {/* Global */}
-            <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-              <div className="w-8 h-8 bg-orange-500/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0 border border-orange-400/30">
+            <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-xl border border-white/20 shadow-sm">
+              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-base">🌟</span>
               </div>
               <div>
-                <p className="text-white/90 text-xs font-bold">Investissement Global</p>
-                <p className="text-white/70 text-xs">Revenus en 90 jours</p>
+                <p className="text-gray-800 text-xs font-bold">Investissement Global</p>
+                <p className="text-gray-600 text-xs">Revenus en 90 jours</p>
               </div>
             </div>
           </div>
