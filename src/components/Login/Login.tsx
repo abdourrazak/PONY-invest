@@ -159,10 +159,10 @@ export default function Login() {
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="6XXXXXXXX"
                 style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium bg-white/90 backdrop-blur-sm ${
+                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                   errors.phone 
                     ? 'border-red-400' 
-                    : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                    : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
                 } focus:outline-none shadow-sm`}
               />
               {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
@@ -181,16 +181,16 @@ export default function Login() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Votre mot de passe"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-gray-800 placeholder-gray-400 font-medium bg-white/90 backdrop-blur-sm ${
+                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
                     errors.password 
                       ? 'border-red-400' 
-                      : 'border-white/30 focus:border-blue-400 focus:bg-white'
+                      : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
                   } focus:outline-none shadow-sm`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
