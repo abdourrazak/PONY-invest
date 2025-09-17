@@ -70,6 +70,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const { currentUser, userData } = useAuth()
   const router = useRouter()
   const [amount, setAmount] = useState('')
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [fundsPassword, setFundsPassword] = useState('')
@@ -260,18 +261,41 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
 
       {/* Main Content */}
       <main className="max-w-md mx-auto px-4 py-6 space-y-6">
-        {/* Amount Section */}
+        {/* Amount Selection Section */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-          <label className="block text-white/70 font-medium text-sm mb-3">
-            Montant à déposer ({isCrypto ? 'USDT' : 'FCFA'})
+          <label className="block text-white/70 font-medium text-sm mb-4">
+            Montant à déposer (FCFA)
           </label>
-          <input
-            type="text"
-            placeholder={isCrypto ? "Minimum 10 USDT" : "Minimum 3,000 FCFA"}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-200"
-          />
+          
+          {/* Preset Amount Buttons */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => (
+              <button
+                key={presetAmount}
+                onClick={() => {
+                  setSelectedAmount(presetAmount)
+                  setAmount(presetAmount.toString())
+                }}
+                className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                  selectedAmount === presetAmount
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400'
+                    : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40'
+                }`}
+              >
+                {presetAmount.toLocaleString()} FCFA
+              </button>
+            ))}
+          </div>
+          
+          {/* Selected Amount Display */}
+          {selectedAmount && (
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-white/70 text-sm">Montant sélectionné :</span>
+                <span className="text-green-400 font-bold text-lg">{selectedAmount.toLocaleString()} FCFA</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Beneficiary Code Section */}
