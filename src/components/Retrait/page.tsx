@@ -49,12 +49,12 @@ export default function RetraitPage() {
     }
   ]
 
-  // Charger le solde de l'utilisateur
+  // Charger le solde de l'utilisateur - synchronisé avec le solde principal (Atout)
   useEffect(() => {
     if (currentUser) {
       // S'abonner aux changements de solde en temps réel
       const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
-        setBalance(newBalance)
+        setBalance(newBalance) // Le solde de retrait = solde principal (Atout)
       })
 
       // Vérifier si l'utilisateur a configuré un mot de passe des fonds

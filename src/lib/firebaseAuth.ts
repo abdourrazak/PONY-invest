@@ -120,7 +120,8 @@ export async function registerUser(
       numeroTel,
       referralCode,
       referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      balance: 1000 // Solde initial de 1000 XOF pour nouveaux utilisateurs
     }
 
     try {

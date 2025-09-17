@@ -5,6 +5,8 @@ import { Plus, Minus, Smartphone, Wallet, ArrowLeft, TrendingUp, Users, FileText
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { useAuth } from '@/contexts/AuthContext'
 import { getReferralCount } from '@/lib/firebaseAuth'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 export default function ComptePage() {
   const { userData } = useAuth()
@@ -12,22 +14,35 @@ export default function ComptePage() {
   const [funds, setFunds] = useState(1000)
   const [referralRewards, setReferralRewards] = useState(0)
   const [checkInRewards, setCheckInRewards] = useState(0)
+  const [hasInvested, setHasInvested] = useState(false)
 
   useEffect(() => {
     const loadUserData = async () => {
-      if (!userData?.numeroTel) return
+      if (!userData?.numeroTel || !userData?.uid) return
       
       const userKey = userData.numeroTel
       
       // Utiliser le solde Firestore comme source de vérité
       const firestoreBalance = userData.balance || 1000
       setBalance(firestoreBalance)
+      
+      // Vérifier si l'utilisateur a investi
+      try {
+        const userDoc = await getDoc(doc(db, 'users', userData.uid))
+        if (userDoc.exists()) {
+          const data = userDoc.data()
+          const invested = data.hasInvested || false
+          setHasInvested(invested)
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification d\'investissement:', error)
+      }
 
-      // Calculer les récompenses de parrainage spécifiques à l'utilisateur
+      // Calculer les récompenses de parrainage UNIQUEMENT pour les investisseurs
       const storedCode = localStorage.getItem(`userReferralCode_${userKey}`)
       let referralRewards = 0
       
-      if (storedCode) {
+      if (storedCode && hasInvested) {
         try {
           const referralCount = await getReferralCount(storedCode)
           referralRewards = referralCount * 25 // 25 FCFA par parrainage
@@ -35,6 +50,8 @@ export default function ComptePage() {
         } catch (error) {
           console.log('Erreur calcul récompenses parrainage:', error)
         }
+      } else {
+        setReferralRewards(0) // Pas de récompenses pour les non-investisseurs
       }
 
       // Calculer les récompenses de check-in quotidien spécifiques à l'utilisateur
@@ -42,7 +59,8 @@ export default function ComptePage() {
       const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
       setCheckInRewards(checkInRewardsTotal)
 
-      // Le solde affiché = seulement le solde Firestore (cohérent avec toutes les pages)
+      // Le solde principal (Atout) = solde Firestore
+      // Le solde de retrait est synchronisé avec le solde principal
       setFunds(firestoreBalance)
 
       // Générer un ID utilisateur unique si pas encore fait
@@ -140,7 +158,9 @@ export default function ComptePage() {
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains totaux</div>
               <div className="text-yellow-400 text-lg font-bold">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
-              <div className="text-white/60 text-xs mt-1">💰 Parrainage + Check-in</div>
+              <div className="text-white/60 text-xs mt-1">
+                {hasInvested ? '💰 Parrainage + Check-in' : '💰 Check-in uniquement'}
+              </div>
             </div>
           </div>
         </div>
