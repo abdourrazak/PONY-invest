@@ -183,15 +183,7 @@ export default function ProduitsPage() {
 
   const handleRent = async (product: ProductData, quantity: number) => {
     if (!currentUser || !userData) {
-      alert('Vous devez être connecté pour effectuer un investissement')
-      return
-    }
-
-    const totalCost = product.price * quantity
-    
-    if (balance < totalCost) {
-      alert(`Solde insuffisant. Vous avez ${balance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
-      return
+      throw new Error('Vous devez être connecté pour effectuer un investissement')
     }
     
     try {
@@ -209,8 +201,6 @@ export default function ProduitsPage() {
         quantity
       )
       
-      alert(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalCost.toLocaleString()} FCFA. ID: ${rentalId.slice(-6)}`)
-      
       // Recharger les locations de l'utilisateur
       const updatedRentals = await getUserRentals(currentUser.uid)
       setUserRentals(updatedRentals)
@@ -218,7 +208,7 @@ export default function ProduitsPage() {
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
     } catch (error: any) {
       console.error('Erreur lors de l\'investissement:', error)
-      alert(`Erreur: ${error.message || 'Impossible de traiter l\'investissement'}`)
+      throw error // Re-lancer l'erreur pour que le modal puisse l'afficher
     }
   }
 
@@ -698,6 +688,7 @@ export default function ProduitsPage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onRent={handleRent}
+          userBalance={balance}
         />
       )}
 

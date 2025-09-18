@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle, Wallet } from 'lucide-react'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -26,13 +26,14 @@ interface ProductModalProps {
   onClose: () => void
   product: ProductData | null
   onRent: (product: ProductData, quantity: number) => Promise<void>
+  userBalance: number
 }
 
-export default function ProductModal({ isOpen, onClose, product, onRent }: ProductModalProps) {
+export default function ProductModal({ isOpen, onClose, product, onRent, userBalance }: ProductModalProps) {
   const { userData } = useAuth()
   const [quantity, setQuantity] = useState(1)
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | null>(null)
+  const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | 'insufficient_balance' | null>(null)
   const [resultMessage, setResultMessage] = useState('')
 
   if (!isOpen || !product) return null
@@ -44,6 +45,17 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
   }
 
   const confirmInvestment = async () => {
+    // Vérifier le solde avant de procéder
+    if (userBalance < totalPrice) {
+      setInvestmentResult('insufficient_balance')
+      setResultMessage(`Vous avez ${userBalance.toLocaleString()} FCFA mais il faut ${totalPrice.toLocaleString()} FCFA pour cet investissement.`)
+      setTimeout(() => {
+        setInvestmentResult(null)
+        setShowConfirmation(false)
+      }, 4000)
+      return
+    }
+
     try {
       await onRent(product, quantity)
       setInvestmentResult('success')
@@ -59,7 +71,7 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
       setTimeout(() => {
         setInvestmentResult(null)
         setShowConfirmation(false)
-      }, 3000)
+      }, 4000)
     }
   }
 
@@ -90,15 +102,23 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
                 <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
+              ) : investmentResult === 'insufficient_balance' ? (
+                <div className="mx-auto w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center">
+                  <Wallet className="w-8 h-8 text-orange-400" />
+                </div>
               ) : (
                 <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                   <XCircle className="w-8 h-8 text-red-400" />
                 </div>
               )}
-              <h3 className={`text-xl font-bold ${investmentResult === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                {investmentResult === 'success' ? 'Investissement Réussi !' : 'Investissement Échoué'}
+              <h3 className={`text-xl font-bold ${
+                investmentResult === 'success' ? 'text-green-400' : 
+                investmentResult === 'insufficient_balance' ? 'text-orange-400' : 'text-red-400'
+              }`}>
+                {investmentResult === 'success' ? 'Investissement Réussi !' : 
+                 investmentResult === 'insufficient_balance' ? 'Solde Insuffisant' : 'Investissement Échoué'}
               </h3>
-              <p className="text-white/80 text-sm">{resultMessage}</p>
+              <p className="text-white/80 text-sm leading-relaxed">{resultMessage}</p>
             </div>
           ) : (
             <div className="text-center space-y-6">
