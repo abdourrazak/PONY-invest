@@ -619,6 +619,19 @@ export default function ProduitsPage() {
           </Link>
         </div>
       </div>
+
+      {/* Product Modal */}
+      {isModalOpen && selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onRent={handleRent}
+        />
+      )}
+
+      {/* Support Float */}
+      <SupportFloat />
     </div>
   )
 }
