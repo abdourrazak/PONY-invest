@@ -51,9 +51,9 @@ export default function AccueilPage() {
     { title: 'Produits', icon: Smartphone, color: 'bg-gradient-to-r from-blue-500 to-cyan-500', href: '/produits' },
     { title: 'Cadeau', icon: FileText, color: 'bg-gradient-to-r from-pink-500 to-rose-500', href: '/cadeau', special: 'gift' },
     { title: 'Compte', icon: Wallet, color: 'bg-gradient-to-r from-purple-500 to-indigo-500', href: '/compte' },
-    { title: 'Gains', icon: TrendingUp, color: 'bg-gradient-to-r from-yellow-500 to-orange-500', href: '/gains' },
+    { title: 'Check-in Quotidien', icon: TrendingUp, color: 'bg-gradient-to-r from-yellow-500 to-orange-500', href: '/check-Quotidien' },
     { title: 'Parrainage', icon: Users, color: 'bg-gradient-to-r from-teal-500 to-cyan-500', href: '/parrainage' },
-    { title: 'Sécurité', icon: Shield, color: 'bg-gradient-to-r from-gray-500 to-slate-500', href: '/securite' }
+    { title: 'Support', icon: Shield, color: 'bg-gradient-to-r from-gray-500 to-slate-500', href: '/support' }
   ]
 
   // Force viewport reset and fix scroll issues
