@@ -570,7 +570,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv7')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
