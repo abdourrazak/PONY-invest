@@ -2,11 +2,15 @@ import {
   doc, 
   updateDoc, 
   getDoc,
+  getDocs,
   addDoc,
   collection,
   serverTimestamp,
   runTransaction,
-  increment
+  increment,
+  query,
+  where,
+  orderBy
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -107,8 +111,28 @@ export async function createRental(
 // Récupérer les locations d'un utilisateur
 export async function getUserRentals(userId: string): Promise<RentalData[]> {
   try {
-    // TODO: Implement query to get user rentals
-    return []
+    const rentalsCollection = collection(db, 'rentals')
+    const q = query(
+      rentalsCollection,
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    )
+    
+    const querySnapshot = await getDocs(q)
+    const rentals: RentalData[] = []
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      rentals.push({
+        id: doc.id,
+        ...data,
+        startDate: data.startDate?.toDate() || new Date(),
+        endDate: data.endDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date()
+      } as RentalData)
+    })
+    
+    return rentals
   } catch (error) {
     console.error('Erreur lors de la récupération des locations:', error)
     return []

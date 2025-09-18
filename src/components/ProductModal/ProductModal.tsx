@@ -134,7 +134,7 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border border-white/20 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto relative shadow-2xl">
+      <div className="bg-gradient-to-br from-white via-gray-50 to-white border border-gray-200 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto relative shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white p-6 rounded-t-3xl relative">
           <button 
@@ -151,12 +151,12 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
         {/* Product Info */}
         <div className="p-6 space-y-6">
           {/* Product Header */}
-          <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20">
+          <div className="flex items-center space-x-4 bg-gray-50 backdrop-blur-sm p-4 rounded-2xl border border-gray-200">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg">
               <Image src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-white text-lg">{product.name}</h3>
+              <h3 className="font-bold text-gray-800 text-lg">{product.name}</h3>
               <div className="flex items-center space-x-2 mt-1">
                 <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                   {product.level}

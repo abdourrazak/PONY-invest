@@ -6,7 +6,7 @@ import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '../ProductModal/ProductModal'
 import { useAuth } from '@/contexts/AuthContext'
-import { createRental } from '@/lib/rentals'
+import { createRental, getUserRentals, RentalData } from '@/lib/rentals'
 import { subscribeToUserBalance } from '@/lib/transactions'
 
 interface ProductData {
@@ -32,6 +32,7 @@ export default function ProduitsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
   const [balance, setBalance] = useState(1000)
+  const [userRentals, setUserRentals] = useState<RentalData[]>([])
 
   // S'abonner au solde en temps réel
   useEffect(() => {
@@ -43,8 +44,24 @@ export default function ProduitsPage() {
     }
   }, [currentUser])
 
+  // Charger les locations de l'utilisateur
+  useEffect(() => {
+    const loadUserRentals = async () => {
+      if (currentUser) {
+        try {
+          const rentals = await getUserRentals(currentUser.uid)
+          setUserRentals(rentals)
+        } catch (error) {
+          console.error('Erreur lors du chargement des locations:', error)
+        }
+      }
+    }
+    
+    loadUserRentals()
+  }, [currentUser])
+
   // Définir les produits par catégorie
-  const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : ['LV8', 'LV9', 'LV10']
+  const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : []
 
   // Product data
   const products: ProductData[] = [
@@ -193,6 +210,10 @@ export default function ProduitsPage() {
       )
       
       alert(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalCost.toLocaleString()} FCFA. ID: ${rentalId.slice(-6)}`)
+      
+      // Recharger les locations de l'utilisateur
+      const updatedRentals = await getUserRentals(currentUser.uid)
+      setUserRentals(updatedRentals)
       
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
     } catch (error: any) {
@@ -581,8 +602,58 @@ export default function ProduitsPage() {
         )}
 
 
-        {/* Empty state */}
-        {currentProducts.length === 0 && (
+        {/* Section Activité - Afficher les produits loués */}
+        {activeTab === 'Activité' && userRentals.map((rental) => (
+          <div key={rental.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
+            <div className="flex justify-between items-start mb-3">
+              <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productName}</span>
+              <span className="text-white/60 text-xs">
+                {rental.status === 'active' ? '🟢 Actif' : '🔴 Terminé'}
+              </span>
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/70">Quantité:</span>
+                <span className="text-white font-medium">{rental.quantity}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/70">Coût total:</span>
+                <span className="text-green-400 font-bold">FCFA{rental.totalCost.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/70">Revenus quotidiens:</span>
+                <span className="text-blue-400 font-medium">FCFA{rental.dailyRevenue.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/70">Date de début:</span>
+                <span className="text-white/80">{rental.startDate.toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/70">Date de fin:</span>
+                <span className="text-white/80">{rental.endDate.toLocaleDateString()}</span>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-3">
+              <div className="flex justify-between items-center">
+                <span className="text-white/80 text-sm">Revenus attendus:</span>
+                <span className="text-yellow-400 font-bold">FCFA{rental.totalExpectedRevenue.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Empty state pour Activité */}
+        {activeTab === 'Activité' && userRentals.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-white/70 text-lg mb-2">Aucun investissement actif</div>
+            <div className="text-white/50 text-sm">Vos produits loués apparaîtront ici</div>
+          </div>
+        )}
+
+        {/* Empty state pour Fixe */}
+        {activeTab === 'Fixe' && currentProducts.length === 0 && (
           <div className="text-center py-12">
             <div className="text-white/70 text-lg mb-2">Aucun produit disponible</div>
             <div className="text-white/50 text-sm">dans la catégorie {activeTab}</div>
