@@ -1,19 +1,205 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { ArrowLeft, Bell } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
+import SupportFloat from '../SupportFloat/SupportFloat'
+import ProductModal from '../ProductModal/ProductModal'
+import { useAuth } from '@/contexts/AuthContext'
+import { createRental } from '@/lib/rentals'
+import { subscribeToUserBalance } from '@/lib/transactions'
+
+interface ProductData {
+  id: string
+  name: string
+  level: string
+  price: number
+  originalPrice?: number
+  dailyRevenue: number
+  duration: number
+  totalRevenue: number
+  image: string
+  type: 'Fixé' | 'Activité'
+  vipLevel: number
+  maxInvestment: number
+  controls: number
+  badge?: string
+}
 
 export default function ProduitsPage() {
+  const { userData, currentUser } = useAuth()
   const [activeTab, setActiveTab] = useState('Fixe')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
+  const [balance, setBalance] = useState(1000)
+
+  // S'abonner au solde en temps réel
+  useEffect(() => {
+    if (currentUser) {
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        setBalance(newBalance)
+      })
+      return () => unsubscribe()
+    }
+  }, [currentUser])
 
   // Définir les produits par catégorie
-  const productsByCategory = {
-    'Fixe': ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'],
-    'Activité': []
+  const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : ['LV8', 'LV9', 'LV10']
+
+  // Product data
+  const products: ProductData[] = [
+    {
+      id: 'lv1',
+      name: 'Titres à revenu fixe 1',
+      level: 'LV1',
+      price: 6000,
+      originalPrice: 3000,
+      dailyRevenue: 500,
+      duration: 120,
+      totalRevenue: 60000,
+      image: '/p1.png',
+      type: 'Fixé',
+      vipLevel: 0,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Promo'
+    },
+    {
+      id: 'lv2',
+      name: 'Titres à revenu fixe 2',
+      level: 'LV2',
+      price: 15000,
+      dailyRevenue: 1400,
+      duration: 120,
+      totalRevenue: 168000,
+      image: '/p2.png',
+      type: 'Fixé',
+      vipLevel: 2,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Standard'
+    },
+    {
+      id: 'lv3',
+      name: 'Titres à revenu fixe 3',
+      level: 'LV3',
+      price: 35000,
+      dailyRevenue: 3500,
+      duration: 120,
+      totalRevenue: 420000,
+      image: '/p3.png',
+      type: 'Fixé',
+      vipLevel: 3,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Premium'
+    },
+    {
+      id: 'lv4',
+      name: 'Titres à revenu fixe 4',
+      level: 'LV4',
+      price: 80000,
+      dailyRevenue: 8500,
+      duration: 120,
+      totalRevenue: 1020000,
+      image: '/p4.png',
+      type: 'Fixé',
+      vipLevel: 4,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Gold'
+    },
+    {
+      id: 'lv5',
+      name: 'Titres à revenu fixe 5',
+      level: 'LV5',
+      price: 110000,
+      dailyRevenue: 12000,
+      duration: 120,
+      totalRevenue: 1440000,
+      image: '/p5.png',
+      type: 'Fixé',
+      vipLevel: 5,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Platinum'
+    },
+    {
+      id: 'lv6',
+      name: 'Titres à revenu fixe 6',
+      level: 'LV6',
+      price: 250000,
+      dailyRevenue: 28500,
+      duration: 120,
+      totalRevenue: 3420000,
+      image: '/p6.png',
+      type: 'Fixé',
+      vipLevel: 6,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Diamond'
+    },
+    {
+      id: 'lv7',
+      name: 'Titres à revenu fixe 7',
+      level: 'LV7',
+      price: 400000,
+      dailyRevenue: 47000,
+      duration: 120,
+      totalRevenue: 5640000,
+      image: '/p7.png',
+      type: 'Fixé',
+      vipLevel: 7,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Elite'
+    }
+  ]
+
+  const handleRentClick = (productId: string) => {
+    const product = products.find(p => p.id === productId)
+    if (product) {
+      setSelectedProduct(product)
+      setIsModalOpen(true)
+    }
   }
 
-  const currentProducts = productsByCategory[activeTab] || []
+  const handleRent = async (product: ProductData, quantity: number) => {
+    if (!currentUser || !userData) {
+      alert('Vous devez être connecté pour effectuer un investissement')
+      return
+    }
+
+    const totalCost = product.price * quantity
+    
+    if (balance < totalCost) {
+      alert(`Solde insuffisant. Vous avez ${balance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
+      return
+    }
+    
+    try {
+      const rentalId = await createRental(
+        currentUser.uid,
+        userData.numeroTel,
+        {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          dailyRevenue: product.dailyRevenue,
+          duration: product.duration,
+          totalRevenue: product.totalRevenue
+        },
+        quantity
+      )
+      
+      alert(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalCost.toLocaleString()} FCFA. ID: ${rentalId.slice(-6)}`)
+      
+      // Le solde sera automatiquement mis à jour via subscribeToUserBalance
+    } catch (error: any) {
+      console.error('Erreur lors de l\'investissement:', error)
+      alert(`Erreur: ${error.message || 'Impossible de traiter l\'investissement'}`)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
@@ -106,7 +292,10 @@ export default function ProduitsPage() {
               <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
               <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
             </div>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv1')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
@@ -149,7 +338,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv2')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
@@ -192,7 +384,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv3')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
@@ -235,7 +430,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv4')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
@@ -278,7 +476,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv5')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>
@@ -321,7 +522,10 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+            <button 
+              onClick={() => handleRentClick('lv6')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+            >
               Louer Maintenant
             </button>
           </div>

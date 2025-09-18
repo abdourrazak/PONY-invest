@@ -1,13 +1,15 @@
 'use client'
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
-import NavigationLink from '../NavigationLink/NavigationLink'
-import { useRouter } from 'next/navigation'
-import { Bell, CreditCard, Info, Users, LogOut, Gift, Smartphone, CheckCircle, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Bell, Plus, Minus, Smartphone, Wallet, TrendingUp, Users, FileText, Shield, LogOut } from 'lucide-react'
+import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import ProductModal from '../ProductModal/ProductModal'
 import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { useAuth } from '@/contexts/AuthContext'
+import { subscribeToUserBalance } from '@/lib/transactions'
+import { createRental } from '@/lib/rentals'
+import { useRouter } from 'next/navigation'
 
 const banners = [
   '/banner1.jpeg',
@@ -15,29 +17,44 @@ const banners = [
   '/banner3.jpeg'
 ]
 
-const notifications = [
-  "🎯 Utilisateur 67***823 vient de gagner 48000 Fcfa",
-  "💼 Nouveau plan promo maintenant actif",
-  "🏆 Bonus disponible dans le canal telegram"
-]
+interface ProductData {
+  id: string
+  name: string
+  level: string
+  price: number
+  originalPrice?: number
+  dailyRevenue: number
+  duration: number
+  totalRevenue: number
+  image: string
+  type: 'Fixé' | 'Activité'
+  vipLevel: number
+  maxInvestment: number
+  controls: number
+  badge?: string
+}
 
-const services = [
-  { icon: CreditCard, title: 'Recharge', color: 'bg-gradient-to-br from-green-500 to-emerald-600', href: '/recharge' },
-  { icon: Info, title: 'À propos', color: 'bg-gradient-to-br from-blue-500 to-indigo-600', href: '/propos' },
-  { icon: Users, title: 'Équipe', color: 'bg-gradient-to-br from-purple-500 to-violet-600', href: '/equipe' },
-  { icon: LogOut, title: 'Retrait', color: 'bg-gradient-to-br from-orange-500 to-red-600', href: '/retrait' },
-  { icon: Gift, title: 'Cadeau', color: 'bg-gradient-to-r from-pink-500 to-purple-600', special: 'gift', href: '/cadeau' },
-  { icon: Smartphone, title: 'Mon Adoption', color: 'bg-gradient-to-br from-cyan-500 to-teal-600', href: '/adoption' },
-  { icon: CheckCircle, title: 'Check-in Quotidien', color: 'bg-gradient-to-br from-yellow-500 to-amber-600', href: '/check-Quotidien' },
-  { icon: Headphones, title: 'Support', color: 'bg-gradient-to-br from-rose-500 to-pink-600', href: '/support' }
-]
-
-export default function Accueil() {
+export default function AccueilPage() {
+  const { userData, currentUser, loading } = useAuth()
+  const [balance, setBalance] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrollText, setScrollText] = useState(0)
-  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
-  const { currentUser, userData, loading } = useAuth()
   const router = useRouter()
+
+  // Services array for the grid
+  const services = [
+    { title: 'Recharge', icon: Plus, color: 'bg-gradient-to-r from-green-500 to-emerald-500', href: '/recharge' },
+    { title: 'Retrait', icon: Minus, color: 'bg-gradient-to-r from-red-500 to-pink-500', href: '/retrait' },
+    { title: 'Produits', icon: Smartphone, color: 'bg-gradient-to-r from-blue-500 to-cyan-500', href: '/produits' },
+    { title: 'Cadeau', icon: FileText, color: 'bg-gradient-to-r from-pink-500 to-rose-500', href: '/cadeau', special: 'gift' },
+    { title: 'Compte', icon: Wallet, color: 'bg-gradient-to-r from-purple-500 to-indigo-500', href: '/compte' },
+    { title: 'Gains', icon: TrendingUp, color: 'bg-gradient-to-r from-yellow-500 to-orange-500', href: '/gains' },
+    { title: 'Parrainage', icon: Users, color: 'bg-gradient-to-r from-teal-500 to-cyan-500', href: '/parrainage' },
+    { title: 'Sécurité', icon: Shield, color: 'bg-gradient-to-r from-gray-500 to-slate-500', href: '/securite' }
+  ]
 
   // Force viewport reset and fix scroll issues
   useEffect(() => {
@@ -76,29 +93,167 @@ export default function Accueil() {
     }
   }, [])
 
-  // Rediriger vers inscription si pas connecté et gérer popup de bienvenue
+  // Rediriger vers register si pas d'utilisateur
   useEffect(() => {
-    if (!loading) {
-      // Vérifier localStorage pour la session
-      const isLoggedIn = localStorage.getItem('isLoggedIn')
-      const userPhone = localStorage.getItem('userPhone')
-      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
-      
-      console.log('🔍 Accueil useEffect - Debug:', {
-        currentUser: !!currentUser,
-        isLoggedIn,
-        userPhone,
-        hasSeenWelcome,
-        loading
-      })
-      
-      if (!currentUser && (!isLoggedIn || !userPhone)) {
-        // Rediriger vers register si pas d'utilisateur
-        router.push('/register')
-      }
-      // Ne plus afficher le popup automatiquement sur l'accueil
+    if (!currentUser) {
+      router.push('/register')
     }
-  }, [currentUser, loading, router])
+  }, [currentUser, router])
+
+  // Product data
+  const products: ProductData[] = [
+    {
+      id: 'lv1',
+      name: 'Titres à revenu fixe 1',
+      level: 'LV1',
+      price: 6000,
+      originalPrice: 3000,
+      dailyRevenue: 500,
+      duration: 120,
+      totalRevenue: 60000,
+      image: '/p1.png',
+      type: 'Fixé',
+      vipLevel: 0,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Promo'
+    },
+    {
+      id: 'lv2',
+      name: 'Titres à revenu fixe 2',
+      level: 'LV2',
+      price: 15000,
+      dailyRevenue: 1400,
+      duration: 120,
+      totalRevenue: 168000,
+      image: '/p2.png',
+      type: 'Fixé',
+      vipLevel: 2,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Standard'
+    },
+    {
+      id: 'lv3',
+      name: 'Titres à revenu fixe 3',
+      level: 'LV3',
+      price: 35000,
+      dailyRevenue: 3500,
+      duration: 120,
+      totalRevenue: 420000,
+      image: '/p3.png',
+      type: 'Fixé',
+      vipLevel: 3,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Premium'
+    },
+    {
+      id: 'lv4',
+      name: 'Titres à revenu fixe 4',
+      level: 'LV4',
+      price: 80000,
+      dailyRevenue: 8500,
+      duration: 120,
+      totalRevenue: 1020000,
+      image: '/p4.png',
+      type: 'Fixé',
+      vipLevel: 4,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Gold'
+    },
+    {
+      id: 'lv5',
+      name: 'Titres à revenu fixe 5',
+      level: 'LV5',
+      price: 110000,
+      dailyRevenue: 12000,
+      duration: 120,
+      totalRevenue: 1440000,
+      image: '/p5.png',
+      type: 'Fixé',
+      vipLevel: 5,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Platinum'
+    },
+    {
+      id: 'lv6',
+      name: 'Titres à revenu fixe 6',
+      level: 'LV6',
+      price: 250000,
+      dailyRevenue: 28500,
+      duration: 120,
+      totalRevenue: 3420000,
+      image: '/p6.png',
+      type: 'Fixé',
+      vipLevel: 6,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Diamond'
+    },
+    {
+      id: 'lv7',
+      name: 'Titres à revenu fixe 7',
+      level: 'LV7',
+      price: 400000,
+      dailyRevenue: 47000,
+      duration: 120,
+      totalRevenue: 5640000,
+      image: '/p7.png',
+      type: 'Fixé',
+      vipLevel: 7,
+      maxInvestment: 100,
+      controls: 20,
+      badge: 'Elite'
+    }
+  ]
+
+  const handleRentClick = (productId: string) => {
+    const product = products.find(p => p.id === productId)
+    if (product) {
+      setSelectedProduct(product)
+      setIsModalOpen(true)
+    }
+  }
+
+  const handleRent = async (product: ProductData, quantity: number) => {
+    if (!currentUser || !userData) {
+      alert('Vous devez être connecté pour effectuer un investissement')
+      return
+    }
+
+    const totalCost = product.price * quantity
+    
+    if (balance < totalCost) {
+      alert(`Solde insuffisant. Vous avez ${balance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
+      return
+    }
+    
+    try {
+      const rentalId = await createRental(
+        currentUser.uid,
+        userData.numeroTel,
+        {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          dailyRevenue: product.dailyRevenue,
+          duration: product.duration,
+          totalRevenue: product.totalRevenue
+        },
+        quantity
+      )
+      
+      alert(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalCost.toLocaleString()} FCFA. ID: ${rentalId.slice(-6)}`)
+      
+      // Le solde sera automatiquement mis à jour via subscribeToUserBalance
+    } catch (error: any) {
+      console.error('Erreur lors de l\'investissement:', error)
+      alert(`Erreur: ${error.message || 'Impossible de traiter l\'investissement'}`)
+    }
+  }
 
   // Gérer la fermeture du popup de bienvenue
   const handleWelcomeClose = () => {
@@ -358,7 +513,10 @@ export default function Accueil() {
             
             <div className="flex justify-between items-center mt-4">
               <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <button 
+                onClick={() => handleRentClick('lv2')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
                 Louer Maintenant
               </button>
             </div>
@@ -402,7 +560,10 @@ export default function Accueil() {
             
             <div className="flex justify-between items-center mt-4">
               <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <button 
+                onClick={() => handleRentClick('lv3')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
                 Louer Maintenant
               </button>
             </div>
@@ -444,7 +605,10 @@ export default function Accueil() {
             
             <div className="flex justify-between items-center mt-4">
               <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <button 
+                onClick={() => handleRentClick('lv4')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
                 Louer Maintenant
               </button>
             </div>
@@ -486,7 +650,10 @@ export default function Accueil() {
             
             <div className="flex justify-between items-center mt-4">
               <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <button 
+                onClick={() => handleRentClick('lv5')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
                 Louer Maintenant
               </button>
             </div>
@@ -528,7 +695,10 @@ export default function Accueil() {
             
             <div className="flex justify-between items-center mt-4">
               <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">
+              <button 
+                onClick={() => handleRentClick('lv6')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
                 Louer Maintenant
               </button>
             </div>
@@ -611,6 +781,13 @@ export default function Accueil() {
 
       {/* Support Float */}
       <SupportFloat />
+      
+      <ProductModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+        onRent={handleRent}
+      />
 
       {/* Welcome Popup */}
       <WelcomePopup 
