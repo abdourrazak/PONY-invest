@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { X, ChevronUp, ChevronDown } from 'lucide-react'
+import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -25,22 +25,46 @@ interface ProductModalProps {
   isOpen: boolean
   onClose: () => void
   product: ProductData | null
-  onRent: (product: ProductData, quantity: number) => void
+  onRent: (product: ProductData, quantity: number) => Promise<void>
 }
 
 export default function ProductModal({ isOpen, onClose, product, onRent }: ProductModalProps) {
   const { userData } = useAuth()
   const [quantity, setQuantity] = useState(1)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | null>(null)
+  const [resultMessage, setResultMessage] = useState('')
 
   if (!isOpen || !product) return null
 
   const totalPrice = product.price * quantity
-  const totalDailyRevenue = product.dailyRevenue * quantity
-  const totalExpectedRevenue = product.totalRevenue * quantity
 
   const handleRent = () => {
-    onRent(product, quantity)
-    onClose()
+    setShowConfirmation(true)
+  }
+
+  const confirmInvestment = async () => {
+    try {
+      await onRent(product, quantity)
+      setInvestmentResult('success')
+      setResultMessage(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalPrice.toLocaleString()} FCFA`)
+      setTimeout(() => {
+        onClose()
+        setShowConfirmation(false)
+        setInvestmentResult(null)
+      }, 3000)
+    } catch (error: any) {
+      setInvestmentResult('error')
+      setResultMessage(error.message || 'Erreur lors de l\'investissement')
+      setTimeout(() => {
+        setInvestmentResult(null)
+        setShowConfirmation(false)
+      }, 3000)
+    }
+  }
+
+  const cancelInvestment = () => {
+    setShowConfirmation(false)
   }
 
   const incrementQuantity = () => {
@@ -148,13 +172,6 @@ export default function ProductModal({ isOpen, onClose, product, onRent }: Produ
             </div>
           </div>
 
-          {/* Expected Returns */}
-          <div className="bg-green-50 p-4 rounded-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Revenu Total Attendu</span>
-              <span className="font-bold text-green-600">FCFA{totalExpectedRevenue.toLocaleString()}</span>
-            </div>
-          </div>
 
           {/* Action Button */}
           <button 
