@@ -55,8 +55,8 @@ export default function ProduitsPage() {
           const rentals = await getUserRentals(currentUser.uid)
           setUserRentals(rentals)
           
-          // Vérifier la réduction LV1 (mode test temporaire)
-          const discount = await checkLV1DiscountTest(currentUser.uid)
+          // Vérifier la réduction LV1
+          const discount = await checkLV1Discount(currentUser.uid)
           setHasLV1Discount(discount)
         } catch (error) {
           console.error('Erreur lors du chargement des données utilisateur:', error)

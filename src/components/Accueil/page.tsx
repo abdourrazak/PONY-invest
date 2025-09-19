@@ -100,10 +100,10 @@ export default function AccueilPage() {
     if (!currentUser) {
       router.push('/register')
     } else {
-      // Vérifier la réduction LV1 (mode test temporaire)
+      // Vérifier la réduction LV1
       const checkDiscount = async () => {
         try {
-          const discount = await checkLV1DiscountTest(currentUser.uid)
+          const discount = await checkLV1Discount(currentUser.uid)
           setHasLV1Discount(discount)
         } catch (error) {
           console.error('Erreur lors de la vérification de la réduction LV1:', error)
