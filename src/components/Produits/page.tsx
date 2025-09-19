@@ -702,7 +702,7 @@ export default function ProduitsPage() {
                 {activeRentals.map((rental, index) => (
                   <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
                     <div className="flex justify-between items-start mb-3">
-                      <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productLevel}</span>
+                      <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productId.toUpperCase()}</span>
                       <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
                         ✅ Actif
                       </span>
