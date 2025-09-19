@@ -475,3 +475,47 @@ export async function getMultiLevelReferralStats(user: User): Promise<MultiLevel
     referralLink: getReferralLink(user.referralCode)
   }
 }
+
+// Vérifier si l'utilisateur a droit à la réduction LV1 (5+ filleuls investisseurs)
+export async function checkLV1Discount(userId: string): Promise<boolean> {
+  try {
+    // Récupérer l'utilisateur pour obtenir son code de parrainage
+    const userDoc = await getDoc(doc(db, 'users', userId))
+    if (!userDoc.exists()) return false
+    
+    const userData = userDoc.data()
+    const userReferralCode = userData.referralCode
+    
+    // Trouver tous les filleuls directs
+    const referralsQuery = query(
+      collection(db, 'users'),
+      where('referredBy', '==', userReferralCode)
+    )
+    const referralsSnapshot = await getDocs(referralsQuery)
+    
+    if (referralsSnapshot.size < 5) return false // Moins de 5 filleuls
+    
+    // Vérifier combien de filleuls ont investi (ont au moins une location)
+    let investorCount = 0
+    
+    for (const referralDoc of referralsSnapshot.docs) {
+      const referralId = referralDoc.id
+      
+      // Vérifier si ce filleul a des locations
+      const rentalsQuery = query(
+        collection(db, 'rentals'),
+        where('userId', '==', referralId)
+      )
+      const rentalsSnapshot = await getDocs(rentalsQuery)
+      
+      if (rentalsSnapshot.size > 0) {
+        investorCount++
+      }
+    }
+    
+    return investorCount >= 5 // Au moins 5 filleuls investisseurs
+  } catch (error) {
+    console.error('Erreur lors de la vérification de la réduction LV1:', error)
+    return false
+  }
+}

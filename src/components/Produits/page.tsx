@@ -8,6 +8,7 @@ import ProductModal from '../ProductModal/ProductModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { createRental, getUserRentals, RentalData } from '@/lib/rentals'
 import { subscribeToUserBalance } from '@/lib/transactions'
+import { checkLV1Discount } from '@/lib/firebaseAuth'
 
 interface ProductData {
   id: string
@@ -33,6 +34,7 @@ export default function ProduitsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
   const [balance, setBalance] = useState(1000)
   const [userRentals, setUserRentals] = useState<RentalData[]>([])
+  const [hasLV1Discount, setHasLV1Discount] = useState(false)
 
   // S'abonner au solde en temps réel
   useEffect(() => {
@@ -44,33 +46,37 @@ export default function ProduitsPage() {
     }
   }, [currentUser])
 
-  // Charger les locations de l'utilisateur
+  // Charger les locations de l'utilisateur et vérifier la réduction LV1
   useEffect(() => {
-    const loadUserRentals = async () => {
+    const loadUserData = async () => {
       if (currentUser) {
         try {
+          // Charger les locations
           const rentals = await getUserRentals(currentUser.uid)
           setUserRentals(rentals)
+          
+          // Vérifier la réduction LV1
+          const discount = await checkLV1Discount(currentUser.uid)
+          setHasLV1Discount(discount)
         } catch (error) {
-          console.error('Erreur lors du chargement des locations:', error)
+          console.error('Erreur lors du chargement des données utilisateur:', error)
         }
       }
     }
-    
-    loadUserRentals()
+    loadUserData()
   }, [currentUser])
 
   // Définir les produits par catégorie
   const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : []
 
-  // Product data
+  // Product data avec logique de réduction LV1
   const products: ProductData[] = [
     {
       id: 'lv1',
       name: 'Titres à revenu fixe 1',
       level: 'LV1',
-      price: 6000,
-      originalPrice: 3000,
+      price: hasLV1Discount ? 3000 : 6000, // Prix réduit si 5+ filleuls investisseurs
+      originalPrice: hasLV1Discount ? 6000 : 3000, // Prix original inversé
       dailyRevenue: 500,
       duration: 120,
       totalRevenue: 60000,
@@ -79,7 +85,7 @@ export default function ProduitsPage() {
       vipLevel: 0,
       maxInvestment: 100,
       controls: 20,
-      badge: 'Promo'
+      badge: hasLV1Discount ? 'Réduction Parrain' : 'Promo'
     },
     {
       id: 'lv2',
@@ -268,7 +274,13 @@ export default function ProduitsPage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
           <div className="flex justify-between items-start mb-3">
             <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-            <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+            <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
+              hasLV1Discount 
+                ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
+                : 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500'
+            }`}>
+              {hasLV1Discount ? 'Réduction Parrain' : 'Promo'}
+            </span>
           </div>
           
           <div className="flex items-start space-x-3">
@@ -280,7 +292,9 @@ export default function ProduitsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">6 000 FCFA</span>
+                  <span className="text-blue-400 text-xs sm:text-sm font-black">
+                    {hasLV1Discount ? '3 000 FCFA' : '6 000 FCFA'}
+                  </span>
                 </div>
                 <div className="flex justify-between sm:flex-col sm:items-center">
                   <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
@@ -300,8 +314,17 @@ export default function ProduitsPage() {
           
           <div className="flex justify-between items-center mt-4">
             <div className="flex flex-col">
-              <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
-              <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+              {hasLV1Discount ? (
+                <>
+                  <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
+                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
+                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+                </>
+              )}
             </div>
             <button 
               onClick={() => handleRentClick('lv1')}
