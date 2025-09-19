@@ -9,7 +9,7 @@ import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { useAuth } from '@/contexts/AuthContext'
 import { subscribeToUserBalance } from '@/lib/transactions'
 import { createRental } from '@/lib/rentals'
-import { checkLV1Discount } from '@/lib/firebaseAuth'
+import { checkLV1Discount, checkLV1DiscountTest } from '@/lib/firebaseAuth'
 import { useRouter } from 'next/navigation'
 
 const banners = [
@@ -100,10 +100,10 @@ export default function AccueilPage() {
     if (!currentUser) {
       router.push('/register')
     } else {
-      // Vérifier la réduction LV1
+      // Vérifier la réduction LV1 (mode test temporaire)
       const checkDiscount = async () => {
         try {
-          const discount = await checkLV1Discount(currentUser.uid)
+          const discount = await checkLV1DiscountTest(currentUser.uid)
           setHasLV1Discount(discount)
         } catch (error) {
           console.error('Erreur lors de la vérification de la réduction LV1:', error)

@@ -479,12 +479,18 @@ export async function getMultiLevelReferralStats(user: User): Promise<MultiLevel
 // Vérifier si l'utilisateur a droit à la réduction LV1 (5+ filleuls investisseurs)
 export async function checkLV1Discount(userId: string): Promise<boolean> {
   try {
+    console.log('🔍 Vérification réduction LV1 pour userId:', userId)
+    
     // Récupérer l'utilisateur pour obtenir son code de parrainage
     const userDoc = await getDoc(doc(db, 'users', userId))
-    if (!userDoc.exists()) return false
+    if (!userDoc.exists()) {
+      console.log('❌ Utilisateur non trouvé')
+      return false
+    }
     
     const userData = userDoc.data()
     const userReferralCode = userData.referralCode
+    console.log('📋 Code de parrainage:', userReferralCode)
     
     // Trouver tous les filleuls directs
     const referralsQuery = query(
@@ -492,8 +498,12 @@ export async function checkLV1Discount(userId: string): Promise<boolean> {
       where('referredBy', '==', userReferralCode)
     )
     const referralsSnapshot = await getDocs(referralsQuery)
+    console.log('👥 Nombre de filleuls directs:', referralsSnapshot.size)
     
-    if (referralsSnapshot.size < 5) return false // Moins de 5 filleuls
+    if (referralsSnapshot.size < 5) {
+      console.log('❌ Moins de 5 filleuls directs')
+      return false // Moins de 5 filleuls
+    }
     
     // Vérifier combien de filleuls ont investi (ont au moins une location)
     let investorCount = 0
@@ -510,12 +520,30 @@ export async function checkLV1Discount(userId: string): Promise<boolean> {
       
       if (rentalsSnapshot.size > 0) {
         investorCount++
+        console.log(`✅ Filleul ${referralId} a investi (${rentalsSnapshot.size} locations)`)
       }
     }
     
-    return investorCount >= 5 // Au moins 5 filleuls investisseurs
+    console.log('💰 Nombre de filleuls investisseurs:', investorCount)
+    const hasDiscount = investorCount >= 5
+    console.log('🎯 Réduction LV1 accordée:', hasDiscount)
+    
+    return hasDiscount // Au moins 5 filleuls investisseurs
   } catch (error) {
     console.error('Erreur lors de la vérification de la réduction LV1:', error)
     return false
   }
+}
+
+// FONCTION DE TEST TEMPORAIRE - À SUPPRIMER EN PRODUCTION
+export async function checkLV1DiscountTest(userId: string): Promise<boolean> {
+  // Pour tester l'affichage, retournons true pour un utilisateur spécifique
+  // ou false pour voir les deux états
+  console.log('🧪 Mode test - Simulation réduction LV1')
+  
+  // Vous pouvez changer cette valeur pour tester les deux états
+  const simulateDiscount = true // Changez à false pour tester l'état normal
+  
+  console.log('🎯 Réduction LV1 simulée:', simulateDiscount)
+  return simulateDiscount
 }
