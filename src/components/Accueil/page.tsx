@@ -439,7 +439,13 @@ export default function AccueilPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
             <div className="flex justify-between items-start mb-3">
               <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-              <span className="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Promo</span>
+              <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
+                hasLV1Discount 
+                  ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
+                  : 'bg-gradient-to-r from-blue-400 to-blue-500'
+              }`}>
+                {hasLV1Discount ? 'Réduction Parrain' : 'Promo'}
+              </span>
             </div>
             
             <div className="flex items-start space-x-3">
@@ -451,7 +457,9 @@ export default function AccueilPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
                   <div className="flex justify-between sm:flex-col sm:items-center">
                     <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">6 000 FCFA</span>
+                    <span className="text-blue-400 text-xs sm:text-sm font-black">
+                      {hasLV1Discount ? '3 000 FCFA' : '6 000 FCFA'}
+                    </span>
                   </div>
                   <div className="flex justify-between sm:flex-col sm:items-center">
                     <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
@@ -471,8 +479,17 @@ export default function AccueilPage() {
             
             <div className="flex justify-between items-center mt-4">
               <div className="flex flex-col">
-                <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
-                <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+                {hasLV1Discount ? (
+                  <>
+                    <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
+                    <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
+                    <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+                  </>
+                )}
               </div>
               <button 
                 onClick={() => handleRentClick('lv1')}
