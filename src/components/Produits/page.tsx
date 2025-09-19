@@ -68,6 +68,31 @@ export default function ProduitsPage() {
 
   // Définir les produits par catégorie
   const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : []
+  
+  // Filtrer les locations actives pour l'onglet Activité
+  const activeRentals = userRentals.filter(rental => {
+    const now = new Date()
+    const startDate = new Date(rental.startDate)
+    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
+    return now >= startDate && now <= endDate
+  })
+
+  // Fonction pour calculer les jours restants
+  const getDaysRemaining = (rental: RentalData) => {
+    const now = new Date()
+    const startDate = new Date(rental.startDate)
+    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
+    const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+    return Math.max(0, daysRemaining)
+  }
+
+  // Fonction pour calculer les revenus accumulés
+  const getAccumulatedRevenue = (rental: RentalData) => {
+    const now = new Date()
+    const startDate = new Date(rental.startDate)
+    const daysElapsed = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
+    return Math.max(0, daysElapsed) * rental.dailyRevenue
+  }
 
   // Product data avec logique de réduction LV1
   const products: ProductData[] = [
@@ -669,12 +694,69 @@ export default function ProduitsPage() {
           </div>
         ))}
 
-        {/* Empty state pour Activité */}
-        {activeTab === 'Activité' && userRentals.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-white/70 text-lg mb-2">Aucun investissement actif</div>
-            <div className="text-white/50 text-sm">Vos produits loués apparaîtront ici</div>
-          </div>
+        {/* Section Activité - Locations actives */}
+        {activeTab === 'Activité' && (
+          <>
+            {activeRentals.length > 0 ? (
+              <div className="space-y-4">
+                {activeRentals.map((rental, index) => (
+                  <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
+                    <div className="flex justify-between items-start mb-3">
+                      <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productLevel}</span>
+                      <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
+                        ✅ Actif
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                        <div className="w-full h-full flex items-center justify-center text-white text-2xl">
+                          💰
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 space-y-2">
+                        <h3 className="text-white font-bold text-sm">{rental.productName}</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                          <div className="flex justify-between sm:flex-col sm:items-center">
+                            <span className="text-white/90 text-xs sm:text-sm font-black">Revenus/jour :</span>
+                            <span className="text-green-400 text-xs sm:text-sm font-black">+{rental.dailyRevenue.toLocaleString()} FCFA</span>
+                          </div>
+                          <div className="flex justify-between sm:flex-col sm:items-center">
+                            <span className="text-white/90 text-xs sm:text-sm font-black">Jours restants :</span>
+                            <span className="text-purple-400 text-xs sm:text-sm font-black">{getDaysRemaining(rental)} jours</span>
+                          </div>
+                          <div className="flex justify-between sm:flex-col sm:items-center">
+                            <span className="text-white/90 text-xs sm:text-sm font-black">Revenus accumulés :</span>
+                            <span className="text-blue-400 text-xs sm:text-sm font-black">{getAccumulatedRevenue(rental).toLocaleString()} FCFA</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="flex flex-col">
+                        <span className="text-yellow-400 font-bold text-lg">
+                          {(rental.quantity * rental.dailyRevenue).toLocaleString()} FCFA/jour
+                        </span>
+                        <span className="text-white/60 text-sm">
+                          Quantité: {rental.quantity}x
+                        </span>
+                      </div>
+                      <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg">
+                        🔥 En cours
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-white/70 text-lg mb-2">Aucun investissement actif</div>
+                <div className="text-white/50 text-sm">Vos produits loués apparaîtront ici</div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Empty state pour Fixe */}
