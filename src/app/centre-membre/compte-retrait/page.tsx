@@ -1,12 +1,13 @@
 'use client'
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
-import { ArrowLeft, Save, CreditCard, Bell } from 'lucide-react'
+import { ArrowLeft, Save, CreditCard, Bell, CheckCircle } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { toast } from 'react-hot-toast'
 import SupportFloat from '@/components/SupportFloat/SupportFloat'
+import { useRouter } from 'next/navigation'
 
 interface WithdrawalAccount {
   operator: string
@@ -17,7 +18,9 @@ interface WithdrawalAccount {
 
 export default function CompteRetraitPage() {
   const { userData, currentUser } = useAuth()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false)
   const [formData, setFormData] = useState<WithdrawalAccount>({
     operator: '',
     accountNumber: '',
@@ -92,7 +95,14 @@ export default function CompteRetraitPage() {
         withdrawalAccount: withdrawalData
       }, { merge: true })
 
-      toast.success('Compte de retrait mis à jour avec succès')
+      // Afficher la popup de succès
+      setShowSuccessPopup(true)
+      
+      // Rediriger vers le formulaire de retrait après 2 secondes
+      setTimeout(() => {
+        router.push('/retrait')
+      }, 2000)
+      
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)
       toast.error('Erreur lors de la mise à jour')
@@ -260,6 +270,25 @@ export default function CompteRetraitPage() {
       </div>
 
       <SupportFloat />
+
+      {/* Popup de succès */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-green-400" />
+            </div>
+            <h3 className="text-xl font-bold text-green-400 mb-2">Configuration Réussie !</h3>
+            <p className="text-white/80 text-sm leading-relaxed mb-4">
+              Votre compte de retrait a été configuré avec succès. Vous allez être redirigé vers le formulaire de retrait.
+            </p>
+            <div className="flex items-center justify-center text-white/60 text-sm">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-400 mr-2"></div>
+              Redirection en cours...
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
