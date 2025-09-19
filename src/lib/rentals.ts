@@ -13,6 +13,7 @@ import {
   orderBy
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { processReferralCommissions } from './referralCommissions';
 
 export interface RentalData {
   id: string
@@ -51,7 +52,7 @@ export async function createRental(
     const startDate = new Date()
     const endDate = new Date(startDate.getTime() + (productData.duration * 24 * 60 * 60 * 1000))
 
-    return await runTransaction(db, async (transaction) => {
+    const rentalId = await runTransaction(db, async (transaction) => {
       // Vérifier le solde de l'utilisateur
       const userRef = doc(db, 'users', userId)
       const userDoc = await transaction.get(userRef)
@@ -82,7 +83,7 @@ export async function createRental(
         quantity,
         unitPrice: productData.price,
         totalCost,
-        dailyRevenue: productData.dailyRevenue * quantity,
+        dailyRevenue: productData.dailyRevenue,
         duration: productData.duration,
         totalExpectedRevenue: productData.totalRevenue * quantity,
         startDate,
@@ -102,6 +103,22 @@ export async function createRental(
 
       return rentalRef.id
     })
+
+    // Traiter les commissions de parrainage après la transaction réussie
+    try {
+      await processReferralCommissions(
+        userId,
+        userNumeroTel,
+        totalCost,
+        productData.name
+      )
+      console.log(`✅ Commissions de parrainage traitées pour l'investissement de ${totalCost} FCFA`)
+    } catch (commissionError) {
+      console.error('❌ Erreur lors du traitement des commissions:', commissionError)
+      // Ne pas faire échouer la transaction principale si les commissions échouent
+    }
+
+    return rentalId
   } catch (error) {
     console.error('Erreur lors de la création de la location:', error)
     throw error
