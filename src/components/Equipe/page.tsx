@@ -1,25 +1,31 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Users, TrendingUp, Award, Target, Copy, Share2, Info } from 'lucide-react'
+import { ArrowLeft, Users, TrendingUp, Award, Target, Copy, Share2, Info, DollarSign } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { getMultiLevelReferralStats, MultiLevelReferralStats } from '@/lib/firebaseAuth'
+import { getUserCommissions, ReferralCommission } from '@/lib/referralCommissions'
 
 export default function EquipePage() {
-  const { userData } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [multiLevelStats, setMultiLevelStats] = useState<MultiLevelReferralStats | null>(null)
+  const [recentCommissions, setRecentCommissions] = useState<ReferralCommission[]>([])
 
   useEffect(() => {
     loadMultiLevelReferralData()
   }, [userData])
 
   const loadMultiLevelReferralData = async () => {
-    if (!userData) return
+    if (!userData || !currentUser) return
 
     try {
       const stats = await getMultiLevelReferralStats(userData)
       setMultiLevelStats(stats)
+      
+      // Charger les commissions récentes
+      const commissions = await getUserCommissions(currentUser.uid)
+      setRecentCommissions(commissions.slice(0, 5)) // Les 5 plus récentes
     } catch (error) {
       console.error('Erreur chargement données parrainage multi-niveaux:', error)
     }
@@ -306,6 +312,55 @@ export default function EquipePage() {
           </Link>
         </div>
       </div>
+
+      {/* Section Commissions Récentes */}
+      {recentCommissions.length > 0 && (
+        <div className="max-w-md mx-auto px-4 pb-20">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+            <div className="flex items-center space-x-3 mb-4">
+              <DollarSign className="w-6 h-6 text-green-400" />
+              <h3 className="text-lg font-semibold text-white">Commissions Récentes</h3>
+            </div>
+            
+            <div className="space-y-3">
+              {recentCommissions.map((commission, index) => (
+                <div key={commission.id || index} className="bg-black/20 rounded-lg p-3 border border-white/10">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">
+                        {commission.productName}
+                      </div>
+                      <div className="text-xs text-white/60">
+                        +{commission.referredUserPhone} • Équipe {commission.level}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-green-400">
+                        +{commission.commissionAmount.toLocaleString()} FCFA
+                      </div>
+                      <div className="text-xs text-white/50">
+                        {commission.commissionPercentage}%
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-white/40">
+                    {commission.createdAt?.toLocaleDateString?.() || 'Date inconnue'}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-white/10">
+              <div className="text-center text-sm text-white/70">
+                Total des commissions reçues
+              </div>
+              <div className="text-center text-lg font-bold text-green-400">
+                {recentCommissions.reduce((total, c) => total + c.commissionAmount, 0).toLocaleString()} FCFA
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <SupportFloat />
     </div>
