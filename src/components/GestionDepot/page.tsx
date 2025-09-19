@@ -7,17 +7,7 @@ import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
 import { createTransaction } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
 
-// Fonction pour hasher le mot de passe avec SHA-256
-const hashPassword = async (password: string): Promise<string> => {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 // Fonction pour compresser une image si elle dépasse 1MB
 const compressImage = (file: File, maxSizeBytes: number = 1048487): Promise<string> => {
@@ -73,9 +63,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [fundsPassword, setFundsPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [hasConfiguredPassword, setHasConfiguredPassword] = useState(false)
 
   const isOrange = paymentMethod === 'orange'
   const isMTN = paymentMethod === 'mtn'
@@ -117,23 +105,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? { primary: "yellow", secondary: "red" }
     : { primary: "blue", secondary: "purple" }
 
-  // Vérifier si l'utilisateur a configuré un mot de passe des fonds
-  useEffect(() => {
-    if (currentUser) {
-      const checkFundsPassword = async () => {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
-          if (userDoc.exists()) {
-            const data = userDoc.data()
-            setHasConfiguredPassword(!!data.fundsPassword?.hash)
-          }
-        } catch (error) {
-          console.error('Erreur lors de la vérification du mot de passe:', error)
-        }
-      }
-      checkFundsPassword()
-    }
-  }, [currentUser])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -159,19 +130,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const handleSubmit = async () => {
     if (!amount || !transactionImage || !currentUser || !userData) return
 
-    // Vérifier si l'utilisateur a configuré un mot de passe des fonds
-    if (!hasConfiguredPassword) {
-      alert('Vous devez d\'abord configurer un mot de passe des fonds dans le Centre membre')
-      router.push('/centre-membre/mot-de-passe-fonds')
-      return
-    }
-
-    // Vérifier le mot de passe des fonds
-    if (!fundsPassword) {
-      alert('Veuillez entrer votre mot de passe des fonds')
-      return
-    }
-
     // Validation du montant minimum
     const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
     const numericAmount = parseFloat(amount)
@@ -184,19 +142,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     setLoading(true)
 
     try {
-      // Vérifier le mot de passe des fonds
-      const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
-      if (userDoc.exists()) {
-        const data = userDoc.data()
-        const storedPasswordHash = data.fundsPassword?.hash
-        const enteredPasswordHash = await hashPassword(fundsPassword)
-        
-        if (storedPasswordHash !== enteredPasswordHash) {
-          alert('Mot de passe des fonds incorrect')
-          setLoading(false)
-          return
-        }
-      }
       
       // Compresser l'image si elle dépasse 1MB
       const compressedImage = await compressImage(transactionImage)
@@ -222,7 +167,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       setAmount('')
       setTransactionImage(null)
       setImagePreview(null)
-      setFundsPassword('')
       
       alert('Demande de dépôt soumise avec succès!')
       
@@ -368,31 +312,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           )}
         </div>
 
-        {/* Mot de passe des fonds */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-          <label className="block text-white/70 font-medium text-sm mb-3">
-            🔐 Mot de passe des fonds
-          </label>
-          {!hasConfiguredPassword ? (
-            <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-4">
-              <p className="text-red-300 text-sm mb-3">Vous devez configurer un mot de passe des fonds</p>
-              <button 
-                onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-              >
-                Configurer maintenant
-              </button>
-            </div>
-          ) : (
-            <input
-              type="password"
-              placeholder="Entrez votre mot de passe des fonds"
-              value={fundsPassword}
-              onChange={(e) => setFundsPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-200"
-            />
-          )}
-        </div>
 
         {/* Submit Button */}
         <button
@@ -403,8 +322,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
             
             return !amount || 
                    !transactionImage || 
-                   !hasConfiguredPassword || 
-                   !fundsPassword || 
                    loading || 
                    isNaN(numericAmount) || 
                    numericAmount < minAmount;
@@ -416,8 +333,6 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               
               const isEnabled = amount && 
                                transactionImage && 
-                               hasConfiguredPassword && 
-                               fundsPassword && 
                                !loading && 
                                !isNaN(numericAmount) && 
                                numericAmount >= minAmount;
