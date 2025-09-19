@@ -9,6 +9,7 @@ import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { useAuth } from '@/contexts/AuthContext'
 import { subscribeToUserBalance } from '@/lib/transactions'
 import { createRental } from '@/lib/rentals'
+import { checkLV1Discount } from '@/lib/firebaseAuth'
 import { useRouter } from 'next/navigation'
 
 const banners = [
@@ -42,6 +43,7 @@ export default function AccueilPage() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrollText, setScrollText] = useState(0)
+  const [hasLV1Discount, setHasLV1Discount] = useState(false)
   const router = useRouter()
 
   // Services array for the grid
@@ -93,21 +95,32 @@ export default function AccueilPage() {
     }
   }, [])
 
-  // Rediriger vers register si pas d'utilisateur
+  // Rediriger vers register si pas d'utilisateur et vérifier la réduction LV1
   useEffect(() => {
     if (!currentUser) {
       router.push('/register')
+    } else {
+      // Vérifier la réduction LV1
+      const checkDiscount = async () => {
+        try {
+          const discount = await checkLV1Discount(currentUser.uid)
+          setHasLV1Discount(discount)
+        } catch (error) {
+          console.error('Erreur lors de la vérification de la réduction LV1:', error)
+        }
+      }
+      checkDiscount()
     }
   }, [currentUser, router])
 
-  // Product data
+  // Product data avec logique de réduction LV1
   const products: ProductData[] = [
     {
       id: 'lv1',
       name: 'Titres à revenu fixe 1',
       level: 'LV1',
-      price: 6000,
-      originalPrice: 3000,
+      price: hasLV1Discount ? 3000 : 6000, // Prix réduit si 5+ filleuls investisseurs
+      originalPrice: hasLV1Discount ? 6000 : 3000, // Prix original inversé
       dailyRevenue: 500,
       duration: 120,
       totalRevenue: 60000,
@@ -116,7 +129,7 @@ export default function AccueilPage() {
       vipLevel: 0,
       maxInvestment: 100,
       controls: 20,
-      badge: 'Promo'
+      badge: hasLV1Discount ? 'Réduction Parrain' : 'Promo'
     },
     {
       id: 'lv2',
