@@ -277,9 +277,9 @@ export default function ProduitsPage() {
             <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
               hasLV1Discount 
                 ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
-                : 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-500'
+                : 'bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600'
             }`}>
-              {hasLV1Discount ? 'Réduction Parrain' : 'Promo'}
+              {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Parrainez 5 amis'}
             </span>
           </div>
           
@@ -321,17 +321,29 @@ export default function ProduitsPage() {
                 </>
               ) : (
                 <>
-                  <span className="text-yellow-400 font-bold text-lg">6 000 FCFA</span>
-                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">3 000 FCFA</span>
+                  <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
+                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
                 </>
               )}
             </div>
-            <button 
-              onClick={() => handleRentClick('lv1')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
+            <div className="flex flex-col space-y-2">
+              {!hasLV1Discount && (
+                <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
+                  <p className="text-orange-300 text-xs font-medium">
+                    💡 Parrainez 5 amis investisseurs pour débloquer ce prix !
+                  </p>
+                  <p className="text-white/70 text-xs mt-1">
+                    Prix actuel : 6,000 FCFA
+                  </p>
+                </div>
+              )}
+              <button 
+                onClick={() => handleRentClick('lv1')}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              >
+                Louer Maintenant
+              </button>
+            </div>
           </div>
         </div>
         )}

@@ -542,7 +542,7 @@ export async function checkLV1DiscountTest(userId: string): Promise<boolean> {
   console.log('🧪 Mode test - Simulation réduction LV1')
   
   // Vous pouvez changer cette valeur pour tester les deux états
-  const simulateDiscount = true // Changez à false pour tester l'état normal
+  const simulateDiscount = false // Changez à true pour tester l'état avec réduction
   
   console.log('🎯 Réduction LV1 simulée:', simulateDiscount)
   return simulateDiscount
