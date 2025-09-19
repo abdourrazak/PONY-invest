@@ -497,6 +497,80 @@ export function subscribeToUserBalance(
   return unsubscribe;
 }
 
+// Approuver une transaction (admin)
+export async function approveTransaction(
+  transactionId: string,
+  adminId: string
+): Promise<void> {
+  try {
+    const transactionRef = doc(db, 'transactions', transactionId);
+    
+    await runTransaction(db, async (transaction) => {
+      const transactionDoc = await transaction.get(transactionRef);
+      
+      if (!transactionDoc.exists()) {
+        throw new Error('Transaction non trouvée');
+      }
+      
+      const transactionData = transactionDoc.data();
+      
+      if (transactionData.status !== 'pending') {
+        throw new Error('Transaction déjà traitée');
+      }
+      
+      // Mettre à jour le statut de la transaction
+      transaction.update(transactionRef, {
+        status: 'approved',
+        approvedAt: serverTimestamp(),
+        approvedBy: adminId
+      });
+      
+      // Mettre à jour le solde utilisateur selon le type de transaction
+      const userRef = doc(db, 'users', transactionData.userId);
+      
+      if (transactionData.type === 'deposit') {
+        // Ajouter le montant au solde pour les dépôts
+        transaction.update(userRef, {
+          balance: increment(transactionData.amount)
+        });
+      } else if (transactionData.type === 'withdrawal') {
+        // Déduire le montant du solde pour les retraits
+        transaction.update(userRef, {
+          balance: increment(-transactionData.amount)
+        });
+      }
+    });
+    
+    console.log(`✅ Transaction ${transactionId} approuvée et solde mis à jour instantanément`);
+  } catch (error) {
+    console.error('Erreur lors de l\'approbation:', error);
+    throw error;
+  }
+}
+
+// Rejeter une transaction (admin)
+export async function rejectTransaction(
+  transactionId: string,
+  adminId: string,
+  reason?: string
+): Promise<void> {
+  try {
+    const transactionRef = doc(db, 'transactions', transactionId);
+    
+    await updateDoc(transactionRef, {
+      status: 'rejected',
+      rejectedAt: serverTimestamp(),
+      rejectedBy: adminId,
+      rejectionReason: reason || 'Aucune raison spécifiée'
+    });
+    
+    console.log(`❌ Transaction ${transactionId} rejetée`);
+  } catch (error) {
+    console.error('Erreur lors du rejet:', error);
+    throw error;
+  }
+}
+
 // Vérifier si un utilisateur est admin
 export async function checkIsAdmin(userId: string): Promise<boolean> {
   try {
@@ -572,6 +646,49 @@ export async function addCheckInReward(
     console.error('Erreur lors de l\'ajout de la récompense check-in:', error);
     throw error;
   }
+}
+
+// S'abonner aux transactions en temps réel (pour admin)
+export function subscribeToTransactions(
+  callback: (transactions: Transaction[]) => void,
+  filters?: TransactionFilters
+): () => void {
+  let q = query(
+    transactionsCollection,
+    orderBy('submittedAt', 'desc')
+  );
+
+  // Appliquer les filtres si fournis
+  if (filters?.status) {
+    q = query(q, where('status', '==', filters.status));
+  }
+  if (filters?.type) {
+    q = query(q, where('type', '==', filters.type));
+  }
+  if (filters?.limit) {
+    q = query(q, limit(filters.limit));
+  }
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const transactions: Transaction[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const transaction = {
+        ...data,
+        id: doc.id,
+        submittedAt: data.submittedAt?.toDate() || new Date(),
+        approvedAt: data.approvedAt?.toDate() || null,
+        rejectedAt: data.rejectedAt?.toDate() || null,
+      };
+      transactions.push(transaction as unknown as Transaction);
+    });
+    callback(transactions);
+  }, (error) => {
+    console.error('Erreur lors de l\'écoute des transactions:', error);
+    callback([]);
+  });
+
+  return unsubscribe;
 }
 
 export type { Transaction };
