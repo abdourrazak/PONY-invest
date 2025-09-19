@@ -7,24 +7,32 @@ import { useAuth } from '@/contexts/AuthContext'
 import { getReferralCount } from '@/lib/firebaseAuth'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { subscribeToUserBalance } from '@/lib/transactions'
 
 export default function ComptePage() {
-  const { userData } = useAuth()
-  const [balance, setBalance] = useState(1000)
-  const [funds, setFunds] = useState(1000)
+  const { userData, currentUser } = useAuth()
+  const [balance, setBalance] = useState(0)
+  const [funds, setFunds] = useState(0)
   const [referralRewards, setReferralRewards] = useState(0)
   const [checkInRewards, setCheckInRewards] = useState(0)
   const [hasInvested, setHasInvested] = useState(false)
+
+  // Synchroniser le solde en temps réel
+  useEffect(() => {
+    if (currentUser) {
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        setBalance(newBalance)
+        setFunds(newBalance) // Le solde Atout = solde principal
+      })
+      return unsubscribe
+    }
+  }, [currentUser])
 
   useEffect(() => {
     const loadUserData = async () => {
       if (!userData?.numeroTel || !userData?.uid) return
       
       const userKey = userData.numeroTel
-      
-      // Utiliser le solde Firestore comme source de vérité
-      const firestoreBalance = userData.balance || 1000
-      setBalance(firestoreBalance)
       
       // Vérifier si l'utilisateur a investi
       try {
@@ -59,9 +67,8 @@ export default function ComptePage() {
       const checkInRewardsTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
       setCheckInRewards(checkInRewardsTotal)
 
-      // Le solde principal (Atout) = solde Firestore
-      // Le solde de retrait est synchronisé avec le solde principal
-      setFunds(firestoreBalance)
+      // Le solde principal (Atout) est maintenant synchronisé via useEffect
+      // Les fonds sont mis à jour automatiquement avec le solde
 
       // Générer un ID utilisateur unique si pas encore fait
       if (!localStorage.getItem('userId')) {

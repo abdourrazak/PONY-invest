@@ -15,12 +15,13 @@ export default function RechargePage() {
   const [balance, setBalance] = useState(0)
   const router = useRouter()
 
-  // Charger le solde de recharge (initialement 0, s'ajoute au solde principal lors des dépôts)
+  // Synchroniser le solde en temps réel
   useEffect(() => {
     if (currentUser) {
-      // Le solde de recharge affiche 0 FCFA initialement
-      // Les dépôts s'ajoutent directement au solde principal (Atout)
-      setBalance(0) // Solde de recharge toujours à 0 FCFA
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        setBalance(newBalance)
+      })
+      return unsubscribe
     }
   }, [currentUser])
 
