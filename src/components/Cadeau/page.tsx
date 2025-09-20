@@ -30,10 +30,20 @@ export default function Cadeau() {
 
   // Gérer le timer quand les données changent
   useEffect(() => {
-    if (giftData && !canUserSpin(giftData)) {
-      const timeRemaining = getTimeUntilNextSpin(giftData)
-      if (timeRemaining > 0) {
-        updateTimeLeft(timeRemaining)
+    if (giftData) {
+      console.log('useEffect giftData changé:', giftData)
+      if (canUserSpin(giftData)) {
+        console.log('Utilisateur peut tourner, timer vide')
+        setTimeLeft('')
+      } else {
+        const timeRemaining = getTimeUntilNextSpin(giftData)
+        console.log('Utilisateur ne peut pas tourner, temps restant:', timeRemaining, 'ms')
+        if (timeRemaining > 0) {
+          updateTimeLeft(timeRemaining)
+        } else {
+          console.log('Temps restant <= 0, timer vide')
+          setTimeLeft('')
+        }
       }
     }
   }, [giftData])
@@ -49,31 +59,16 @@ export default function Cadeau() {
       
       // Récupérer les données de cadeau depuis Firestore
       const data = await getUserGiftData(currentUser.uid)
-      setGiftData(data)
       
       // Vérifier les filleuls valides
       const validReferrals = await validateReferrals(currentUser.uid, userData.referralCode)
       
-      // Mettre à jour les données si nécessaire
-      if (validReferrals !== data.validReferrals) {
-        const updatedData = { ...data, validReferrals }
-        setGiftData(updatedData)
-      }
+      // Créer les données finales avec les filleuls mis à jour
+      const finalData = { ...data, validReferrals }
+      setGiftData(finalData)
       
-      // Gérer le cooldown
-      if (!canUserSpin(data)) {
-        const timeRemaining = getTimeUntilNextSpin(data)
-        console.log('Utilisateur ne peut pas tourner, temps restant:', timeRemaining)
-        if (timeRemaining > 0) {
-          updateTimeLeft(timeRemaining)
-        } else {
-          setTimeLeft('')
-        }
-      } else {
-        // Si l'utilisateur peut tourner, s'assurer que le timer est vide
-        console.log('Utilisateur peut tourner')
-        setTimeLeft('')
-      }
+      // Le timer sera géré par le useEffect qui écoute giftData
+      console.log('Données chargées, canUserSpin:', canUserSpin(finalData), 'validReferrals:', finalData.validReferrals, 'lastSpin:', finalData.lastSpin)
       
     } catch (error) {
       console.error('Erreur chargement données cadeau:', error)
@@ -92,11 +87,14 @@ export default function Cadeau() {
     const hours = Math.floor(timeRemaining / (1000 * 60 * 60))
     const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000)
-    setTimeLeft(`${hours}h ${minutes}m ${seconds}s`)
+    const timeString = `${hours}h ${minutes}m ${seconds}s`
+    console.log('updateTimeLeft appelé, temps:', timeString)
+    setTimeLeft(timeString)
 
     if (timeRemaining > 0) {
       setTimeout(() => updateTimeLeft(timeRemaining - 1000), 1000)
     } else {
+      console.log('Timer fini, rechargement des données')
       setTimeLeft('')
       // Recharger les données pour vérifier si l'utilisateur peut maintenant tourner
       loadGiftData()
