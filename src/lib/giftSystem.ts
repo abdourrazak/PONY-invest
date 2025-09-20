@@ -145,7 +145,7 @@ export async function performSpin(userId: string, referralCode: string): Promise
     
     if (giftData.spinCount === 0) {
       // Premier spin : montant élevé
-      spinAmount = Math.floor(Math.random() * 91) + 4850 // 4850-4940 XAF
+      spinAmount = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
       spinType = 'first'
     } else if (newValidReferrals > 0) {
       // Bonus de parrainage

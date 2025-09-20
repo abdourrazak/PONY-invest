@@ -229,61 +229,167 @@ export default function Cadeau() {
           </div>
         </div>
 
-        {/* Roue de la Fortune */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center shadow-lg">
-          <div className="relative mx-auto w-64 h-64 mb-6">
-            {/* Roue */}
-            <div className={`w-full h-full rounded-full border-8 border-yellow-400 bg-gradient-to-br from-red-500 via-green-500 to-blue-500 relative overflow-hidden shadow-2xl ${
-              spinning ? 'animate-spin' : ''
-            }`} style={{ animationDuration: spinning ? '3s' : '0s' }}>
-              {/* Segments de la roue */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-black font-black text-xl shadow-lg border-2 border-white">
-                  {spinning ? '?' : '💰'}
+        {/* Roue de la Fortune Premium */}
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center shadow-2xl relative overflow-hidden">
+          {/* Effet de brillance en arrière-plan */}
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-transparent to-purple-500/10 rounded-2xl"></div>
+          
+          <div className="relative z-10">
+            <h3 className="text-xl font-black text-white mb-6 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
+              🎰 ROUE DE LA FORTUNE
+            </h3>
+            
+            <div className="relative mx-auto w-72 h-72 mb-8">
+              {/* Cercle extérieur avec effet glow */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 p-2 shadow-2xl animate-pulse">
+                <div className="w-full h-full rounded-full bg-black/20 backdrop-blur-sm"></div>
+              </div>
+              
+              {/* Roue principale */}
+              <div className={`absolute inset-2 rounded-full border-4 border-white/30 bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-blue-500 via-purple-500 to-red-500 relative overflow-hidden shadow-2xl ${
+                spinning ? 'animate-spin' : ''
+              }`} style={{ 
+                animationDuration: spinning ? '3s' : '0s',
+                animationTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              }}>
+                
+                {/* Segments de la roue avec effet premium */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-600 rounded-full flex items-center justify-center text-black font-black text-2xl shadow-2xl border-4 border-white relative overflow-hidden">
+                    {/* Effet de brillance */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent rounded-full"></div>
+                    <div className="relative z-10">
+                      {spinning ? (
+                        <div className="animate-bounce text-3xl">💫</div>
+                      ) : (
+                        <div className="text-2xl">💰</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Indicateurs premium sur la roue */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white font-black text-xs bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 shadow-lg">
+                  JACKPOT
+                </div>
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white font-black text-xs bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 shadow-lg">
+                  BONUS
+                </div>
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white font-black text-xs bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 shadow-lg">
+                  MEGA
+                </div>
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white font-black text-xs bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 shadow-lg">
+                  WIN
+                </div>
+                
+                {/* Lignes de séparation des segments */}
+                <div className="absolute inset-0">
+                  {[...Array(8)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-0.5 h-full bg-white/20 origin-bottom"
+                      style={{
+                        left: '50%',
+                        transform: `translateX(-50%) rotate(${i * 45}deg)`,
+                        transformOrigin: 'center bottom'
+                      }}
+                    />
+                  ))}
                 </div>
               </div>
               
-              {/* Indicateurs sur la roue */}
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-white font-black text-sm bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">BONUS</div>
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-black text-sm bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">XAF</div>
-              <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white font-black text-sm bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">5K</div>
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white font-black text-sm bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">WIN</div>
+              {/* Flèche premium avec effet glow */}
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
+                <div className="relative">
+                  <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-transparent border-b-yellow-400 drop-shadow-2xl filter blur-sm absolute"></div>
+                  <div className="w-0 h-0 border-l-6 border-r-6 border-b-10 border-transparent border-b-white relative z-10"></div>
+                </div>
+              </div>
+              
+              {/* Particules d'effet autour de la roue */}
+              {spinning && (
+                <div className="absolute inset-0 pointer-events-none">
+                  {[...Array(12)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-2 h-2 bg-yellow-400 rounded-full animate-ping"
+                      style={{
+                        top: `${20 + Math.random() * 60}%`,
+                        left: `${20 + Math.random() * 60}%`,
+                        animationDelay: `${i * 0.1}s`,
+                        animationDuration: '1s'
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-            
-            {/* Flèche */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-10 border-transparent border-b-yellow-400 drop-shadow-lg"></div>
           </div>
 
-          {/* Résultat du spin */}
+          {/* Résultat du spin premium */}
           {spinResult && (
-            <div className="mb-4 p-4 bg-green-500/20 backdrop-blur-sm rounded-2xl border border-green-400/30 shadow-lg">
-              <div className="text-green-400 font-black text-lg">
-                🎉 Vous avez gagné {spinResult.toLocaleString()} XAF !
+            <div className="mb-6 p-6 bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-2xl border-2 border-green-400/50 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 animate-pulse"></div>
+              <div className="relative z-10 text-center">
+                <div className="text-4xl mb-2">🎊</div>
+                <div className="text-green-400 font-black text-xl mb-2">
+                  FÉLICITATIONS !
+                </div>
+                <div className="text-white font-black text-2xl mb-1">
+                  +{spinResult.toLocaleString()} XAF
+                </div>
+                <div className="text-green-300 text-sm font-medium">
+                  Ajouté à votre solde cadeau
+                </div>
               </div>
             </div>
           )}
 
-          {/* Bouton Spin */}
-          <button
-            onClick={handleSpin}
-            disabled={!canSpin || spinning}
-            className={`w-full py-4 rounded-xl font-black text-lg transition-all duration-200 transform shadow-lg ${
-              canSpin && !spinning
-                ? 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 hover:scale-105 active:scale-95 shadow-xl'
-                : 'bg-black/30 backdrop-blur-sm text-white/50 cursor-not-allowed border border-white/20'
-            }`}
-          >
-            {spinning ? (
-              <div className="flex items-center justify-center">
-                <RotateCcw className="animate-spin mr-2" size={20} />
-                Tournage en cours...
+          {/* Bouton Spin Premium */}
+          <div className="relative">
+            <button
+              onClick={handleSpin}
+              disabled={!canSpin || spinning}
+              className={`w-full py-5 rounded-2xl font-black text-lg transition-all duration-300 transform shadow-2xl relative overflow-hidden ${
+                canSpin && !spinning
+                  ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-600 text-white hover:from-yellow-600 hover:via-orange-600 hover:to-yellow-700 hover:scale-105 active:scale-95 shadow-2xl border-2 border-yellow-400/50'
+                  : 'bg-black/40 backdrop-blur-sm text-white/50 cursor-not-allowed border-2 border-white/20'
+              }`}
+            >
+              {/* Effet de brillance sur le bouton actif */}
+              {canSpin && !spinning && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+              )}
+              
+              <div className="relative z-10 flex items-center justify-center">
+                {spinning ? (
+                  <>
+                    <div className="flex items-center">
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                      <span>TOURNAGE EN COURS...</span>
+                      <div className="ml-2 text-2xl animate-bounce">🎰</div>
+                    </div>
+                  </>
+                ) : canSpin ? (
+                  <>
+                    <div className="text-2xl mr-2 animate-pulse">🎰</div>
+                    <span>TOURNER LA ROUE</span>
+                    <div className="text-2xl ml-2 animate-pulse">💫</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-xl mr-2">⏰</div>
+                    <span>Prochain tour dans {timeLeft}</span>
+                  </>
+                )}
               </div>
-            ) : canSpin ? (
-              '🎰 TOURNER LA ROUE'
-            ) : (
-              `⏰ Prochain tour dans ${timeLeft}`
+            </button>
+            
+            {/* Effet glow autour du bouton quand actif */}
+            {canSpin && !spinning && (
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 rounded-2xl blur-lg opacity-30 animate-pulse -z-10"></div>
             )}
-          </button>
+          </div>
         </div>
 
         {/* Section Invitations */}
