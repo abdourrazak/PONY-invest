@@ -28,6 +28,16 @@ export default function Cadeau() {
     loadGiftData()
   }, [currentUser, userData])
 
+  // Gérer le timer quand les données changent
+  useEffect(() => {
+    if (giftData && !canUserSpin(giftData)) {
+      const timeRemaining = getTimeUntilNextSpin(giftData)
+      if (timeRemaining > 0) {
+        updateTimeLeft(timeRemaining)
+      }
+    }
+  }, [giftData])
+
   const loadGiftData = async () => {
     if (!currentUser || !userData?.referralCode) {
       setLoading(false)
@@ -53,11 +63,15 @@ export default function Cadeau() {
       // Gérer le cooldown
       if (!canUserSpin(data)) {
         const timeRemaining = getTimeUntilNextSpin(data)
+        console.log('Utilisateur ne peut pas tourner, temps restant:', timeRemaining)
         if (timeRemaining > 0) {
           updateTimeLeft(timeRemaining)
+        } else {
+          setTimeLeft('')
         }
       } else {
         // Si l'utilisateur peut tourner, s'assurer que le timer est vide
+        console.log('Utilisateur peut tourner')
         setTimeLeft('')
       }
       
@@ -276,7 +290,7 @@ export default function Cadeau() {
             ) : canSpin ? (
               '🎰 TOURNER LA ROUE'
             ) : (
-              `⏰ Prochain tour dans ${timeLeft}`
+              timeLeft ? `⏰ Prochain tour dans ${timeLeft}` : '⏰ Chargement du timer...'
             )}
           </button>
         </div>
