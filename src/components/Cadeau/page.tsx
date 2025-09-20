@@ -4,89 +4,70 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Gift, Users, Clock, Share2, ArrowLeft, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
+import { 
+  getUserGiftData, 
+  performSpin, 
+  canUserSpin, 
+  getTimeUntilNextSpin,
+  validateReferrals,
+  UserGiftData 
+} from '@/lib/giftSystem'
 
 export default function Cadeau() {
   const { currentUser, userData } = useAuth()
   const router = useRouter()
   const [spinning, setSpinning] = useState(false)
   const [spinResult, setSpinResult] = useState<number | null>(null)
-  const [canSpin, setCanSpin] = useState(true)
+  const [giftData, setGiftData] = useState<UserGiftData | null>(null)
   const [timeLeft, setTimeLeft] = useState('')
-  const [totalBonus, setTotalBonus] = useState(0)
-  const [invitedFriends, setInvitedFriends] = useState(0)
+  const [loading, setLoading] = useState(true)
   const [eventTimeLeft, setEventTimeLeft] = useState('2d 00:00:00')
 
-  // Charger les données utilisateur et vérifier les nouveaux filleuls
+  // Charger les données de cadeau depuis Firestore
   useEffect(() => {
-    if (!userData?.numeroTel || !userData?.referralCode) return
+    loadGiftData()
+  }, [currentUser, userData])
 
-    const userKey = userData.numeroTel
-    const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
-    const savedFriends = localStorage.getItem(`validReferralCount_${userKey}`)
-    const lastSpin = localStorage.getItem(`lastSpin_${userKey}`)
-
-    if (savedBonus) setTotalBonus(parseInt(savedBonus))
-    if (savedFriends) setInvitedFriends(parseInt(savedFriends))
-
-    // Vérifier les nouveaux filleuls depuis Firebase
-    checkForNewReferrals()
-
-    // Vérifier si l'utilisateur peut tourner
-    if (lastSpin) {
-      const lastSpinTime = parseInt(lastSpin)
-      const now = Date.now()
-      const timeDiff = now - lastSpinTime
-      const cooldown = 24 * 60 * 60 * 1000 // 24h en millisecondes
-
-      if (timeDiff < cooldown) {
-        setCanSpin(false)
-        updateTimeLeft(cooldown - timeDiff)
-      }
+  const loadGiftData = async () => {
+    if (!currentUser || !userData?.referralCode) {
+      setLoading(false)
+      return
     }
-  }, [userData])
-
-  // Vérifier s'il y a de nouveaux filleuls qui ont fait un dépôt
-  const checkForNewReferrals = async () => {
-    if (!userData?.referralCode || !userData?.numeroTel) return
 
     try {
-      // Importer la fonction getReferrals
-      const { getReferrals } = await import('@/lib/firebaseAuth')
-      const referrals = await getReferrals(userData.referralCode)
+      setLoading(true)
       
-      // Compter seulement les filleuls qui ont fait un dépôt de 500 XAF
-      let validReferrals = 0
-      referrals.forEach(referral => {
-        const referralDeposit = localStorage.getItem(`userDeposits_${referral.numeroTel}`)
-        const totalDeposited = referralDeposit ? parseInt(referralDeposit) : 0
-        if (totalDeposited >= 500) {
-          validReferrals++
-        }
-      })
-
-      const userKey = userData.numeroTel
-      const savedCount = localStorage.getItem(`validReferralCount_${userKey}`)
-      const lastKnownCount = savedCount ? parseInt(savedCount) : 0
-
-      // Si il y a de nouveaux filleuls valides, débloquer des tours
-      if (validReferrals > lastKnownCount) {
-        const newValidReferrals = validReferrals - lastKnownCount
-        
-        // Mettre à jour le compteur d'amis invités (seulement ceux qui ont déposé)
-        setInvitedFriends(validReferrals)
-        localStorage.setItem(`invitedFriends_${userKey}`, validReferrals.toString())
-        localStorage.setItem(`validReferralCount_${userKey}`, validReferrals.toString())
-
-        // Débloquer un tour pour chaque nouvel ami valide (jusqu'à 60 max)
-        if (validReferrals <= 60) {
-          setCanSpin(true)
-          setTimeLeft('')
-          localStorage.removeItem(`lastSpin_${userKey}`)
+      // Récupérer les données de cadeau depuis Firestore
+      const data = await getUserGiftData(currentUser.uid)
+      setGiftData(data)
+      
+      // Vérifier les filleuls valides
+      const validReferrals = await validateReferrals(currentUser.uid, userData.referralCode)
+      
+      // Mettre à jour les données si nécessaire
+      if (validReferrals !== data.validReferrals) {
+        const updatedData = { ...data, validReferrals }
+        setGiftData(updatedData)
+      }
+      
+      // Gérer le cooldown
+      if (!canUserSpin(data)) {
+        const timeRemaining = getTimeUntilNextSpin(data)
+        if (timeRemaining > 0) {
+          updateTimeLeft(timeRemaining)
         }
       }
+      
     } catch (error) {
-      console.error('Erreur vérification filleuls:', error)
+      console.error('Erreur chargement données cadeau:', error)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  // Fonction pour forcer la vérification des nouveaux filleuls
+  const forceCheckReferrals = async () => {
+    await loadGiftData()
   }
 
   // Mettre à jour le compte à rebours
@@ -99,51 +80,60 @@ export default function Cadeau() {
     if (timeRemaining > 0) {
       setTimeout(() => updateTimeLeft(timeRemaining - 1000), 1000)
     } else {
-      setCanSpin(true)
       setTimeLeft('')
+      // Recharger les données pour vérifier si l'utilisateur peut maintenant tourner
+      loadGiftData()
     }
   }
 
-  // Fonction de spin
-  const handleSpin = () => {
-    if (!canSpin || spinning || !userData?.numeroTel) return
+  // Fonction de spin avec le nouveau système
+  const handleSpin = async () => {
+    if (!currentUser || !userData?.referralCode || !giftData || spinning) return
+    
+    // Vérifier si l'utilisateur peut tourner
+    if (!canUserSpin(giftData)) {
+      const timeRemaining = getTimeUntilNextSpin(giftData)
+      if (timeRemaining > 0) {
+        updateTimeLeft(timeRemaining)
+        return
+      }
+    }
 
     setSpinning(true)
     
-    // Animation de 3 secondes
-    setTimeout(() => {
-      const userKey = userData.numeroTel
-      
-      // Premier tour : montant de base élevé, puis progression très lente
-      let bonus
-      
-      if (totalBonus === 0) {
-        // Premier tour : montant de base entre 4850-4940 XAF
-        bonus = Math.floor(Math.random() * 91) + 4850 // 4850-4940 XAF
-      } else if (invitedFriends > 0 && totalBonus < 4850 + (invitedFriends * 6)) {
-        // Bonus de parrainage (quand un nouvel ami a fait un dépôt)
-        bonus = Math.floor(Math.random() * 6) + 1 // 1-6 XAF
-      } else {
-        // Bonus quotidien normal (extrêmement faible)
-        bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
-      }
-      
-      const newTotal = Math.min(totalBonus + bonus, 5000)
-      
-      setSpinResult(bonus)
-      setTotalBonus(newTotal)
+    try {
+      // Animation de 3 secondes
+      setTimeout(async () => {
+        try {
+          const result = await performSpin(currentUser.uid, userData.referralCode)
+          
+          if (result.success) {
+            setSpinResult(result.amount)
+            
+            // Recharger les données pour avoir les dernières informations
+            await loadGiftData()
+            
+            // Si pas de cooldown (60+ filleuls), permettre un nouveau spin
+            if (giftData.validReferrals < 60) {
+              const timeRemaining = getTimeUntilNextSpin(giftData)
+              if (timeRemaining > 0) {
+                updateTimeLeft(timeRemaining)
+              }
+            }
+          } else {
+            alert(result.message)
+          }
+        } catch (error) {
+          console.error('Erreur lors du spin:', error)
+          alert('Erreur lors du spin. Veuillez réessayer.')
+        } finally {
+          setSpinning(false)
+        }
+      }, 3000)
+    } catch (error) {
+      console.error('Erreur lors du spin:', error)
       setSpinning(false)
-      setCanSpin(false)
-
-      // Sauvegarder les données
-      localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
-      localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
-
-      // Démarrer le cooldown de 24h seulement si l'utilisateur n'a pas assez d'amis
-      if (invitedFriends < 60) {
-        updateTimeLeft(24 * 60 * 60 * 1000)
-      }
-    }, 3000)
+    }
   }
 
   // Fonction d'invitation d'amis
@@ -164,12 +154,12 @@ export default function Cadeau() {
     }
   }
 
-  // Fonction pour forcer la vérification des nouveaux filleuls
-  const forceCheckReferrals = async () => {
-    await checkForNewReferrals()
-  }
 
   // Calculer le progrès vers 5000 XAF
+  const totalBonus = giftData?.totalBonus || 0
+  const invitedFriends = giftData?.validReferrals || 0
+  const canSpin = giftData ? canUserSpin(giftData) : false
+  
   const progressPercentage = Math.min((totalBonus / 5000) * 100, 100)
   const remainingAmount = Math.max(5000 - totalBonus, 0)
 
@@ -204,6 +194,14 @@ export default function Cadeau() {
       </header>
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="text-white/70 text-lg mb-2">Chargement...</div>
+            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
+          </div>
+        ) : (
+          <>
+        
         {/* Objectif et Progrès */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
@@ -319,6 +317,8 @@ export default function Cadeau() {
             </button>
           </div>
         </div>
+          </>
+        )}
       </main>
 
       {/* Navigation Bottom */}
