@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Minus, Smartphone, Wallet, ArrowLeft, TrendingUp, Users, FileText, Shield, LogOut, Bell } from 'lucide-react'
+import { Plus, Minus, Smartphone, Wallet, ArrowLeft, TrendingUp, Users, FileText, Shield, LogOut, Bell, Home, BarChart3, UserCheck, User, CreditCard } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { useAuth } from '@/contexts/AuthContext'
 import { getReferralCount } from '@/lib/firebaseAuth'
@@ -147,7 +147,10 @@ export default function ComptePage() {
           </Link>
           <Link href="/portefeuille">
             <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
-              💼 Portefeuille
+              <div className="flex items-center justify-center space-x-2">
+                <CreditCard size={18} />
+                <span>Portefeuille</span>
+              </div>
             </button>
           </Link>
         </div>
@@ -253,25 +256,25 @@ export default function ComptePage() {
         <div className="flex justify-around items-center">
           <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-              <span className="text-white text-xs">🏠</span>
+              <Home size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Accueil</span>
           </Link>
           <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-              <span className="text-white text-xs">📊</span>
+              <BarChart3 size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Produits</span>
           </Link>
           <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-              <span className="text-white text-xs">👥</span>
+              <UserCheck size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Équipe</span>
           </Link>
           <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
-              <span className="text-white text-xs">👤</span>
+              <User size={16} className="text-white" />
             </div>
             <span className="text-purple-400 text-xs font-semibold">Mon Compte</span>
           </Link>

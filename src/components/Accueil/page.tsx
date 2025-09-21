@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Bell, Plus, Minus, Smartphone, Wallet, TrendingUp, Users, FileText, Shield, LogOut } from 'lucide-react'
+import { ArrowLeft, Bell, Users, TrendingUp, Wallet, Plus, Minus, RotateCcw, Home, BarChart3, UserCheck, User, Smartphone, FileText, Shield } from 'lucide-react'
 import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '../ProductModal/ProductModal'
@@ -791,25 +791,25 @@ export default function AccueilPage() {
           <div className="flex justify-around items-center">
             <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
-                <span className="text-white text-xs">🏠</span>
+                <Home size={16} className="text-white" />
               </div>
               <span className="text-purple-400 text-xs font-semibold">Accueil</span>
             </Link>
             <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-                <span className="text-white text-xs">📊</span>
+                <BarChart3 size={16} className="text-white" />
               </div>
               <span className="text-white/70 text-xs">Produits</span>
             </Link>
             <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-                <span className="text-white text-xs">👥</span>
+                <UserCheck size={16} className="text-white" />
               </div>
               <span className="text-white/70 text-xs">Équipe</span>
             </Link>
             <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
-                <span className="text-white text-xs">👤</span>
+                <User size={16} className="text-white" />
               </div>
               <span className="text-white/70 text-xs">Mon Compte</span>
             </Link>
