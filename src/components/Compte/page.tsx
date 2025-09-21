@@ -192,7 +192,7 @@ export default function ComptePage() {
             </div>
           </Link>
 
-          <button className="w-full">
+          <Link href="/mes-recus" className="block w-full">
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -208,7 +208,7 @@ export default function ComptePage() {
                 </div>
               </div>
             </div>
-          </button>
+          </Link>
 
           <Link href="/centre-membre" className="block w-full">
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/20 transition-all duration-200">
