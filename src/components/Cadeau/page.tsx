@@ -172,96 +172,89 @@ export default function Cadeau() {
     }
   }
 
-  // Fonction de spin avec fallback
+  // Fonction de spin simplifiée avec localStorage
   const handleSpin = async () => {
-    if (!currentUser || !userData?.referralCode || spinning) return
+    if (!currentUser || !userData?.numeroTel || spinning) return
     
-    // Vérifier avec Firestore si disponible, sinon localStorage
-    if (giftData && !canUserSpin(giftData)) {
-      const timeRemaining = getTimeUntilNextSpin(giftData)
-      if (timeRemaining > 0) {
+    console.log('handleSpin appelé pour:', userData.numeroTel)
+    
+    // Vérifier le cooldown avec localStorage (plus fiable)
+    const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
+    if (lastSpin) {
+      const lastSpinTime = parseInt(lastSpin)
+      const now = Date.now()
+      const timeDiff = now - lastSpinTime
+      const cooldown = 24 * 60 * 60 * 1000 // 24h
+      
+      if (timeDiff < cooldown) {
+        const timeRemaining = cooldown - timeDiff
+        console.log('Cooldown actif, temps restant:', timeRemaining)
         updateTimeLeft(timeRemaining)
         return
       }
     }
-    
-    // Vérification fallback localStorage
-    if (!giftData && userData?.numeroTel) {
-      const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
-      if (lastSpin) {
-        const lastSpinTime = parseInt(lastSpin)
-        const now = Date.now()
-        const timeDiff = now - lastSpinTime
-        const cooldown = 24 * 60 * 60 * 1000 // 24h
-        
-        if (timeDiff < cooldown) {
-          const timeRemaining = cooldown - timeDiff
-          updateTimeLeft(timeRemaining)
-          return
-        }
-      }
-    }
 
     setSpinning(true)
+    console.log('Début du spin')
     
-    try {
-      // Animation de 3 secondes
-      setTimeout(async () => {
-        try {
-          if (giftData) {
-            // Utiliser le système Firestore
-            const result = await performSpin(currentUser.uid, userData.referralCode)
-            
-            if (result.success) {
-              setSpinResult(result.amount)
-              await loadGiftData()
-            } else {
-              alert(result.message)
-            }
-          } else {
-            // Fallback localStorage
-            console.log('Fallback spin avec localStorage')
-            const userKey = userData.numeroTel
-            const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
-            const currentBonus = savedBonus ? parseInt(savedBonus) : 0
-            
-            let bonus
-            if (currentBonus === 0) {
-              bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
-            } else {
-              bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
-            }
-            
-            const newTotal = Math.min(currentBonus + bonus, 5000)
-            
-            setSpinResult(bonus)
-            localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
-            localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
-            
-            // Créer des données temporaires pour l'affichage
-            const tempData = {
-              userId: currentUser.uid,
-              totalBonus: newTotal,
-              validReferrals: 0,
-              lastSpin: { toMillis: () => Date.now() } as any,
-              canSpin: false,
-              spinCount: 1,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            }
-            setGiftData(tempData as any)
-          }
-        } catch (error) {
-          console.error('Erreur lors du spin:', error)
-          alert('Erreur lors du spin. Veuillez réessayer.')
-        } finally {
-          setSpinning(false)
+    // Animation de 3 secondes puis spin
+    setTimeout(() => {
+      try {
+        console.log('Exécution du spin')
+        const userKey = userData.numeroTel
+        const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
+        const currentBonus = savedBonus ? parseInt(savedBonus) : 0
+        
+        console.log('Bonus actuel:', currentBonus)
+        
+        let bonus
+        if (currentBonus === 0) {
+          bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
+          console.log('Premier spin, bonus:', bonus)
+        } else {
+          bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
+          console.log('Spin quotidien, bonus:', bonus)
         }
-      }, 3000)
-    } catch (error) {
-      console.error('Erreur lors du spin:', error)
-      setSpinning(false)
-    }
+        
+        const newTotal = Math.min(currentBonus + bonus, 5000)
+        console.log('Nouveau total:', newTotal)
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
+        localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
+        
+        // Afficher le résultat
+        setSpinResult(bonus)
+        
+        // Mettre à jour les données d'affichage
+        const tempData = {
+          userId: currentUser.uid,
+          totalBonus: newTotal,
+          validReferrals: 0,
+          lastSpin: { toMillis: () => Date.now() } as any,
+          canSpin: false,
+          spinCount: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+        setGiftData(tempData as any)
+        
+        console.log('Spin terminé avec succès')
+        
+        // Essayer de synchroniser avec Firestore en arrière-plan (optionnel)
+        if (userData?.referralCode) {
+          performSpin(currentUser.uid, userData.referralCode).catch(error => {
+            console.log('Sync Firestore échouée (pas grave):', error)
+          })
+        }
+        
+      } catch (error) {
+        console.error('Erreur dans le spin localStorage:', error)
+        alert('Erreur lors du spin. Veuillez réessayer.')
+      } finally {
+        setSpinning(false)
+      }
+    }, 3000)
   }
 
   // Fonction d'invitation d'amis
@@ -283,10 +276,33 @@ export default function Cadeau() {
   }
 
 
-  // Calculer le progrès vers 5000 XAF
-  const totalBonus = giftData?.totalBonus || 0
+  // Calculer le progrès vers 5000 XAF avec localStorage en priorité
+  const getLocalStorageBonus = () => {
+    if (userData?.numeroTel) {
+      const savedBonus = localStorage.getItem(`spinBonus_${userData.numeroTel}`)
+      return savedBonus ? parseInt(savedBonus) : 0
+    }
+    return 0
+  }
+  
+  const totalBonus = giftData?.totalBonus || getLocalStorageBonus()
   const invitedFriends = giftData?.validReferrals || 0
-  const canSpin = giftData ? canUserSpin(giftData) : true // Par défaut true pour débloquer
+  
+  // Vérifier si peut tourner avec localStorage
+  const canSpinLocalStorage = () => {
+    if (!userData?.numeroTel) return true
+    const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
+    if (!lastSpin) return true
+    
+    const lastSpinTime = parseInt(lastSpin)
+    const now = Date.now()
+    const timeDiff = now - lastSpinTime
+    const cooldown = 24 * 60 * 60 * 1000 // 24h
+    
+    return timeDiff >= cooldown
+  }
+  
+  const canSpin = giftData ? canUserSpin(giftData) : canSpinLocalStorage()
   
   const progressPercentage = Math.min((totalBonus / 5000) * 100, 100)
   const remainingAmount = Math.max(5000 - totalBonus, 0)
