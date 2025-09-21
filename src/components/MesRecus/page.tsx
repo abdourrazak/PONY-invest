@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Download, Filter, Search, Receipt, CreditCard, ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { collection, query, where, orderBy, getDocs, addDoc, Timestamp } from 'firebase/firestore'
+import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 
 interface Transaction {
@@ -92,61 +92,6 @@ export default function MesRecus() {
     }
   }
 
-  // Fonction pour créer des données de test (développement uniquement)
-  const createTestData = async () => {
-    if (!currentUser) return
-    
-    try {
-      const testTransactions = [
-        {
-          userId: currentUser.uid,
-          type: 'deposit',
-          amount: 10000,
-          status: 'approved',
-          method: 'Mobile Money',
-          reference: 'DEP-' + Date.now(),
-          description: 'Dépôt via Orange Money',
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        },
-        {
-          userId: currentUser.uid,
-          type: 'withdrawal',
-          amount: 5000,
-          status: 'pending',
-          method: 'Mobile Money',
-          reference: 'WIT-' + Date.now(),
-          description: 'Retrait vers MTN Money',
-          createdAt: Timestamp.fromDate(new Date(Date.now() - 86400000)), // Hier
-          updatedAt: Timestamp.fromDate(new Date(Date.now() - 86400000))
-        },
-        {
-          userId: currentUser.uid,
-          type: 'card_payment',
-          amount: 2500,
-          status: 'approved',
-          productName: 'Carte Premium Gold',
-          cardType: 'premium',
-          reference: 'CARD-' + Date.now(),
-          description: 'Achat carte produit Premium',
-          createdAt: Timestamp.fromDate(new Date(Date.now() - 172800000)), // Il y a 2 jours
-          updatedAt: Timestamp.fromDate(new Date(Date.now() - 172800000))
-        }
-      ]
-
-      // Ajouter les transactions de test à Firestore
-      const transactionsRef = collection(db, 'transactions')
-      for (const transaction of testTransactions) {
-        await addDoc(transactionsRef, transaction)
-      }
-      
-      alert('Données de test créées avec succès!')
-      loadTransactions() // Recharger les données
-    } catch (error) {
-      console.error('Erreur création données test:', error)
-      alert('Erreur lors de la création des données de test')
-    }
-  }
 
   const filteredTransactions = transactions.filter(transaction => {
     const matchesFilter = filter === 'all' || transaction.type === filter
@@ -342,20 +287,12 @@ AXML Global - Plateforme d'investissement
           <div className="text-center py-12">
             <Receipt className="mx-auto text-white/30 mb-4" size={64} />
             <h3 className="text-white/70 text-lg mb-2">Aucun reçu trouvé</h3>
-            <p className="text-white/50 mb-6">
+            <p className="text-white/50">
               {searchTerm || filter !== 'all' 
                 ? 'Essayez de modifier vos filtres de recherche'
                 : 'Vous n\'avez pas encore de transactions'
               }
             </p>
-            {transactions.length === 0 && !searchTerm && filter === 'all' && (
-              <button
-                onClick={createTestData}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
-              >
-                Créer des données de test
-              </button>
-            )}
           </div>
         ) : (
           <div className="space-y-4">
