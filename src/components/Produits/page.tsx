@@ -302,9 +302,9 @@ export default function ProduitsPage() {
             <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
               hasLV1Discount 
                 ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
-                : 'bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600'
+                : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
             }`}>
-              {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Parrainez 5 amis'}
+              {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Promo'}
             </span>
           </div>
           
@@ -353,9 +353,9 @@ export default function ProduitsPage() {
             </div>
             <div className="flex flex-col space-y-2">
               {!hasLV1Discount && (
-                <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
-                  <p className="text-orange-300 text-xs font-medium">
-                    💡 Parrainez 5 amis investisseurs pour débloquer ce prix !
+                <div className="bg-blue-500/20 border border-blue-400/30 rounded-xl p-3 text-center">
+                  <p className="text-blue-300 text-xs font-medium">
+                    💡 Offre promotionnelle disponible !
                   </p>
                   <p className="text-white/70 text-xs mt-1">
                     Prix actuel : 6,000 FCFA

@@ -442,9 +442,9 @@ export default function AccueilPage() {
               <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
                 hasLV1Discount 
                   ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
-                  : 'bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600'
+                  : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
               }`}>
-                {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Parrainez 5 amis'}
+                {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Promo'}
               </span>
             </div>
             
