@@ -30,23 +30,56 @@ export default function Cadeau() {
 
   // Gérer le timer quand les données changent
   useEffect(() => {
-    if (giftData) {
-      console.log('useEffect giftData changé:', giftData)
-      if (canUserSpin(giftData)) {
-        console.log('Utilisateur peut tourner, timer vide')
-        setTimeLeft('')
-      } else {
-        const timeRemaining = getTimeUntilNextSpin(giftData)
-        console.log('Utilisateur ne peut pas tourner, temps restant:', timeRemaining, 'ms')
-        if (timeRemaining > 0) {
+    console.log('useEffect déclenché, giftData:', giftData)
+    
+    // Fallback avec localStorage si Firestore ne fonctionne pas
+    if (!giftData && userData?.numeroTel) {
+      console.log('Fallback localStorage pour:', userData.numeroTel)
+      const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
+      if (lastSpin) {
+        const lastSpinTime = parseInt(lastSpin)
+        const now = Date.now()
+        const timeDiff = now - lastSpinTime
+        const cooldown = 24 * 60 * 60 * 1000 // 24h
+        
+        if (timeDiff < cooldown) {
+          const timeRemaining = cooldown - timeDiff
+          console.log('Fallback: temps restant', timeRemaining)
           updateTimeLeft(timeRemaining)
-        } else {
-          console.log('Temps restant <= 0, timer vide')
-          setTimeLeft('')
+          return
         }
       }
+      console.log('Fallback: peut tourner')
+      setTimeLeft('')
+      return
     }
-  }, [giftData])
+    
+    if (giftData) {
+      try {
+        const canSpin = canUserSpin(giftData)
+        console.log('canUserSpin résultat:', canSpin)
+        
+        if (canSpin) {
+          console.log('Utilisateur peut tourner')
+          setTimeLeft('')
+        } else {
+          const timeRemaining = getTimeUntilNextSpin(giftData)
+          console.log('Temps restant calculé:', timeRemaining, 'ms')
+          
+          if (timeRemaining > 0) {
+            console.log('Démarrage du timer')
+            updateTimeLeft(timeRemaining)
+          } else {
+            console.log('Pas de temps restant, peut tourner')
+            setTimeLeft('')
+          }
+        }
+      } catch (error) {
+        console.error('Erreur dans useEffect timer:', error)
+        setTimeLeft('')
+      }
+    }
+  }, [giftData, userData])
 
   const loadGiftData = async () => {
     if (!currentUser || !userData?.referralCode) {
@@ -56,24 +89,62 @@ export default function Cadeau() {
 
     try {
       setLoading(true)
+      console.log('Début chargement données pour userId:', currentUser.uid)
       
       // Récupérer les données de cadeau depuis Firestore
       const data = await getUserGiftData(currentUser.uid)
+      console.log('Données brutes récupérées:', data)
       
       // Vérifier les filleuls valides
       const validReferrals = await validateReferrals(currentUser.uid, userData.referralCode)
+      console.log('Filleuls valides:', validReferrals)
       
       // Créer les données finales avec les filleuls mis à jour
       const finalData = { ...data, validReferrals }
-      setGiftData(finalData)
+      console.log('Données finales avant setGiftData:', finalData)
       
-      // Le timer sera géré par le useEffect qui écoute giftData
-      console.log('Données chargées, canUserSpin:', canUserSpin(finalData), 'validReferrals:', finalData.validReferrals, 'lastSpin:', finalData.lastSpin)
+      setGiftData(finalData)
+      console.log('setGiftData appelé avec succès')
       
     } catch (error) {
       console.error('Erreur chargement données cadeau:', error)
+      // En cas d'erreur, créer des données par défaut pour débloquer l'interface
+      const defaultData = {
+        userId: currentUser.uid,
+        totalBonus: 0,
+        validReferrals: 0,
+        lastSpin: null,
+        canSpin: true,
+        spinCount: 0,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      console.log('Utilisation des données par défaut:', defaultData)
+      setGiftData(defaultData as any)
     } finally {
       setLoading(false)
+    }
+    
+    // Si Firestore ne fonctionne pas, essayer localStorage
+    if (!giftData && userData?.numeroTel) {
+      console.log('Tentative de chargement depuis localStorage')
+      const savedBonus = localStorage.getItem(`spinBonus_${userData.numeroTel}`)
+      const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
+      
+      if (savedBonus || lastSpin) {
+        const localData = {
+          userId: currentUser?.uid || '',
+          totalBonus: savedBonus ? parseInt(savedBonus) : 0,
+          validReferrals: 0,
+          lastSpin: lastSpin ? { toMillis: () => parseInt(lastSpin) } as any : null,
+          canSpin: true,
+          spinCount: savedBonus ? 1 : 0,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+        console.log('Données localStorage chargées:', localData)
+        setGiftData(localData as any)
+      }
     }
   }
 
@@ -101,16 +172,33 @@ export default function Cadeau() {
     }
   }
 
-  // Fonction de spin avec le nouveau système
+  // Fonction de spin avec fallback
   const handleSpin = async () => {
-    if (!currentUser || !userData?.referralCode || !giftData || spinning) return
+    if (!currentUser || !userData?.referralCode || spinning) return
     
-    // Vérifier si l'utilisateur peut tourner
-    if (!canUserSpin(giftData)) {
+    // Vérifier avec Firestore si disponible, sinon localStorage
+    if (giftData && !canUserSpin(giftData)) {
       const timeRemaining = getTimeUntilNextSpin(giftData)
       if (timeRemaining > 0) {
         updateTimeLeft(timeRemaining)
         return
+      }
+    }
+    
+    // Vérification fallback localStorage
+    if (!giftData && userData?.numeroTel) {
+      const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
+      if (lastSpin) {
+        const lastSpinTime = parseInt(lastSpin)
+        const now = Date.now()
+        const timeDiff = now - lastSpinTime
+        const cooldown = 24 * 60 * 60 * 1000 // 24h
+        
+        if (timeDiff < cooldown) {
+          const timeRemaining = cooldown - timeDiff
+          updateTimeLeft(timeRemaining)
+          return
+        }
       }
     }
 
@@ -120,15 +208,48 @@ export default function Cadeau() {
       // Animation de 3 secondes
       setTimeout(async () => {
         try {
-          const result = await performSpin(currentUser.uid, userData.referralCode)
-          
-          if (result.success) {
-            setSpinResult(result.amount)
+          if (giftData) {
+            // Utiliser le système Firestore
+            const result = await performSpin(currentUser.uid, userData.referralCode)
             
-            // Recharger les données pour avoir les dernières informations
-            await loadGiftData()
+            if (result.success) {
+              setSpinResult(result.amount)
+              await loadGiftData()
+            } else {
+              alert(result.message)
+            }
           } else {
-            alert(result.message)
+            // Fallback localStorage
+            console.log('Fallback spin avec localStorage')
+            const userKey = userData.numeroTel
+            const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
+            const currentBonus = savedBonus ? parseInt(savedBonus) : 0
+            
+            let bonus
+            if (currentBonus === 0) {
+              bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
+            } else {
+              bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
+            }
+            
+            const newTotal = Math.min(currentBonus + bonus, 5000)
+            
+            setSpinResult(bonus)
+            localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
+            localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
+            
+            // Créer des données temporaires pour l'affichage
+            const tempData = {
+              userId: currentUser.uid,
+              totalBonus: newTotal,
+              validReferrals: 0,
+              lastSpin: { toMillis: () => Date.now() } as any,
+              canSpin: false,
+              spinCount: 1,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }
+            setGiftData(tempData as any)
           }
         } catch (error) {
           console.error('Erreur lors du spin:', error)
@@ -165,7 +286,7 @@ export default function Cadeau() {
   // Calculer le progrès vers 5000 XAF
   const totalBonus = giftData?.totalBonus || 0
   const invitedFriends = giftData?.validReferrals || 0
-  const canSpin = giftData ? canUserSpin(giftData) : false
+  const canSpin = giftData ? canUserSpin(giftData) : true // Par défaut true pour débloquer
   
   const progressPercentage = Math.min((totalBonus / 5000) * 100, 100)
   const remainingAmount = Math.max(5000 - totalBonus, 0)
