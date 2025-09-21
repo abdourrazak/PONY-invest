@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Bell } from 'lucide-react'
+import { ArrowLeft, Bell, Home, BarChart3, UserCheck, User } from 'lucide-react'
 import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '../ProductModal/ProductModal'
@@ -771,27 +771,27 @@ export default function ProduitsPage() {
       {/* Navigation Bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/10 backdrop-blur-sm border-t border-white/10 px-4 py-2">
         <div className="flex justify-around items-center">
-          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1">
-              <span className="text-white text-xs">🏠</span>
+          <Link href="/" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <Home size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Accueil</span>
           </Link>
-          <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mb-1">
-              <span className="text-white text-xs">📊</span>
+          <Link href="/produits" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mb-1 shadow-lg">
+              <BarChart3 size={16} className="text-white" />
             </div>
-            <span className="text-purple-400 text-xs font-medium">Produits</span>
+            <span className="text-purple-400 text-xs font-semibold">Produits</span>
           </Link>
-          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1">
-              <span className="text-white text-xs">👥</span>
+          <Link href="/equipe" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <UserCheck size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Équipe</span>
           </Link>
-          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1">
-              <span className="text-white text-xs">👤</span>
+          <Link href="/compte" className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-all duration-200 transform hover:scale-105">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-1 border border-white/30">
+              <User size={16} className="text-white" />
             </div>
             <span className="text-white/70 text-xs">Mon Compte</span>
           </Link>
