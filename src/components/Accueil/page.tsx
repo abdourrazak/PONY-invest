@@ -95,21 +95,29 @@ export default function AccueilPage() {
     }
   }, [])
 
+  // Synchroniser le solde en temps réel
+  useEffect(() => {
+    if (currentUser) {
+      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
+        console.log('Solde mis à jour:', newBalance)
+        setBalance(newBalance)
+      })
+      return unsubscribe
+    }
+  }, [currentUser])
+
   // Rediriger vers register si pas d'utilisateur et vérifier la réduction LV1
   useEffect(() => {
     if (!currentUser) {
       router.push('/register')
     } else {
       // Vérifier la réduction LV1
-      const checkDiscount = async () => {
-        try {
-          const discount = await checkLV1Discount(currentUser.uid)
-          setHasLV1Discount(discount)
-        } catch (error) {
-          console.error('Erreur lors de la vérification de la réduction LV1:', error)
-        }
-      }
-      checkDiscount()
+      checkLV1Discount(currentUser.uid).then(hasDiscount => {
+        setHasLV1Discount(hasDiscount)
+      }).catch(error => {
+        console.log('Erreur vérification réduction LV1:', error)
+        setHasLV1Discount(false)
+      })
     }
   }, [currentUser, router])
 

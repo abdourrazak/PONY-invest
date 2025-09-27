@@ -45,8 +45,17 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
   }
 
   const confirmInvestment = async () => {
+    // Debug logs
+    console.log('=== VÉRIFICATION SOLDE ===')
+    console.log('Solde utilisateur:', userBalance)
+    console.log('Prix total:', totalPrice)
+    console.log('Quantité:', quantity)
+    console.log('Prix unitaire:', product.price)
+    console.log('Solde suffisant?', userBalance >= totalPrice)
+    
     // Vérifier le solde avant de procéder
     if (userBalance < totalPrice) {
+      console.log('❌ SOLDE INSUFFISANT')
       setInvestmentResult('insufficient_balance')
       setResultMessage(`Vous avez ${userBalance.toLocaleString()} FCFA mais il faut ${totalPrice.toLocaleString()} FCFA pour cet investissement.`)
       setTimeout(() => {
@@ -55,6 +64,8 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
       }, 4000)
       return
     }
+    
+    console.log('✅ SOLDE SUFFISANT - Procédure d\'investissement')
 
     try {
       await onRent(product, quantity)
@@ -190,6 +201,14 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             </div>
           </div>
 
+          {/* User Balance */}
+          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+            <div className="flex justify-between items-center">
+              <span className="text-blue-700 font-medium">💰 Votre Solde</span>
+              <span className="font-bold text-blue-800 text-lg">FCFA{userBalance.toLocaleString()}</span>
+            </div>
+          </div>
+
           {/* Product Details */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -234,17 +253,30 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Montant à Payer</span>
-              <span className="font-bold text-blue-600">FCFA{totalPrice.toLocaleString()}</span>
+              <span className={`font-bold text-lg ${userBalance >= totalPrice ? 'text-green-600' : 'text-red-600'}`}>
+                FCFA{totalPrice.toLocaleString()}
+              </span>
             </div>
+            
+            {userBalance < totalPrice && (
+              <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                ⚠️ Solde insuffisant. Il vous manque FCFA{(totalPrice - userBalance).toLocaleString()}
+              </div>
+            )}
           </div>
 
 
           {/* Action Button */}
           <button 
             onClick={handleRent}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+            disabled={userBalance < totalPrice}
+            className={`w-full py-3 rounded-xl font-medium transition-all duration-200 transform shadow-lg ${
+              userBalance >= totalPrice
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:scale-105 active:scale-95'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
-            Investir Maintenant
+            {userBalance >= totalPrice ? 'Investir Maintenant' : 'Solde Insuffisant'}
           </button>
         </div>
       </div>
