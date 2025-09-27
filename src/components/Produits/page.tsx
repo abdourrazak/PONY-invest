@@ -73,12 +73,12 @@ export default function ProduitsPage() {
   const activeRentals = userRentals.filter(rental => {
     const now = new Date()
     const startDate = new Date(rental.startDate)
-    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
-    return now >= startDate && now <= endDate
+    const endDate = new Date(rental.endDate)
+    return now >= startDate && now <= endDate && rental.status === 'active'
   })
 
-  // Fonction pour calculer les jours restants
-  const getDaysRemaining = (rental: RentalData) => {
+  // Calculer les jours restants pour une location
+  const getDaysRemaining = (rental: RentalData): number => {
     const now = new Date()
     const startDate = new Date(rental.startDate)
     const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
@@ -91,7 +91,42 @@ export default function ProduitsPage() {
     const now = new Date()
     const startDate = new Date(rental.startDate)
     const daysElapsed = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
-    return Math.max(0, daysElapsed) * rental.dailyRevenue
+    const effectiveDays = Math.max(0, Math.min(daysElapsed, rental.duration))
+    return effectiveDays * rental.dailyRevenue * rental.quantity
+  }
+
+  // Calculer le pourcentage de progression
+  const getProgressPercentage = (rental: RentalData): number => {
+    const now = new Date()
+    const startDate = new Date(rental.startDate)
+    const totalDuration = rental.duration * 24 * 60 * 60 * 1000 // en millisecondes
+    const elapsed = now.getTime() - startDate.getTime()
+    return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100))
+  }
+
+  // Fonction pour collecter les gains journaliers
+  const handleCollectEarnings = async (rental: RentalData) => {
+    if (!currentUser) return
+    
+    try {
+      const accumulatedRevenue = getAccumulatedRevenue(rental)
+      if (accumulatedRevenue <= 0) {
+        alert('Aucun gain à collecter pour le moment')
+        return
+      }
+
+      // TODO: Implémenter la logique de collecte des gains
+      // - Ajouter les gains au solde de l'utilisateur
+      // - Marquer les gains comme collectés
+      // - Mettre à jour l'historique des collectes
+      
+      alert(`Collecte de ${accumulatedRevenue.toLocaleString()} FCFA en cours...`)
+      console.log(`Collecte des gains pour ${rental.productName}: ${accumulatedRevenue} FCFA`)
+      
+    } catch (error) {
+      console.error('Erreur lors de la collecte:', error)
+      alert('Erreur lors de la collecte des gains')
+    }
   }
 
   // Product data avec logique de réduction LV1
@@ -652,54 +687,13 @@ export default function ProduitsPage() {
         )}
 
 
-        {/* Section Activité - Afficher les produits loués */}
-        {activeTab === 'Activité' && userRentals.map((rental) => (
-          <div key={rental.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productName}</span>
-              <span className="text-white/60 text-xs">
-                {rental.status === 'active' ? '🟢 Actif' : '🔴 Terminé'}
-              </span>
-            </div>
-            
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-white/70">Quantité:</span>
-                <span className="text-white font-medium">{rental.quantity}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/70">Coût total:</span>
-                <span className="text-green-400 font-bold">FCFA{rental.totalCost.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/70">Revenus quotidiens:</span>
-                <span className="text-blue-400 font-medium">FCFA{rental.dailyRevenue.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/70">Date de début:</span>
-                <span className="text-white/80">{rental.startDate.toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/70">Date de fin:</span>
-                <span className="text-white/80">{rental.endDate.toLocaleDateString()}</span>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg p-3">
-              <div className="flex justify-between items-center">
-                <span className="text-white/80 text-sm">Revenus attendus:</span>
-                <span className="text-yellow-400 font-bold">FCFA{rental.totalExpectedRevenue.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        ))}
 
         {/* Section Activité - Locations actives */}
         {activeTab === 'Activité' && (
           <>
-            {activeRentals.length > 0 ? (
+            {userRentals.length > 0 ? (
               <div className="space-y-4">
-                {activeRentals.map((rental, index) => (
+                {userRentals.map((rental, index) => (
                   <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
                     <div className="flex justify-between items-start mb-3">
                       <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productId.toUpperCase()}</span>
@@ -731,6 +725,20 @@ export default function ProduitsPage() {
                             <span className="text-blue-400 text-xs sm:text-sm font-black">{getAccumulatedRevenue(rental).toLocaleString()} FCFA</span>
                           </div>
                         </div>
+                        
+                        {/* Barre de progression */}
+                        <div className="mt-3">
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-white/70">Progression</span>
+                            <span className="text-purple-400 font-bold">{getProgressPercentage(rental).toFixed(1)}%</span>
+                          </div>
+                          <div className="w-full bg-black/30 rounded-full h-2">
+                            <div 
+                              className="h-full bg-gradient-to-r from-green-400 to-purple-600 rounded-full"
+                              style={{ width: `${getProgressPercentage(rental)}%` }}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -743,9 +751,12 @@ export default function ProduitsPage() {
                           Quantité: {rental.quantity}x
                         </span>
                       </div>
-                      <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg">
-                        🔥 En cours
-                      </div>
+                      <button 
+                        onClick={() => handleCollectEarnings(rental)}
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
+                      >
+                        💰 Collecter
+                      </button>
                     </div>
                   </div>
                 ))}
