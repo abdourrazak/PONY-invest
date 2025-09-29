@@ -133,8 +133,9 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
     const rentalsCollection = collection(db, 'rentals')
     const q = query(
       rentalsCollection,
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', userId)
+      // Temporairement supprimé orderBy pour éviter l'erreur d'index
+      // orderBy('createdAt', 'desc')
     )
     
     console.log('📋 getUserRentals - Exécution de la requête Firestore...')
@@ -155,6 +156,9 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
         createdAt: data.createdAt?.toDate() || new Date()
       } as RentalData)
     })
+    
+    // Tri manuel par date de création (plus récent en premier)
+    rentals.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     
     console.log('✅ getUserRentals - Locations finales:', rentals)
     return rentals
