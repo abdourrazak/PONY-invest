@@ -6,9 +6,9 @@ import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '../ProductModal/ProductModal'
 import { useAuth } from '@/contexts/AuthContext'
-import { createRental, getUserRentals, RentalData } from '@/lib/rentals'
+import { checkLV1Discount } from '@/lib/firebaseAuth'
 import { subscribeToUserBalance } from '@/lib/transactions'
-import { checkLV1Discount, checkLV1DiscountTest } from '@/lib/firebaseAuth'
+import { createRental, collectRentalEarnings, getUserRentals, RentalData } from '@/lib/rentals'
 
 interface ProductData {
   id: string
@@ -91,12 +91,22 @@ export default function ProduitsPage() {
     return Math.max(0, daysRemaining)
   }
 
-  // Fonction pour calculer les revenus accumulés
+  // Fonction pour calculer les revenus accumulés depuis la dernière collecte
   const getAccumulatedRevenue = (rental: RentalData) => {
     const now = new Date()
-    const startDate = new Date(rental.startDate)
-    const daysElapsed = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
-    const effectiveDays = Math.max(0, Math.min(daysElapsed, rental.duration))
+    // Utiliser la dernière date de collecte ou la date de début si jamais collecté
+    const lastCollectionDate = (rental as any).lastCollectionDate || rental.startDate
+    const referenceDate = new Date(lastCollectionDate)
+    
+    const daysElapsed = Math.floor((now.getTime() - referenceDate.getTime()) / (24 * 60 * 60 * 1000))
+    const effectiveDays = Math.max(0, daysElapsed)
+    
+    // Vérifier que l'investissement n'est pas expiré
+    const endDate = new Date(rental.startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
+    if (now > endDate) {
+      return 0 // Investissement terminé
+    }
+    
     return effectiveDays * rental.dailyRevenue * rental.quantity
   }
 
@@ -148,17 +158,27 @@ export default function ProduitsPage() {
         return
       }
 
-      // TODO: Implémenter la logique de collecte des gains
-      // - Ajouter les gains au solde de l'utilisateur
-      // - Marquer les gains comme collectés
-      // - Mettre à jour l'historique des collectes
+      console.log('🎯 Début de la collecte des gains:', {
+        productName: rental.productName,
+        accumulatedRevenue,
+        rentalId: rental.id
+      })
+
+      // Collecter les gains via la fonction Firestore
+      await collectRentalEarnings(currentUser.uid, rental.id, accumulatedRevenue)
       
-      alert(`Collecte de ${accumulatedRevenue.toLocaleString()} FCFA en cours...`)
-      console.log(`Collecte des gains pour ${rental.productName}: ${accumulatedRevenue} FCFA`)
+      // Recharger les données utilisateur pour voir la mise à jour
+      const updatedRentals = await getUserRentals(currentUser.uid)
+      setUserRentals(updatedRentals)
       
-    } catch (error) {
-      console.error('Erreur lors de la collecte:', error)
-      alert('Erreur lors de la collecte des gains')
+      // Le solde sera automatiquement mis à jour via subscribeToUserBalance
+      
+      alert(`✅ Collecte réussie ! ${accumulatedRevenue.toLocaleString()} FCFA ajoutés à votre solde.`)
+      console.log('✅ Collecte terminée avec succès')
+      
+    } catch (error: any) {
+      console.error('❌ Erreur lors de la collecte:', error)
+      alert(`Erreur lors de la collecte: ${error.message}`)
     }
   }
 

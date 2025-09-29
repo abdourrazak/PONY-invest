@@ -168,6 +168,64 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
   }
 }
 
+// Collecter les gains accumulés d'un investissement
+export async function collectRentalEarnings(
+  userId: string, 
+  rentalId: string, 
+  accumulatedRevenue: number
+): Promise<void> {
+  try {
+    console.log('💰 Début de la collecte des gains:', { userId, rentalId, accumulatedRevenue })
+    
+    await runTransaction(db, async (transaction) => {
+      // Référence vers l'utilisateur
+      const userRef = doc(db, 'users', userId)
+      const userDoc = await transaction.get(userRef)
+      
+      if (!userDoc.exists()) {
+        throw new Error('Utilisateur non trouvé')
+      }
+
+      // Référence vers la location
+      const rentalRef = doc(db, 'rentals', rentalId)
+      const rentalDoc = await transaction.get(rentalRef)
+      
+      if (!rentalDoc.exists()) {
+        throw new Error('Location non trouvée')
+      }
+
+      const rentalData = rentalDoc.data()
+      const lastCollectionDate = rentalData.lastCollectionDate?.toDate() || rentalData.startDate?.toDate() || new Date()
+      const now = new Date()
+
+      // Calculer les gains depuis la dernière collecte
+      const daysSinceLastCollection = Math.floor((now.getTime() - lastCollectionDate.getTime()) / (24 * 60 * 60 * 1000))
+      const collectibleRevenue = Math.max(0, daysSinceLastCollection) * rentalData.dailyRevenue * rentalData.quantity
+
+      if (collectibleRevenue <= 0) {
+        throw new Error('Aucun gain à collecter')
+      }
+
+      // Mettre à jour le solde de l'utilisateur
+      transaction.update(userRef, {
+        balance: increment(collectibleRevenue)
+      })
+
+      // Mettre à jour la date de dernière collecte
+      transaction.update(rentalRef, {
+        lastCollectionDate: serverTimestamp(),
+        totalCollected: increment(collectibleRevenue)
+      })
+
+      console.log('✅ Gains collectés avec succès:', collectibleRevenue, 'FCFA')
+    })
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de la collecte des gains:', error)
+    throw error
+  }
+}
+
 // Calculer les revenus quotidiens pour un utilisateur
 export async function calculateDailyRevenue(userId: string): Promise<number> {
   try {
