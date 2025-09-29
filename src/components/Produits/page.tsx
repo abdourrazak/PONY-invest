@@ -109,6 +109,34 @@ export default function ProduitsPage() {
     return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100))
   }
 
+  // Fonction pour obtenir l'image du produit
+  const getProductImage = (productId: string): string => {
+    const productImages: { [key: string]: string } = {
+      'lv1': '💎',
+      'lv2': '🏆', 
+      'lv3': '👑',
+      'lv4': '🌟',
+      'lv5': '💰',
+      'lv6': '🔥',
+      'lv7': '⚡'
+    }
+    return productImages[productId.toLowerCase()] || '💰'
+  }
+
+  // Fonction pour obtenir la couleur du produit
+  const getProductColor = (productId: string): string => {
+    const productColors: { [key: string]: string } = {
+      'lv1': 'from-blue-500 to-cyan-500',
+      'lv2': 'from-green-500 to-emerald-500', 
+      'lv3': 'from-purple-500 to-violet-500',
+      'lv4': 'from-yellow-500 to-orange-500',
+      'lv5': 'from-pink-500 to-rose-500',
+      'lv6': 'from-red-500 to-orange-600',
+      'lv7': 'from-indigo-500 to-purple-600'
+    }
+    return productColors[productId.toLowerCase()] || 'from-gray-500 to-gray-600'
+  }
+
   // Fonction pour collecter les gains journaliers
   const handleCollectEarnings = async (rental: RentalData) => {
     if (!currentUser) return
@@ -702,44 +730,23 @@ export default function ProduitsPage() {
         {/* Section Activité - Locations actives */}
         {activeTab === 'Activité' && (
           <>
-            {/* Bouton de debug temporaire */}
-            <div className="mb-4 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-yellow-300 font-bold">🔧 Debug Mode</p>
-                  <p className="text-yellow-200 text-sm">Locations: {userRentals.length}</p>
-                </div>
-                <button 
-                  onClick={async () => {
-                    if (currentUser) {
-                      console.log('🔄 Rechargement manuel des locations...')
-                      const rentals = await getUserRentals(currentUser.uid)
-                      setUserRentals(rentals)
-                    }
-                  }}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded font-bold text-sm"
-                >
-                  Recharger
-                </button>
-              </div>
-            </div>
-
-            {console.log('🎯 Affichage section Activité - userRentals:', userRentals)}
             {userRentals.length > 0 ? (
               <div className="space-y-4">
                 {userRentals.map((rental, index) => (
                   <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
                     <div className="flex justify-between items-start mb-3">
-                      <span className="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold">{rental.productId.toUpperCase()}</span>
+                      <span className={`bg-gradient-to-r ${getProductColor(rental.productId)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                        {rental.productId.toUpperCase()}
+                      </span>
                       <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
                         ✅ Actif
                       </span>
                     </div>
                     
                     <div className="flex items-start space-x-3">
-                      <div className="w-16 h-16 bg-green-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                      <div className={`w-16 h-16 bg-gradient-to-br ${getProductColor(rental.productId)} rounded-2xl flex-shrink-0 overflow-hidden shadow-lg border-2 border-white/20`}>
                         <div className="w-full h-full flex items-center justify-center text-white text-2xl">
-                          💰
+                          {getProductImage(rental.productId)}
                         </div>
                       </div>
                       
