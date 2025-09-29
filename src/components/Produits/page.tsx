@@ -30,6 +30,15 @@ interface ProductData {
 export default function ProduitsPage() {
   const { userData, currentUser } = useAuth()
   const [activeTab, setActiveTab] = useState('Fixe')
+
+  // Gérer l'onglet depuis l'URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const tab = urlParams.get('tab')
+    if (tab === 'Activité') {
+      setActiveTab('Activité')
+    }
+  }, [])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
   const [balance, setBalance] = useState(1000)

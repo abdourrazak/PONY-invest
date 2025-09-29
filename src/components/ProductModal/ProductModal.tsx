@@ -35,6 +35,7 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | 'insufficient_balance' | null>(null)
   const [resultMessage, setResultMessage] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
 
   if (!isOpen || !product) return null
 
@@ -45,43 +46,37 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
   }
 
   const confirmInvestment = async () => {
-    // Debug logs
-    console.log('=== VÉRIFICATION SOLDE ===')
-    console.log('Solde utilisateur:', userBalance)
-    console.log('Prix total:', totalPrice)
-    console.log('Quantité:', quantity)
-    console.log('Prix unitaire:', product.price)
-    console.log('Solde suffisant?', userBalance >= totalPrice)
+    if (isProcessing) return
     
-    // Vérifier le solde avant de procéder
-    if (userBalance < totalPrice) {
-      console.log('❌ SOLDE INSUFFISANT')
-      setInvestmentResult('insufficient_balance')
-      setResultMessage(`Vous avez ${userBalance.toLocaleString()} FCFA mais il faut ${totalPrice.toLocaleString()} FCFA pour cet investissement.`)
-      setTimeout(() => {
-        setInvestmentResult(null)
-        setShowConfirmation(false)
-      }, 4000)
-      return
-    }
+    setIsProcessing(true)
     
-    console.log('✅ SOLDE SUFFISANT - Procédure d\'investissement')
-
     try {
       await onRent(product, quantity)
       setInvestmentResult('success')
       setResultMessage(`Investissement réussi ! ${quantity} x ${product.name} pour ${totalPrice.toLocaleString()} FCFA`)
+      
       setTimeout(() => {
         onClose()
         setShowConfirmation(false)
         setInvestmentResult(null)
-      }, 3000)
+        setIsProcessing(false)
+        window.location.href = '/produits?tab=Activité'
+      }, 2000)
     } catch (error: any) {
-      setInvestmentResult('error')
-      setResultMessage(error.message || 'Erreur lors de l\'investissement')
+      console.error('Erreur investissement:', error)
+      
+      if (error.message && error.message.includes('solde insuffisant')) {
+        setInvestmentResult('insufficient_balance')
+        setResultMessage(`Solde insuffisant. Vous avez ${userBalance.toLocaleString()} FCFA mais il faut ${totalPrice.toLocaleString()} FCFA.`)
+      } else {
+        setInvestmentResult('error')
+        setResultMessage(error.message || 'Erreur lors de l\'investissement')
+      }
+      
       setTimeout(() => {
         setInvestmentResult(null)
         setShowConfirmation(false)
+        setIsProcessing(false)
       }, 4000)
     }
   }
@@ -102,62 +97,93 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
     }
   }
 
-  // Popup de confirmation/résultat
-  if (showConfirmation || investmentResult) {
+  // Affichage du résultat
+  if (investmentResult) {
     return (
       <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border border-white/20 rounded-3xl max-w-sm w-full p-6 shadow-2xl">
-          {investmentResult ? (
-            <div className="text-center space-y-4">
-              {investmentResult === 'success' ? (
-                <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
+        <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 border border-white/20 rounded-3xl max-w-md w-full p-8 relative shadow-2xl">
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-all duration-200 transform hover:scale-110"
+          >
+            <X size={20} className="text-white" />
+          </button>
+          
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+              {investmentResult === 'success' && (
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
-              ) : investmentResult === 'insufficient_balance' ? (
-                <div className="mx-auto w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center">
-                  <Wallet className="w-8 h-8 text-orange-400" />
-                </div>
-              ) : (
-                <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+              )}
+              {investmentResult === 'error' && (
+                <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                   <XCircle className="w-8 h-8 text-red-400" />
                 </div>
               )}
-              <h3 className={`text-xl font-bold ${
-                investmentResult === 'success' ? 'text-green-400' : 
-                investmentResult === 'insufficient_balance' ? 'text-orange-400' : 'text-red-400'
+              {investmentResult === 'insufficient_balance' && (
+                <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                  <Wallet className="w-8 h-8 text-yellow-400" />
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <h3 className={`text-xl font-bold mb-2 ${
+                investmentResult === 'success' ? 'text-green-400' :
+                investmentResult === 'error' ? 'text-red-400' : 'text-yellow-400'
               }`}>
-                {investmentResult === 'success' ? 'Investissement Réussi !' : 
-                 investmentResult === 'insufficient_balance' ? 'Solde Insuffisant' : 'Investissement Échoué'}
+                {investmentResult === 'success' ? 'Investissement Réussi !' :
+                 investmentResult === 'error' ? 'Erreur d\'Investissement' : 'Solde Insuffisant'}
               </h3>
-              <p className="text-white/80 text-sm leading-relaxed">{resultMessage}</p>
+              <p className="text-white/80 text-sm">
+                {resultMessage}
+              </p>
             </div>
-          ) : (
-            <div className="text-center space-y-6">
-              <div className="mx-auto w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-yellow-400" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">Confirmer l'Investissement</h3>
-                <p className="text-white/80 text-sm mb-4">
-                  Voulez-vous investir {quantity} x {product.name} pour {totalPrice.toLocaleString()} FCFA ?
-                </p>
-              </div>
-              <div className="flex space-x-3">
-                <button
-                  onClick={cancelInvestment}
-                  className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium transition-all duration-200 border border-white/20"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={confirmInvestment}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-medium transition-all duration-200 shadow-lg"
-                >
-                  Confirmer
-                </button>
-              </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Affichage de confirmation
+  if (showConfirmation) {
+    return (
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div className="bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 border border-white/20 rounded-3xl max-w-md w-full p-8 relative shadow-2xl">
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-all duration-200 transform hover:scale-110"
+          >
+            <X size={20} className="text-white" />
+          </button>
+          
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-yellow-400" />
             </div>
-          )}
+            <div>
+              <h3 className="text-xl font-bold text-white mb-2">Confirmer l'Investissement</h3>
+              <p className="text-white/80 text-sm mb-4">
+                Voulez-vous investir {quantity} x {product.name} pour {totalPrice.toLocaleString()} FCFA ?
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={cancelInvestment}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium transition-all duration-200 border border-white/20"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmInvestment}
+                disabled={isProcessing}
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-medium transition-all duration-200 shadow-lg disabled:opacity-50"
+              >
+                {isProcessing ? 'Traitement...' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -209,25 +235,6 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             </div>
           </div>
 
-          {/* Product Details */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Prix Unitaire</span>
-              <span className="font-bold text-blue-600">FCFA{product.price.toLocaleString()}</span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Durée</span>
-              <span className="font-bold text-gray-800">{product.duration} jours</span>
-            </div>
-            
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Investissement Maximum</span>
-              <span className="font-bold text-gray-800">{product.maxInvestment}</span>
-            </div>
-          </div>
-
           {/* Quantity Selector */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between items-center mb-3">
@@ -265,18 +272,22 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             )}
           </div>
 
-
           {/* Action Button */}
           <button 
             onClick={handleRent}
-            disabled={userBalance < totalPrice}
+            disabled={userBalance < totalPrice || isProcessing}
             className={`w-full py-3 rounded-xl font-medium transition-all duration-200 transform shadow-lg ${
-              userBalance >= totalPrice
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:scale-105 active:scale-95'
+              userBalance >= totalPrice && !isProcessing
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-105 active:scale-95' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {userBalance >= totalPrice ? 'Investir Maintenant' : 'Solde Insuffisant'}
+            {isProcessing 
+              ? 'Traitement...' 
+              : userBalance >= totalPrice 
+                ? 'Investir Maintenant' 
+                : 'Solde Insuffisant'
+            }
           </button>
         </div>
       </div>
