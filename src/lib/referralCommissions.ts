@@ -30,10 +30,21 @@ export async function processReferralCommissions(
   productName: string
 ): Promise<void> {
   try {
+    console.log('🎯 Début traitement commissions parrainage:', {
+      investorUserId,
+      investorPhone,
+      investmentAmount,
+      productName
+    })
+    
     // Récupérer la chaîne de parrainage
     const referralChain = await getReferralChain(investorUserId)
+    console.log('👥 Chaîne de parrainage trouvée:', referralChain)
     
-    if (referralChain.length === 0) return
+    if (referralChain.length === 0) {
+      console.log('❌ Aucun parrain trouvé pour cet utilisateur')
+      return
+    }
     
     // Traiter les commissions pour chaque niveau
     const levels = ['A', 'B', 'C'] as const
@@ -43,6 +54,12 @@ export async function processReferralCommissions(
       const level = levels[i]
       const commissionRate = COMMISSION_RATES[level]
       const commissionAmount = Math.round(investmentAmount * commissionRate)
+      
+      console.log(`💰 Traitement commission Équipe ${level}:`, {
+        sponsorId,
+        commissionRate: `${commissionRate * 100}%`,
+        commissionAmount
+      })
       
       // Mettre à jour le solde du parrain
       await runTransaction(db, async (transaction) => {
@@ -67,11 +84,16 @@ export async function processReferralCommissions(
             productName,
             createdAt: serverTimestamp()
           })
+          
+          console.log(`✅ Commission Équipe ${level} payée: ${commissionAmount} FCFA à ${sponsorId}`)
+        } else {
+          console.log(`❌ Parrain ${sponsorId} non trouvé`)
         }
       })
     }
+    console.log('✅ Traitement des commissions de parrainage terminé')
   } catch (error) {
-    console.error('Erreur commissions parrainage:', error)
+    console.error('❌ Erreur commissions parrainage:', error)
   }
 }
 
