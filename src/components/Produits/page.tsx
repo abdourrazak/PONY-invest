@@ -735,11 +735,11 @@ export default function ProduitsPage() {
                 {userRentals.map((rental, index) => (
                   <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
                     <div className="flex justify-between items-start mb-3">
-                      <span className={`bg-gradient-to-r ${getProductColor(rental.productId)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg`}>
+                      <span className={`bg-gradient-to-r ${getProductColor(rental.productId)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}>
                         {rental.productId.toUpperCase()}
                       </span>
-                      <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
-                        ✅ Actif
+                      <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
+                        🔵 Actif
                       </span>
                     </div>
                     
@@ -794,9 +794,9 @@ export default function ProduitsPage() {
                       </div>
                       <button 
                         onClick={() => handleCollectEarnings(rental)}
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
+                        className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
                       >
-                        💰 Collecter
+                        🎯 Collecter
                       </button>
                     </div>
                   </div>
