@@ -128,6 +128,8 @@ export async function createRental(
 // Récupérer les locations d'un utilisateur
 export async function getUserRentals(userId: string): Promise<RentalData[]> {
   try {
+    console.log('🔍 getUserRentals - Recherche pour userId:', userId)
+    
     const rentalsCollection = collection(db, 'rentals')
     const q = query(
       rentalsCollection,
@@ -135,11 +137,16 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
       orderBy('createdAt', 'desc')
     )
     
+    console.log('📋 getUserRentals - Exécution de la requête Firestore...')
     const querySnapshot = await getDocs(q)
+    console.log('📋 getUserRentals - Nombre de documents trouvés:', querySnapshot.size)
+    
     const rentals: RentalData[] = []
     
     querySnapshot.forEach((doc) => {
       const data = doc.data()
+      console.log('📄 getUserRentals - Document trouvé:', doc.id, data)
+      
       rentals.push({
         id: doc.id,
         ...data,
@@ -149,9 +156,10 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
       } as RentalData)
     })
     
+    console.log('✅ getUserRentals - Locations finales:', rentals)
     return rentals
   } catch (error) {
-    console.error('Erreur lors de la récupération des locations:', error)
+    console.error('❌ getUserRentals - Erreur lors de la récupération des locations:', error)
     return []
   }
 }

@@ -51,15 +51,20 @@ export default function ProduitsPage() {
     const loadUserData = async () => {
       if (currentUser) {
         try {
+          console.log('🔍 Chargement des locations pour utilisateur:', currentUser.uid)
+          
           // Charger les locations
           const rentals = await getUserRentals(currentUser.uid)
+          console.log('📊 Locations récupérées:', rentals)
+          console.log('📊 Nombre de locations:', rentals.length)
+          
           setUserRentals(rentals)
           
           // Vérifier la réduction LV1
           const discount = await checkLV1Discount(currentUser.uid)
           setHasLV1Discount(discount)
         } catch (error) {
-          console.error('Erreur lors du chargement des données utilisateur:', error)
+          console.error('❌ Erreur lors du chargement des données utilisateur:', error)
         }
       }
     }
@@ -267,8 +272,14 @@ export default function ProduitsPage() {
         quantity
       )
       
+      console.log('✅ Investissement créé avec succès, ID:', rentalId)
+      
       // Recharger les locations de l'utilisateur
+      console.log('🔄 Rechargement des locations après investissement...')
       const updatedRentals = await getUserRentals(currentUser.uid)
+      console.log('📊 Locations après investissement:', updatedRentals)
+      console.log('📊 Nouveau nombre de locations:', updatedRentals.length)
+      
       setUserRentals(updatedRentals)
       
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
@@ -691,6 +702,29 @@ export default function ProduitsPage() {
         {/* Section Activité - Locations actives */}
         {activeTab === 'Activité' && (
           <>
+            {/* Bouton de debug temporaire */}
+            <div className="mb-4 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-yellow-300 font-bold">🔧 Debug Mode</p>
+                  <p className="text-yellow-200 text-sm">Locations: {userRentals.length}</p>
+                </div>
+                <button 
+                  onClick={async () => {
+                    if (currentUser) {
+                      console.log('🔄 Rechargement manuel des locations...')
+                      const rentals = await getUserRentals(currentUser.uid)
+                      setUserRentals(rentals)
+                    }
+                  }}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded font-bold text-sm"
+                >
+                  Recharger
+                </button>
+              </div>
+            </div>
+
+            {console.log('🎯 Affichage section Activité - userRentals:', userRentals)}
             {userRentals.length > 0 ? (
               <div className="space-y-4">
                 {userRentals.map((rental, index) => (
