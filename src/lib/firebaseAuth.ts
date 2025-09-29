@@ -382,7 +382,7 @@ export async function getMultiLevelReferrals(referralCode: string): Promise<{
   }
 }
 
-// Calculer les revenus de parrainage basés sur les gains des filleuls
+// Calculer les revenus de parrainage basés sur les vraies commissions reçues
 export async function calculateReferralRevenue(referralCode: string): Promise<{
   equipeARevenue: number,
   equipeBRevenue: number,
@@ -390,15 +390,51 @@ export async function calculateReferralRevenue(referralCode: string): Promise<{
   totalRevenue: number
 }> {
   try {
-    const { equipeA, equipeB, equipeC } = await getMultiLevelReferrals(referralCode)
+    // Trouver l'utilisateur avec ce code de parrainage
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('referralCode', '==', referralCode)
+    )
+    const userSnapshot = await getDocs(usersQuery)
     
-    // Pour l'instant, utiliser un gain moyen simulé par filleul
-    // TODO: Intégrer avec le système de transactions réelles
-    const averageEarningsPerUser = 1000 // 1000 FCFA de gains moyens par utilisateur
+    if (userSnapshot.empty) {
+      return {
+        equipeARevenue: 0,
+        equipeBRevenue: 0,
+        equipeCRevenue: 0,
+        totalRevenue: 0
+      }
+    }
     
-    const equipeARevenue = equipeA.length * averageEarningsPerUser * 0.10 // 10%
-    const equipeBRevenue = equipeB.length * averageEarningsPerUser * 0.05 // 5%
-    const equipeCRevenue = equipeC.length * averageEarningsPerUser * 0.03 // 3%
+    const userId = userSnapshot.docs[0].id
+    
+    // Récupérer les vraies commissions reçues depuis la collection referralCommissions
+    const commissionsQuery = query(
+      collection(db, 'referralCommissions'),
+      where('sponsorId', '==', userId)
+    )
+    const commissionsSnapshot = await getDocs(commissionsQuery)
+    
+    let equipeARevenue = 0
+    let equipeBRevenue = 0
+    let equipeCRevenue = 0
+    
+    commissionsSnapshot.forEach((doc) => {
+      const commission = doc.data()
+      const amount = commission.commissionAmount || 0
+      
+      switch (commission.level) {
+        case 'A':
+          equipeARevenue += amount
+          break
+        case 'B':
+          equipeBRevenue += amount
+          break
+        case 'C':
+          equipeCRevenue += amount
+          break
+      }
+    })
     
     const totalRevenue = equipeARevenue + equipeBRevenue + equipeCRevenue
     

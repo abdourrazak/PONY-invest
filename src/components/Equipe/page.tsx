@@ -83,7 +83,8 @@ export default function EquipePage() {
               <div className="text-2xl font-bold text-green-400">
                 {Math.round(multiLevelStats?.totalRevenue || 0)} FCFA
               </div>
-              <div className="text-white/70">Revenus Total</div>
+              <div className="text-white/70">Commissions Reçues</div>
+              <div className="text-xs text-white/50 mt-1">Basées sur les investissements</div>
             </div>
 
             <div className="pt-4 border-t border-white/20">
@@ -114,11 +115,17 @@ export default function EquipePage() {
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-white/70">Revenus générés</span>
+              <span className="text-white/70">Commissions reçues</span>
               <span className="text-green-400 font-semibold">
                 {Math.round(multiLevelStats?.equipeA.revenue || 0)} FCFA
               </span>
             </div>
+            
+            {multiLevelStats?.equipeA.revenue === 0 && multiLevelStats?.equipeA.count > 0 && (
+              <div className="mt-2 text-xs text-yellow-400 bg-yellow-400/10 rounded-lg p-2">
+                💡 Vos filleuls doivent investir pour générer des commissions
+              </div>
+            )}
 
             {multiLevelStats?.equipeA.members && multiLevelStats.equipeA.members.length > 0 && (
               <div className="mt-4 space-y-2">
@@ -160,11 +167,17 @@ export default function EquipePage() {
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-white/70">Revenus générés</span>
+              <span className="text-white/70">Commissions reçues</span>
               <span className="text-blue-400 font-semibold">
                 {Math.round(multiLevelStats?.equipeB.revenue || 0)} FCFA
               </span>
             </div>
+            
+            {multiLevelStats?.equipeB.revenue === 0 && multiLevelStats?.equipeB.count > 0 && (
+              <div className="mt-2 text-xs text-yellow-400 bg-yellow-400/10 rounded-lg p-2">
+                💡 Vos filleuls doivent investir pour générer des commissions
+              </div>
+            )}
 
             {multiLevelStats?.equipeB.members && multiLevelStats.equipeB.members.length > 0 && (
               <div className="mt-4 space-y-2">
@@ -206,11 +219,17 @@ export default function EquipePage() {
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-white/70">Revenus générés</span>
+              <span className="text-white/70">Commissions reçues</span>
               <span className="text-purple-400 font-semibold">
                 {Math.round(multiLevelStats?.equipeC.revenue || 0)} FCFA
               </span>
             </div>
+            
+            {multiLevelStats?.equipeC.revenue === 0 && multiLevelStats?.equipeC.count > 0 && (
+              <div className="mt-2 text-xs text-yellow-400 bg-yellow-400/10 rounded-lg p-2">
+                💡 Vos filleuls doivent investir pour générer des commissions
+              </div>
+            )}
 
             {multiLevelStats?.equipeC.members && multiLevelStats.equipeC.members.length > 0 && (
               <div className="mt-4 space-y-2">
