@@ -130,8 +130,8 @@ export default function CheckQuotidien() {
     if (!reward || reward.claimed || !reward.available) return
 
     try {
-      // NE PAS ajouter au solde Firestore - garder indépendant
-      // await addCheckInReward(currentUser.uid, reward.amount)
+      // Ajouter immédiatement au solde retirable Firestore
+      await addCheckInReward(currentUser.uid, reward.amount)
       
       // Sauvegarder l'historique des récompenses Check-in indépendant
       const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userId}`) || '[]')
@@ -143,7 +143,7 @@ export default function CheckQuotidien() {
       })
       localStorage.setItem(`rewardHistory_${userId}`, JSON.stringify(rewardHistory))
       
-      // Mettre à jour le solde Check-in indépendant
+      // Mettre à jour le solde Check-in indépendant (pour affichage local)
       const newCheckInBalance = checkInBalance + reward.amount
       setCheckInBalance(newCheckInBalance)
 
