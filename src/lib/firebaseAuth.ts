@@ -26,6 +26,9 @@ export interface User {
   createdAt: any
   role?: 'user' | 'admin'
   balance?: number
+  totalDeposited?: number // Total des dépôts effectués
+  totalInvested?: number  // Total investi depuis le dernier dépôt
+  lastDepositDate?: any   // Date du dernier dépôt
 }
 
 // Génère un code d'invitation unique de 8 caractères

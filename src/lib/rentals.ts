@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { processReferralCommissions } from './referralCommissions';
+import { validateInvestment } from './investmentRules';
 
 export interface RentalData {
   id: string
@@ -49,6 +50,13 @@ export async function createRental(
 ): Promise<string> {
   try {
     const totalCost = productData.price * quantity
+    
+    // VALIDATION DES RÈGLES D'INVESTISSEMENT
+    const validation = await validateInvestment(userId, productData.id, totalCost)
+    if (!validation.canInvest) {
+      throw new Error(validation.message)
+    }
+    
     const startDate = new Date()
     const endDate = new Date(startDate.getTime() + (productData.duration * 24 * 60 * 60 * 1000))
 
@@ -68,9 +76,10 @@ export async function createRental(
         throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
       }
 
-      // Déduire le montant du solde
+      // Déduire le montant du solde et mettre à jour les totaux
       transaction.update(userRef, {
         balance: increment(-totalCost),
+        totalInvested: increment(totalCost), // Ajouter au total investi
         hasInvested: true // Marquer l'utilisateur comme ayant investi
       })
 

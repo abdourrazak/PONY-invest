@@ -38,6 +38,15 @@ export async function createTransaction(
   data: CreateTransactionData
 ): Promise<string> {
   try {
+    // Vérifier les règles de retrait si c'est un retrait
+    if (data.type === 'withdrawal') {
+      const { canUserWithdraw } = await import('./investmentRules');
+      const withdrawalCheck = await canUserWithdraw(userId);
+      if (!withdrawalCheck.canWithdraw) {
+        throw new Error(withdrawalCheck.message);
+      }
+    }
+
     const transactionData = {
       ...data,
       userId,
@@ -529,9 +538,11 @@ export async function approveTransaction(
       const userRef = doc(db, 'users', transactionData.userId);
       
       if (transactionData.type === 'deposit') {
-        // Ajouter le montant au solde pour les dépôts
+        // Ajouter le montant au solde pour les dépôts et mettre à jour les totaux
         transaction.update(userRef, {
-          balance: increment(transactionData.amount)
+          balance: increment(transactionData.amount),
+          totalDeposited: increment(transactionData.amount), // Ajouter au total des dépôts
+          lastDepositDate: serverTimestamp() // Mettre à jour la date du dernier dépôt
         });
       } else if (transactionData.type === 'withdrawal') {
         // Déduire le montant du solde pour les retraits

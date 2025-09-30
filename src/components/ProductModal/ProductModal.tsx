@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
-import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle, Wallet } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle, Wallet, Lock } from 'lucide-react'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
+import { validateInvestment, getNextAllowedLevel } from '@/lib/investmentRules'
 
 interface ProductData {
   id: string
@@ -30,12 +31,37 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ isOpen, onClose, product, onRent, userBalance }: ProductModalProps) {
-  const { userData } = useAuth()
+  const { userData, currentUser } = useAuth()
   const [quantity, setQuantity] = useState(1)
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | 'insufficient_balance' | null>(null)
+  const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | 'insufficient_balance' | 'blocked' | null>(null)
   const [resultMessage, setResultMessage] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [canInvest, setCanInvest] = useState(true)
+  const [validationMessage, setValidationMessage] = useState('')
+  const [nextAllowedLevel, setNextAllowedLevel] = useState<string | null>(null)
+
+  // Valider l'investissement quand le modal s'ouvre ou le produit change
+  useEffect(() => {
+    if (isOpen && product && currentUser) {
+      validateInvestmentRules()
+    }
+  }, [isOpen, product, currentUser])
+
+  const validateInvestmentRules = async () => {
+    if (!currentUser || !product) return
+
+    try {
+      const validation = await validateInvestment(currentUser.uid, product.id, product.price * quantity)
+      setCanInvest(validation.canInvest)
+      setValidationMessage(validation.message)
+      setNextAllowedLevel(validation.nextAllowedLevel || null)
+    } catch (error) {
+      console.error('Erreur validation:', error)
+      setCanInvest(false)
+      setValidationMessage('Erreur lors de la validation')
+    }
+  }
 
   if (!isOpen || !product) return null
 
@@ -126,15 +152,21 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
                   <Wallet className="w-8 h-8 text-yellow-400" />
                 </div>
               )}
+              {investmentResult === 'blocked' && (
+                <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-red-400" />
+                </div>
+              )}
             </div>
             
             <div>
               <h3 className={`text-xl font-bold mb-2 ${
                 investmentResult === 'success' ? 'text-green-400' :
-                investmentResult === 'error' ? 'text-red-400' : 'text-yellow-400'
+                investmentResult === 'error' || investmentResult === 'blocked' ? 'text-red-400' : 'text-yellow-400'
               }`}>
                 {investmentResult === 'success' ? 'Investissement Réussi !' :
-                 investmentResult === 'error' ? 'Erreur d\'Investissement' : 'Solde Insuffisant'}
+                 investmentResult === 'error' ? 'Erreur d\'Investissement' :
+                 investmentResult === 'blocked' ? 'Investissement Bloqué' : 'Solde Insuffisant'}
               </h3>
               <p className="text-white/80 text-sm">
                 {resultMessage}
@@ -272,21 +304,41 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             )}
           </div>
 
+          {/* Règles d'investissement */}
+          {!canInvest && (
+            <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <Lock className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-red-800 mb-1">Investissement non autorisé</h4>
+                  <p className="text-red-700 text-sm">{validationMessage}</p>
+                  {nextAllowedLevel && (
+                    <p className="text-red-600 text-sm mt-2">
+                      <strong>Prochain niveau autorisé :</strong> {nextAllowedLevel}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Action Button */}
           <button 
             onClick={handleRent}
-            disabled={userBalance < totalPrice || isProcessing}
+            disabled={userBalance < totalPrice || isProcessing || !canInvest}
             className={`w-full py-3 rounded-xl font-medium transition-all duration-200 transform shadow-lg ${
-              userBalance >= totalPrice && !isProcessing
+              userBalance >= totalPrice && !isProcessing && canInvest
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-105 active:scale-95' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
             {isProcessing 
               ? 'Traitement...' 
-              : userBalance >= totalPrice 
-                ? 'Investir Maintenant' 
-                : 'Solde Insuffisant'
+              : !canInvest
+                ? 'Investissement Bloqué'
+                : userBalance >= totalPrice 
+                  ? 'Investir Maintenant' 
+                  : 'Solde Insuffisant'
             }
           </button>
         </div>
