@@ -143,12 +143,17 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const handleSubmit = async () => {
     if (!amount || !transactionImage || !currentUser || !userData) return
 
-    // Validation du montant minimum (2000 FCFA si 20+ amis, sinon 3000 FCFA)
-    const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000) // 10 USDT ou 2000/3000 FCFA
+    // Validation du montant
     const numericAmount = parseFloat(amount)
     
-    if (isNaN(numericAmount) || numericAmount < minAmount) {
-      alert(`Le montant minimum est de ${minAmount} ${isCrypto ? 'USDT' : 'FCFA'}`)
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      alert(`Veuillez entrer un montant valide`)
+      return
+    }
+    
+    // Validation spéciale pour 2000 FCFA (nécessite 20+ amis)
+    if (numericAmount === 2000 && !hasLV1Discount) {
+      alert(`Le montant de 2,000 FCFA nécessite d'inviter au moins 20 amis`)
       return
     }
 
@@ -226,22 +231,34 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           
           {/* Preset Amount Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-            {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => (
-              <button
-                key={presetAmount}
-                onClick={() => {
-                  setSelectedAmount(presetAmount)
-                  setAmount(presetAmount.toString())
-                }}
-                className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 ${
-                  selectedAmount === presetAmount
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400'
-                    : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40'
-                }`}
-              >
-                {presetAmount.toLocaleString()} FCFA
-              </button>
-            ))}
+            {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => {
+              // Le bouton 2000 FCFA nécessite 20+ amis
+              const isLocked = presetAmount === 2000 && !hasLV1Discount
+              
+              return (
+                <button
+                  key={presetAmount}
+                  onClick={() => {
+                    if (!isLocked) {
+                      setSelectedAmount(presetAmount)
+                      setAmount(presetAmount.toString())
+                    }
+                  }}
+                  disabled={isLocked}
+                  className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 transform ${
+                    isLocked
+                      ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-500/30'
+                      : selectedAmount === presetAmount
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400 hover:scale-105 active:scale-95'
+                      : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40 hover:scale-105 active:scale-95'
+                  }`}
+                  title={isLocked ? 'Invitez 20 amis pour débloquer' : ''}
+                >
+                  {presetAmount.toLocaleString()} FCFA
+                  {isLocked && <span className="ml-1">🔒</span>}
+                </button>
+              )
+            })}
           </div>
           
           {/* Selected Amount Display */}
@@ -331,23 +348,28 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           onClick={handleSubmit}
           disabled={(() => {
             const numericAmount = parseFloat(amount);
-            const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000);
+            
+            // Vérifier si 2000 FCFA est bloqué
+            const is2000Locked = numericAmount === 2000 && !hasLV1Discount;
             
             return !amount || 
                    !transactionImage || 
                    loading || 
-                   (numericAmount < minAmount);
+                   is2000Locked ||
+                   isNaN(numericAmount) ||
+                   numericAmount <= 0;
           })()}
           className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
             (() => {
               const numericAmount = parseFloat(amount);
-              const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000);
+              const is2000Locked = numericAmount === 2000 && !hasLV1Discount;
               
               const isEnabled = amount && 
                                transactionImage && 
                                !loading && 
                                !isNaN(numericAmount) && 
-                               numericAmount >= minAmount;
+                               numericAmount > 0 &&
+                               !is2000Locked;
               
               return isEnabled
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
