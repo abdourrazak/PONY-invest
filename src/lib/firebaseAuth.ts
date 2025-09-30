@@ -126,9 +126,9 @@ export async function registerUser(
       referralCode,
       referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
       createdAt: serverTimestamp(),
-      balance: 0, // Pas de solde initial
-      depositBalance: 0, // Pas de dépôt initial
-      withdrawableBalance: 0, // Pas de bonus d'inscription
+      balance: 1000, // Bonus d'inscription de 1000 FCFA
+      depositBalance: 1000, // Bonus d'inscription va dans depositBalance (doit être investi)
+      withdrawableBalance: 0, // Pas de solde retirable initial
       totalDeposited: 0,
       totalInvested: 0
     }
