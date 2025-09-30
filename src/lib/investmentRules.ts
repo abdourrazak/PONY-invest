@@ -71,7 +71,7 @@ export async function validateInvestment(
       }
     }
 
-    // RÈGLE 2: Vérifier la progression des niveaux (LV1 → LV2 → LV3...)
+    // RÈGLE 2: Vérifier qu'on ne revient pas en arrière (pas de régression)
     const levelOrder = ['lv1', 'lv2', 'lv3', 'lv4', 'lv5', 'lv6', 'lv7']
     const currentProductIndex = levelOrder.indexOf(productId.toLowerCase())
     
@@ -92,15 +92,13 @@ export async function validateInvestment(
       }
     })
 
-    // Vérifier si l'utilisateur peut investir dans ce niveau
-    const expectedNextLevel = highestInvestedLevel + 1
-    if (currentProductIndex !== expectedNextLevel) {
-      const nextAllowedProduct = levelOrder[expectedNextLevel]
+    // Vérifier qu'on ne revient pas en arrière (on peut sauter des niveaux mais pas régresser)
+    if (currentProductIndex <= highestInvestedLevel) {
       return {
         canInvest: false,
         canWithdraw: false,
-        message: `Vous devez investir dans les niveaux dans l'ordre. Votre prochain investissement doit être ${nextAllowedProduct?.toUpperCase() || 'aucun niveau disponible'}.`,
-        nextAllowedLevel: nextAllowedProduct?.toUpperCase()
+        message: `Vous ne pouvez pas investir dans ${productId.toUpperCase()} car vous avez déjà investi dans un niveau supérieur ou égal. Vous devez progresser vers des niveaux plus élevés.`,
+        nextAllowedLevel: highestInvestedLevel < levelOrder.length - 1 ? levelOrder[highestInvestedLevel + 1]?.toUpperCase() : undefined
       }
     }
 
@@ -173,7 +171,7 @@ export async function canUserWithdraw(userId: string): Promise<{canWithdraw: boo
   }
 }
 
-// Obtenir le prochain niveau autorisé pour un utilisateur
+// Obtenir le niveau minimum autorisé pour un utilisateur (premier niveau supérieur au plus haut investi)
 export async function getNextAllowedLevel(userId: string): Promise<string | null> {
   try {
     const rentalsQuery = query(
@@ -193,6 +191,7 @@ export async function getNextAllowedLevel(userId: string): Promise<string | null
       }
     })
 
+    // Retourner le niveau suivant le plus élevé (mais l'utilisateur peut aussi choisir des niveaux supérieurs)
     const nextLevelIndex = highestInvestedLevel + 1
     return nextLevelIndex < levelOrder.length ? levelOrder[nextLevelIndex] : null
 
