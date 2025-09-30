@@ -304,24 +304,6 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             )}
           </div>
 
-          {/* Règles d'investissement */}
-          {!canInvest && (
-            <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-              <div className="flex items-start space-x-3">
-                <Lock className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-red-800 mb-1">Investissement non autorisé</h4>
-                  <p className="text-red-700 text-sm">{validationMessage}</p>
-                  {nextAllowedLevel && (
-                    <p className="text-red-600 text-sm mt-2">
-                      <strong>Prochain niveau autorisé :</strong> {nextAllowedLevel}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Action Button */}
           <button 
             onClick={handleRent}
