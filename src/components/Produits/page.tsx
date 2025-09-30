@@ -103,20 +103,49 @@ export default function ProduitsPage() {
   // Fonction pour calculer les revenus accumulés depuis la dernière collecte
   const getAccumulatedRevenue = (rental: RentalData) => {
     const now = new Date()
+    
     // Utiliser la dernière date de collecte ou la date de début si jamais collecté
     const lastCollectionDate = (rental as any).lastCollectionDate || rental.startDate
-    const referenceDate = new Date(lastCollectionDate)
+    
+    // Convertir en Date si c'est un Timestamp Firestore
+    let referenceDate: Date
+    if (lastCollectionDate?.toDate) {
+      referenceDate = lastCollectionDate.toDate()
+    } else if (lastCollectionDate instanceof Date) {
+      referenceDate = lastCollectionDate
+    } else {
+      referenceDate = new Date(lastCollectionDate)
+    }
+    
+    // Convertir startDate en Date
+    let startDate: Date
+    if ((rental.startDate as any)?.toDate) {
+      startDate = (rental.startDate as any).toDate()
+    } else if (rental.startDate instanceof Date) {
+      startDate = rental.startDate
+    } else {
+      startDate = new Date(rental.startDate)
+    }
     
     const daysElapsed = Math.floor((now.getTime() - referenceDate.getTime()) / (24 * 60 * 60 * 1000))
     const effectiveDays = Math.max(0, daysElapsed)
     
     // Vérifier que l'investissement n'est pas expiré
-    const endDate = new Date(rental.startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
+    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
     if (now > endDate) {
       return 0 // Investissement terminé
     }
     
-    return effectiveDays * rental.dailyRevenue * rental.quantity
+    const accumulated = effectiveDays * rental.dailyRevenue * rental.quantity
+    console.log('💰 Revenus accumulés calculés:', {
+      daysElapsed,
+      effectiveDays,
+      dailyRevenue: rental.dailyRevenue,
+      quantity: rental.quantity,
+      accumulated
+    })
+    
+    return accumulated
   }
 
   // Calculer le pourcentage de progression
