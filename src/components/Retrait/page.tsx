@@ -11,6 +11,7 @@ import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib
 import { CreateTransactionData } from '@/types/transactions'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { subscribeToWithdrawableBalance } from '@/lib/balanceUtils'
 
 // Fonction pour hasher le mot de passe avec SHA-256
 const hashPassword = async (password: string): Promise<string> => {
@@ -28,7 +29,9 @@ export default function RetraitPage() {
   const [amount, setAmount] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [fundsPassword, setFundsPassword] = useState('')
-  const [balance, setBalance] = useState(0)
+  const [balance, setBalance] = useState(0) // Solde retirable uniquement
+  const [depositBalance, setDepositBalance] = useState(0) // Solde de dépôt (non retirable)
+  const [totalBalance, setTotalBalance] = useState(0) // Solde total
   const [loading, setLoading] = useState(false)
   const [hasConfiguredPassword, setHasConfiguredPassword] = useState(false)
   const [hasWithdrawalAccount, setHasWithdrawalAccount] = useState(false)
@@ -49,13 +52,18 @@ export default function RetraitPage() {
     }
   ]
 
-  // Charger le solde de l'utilisateur - synchronisé avec le solde principal (Atout)
+  // Charger le solde retirable de l'utilisateur
   useEffect(() => {
     if (currentUser) {
-      // S'abonner aux changements de solde en temps réel
-      const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
-        setBalance(newBalance) // Le solde de retrait = solde principal (Atout)
-      })
+      // S'abonner aux changements de solde retirable en temps réel
+      const unsubscribe = subscribeToWithdrawableBalance(
+        currentUser.uid, 
+        (withdrawable, deposit, total) => {
+          setBalance(withdrawable) // Solde retirable uniquement
+          setDepositBalance(deposit) // Solde de dépôt
+          setTotalBalance(total) // Solde total
+        }
+      )
 
       // Vérifier si l'utilisateur a configuré un mot de passe des fonds
       const checkFundsPassword = async () => {
@@ -205,7 +213,29 @@ export default function RetraitPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
+              <span className="text-white font-bold text-sm">Solde Retirable: {balance.toLocaleString()} FCFA</span>
+            </div>
+          </div>
+          
+          {/* Message informatif sur le solde retirable */}
+          <div className="mt-4 bg-blue-500/20 border border-blue-500/30 rounded-xl p-4">
+            <div className="flex items-start space-x-3">
+              <span className="text-2xl">ℹ️</span>
+              <div className="flex-1">
+                <h4 className="text-white font-bold text-sm mb-2">À propos du solde retirable</h4>
+                <p className="text-white/80 text-xs leading-relaxed">
+                  Le solde retirable comprend uniquement :
+                </p>
+                <ul className="text-white/80 text-xs mt-2 space-y-1 list-disc list-inside">
+                  <li>Bonus d'inscription (1,000 FCFA)</li>
+                  <li>Commissions de parrainage</li>
+                  <li>Gains collectés de vos investissements</li>
+                  <li>Récompenses check-in quotidien</li>
+                </ul>
+                <p className="text-white/70 text-xs mt-3 italic">
+                  💡 Les dépôts doivent être investis avant de pouvoir être retirés.
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -538,16 +538,18 @@ export async function approveTransaction(
       const userRef = doc(db, 'users', transactionData.userId);
       
       if (transactionData.type === 'deposit') {
-        // Ajouter le montant au solde pour les dépôts et mettre à jour les totaux
+        // Ajouter le montant au solde de dépôt (ne peut être retiré, doit être investi)
         transaction.update(userRef, {
           balance: increment(transactionData.amount),
+          depositBalance: increment(transactionData.amount), // Solde de dépôt (pour investissement)
           totalDeposited: increment(transactionData.amount), // Ajouter au total des dépôts
           lastDepositDate: serverTimestamp() // Mettre à jour la date du dernier dépôt
         });
       } else if (transactionData.type === 'withdrawal') {
-        // Déduire le montant du solde pour les retraits
+        // Déduire le montant du solde retirable uniquement
         transaction.update(userRef, {
-          balance: increment(-transactionData.amount)
+          balance: increment(-transactionData.amount),
+          withdrawableBalance: increment(-transactionData.amount) // Déduire du solde retirable
         });
       }
     });

@@ -14,10 +14,14 @@ export async function migrateUsersForInvestmentRules(): Promise<void> {
       const userData = userDoc.data()
       
       // Vérifier si les nouveaux champs existent déjà
-      if (userData.totalDeposited === undefined || userData.totalInvested === undefined) {
+      if (userData.depositBalance === undefined || userData.withdrawableBalance === undefined) {
         const userRef = doc(db, 'users', userDoc.id)
         
+        const currentBalance = userData.balance || 0
+        
         batch.update(userRef, {
+          depositBalance: userData.depositBalance || 0,
+          withdrawableBalance: userData.withdrawableBalance || currentBalance, // Tout le solde actuel devient retirable
           totalDeposited: userData.totalDeposited || 0,
           totalInvested: userData.totalInvested || 0,
           lastDepositDate: userData.lastDepositDate || null
@@ -45,6 +49,8 @@ export async function resetUserInvestmentTotals(userId: string): Promise<void> {
   try {
     const userRef = doc(db, 'users', userId)
     await updateDoc(userRef, {
+      depositBalance: 0,
+      withdrawableBalance: 1000, // Remettre le bonus d'inscription
       totalDeposited: 0,
       totalInvested: 0,
       lastDepositDate: null

@@ -68,7 +68,8 @@ export async function processReferralCommissions(
         
         if (sponsorDoc.exists()) {
           transaction.update(sponsorRef, {
-            balance: increment(commissionAmount)
+            balance: increment(commissionAmount),
+            withdrawableBalance: increment(commissionAmount) // Ajouter au solde retirable
           })
           
           // Enregistrer la commission

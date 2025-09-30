@@ -135,38 +135,42 @@ export async function validateInvestment(
 }
 
 // Vérifier si un utilisateur peut effectuer un retrait
-export async function canUserWithdraw(userId: string): Promise<{canWithdraw: boolean, message: string}> {
+export async function canUserWithdraw(userId: string): Promise<{canWithdraw: boolean, message: string, withdrawableBalance: number}> {
   try {
     const userDoc = await getDoc(doc(db, 'users', userId))
     if (!userDoc.exists()) {
       return {
         canWithdraw: false,
-        message: 'Utilisateur non trouvé'
+        message: 'Utilisateur non trouvé',
+        withdrawableBalance: 0
       }
     }
 
     const userData = userDoc.data() as User
-    const totalDeposited = userData.totalDeposited || 0
-    const totalInvested = userData.totalInvested || 0
-    const remainingToInvest = totalDeposited - totalInvested
+    const withdrawableBalance = userData.withdrawableBalance || 0
 
-    if (remainingToInvest > 0) {
+    // L'utilisateur peut retirer uniquement son solde retirable
+    // (bonus d'inscription + commissions de parrainage + gains des produits + récompenses check-in)
+    if (withdrawableBalance <= 0) {
       return {
         canWithdraw: false,
-        message: `Vous devez d'abord investir les ${remainingToInvest.toLocaleString()} FCFA restants de votre dépôt avant de pouvoir effectuer un retrait.`
+        message: 'Vous n\'avez pas de solde retirable. Le solde retirable provient des bonus, commissions de parrainage et gains de vos investissements.',
+        withdrawableBalance: 0
       }
     }
 
     return {
       canWithdraw: true,
-      message: 'Retrait autorisé'
+      message: 'Retrait autorisé',
+      withdrawableBalance
     }
 
   } catch (error) {
     console.error('Erreur vérification retrait:', error)
     return {
       canWithdraw: false,
-      message: 'Erreur lors de la vérification'
+      message: 'Erreur lors de la vérification',
+      withdrawableBalance: 0
     }
   }
 }

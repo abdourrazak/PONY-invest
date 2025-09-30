@@ -76,9 +76,10 @@ export async function createRental(
         throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
       }
 
-      // Déduire le montant du solde et mettre à jour les totaux
+      // Déduire le montant du solde de dépôt et mettre à jour les totaux
       transaction.update(userRef, {
         balance: increment(-totalCost),
+        depositBalance: increment(-totalCost), // Déduire du solde de dépôt
         totalInvested: increment(totalCost), // Ajouter au total investi
         hasInvested: true // Marquer l'utilisateur comme ayant investi
       })
@@ -215,9 +216,10 @@ export async function collectRentalEarnings(
         throw new Error('Aucun gain à collecter')
       }
 
-      // Mettre à jour le solde de l'utilisateur
+      // Mettre à jour le solde de l'utilisateur (ajouter au solde retirable)
       transaction.update(userRef, {
-        balance: increment(collectibleRevenue)
+        balance: increment(collectibleRevenue),
+        withdrawableBalance: increment(collectibleRevenue) // Ajouter au solde retirable
       })
 
       // Mettre à jour la date de dernière collecte

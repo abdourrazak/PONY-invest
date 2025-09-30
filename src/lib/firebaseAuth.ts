@@ -25,7 +25,9 @@ export interface User {
   referredBy?: string | null
   createdAt: any
   role?: 'user' | 'admin'
-  balance?: number
+  balance?: number // Solde total (dépôts + gains)
+  depositBalance?: number // Solde provenant des dépôts (doit être investi)
+  withdrawableBalance?: number // Solde retirable (bonus + commissions + gains)
   totalDeposited?: number // Total des dépôts effectués
   totalInvested?: number  // Total investi depuis le dernier dépôt
   lastDepositDate?: any   // Date du dernier dépôt
@@ -124,7 +126,11 @@ export async function registerUser(
       referralCode,
       referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
       createdAt: serverTimestamp(),
-      balance: 1000 // Solde initial de 1000 XOF pour nouveaux utilisateurs
+      balance: 1000, // Solde initial de 1000 XOF pour nouveaux utilisateurs
+      depositBalance: 0, // Pas de dépôt initial
+      withdrawableBalance: 1000, // Bonus d'inscription retirable
+      totalDeposited: 0,
+      totalInvested: 0
     }
 
     try {
