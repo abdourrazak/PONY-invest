@@ -160,7 +160,7 @@ export default function ComptePage() {
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-4">
           <Link href="/recharge">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+            <button className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 w-full">
               <div className="flex items-center justify-center space-x-2">
                 <Plus size={18} />
                 <span>Recharge</span>
@@ -168,7 +168,7 @@ export default function ComptePage() {
             </button>
           </Link>
           <Link href="/retrait">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+            <button className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 w-full">
               <div className="flex items-center justify-center space-x-2">
                 <Minus size={18} />
                 <span>Retrait</span>
@@ -176,7 +176,7 @@ export default function ComptePage() {
             </button>
           </Link>
           <Link href="/mes-gains">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+            <button className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 w-full">
               <div className="flex items-center justify-center space-x-2">
                 <Smartphone size={18} />
                 <span>Appareil</span>
@@ -184,7 +184,7 @@ export default function ComptePage() {
             </button>
           </Link>
           <Link href="/portefeuille">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl w-full">
+            <button className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 w-full">
               <div className="flex items-center justify-center space-x-2">
                 <CreditCard size={18} />
                 <span>Portefeuille</span>
