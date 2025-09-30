@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react'
 import { ArrowLeft, Crown, Clock, TrendingUp, CreditCard, Info } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../contexts/AuthContext'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
+import { calculateUserEarnings } from '@/lib/earningsCalculator'
 
 interface UserGains {
   montantCredite: number
@@ -13,6 +14,9 @@ interface UserGains {
   gainsHoraire: number
   revenusQuotidiens: number
   totalDepense: number
+  commissionsParrainage: number
+  gainsInvestissements: number
+  recompensesCheckIn: number
 }
 
 export default function MesGains() {
@@ -23,50 +27,55 @@ export default function MesGains() {
     forfaitsVipActifs: 0,
     gainsHoraire: 0,
     revenusQuotidiens: 0,
-    totalDepense: 0
+    totalDepense: 0,
+    commissionsParrainage: 0,
+    gainsInvestissements: 0,
+    recompensesCheckIn: 0
   })
   const [loading, setLoading] = useState(true)
 
-  // Fonction pour rafraîchir les données
-  const refreshUserGains = () => {
-    if (!userData?.numeroTel) return
+  // Fonction pour rafraîchir les données depuis Firestore
+  const refreshUserGains = async () => {
+    if (!currentUser) return
 
-    const userKey = userData.numeroTel
-    
-    // Montant crédité depuis localStorage
-    const savedFunds = localStorage.getItem(`userFunds_${userKey}`)
-    const montantCredite = savedFunds ? parseInt(savedFunds) : 1000
-    
-    // Historique des récompenses quotidiennes
-    const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userKey}`) || '[]')
-    const revenusQuotidiens = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
-    
-    // Récompenses de parrainage
-    const referralRewards = parseInt(localStorage.getItem(`referralRewards_${userKey}`) || '0')
-    
-    // Forfaits VIP actifs
-    const forfaitsVipActifs = parseInt(localStorage.getItem(`forfaitsVipActifs_${userKey}`) || '0')
-    
-    // Gains horaire basé sur les forfaits actifs
-    const gainsHoraire = forfaitsVipActifs * 50
-    
-    // Total dépensé
-    const totalDepense = parseInt(localStorage.getItem(`totalDepense_${userKey}`) || '0')
+    try {
+      // Calculer les gains depuis Firestore
+      const earnings = await calculateUserEarnings(currentUser.uid)
+      
+      // Récupérer les données utilisateur
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
+      const userData = userDoc.data()
+      
+      // Compter les investissements actifs
+      const rentalsQuery = query(
+        collection(db, 'rentals'),
+        where('userId', '==', currentUser.uid)
+      )
+      const rentalsSnapshot = await getDocs(rentalsQuery)
+      const forfaitsVipActifs = rentalsSnapshot.size
+      
+      // Calculer gains horaire (estimé)
+      let gainsHoraire = 0
+      rentalsSnapshot.forEach((doc) => {
+        const data = doc.data()
+        gainsHoraire += (data.dailyRevenue || 0) * (data.quantity || 1) / 24
+      })
 
-    setUserGains({
-      montantCredite,
-      forfaitsVipActifs,
-      gainsHoraire,
-      revenusQuotidiens,
-      totalDepense
-    })
+      setUserGains({
+        montantCredite: userData?.balance || 0,
+        forfaitsVipActifs,
+        gainsHoraire: Math.round(gainsHoraire),
+        revenusQuotidiens: earnings.todayEarnings,
+        totalDepense: userData?.totalInvested || 0,
+        commissionsParrainage: earnings.breakdown.referralCommissions,
+        gainsInvestissements: earnings.breakdown.productRevenue,
+        recompensesCheckIn: earnings.breakdown.checkInRewards
+      })
 
-    console.log('🔄 Gains rafraîchis:', {
-      montantCredite,
-      revenusQuotidiens,
-      userKey,
-      rewardHistoryLength: rewardHistory.length
-    })
+      console.log('🔄 Gains rafraîchis depuis Firestore:', earnings)
+    } catch (error) {
+      console.error('Erreur rafraîchissement gains:', error)
+    }
   }
 
   // Écouter les événements de focus pour rafraîchir
@@ -94,53 +103,12 @@ export default function MesGains() {
 
   useEffect(() => {
     const fetchUserGains = async () => {
-      if (!currentUser && !userData) return
+      if (!currentUser) return
 
       try {
-        const userId = currentUser?.uid || userData?.uid
-        const userPhone = userData?.numeroTel
-        
-        if (userId && userPhone) {
-          // Récupérer les données depuis localStorage (données locales utilisateur)
-          const userKey = userPhone
-          
-          // Montant crédité depuis localStorage
-          const savedFunds = localStorage.getItem(`userFunds_${userKey}`)
-          const montantCredite = savedFunds ? parseInt(savedFunds) : 1000
-          
-          // Historique des récompenses quotidiennes
-          const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userKey}`) || '[]')
-          const revenusQuotidiens = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
-          
-          // Récompenses de parrainage
-          const referralRewards = parseInt(localStorage.getItem(`referralRewards_${userKey}`) || '0')
-          
-          // Forfaits VIP actifs (depuis localStorage ou Firebase)
-          const forfaitsVipActifs = parseInt(localStorage.getItem(`forfaitsVipActifs_${userKey}`) || '0')
-          
-          // Gains horaire basé sur les forfaits actifs
-          const gainsHoraire = forfaitsVipActifs * 50 // 50 XOF par forfait par heure
-          
-          // Total dépensé (achats de forfaits, etc.)
-          const totalDepense = parseInt(localStorage.getItem(`totalDepense_${userKey}`) || '0')
-
-          setUserGains({
-            montantCredite,
-            forfaitsVipActifs,
-            gainsHoraire,
-            revenusQuotidiens,
-            totalDepense
-          })
-
-          console.log('Gains utilisateur chargés:', {
-            montantCredite,
-            forfaitsVipActifs,
-            gainsHoraire,
-            revenusQuotidiens,
-            totalDepense,
-            userKey
-          })
-        }
+        // Charger les données depuis Firestore
+        await refreshUserGains()
+        console.log('Gains utilisateur chargés depuis Firestore')
       } catch (error) {
         console.error('Erreur lors du chargement des gains:', error)
       } finally {
@@ -149,18 +117,7 @@ export default function MesGains() {
     }
 
     fetchUserGains()
-    
-    // Écouter les changements dans localStorage pour mise à jour en temps réel
-    const handleStorageChange = () => {
-      fetchUserGains()
-    }
-    
-    window.addEventListener('storage', handleStorageChange)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [currentUser, userData])
+  }, [currentUser])
 
   const formatCurrency = (amount: number) => {
     return `XOF${amount.toFixed(2).replace('.', ',')}`
