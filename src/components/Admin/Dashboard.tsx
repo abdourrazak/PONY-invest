@@ -19,7 +19,8 @@ import {
   TrendingUp,
   TrendingDown,
   Eye,
-  X
+  X,
+  Database
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -208,8 +209,17 @@ export default function AdminDashboard() {
                 🛡️ Admin
               </h1>
             </div>
-            <div className="text-xs sm:text-sm text-white/70">
-              {userData?.numeroTel}
+            <div className="flex items-center space-x-2">
+              <Link 
+                href="/migrate-balances"
+                className="flex items-center space-x-1 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-300 px-3 py-1.5 rounded-lg transition-all text-xs sm:text-sm"
+              >
+                <Database size={16} />
+                <span className="hidden sm:inline">Migration</span>
+              </Link>
+              <div className="text-xs sm:text-sm text-white/70">
+                {userData?.numeroTel}
+              </div>
             </div>
           </div>
           <div className="sm:hidden">
