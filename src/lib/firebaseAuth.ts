@@ -521,7 +521,7 @@ export async function getMultiLevelReferralStats(user: User): Promise<MultiLevel
   }
 }
 
-// Vérifier si l'utilisateur a droit à la réduction LV1 (5+ filleuls investisseurs)
+// Vérifier si l'utilisateur a droit à la réduction LV1 (20+ amis réels inscrits)
 export async function checkLV1Discount(userId: string): Promise<boolean> {
   try {
     console.log('🔍 Vérification réduction LV1 pour userId:', userId)
@@ -537,43 +537,20 @@ export async function checkLV1Discount(userId: string): Promise<boolean> {
     const userReferralCode = userData.referralCode
     console.log('📋 Code de parrainage:', userReferralCode)
     
-    // Trouver tous les filleuls directs
+    // Trouver tous les filleuls directs (amis réels inscrits)
     const referralsQuery = query(
       collection(db, 'users'),
       where('referredBy', '==', userReferralCode)
     )
     const referralsSnapshot = await getDocs(referralsQuery)
-    console.log('👥 Nombre de filleuls directs:', referralsSnapshot.size)
+    const totalReferrals = referralsSnapshot.size
+    console.log('👥 Nombre total d\'amis inscrits:', totalReferrals)
     
-    if (referralsSnapshot.size < 5) {
-      console.log('❌ Moins de 5 filleuls directs')
-      return false // Moins de 5 filleuls
-    }
+    // Vérifier si l'utilisateur a au moins 20 amis inscrits
+    const hasDiscount = totalReferrals >= 20
+    console.log('🎯 Réduction LV1 accordée:', hasDiscount, `(${totalReferrals}/20 amis)`)
     
-    // Vérifier combien de filleuls ont investi (ont au moins une location)
-    let investorCount = 0
-    
-    for (const referralDoc of referralsSnapshot.docs) {
-      const referralId = referralDoc.id
-      
-      // Vérifier si ce filleul a des locations
-      const rentalsQuery = query(
-        collection(db, 'rentals'),
-        where('userId', '==', referralId)
-      )
-      const rentalsSnapshot = await getDocs(rentalsQuery)
-      
-      if (rentalsSnapshot.size > 0) {
-        investorCount++
-        console.log(`✅ Filleul ${referralId} a investi (${rentalsSnapshot.size} locations)`)
-      }
-    }
-    
-    console.log('💰 Nombre de filleuls investisseurs:', investorCount)
-    const hasDiscount = investorCount >= 5
-    console.log('🎯 Réduction LV1 accordée:', hasDiscount)
-    
-    return hasDiscount // Au moins 5 filleuls investisseurs
+    return hasDiscount // Au moins 20 amis réels inscrits
   } catch (error) {
     console.error('Erreur lors de la vérification de la réduction LV1:', error)
     return false

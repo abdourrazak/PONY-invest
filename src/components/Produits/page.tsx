@@ -197,7 +197,7 @@ export default function ProduitsPage() {
       id: 'lv1',
       name: 'Titres à revenu fixe 1',
       level: 'LV1',
-      price: hasLV1Discount ? 3000 : 6000, // Prix réduit si 5+ filleuls investisseurs
+      price: hasLV1Discount ? 3000 : 6000, // Prix réduit si 20+ amis inscrits
       originalPrice: hasLV1Discount ? 6000 : 3000, // Prix original inversé
       dailyRevenue: 500,
       duration: 120,
@@ -456,9 +456,9 @@ export default function ProduitsPage() {
             </div>
             <div className="flex flex-col space-y-2">
               {!hasLV1Discount && (
-                <div className="bg-blue-500/20 border border-blue-400/30 rounded-xl p-3 text-center">
-                  <p className="text-blue-300 text-xs font-medium">
-                    💡 Offre promotionnelle disponible !
+                <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
+                  <p className="text-orange-300 text-xs font-medium">
+                    💡 Invitez 20 amis pour débloquer ce prix !
                   </p>
                   <p className="text-white/70 text-xs mt-1">
                     Prix actuel : 6,000 FCFA
