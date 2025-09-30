@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
 import { createTransaction } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
+import { checkLV1Discount } from '@/lib/firebaseAuth'
 
 
 // Fonction pour compresser une image si elle dépasse 1MB
@@ -64,6 +65,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const [transactionImage, setTransactionImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [hasLV1Discount, setHasLV1Discount] = useState(false)
 
   const isOrange = paymentMethod === 'orange'
   const isMTN = paymentMethod === 'mtn'
@@ -105,6 +107,17 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? { primary: "yellow", secondary: "red" }
     : { primary: "blue", secondary: "purple" }
 
+  // Vérifier si l'utilisateur a la réduction LV1 (20+ amis)
+  useEffect(() => {
+    if (currentUser) {
+      checkLV1Discount(currentUser.uid).then(hasDiscount => {
+        setHasLV1Discount(hasDiscount)
+      }).catch(error => {
+        console.log('Erreur vérification réduction:', error)
+        setHasLV1Discount(false)
+      })
+    }
+  }, [currentUser])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -130,8 +143,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const handleSubmit = async () => {
     if (!amount || !transactionImage || !currentUser || !userData) return
 
-    // Validation du montant minimum
-    const minAmount = isCrypto ? 10 : 3000 // 10 USDT ou 3000 FCFA
+    // Validation du montant minimum (2000 FCFA si 20+ amis, sinon 3000 FCFA)
+    const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000) // 10 USDT ou 2000/3000 FCFA
     const numericAmount = parseFloat(amount)
     
     if (isNaN(numericAmount) || numericAmount < minAmount) {
@@ -318,18 +331,17 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           onClick={handleSubmit}
           disabled={(() => {
             const numericAmount = parseFloat(amount);
-            const minAmount = isCrypto ? 10 : 3000;
+            const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000);
             
             return !amount || 
                    !transactionImage || 
                    loading || 
-                   isNaN(numericAmount) || 
-                   numericAmount < minAmount;
+                   (numericAmount < minAmount);
           })()}
           className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
             (() => {
               const numericAmount = parseFloat(amount);
-              const minAmount = isCrypto ? 10 : 3000;
+              const minAmount = isCrypto ? 10 : (hasLV1Discount ? 2000 : 3000);
               
               const isEnabled = amount && 
                                transactionImage && 
