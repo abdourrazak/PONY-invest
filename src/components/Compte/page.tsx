@@ -105,7 +105,7 @@ export default function ComptePage() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center">
                 <span className="text-white text-lg">👤</span>
               </div>
               <div>
