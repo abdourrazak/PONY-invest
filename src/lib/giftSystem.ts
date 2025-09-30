@@ -1,15 +1,5 @@
 import { db } from './firebase'
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  query, 
-  where, 
-  getDocs,
-  Timestamp 
-} from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, Timestamp, addDoc } from 'firebase/firestore'
 import { getReferrals } from './firebaseAuth'
 
 // Interface pour les données de cadeau utilisateur

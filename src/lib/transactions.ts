@@ -649,8 +649,10 @@ export async function addCheckInReward(
       }
 
       const currentBalance = userDoc.data().balance || 0;
+      const currentWithdrawable = userDoc.data().withdrawableBalance || 0;
       transaction.update(userRef, {
-        balance: currentBalance + rewardAmount
+        balance: currentBalance + rewardAmount,
+        withdrawableBalance: currentWithdrawable + rewardAmount // Ajouter au solde retirable
       });
     });
     
