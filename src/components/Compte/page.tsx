@@ -8,6 +8,7 @@ import { getReferralCount } from '@/lib/firebaseAuth'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { subscribeToUserBalance } from '@/lib/transactions'
+import { calculateUserEarnings, calculateGrowthPercentage } from '@/lib/earningsCalculator'
 
 export default function ComptePage() {
   const { userData, currentUser } = useAuth()
@@ -16,6 +17,9 @@ export default function ComptePage() {
   const [referralRewards, setReferralRewards] = useState(0)
   const [checkInRewards, setCheckInRewards] = useState(0)
   const [hasInvested, setHasInvested] = useState(false)
+  const [todayEarnings, setTodayEarnings] = useState(0)
+  const [totalEarnings, setTotalEarnings] = useState(0)
+  const [growthPercentage, setGrowthPercentage] = useState(0)
 
   // Synchroniser le solde en temps réel
   useEffect(() => {
@@ -26,6 +30,20 @@ export default function ComptePage() {
       })
       return unsubscribe
     }
+  }, [currentUser])
+
+  // Calculer les gains réels
+  useEffect(() => {
+    const loadEarnings = async () => {
+      if (!currentUser) return
+      
+      const earnings = await calculateUserEarnings(currentUser.uid)
+      setTodayEarnings(earnings.todayEarnings)
+      setTotalEarnings(earnings.totalEarnings)
+      setGrowthPercentage(calculateGrowthPercentage(earnings.todayEarnings, earnings.totalEarnings))
+    }
+    
+    loadEarnings()
   }, [currentUser])
 
   useEffect(() => {
@@ -160,17 +178,15 @@ export default function ComptePage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains aujourd'hui</div>
-              <div className="text-green-400 text-lg font-bold">0 XOF</div>
-              <div className="text-white/60 text-xs mt-1">📈 +0%</div>
+              <div className="text-green-400 text-lg font-bold">{todayEarnings.toLocaleString()} XOF</div>
+              <div className="text-white/60 text-xs mt-1">📈 +{growthPercentage}%</div>
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains totaux</div>
-              <div className="text-yellow-400 text-lg font-bold">{(referralRewards + checkInRewards).toLocaleString('fr-FR')} XOF</div>
-              <div className="text-white/60 text-xs mt-1">
-                {hasInvested ? '💰 Parrainage + Check-in' : '💰 Check-in uniquement'}
-              </div>
+              <div className="text-yellow-400 text-lg font-bold">{totalEarnings.toLocaleString()} XOF</div>
+              <div className="text-white/60 text-xs mt-1">💰 Parrainage + Check-in</div>
             </div>
           </div>
         </div>
