@@ -121,38 +121,28 @@ export default function ComptePage() {
       </header>
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-24">
-        {/* Balance Card - Modern Design */}
-        <div className="relative overflow-hidden rounded-3xl">
-          {/* Gradient Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500"></div>
-          
-          {/* Animated Circles */}
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -translate-y-20 translate-x-20 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-y-16 -translate-x-16 animate-pulse" style={{animationDelay: '1s'}}></div>
-          
-          {/* Content */}
-          <div className="relative z-10 p-8">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white text-lg font-bold tracking-wide">Mes atouts</h3>
-              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-white" />
-              </div>
+        {/* Balance Card - Transparent Design */}
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-white text-lg font-bold tracking-wide">Mes atouts</h3>
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
-            
-            {/* Balance Display */}
-            <div className="text-center mb-4">
-              <div className="text-white text-5xl font-black mb-2 tracking-tight">
-                <AnimatedBalance value={funds} suffix="" />
-              </div>
-              <div className="text-white text-2xl font-bold">XOF</div>
+          </div>
+          
+          {/* Balance Display */}
+          <div className="text-center mb-4">
+            <div className="text-white text-5xl font-black mb-2 tracking-tight">
+              <AnimatedBalance value={funds} suffix="" />
             </div>
-            
-            {/* Label */}
-            <div className="text-center">
-              <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span className="text-white/90 text-sm font-medium">Solde disponible</span>
-              </div>
+            <div className="text-white text-2xl font-bold">XOF</div>
+          </div>
+          
+          {/* Label */}
+          <div className="text-center">
+            <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <span className="text-white/90 text-sm font-medium">Solde disponible</span>
             </div>
           </div>
         </div>
