@@ -125,24 +125,28 @@ export default function ComptePage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white text-lg font-bold tracking-wide">Mes atouts</h3>
+            <h3 className="text-lg font-bold tracking-wide bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
+              Mes atouts
+            </h3>
             <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-white" />
+              <Wallet className="w-5 h-5 text-yellow-400" />
             </div>
           </div>
           
           {/* Balance Display */}
           <div className="text-center mb-4">
-            <div className="text-white text-5xl font-black mb-2 tracking-tight">
+            <div className="text-5xl font-black mb-2 tracking-tight bg-gradient-to-r from-yellow-400 via-green-400 to-yellow-400 bg-clip-text text-transparent">
               <AnimatedBalance value={funds} suffix="" />
             </div>
-            <div className="text-white text-2xl font-bold">XOF</div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+              XOF
+            </div>
           </div>
           
           {/* Label */}
           <div className="text-center">
             <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <span className="text-white/90 text-sm font-medium">Solde disponible</span>
+              <span className="text-green-300 text-sm font-medium">Solde disponible</span>
             </div>
           </div>
         </div>
