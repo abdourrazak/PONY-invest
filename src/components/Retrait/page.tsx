@@ -213,29 +213,7 @@ export default function RetraitPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-white font-bold text-sm">Solde Retirable: {balance.toLocaleString()} FCFA</span>
-            </div>
-          </div>
-          
-          {/* Message informatif sur le solde retirable */}
-          <div className="mt-4 bg-blue-500/20 border border-blue-500/30 rounded-xl p-4">
-            <div className="flex items-start space-x-3">
-              <span className="text-2xl">ℹ️</span>
-              <div className="flex-1">
-                <h4 className="text-white font-bold text-sm mb-2">À propos du solde retirable</h4>
-                <p className="text-white/80 text-xs leading-relaxed">
-                  Le solde retirable comprend uniquement :
-                </p>
-                <ul className="text-white/80 text-xs mt-2 space-y-1 list-disc list-inside">
-                  <li>Bonus d'inscription (1,000 FCFA)</li>
-                  <li>Commissions de parrainage</li>
-                  <li>Gains collectés de vos investissements</li>
-                  <li>Récompenses check-in quotidien</li>
-                </ul>
-                <p className="text-white/70 text-xs mt-3 italic">
-                  💡 Les dépôts doivent être investis avant de pouvoir être retirés.
-                </p>
-              </div>
+              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
             </div>
           </div>
         </div>

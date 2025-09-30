@@ -19,15 +19,18 @@ export async function migrateUsersForInvestmentRules(): Promise<void> {
         
         const currentBalance = userData.balance || 0
         
+        // Pour les comptes existants, tout le solde actuel devient retirable
+        // (considéré comme des gains/bonus accumulés avant la mise à jour)
         batch.update(userRef, {
-          depositBalance: userData.depositBalance || 0,
-          withdrawableBalance: userData.withdrawableBalance || currentBalance, // Tout le solde actuel devient retirable
+          depositBalance: 0, // Pas de dépôt en attente pour les anciens comptes
+          withdrawableBalance: currentBalance, // Tout le solde actuel devient retirable
           totalDeposited: userData.totalDeposited || 0,
           totalInvested: userData.totalInvested || 0,
           lastDepositDate: userData.lastDepositDate || null
         })
         
         updatedCount++
+        console.log(`Migration utilisateur ${userDoc.id}: balance ${currentBalance} → withdrawableBalance`)
       }
     })
     
