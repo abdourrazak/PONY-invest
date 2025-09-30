@@ -7,6 +7,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { toast } from 'react-hot-toast'
 import SupportFloat from '@/components/SupportFloat/SupportFloat'
+import { useRouter } from 'next/navigation'
 
 // Fonction pour hasher le mot de passe avec SHA-256
 const hashPassword = async (password: string): Promise<string> => {
@@ -19,6 +20,7 @@ const hashPassword = async (password: string): Promise<string> => {
 
 export default function MotDePasseFondsPage() {
   const { userData, currentUser } = useAuth()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showPasswords, setShowPasswords] = useState({
     new: false,
@@ -108,6 +110,11 @@ export default function MotDePasseFondsPage() {
         confirmPassword: ''
       })
       setHasExistingPassword(true)
+      
+      // Rediriger vers la page de retrait après 1 seconde
+      setTimeout(() => {
+        router.push('/retrait')
+      }, 1000)
       
     } catch (error) {
       console.error('Erreur lors de la mise à jour du mot de passe:', error)

@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { X, ChevronUp, ChevronDown, CheckCircle, XCircle, AlertTriangle, Wallet, Lock } from 'lucide-react'
-import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
-import { validateInvestment, getNextAllowedLevel } from '@/lib/investmentRules'
+import { validateInvestment } from '@/lib/investmentRules'
+import { useRouter } from 'next/navigation'
+import NextImage from 'next/image'
 
 interface ProductData {
   id: string
@@ -32,6 +33,7 @@ interface ProductModalProps {
 
 export default function ProductModal({ isOpen, onClose, product, onRent, userBalance }: ProductModalProps) {
   const { userData, currentUser } = useAuth()
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [investmentResult, setInvestmentResult] = useState<'success' | 'error' | 'insufficient_balance' | 'blocked' | null>(null)
@@ -86,8 +88,9 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
         setShowConfirmation(false)
         setInvestmentResult(null)
         setIsProcessing(false)
-        window.location.href = '/produits?tab=Activité'
-      }, 2000)
+        // Redirection fluide vers la section Activité
+        router.push('/produits?tab=Activité')
+      }, 1500)
     } catch (error: any) {
       console.error('Erreur investissement:', error)
       
@@ -242,7 +245,7 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
           {/* Product Header */}
           <div className="flex items-center space-x-4 bg-gray-50 backdrop-blur-sm p-4 rounded-2xl border border-gray-200">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg">
-              <Image src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" />
+              <NextImage src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" />
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-gray-800 text-lg">{product.name}</h3>
