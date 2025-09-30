@@ -9,6 +9,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { subscribeToUserBalance } from '@/lib/transactions'
 import { calculateUserEarnings, calculateGrowthPercentage } from '@/lib/earningsCalculator'
+import AnimatedBalance from '@/components/AnimatedBalance/AnimatedBalance'
 
 export default function ComptePage() {
   const { userData, currentUser } = useAuth()
@@ -130,7 +131,7 @@ export default function ComptePage() {
             </div>
             <div className="text-center">
               <div className="text-white text-4xl font-bold mb-2">
-                {funds.toLocaleString('fr-FR')} XOF
+                <AnimatedBalance value={funds} suffix=" XOF" />
               </div>
               <div className="text-white/70 text-sm">Solde disponible</div>
             </div>
@@ -178,14 +179,18 @@ export default function ComptePage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains aujourd'hui</div>
-              <div className="text-green-400 text-lg font-bold">{todayEarnings.toLocaleString()} XOF</div>
+              <div className="text-green-400 text-lg font-bold">
+                <AnimatedBalance value={todayEarnings} suffix=" XOF" className="text-green-400" />
+              </div>
               <div className="text-white/60 text-xs mt-1">📈 +{growthPercentage}%</div>
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains totaux</div>
-              <div className="text-yellow-400 text-lg font-bold">{totalEarnings.toLocaleString()} XOF</div>
+              <div className="text-yellow-400 text-lg font-bold">
+                <AnimatedBalance value={totalEarnings} suffix=" XOF" className="text-yellow-400" />
+              </div>
               <div className="text-white/60 text-xs mt-1">💰 Parrainage + Check-in</div>
             </div>
           </div>

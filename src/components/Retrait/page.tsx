@@ -12,6 +12,7 @@ import { CreateTransactionData } from '@/types/transactions'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { subscribeToWithdrawableBalance } from '@/lib/balanceUtils'
+import AnimatedBalance from '@/components/AnimatedBalance/AnimatedBalance'
 
 // Fonction pour hasher le mot de passe avec SHA-256
 const hashPassword = async (password: string): Promise<string> => {
@@ -213,7 +214,9 @@ export default function RetraitPage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
+              <span className="text-white font-bold text-sm">
+                Solde: <AnimatedBalance value={balance} suffix=" FCFA" className="inline" />
+              </span>
             </div>
           </div>
         </div>
