@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Bell, Users, TrendingUp, Wallet, Plus, Minus, RotateCcw, Home, BarChart3, UserCheck, User, Smartphone, FileText, Shield } from 'lucide-react'
+import { Plus, Minus, Smartphone, Gift, Wallet, TrendingUp, Users, Bell, Shield, Home, BarChart3, UserCheck, User } from 'lucide-react'
 import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '@/components/ProductModal/ProductModal'
@@ -51,7 +51,7 @@ export default function AccueilPage() {
     { title: 'Recharge', icon: Plus, color: 'bg-gradient-to-r from-green-500 to-emerald-500', href: '/recharge' },
     { title: 'Retrait', icon: Minus, color: 'bg-gradient-to-r from-red-500 to-pink-500', href: '/retrait' },
     { title: 'Produits', icon: Smartphone, color: 'bg-gradient-to-r from-blue-500 to-cyan-500', href: '/produits' },
-    { title: 'Cadeau', icon: FileText, color: 'bg-gradient-to-r from-pink-500 to-rose-500', href: '/cadeau', special: 'gift' },
+    { title: 'Cadeau', icon: Gift, color: 'bg-gradient-to-r from-pink-500 to-rose-500', href: '/cadeau', special: 'gift' },
     { title: 'Compte', icon: Wallet, color: 'bg-gradient-to-r from-purple-500 to-indigo-500', href: '/compte' },
     { title: 'Check-in Quotidien', icon: TrendingUp, color: 'bg-gradient-to-r from-yellow-500 to-orange-500', href: '/check-Quotidien' },
     { title: 'Parrainage', icon: Users, color: 'bg-gradient-to-r from-teal-500 to-cyan-500', href: '/equipe' },
