@@ -19,6 +19,17 @@ interface UserGains {
   recompensesCheckIn: number
 }
 
+interface RentalData {
+  id: string
+  productName: string
+  level: string
+  price: number
+  quantity: number
+  dailyRevenue: number
+  totalCollected: number
+  createdAt: any
+}
+
 export default function MesGains() {
   const router = useRouter()
   const { currentUser, userData } = useAuth()
@@ -33,6 +44,7 @@ export default function MesGains() {
     recompensesCheckIn: 0
   })
   const [loading, setLoading] = useState(true)
+  const [activeRentals, setActiveRentals] = useState<RentalData[]>([])
 
   // Fonction pour rafraîchir les données depuis Firestore
   const refreshUserGains = async () => {
@@ -54,11 +66,22 @@ export default function MesGains() {
       const rentalsSnapshot = await getDocs(rentalsQuery)
       const forfaitsVipActifs = rentalsSnapshot.size
       
-      // Calculer gains horaire (estimé)
+      // Calculer gains horaire (estimé) et récupérer les rentals
       let gainsHoraire = 0
+      const rentals: RentalData[] = []
       rentalsSnapshot.forEach((doc) => {
         const data = doc.data()
         gainsHoraire += (data.dailyRevenue || 0) * (data.quantity || 1) / 24
+        rentals.push({
+          id: doc.id,
+          productName: data.productName || '',
+          level: data.level || '',
+          price: data.price || 0,
+          quantity: data.quantity || 1,
+          dailyRevenue: data.dailyRevenue || 0,
+          totalCollected: data.totalCollected || 0,
+          createdAt: data.createdAt
+        })
       })
 
       setUserGains({
@@ -71,6 +94,8 @@ export default function MesGains() {
         gainsInvestissements: earnings.breakdown.productRevenue,
         recompensesCheckIn: earnings.breakdown.checkInRewards
       })
+      
+      setActiveRentals(rentals)
 
       console.log('🔄 Gains rafraîchis depuis Firestore:', earnings)
     } catch (error) {
@@ -227,21 +252,58 @@ export default function MesGains() {
             Mes Forfaits Et Revenus Actifs
           </h2>
           
-          {/* État vide */}
-          <div className="text-center py-12">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-12 sm:h-12">
-                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" 
-                      fill="#8B5CF6" stroke="#A855F7" strokeWidth="1"/>
-              </svg>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-white/70">Chargement...</p>
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-white/90 mb-2 tracking-wide">
-              Aucun Forfait VIP Actif
-            </h3>
-            <p className="text-white/70 text-sm sm:text-base font-bold">
-              Activez un forfait VIP pour commencer à générer des revenus
-            </p>
-          </div>
+          ) : activeRentals.length === 0 ? (
+            /* État vide */
+            <div className="text-center py-12">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-12 sm:h-12">
+                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" 
+                        fill="#8B5CF6" stroke="#A855F7" strokeWidth="1"/>
+                </svg>
+              </div>
+              <h3 className="text-lg sm:text-xl font-black text-white/90 mb-2 tracking-wide">
+                Aucun Forfait VIP Actif
+              </h3>
+              <p className="text-white/70 text-sm sm:text-base font-bold">
+                Activez un forfait VIP pour commencer à générer des revenus
+              </p>
+            </div>
+          ) : (
+            /* Liste des forfaits actifs */
+            <div className="space-y-3">
+              {activeRentals.map((rental) => (
+                <div key={rental.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        {rental.level}
+                      </span>
+                      <span className="text-white font-bold text-sm">{rental.productName}</span>
+                    </div>
+                    <span className="text-white/70 text-xs">Qté: {rental.quantity}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div>
+                      <p className="text-white/60">Investissement</p>
+                      <p className="text-green-400 font-bold">{(rental.price * rental.quantity).toLocaleString()} FCFA</p>
+                    </div>
+                    <div>
+                      <p className="text-white/60">Revenu/jour</p>
+                      <p className="text-blue-400 font-bold">{(rental.dailyRevenue * rental.quantity).toLocaleString()} FCFA</p>
+                    </div>
+                    <div>
+                      <p className="text-white/60">Collecté</p>
+                      <p className="text-yellow-400 font-bold">{rental.totalCollected.toLocaleString()} FCFA</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Espace pour la navigation bottom */}

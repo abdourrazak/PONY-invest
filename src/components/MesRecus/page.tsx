@@ -36,6 +36,31 @@ export default function MesRecus() {
     }
   }, [currentUser])
 
+  // Rafraîchir quand la page devient visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && currentUser) {
+        console.log('Page visible - Rafraîchissement des transactions')
+        loadTransactions()
+      }
+    }
+
+    const handleFocus = () => {
+      if (currentUser) {
+        console.log('Page focus - Rafraîchissement des transactions')
+        loadTransactions()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [currentUser])
+
   const loadTransactions = async () => {
     if (!currentUser) return
 
