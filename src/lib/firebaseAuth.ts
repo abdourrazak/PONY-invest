@@ -126,9 +126,9 @@ export async function registerUser(
       referralCode,
       referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
       createdAt: serverTimestamp(),
-      balance: 1000, // Solde initial de 1000 XOF pour nouveaux utilisateurs
+      balance: 0, // Pas de solde initial
       depositBalance: 0, // Pas de dépôt initial
-      withdrawableBalance: 1000, // Bonus d'inscription retirable
+      withdrawableBalance: 0, // Pas de bonus d'inscription
       totalDeposited: 0,
       totalInvested: 0
     }

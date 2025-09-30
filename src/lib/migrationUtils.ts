@@ -53,7 +53,7 @@ export async function resetUserInvestmentTotals(userId: string): Promise<void> {
     const userRef = doc(db, 'users', userId)
     await updateDoc(userRef, {
       depositBalance: 0,
-      withdrawableBalance: 1000, // Remettre le bonus d'inscription
+      withdrawableBalance: 0, // Pas de bonus d'inscription
       totalDeposited: 0,
       totalInvested: 0,
       lastDepositDate: null
