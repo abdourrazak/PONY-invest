@@ -30,9 +30,7 @@ export default function CompteRetraitPage() {
   const operators = [
     { value: 'orange', label: 'Orange Money' },
     { value: 'mtn', label: 'MTN Mobile Money' },
-    { value: 'moov', label: 'Moov Money' },
-    { value: 'wave', label: 'Wave' },
-    { value: 'bank', label: 'Compte bancaire' }
+    { value: 'crypto', label: 'Cryptomonnaie' }
   ]
 
   // Charger les données existantes
@@ -78,7 +76,10 @@ export default function CompteRetraitPage() {
     }
 
     // Validation du numéro de compte
-    if (formData.operator !== 'bank' && formData.accountNumber.length < 8) {
+    if (formData.operator === 'crypto' && formData.accountNumber.length < 20) {
+      toast.error('L\'adresse crypto doit contenir au moins 20 caractères')
+      return
+    } else if (formData.operator !== 'crypto' && formData.accountNumber.length < 8) {
       toast.error('Le numéro de compte doit contenir au moins 8 chiffres')
       return
     }

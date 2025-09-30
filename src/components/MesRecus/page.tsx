@@ -9,23 +9,25 @@ import { db } from '@/lib/firebase'
 
 interface Transaction {
   id: string
-  type: 'deposit' | 'withdrawal' | 'card_payment'
+  type: 'deposit' | 'withdrawal' | 'card_payment' | 'investment'
   amount: number
-  status: 'pending' | 'approved' | 'rejected'
+  status: 'pending' | 'approved' | 'rejected' | 'active'
   createdAt: Timestamp
-  updatedAt: Timestamp
+  updatedAt?: Timestamp
   method?: string
   reference?: string
   productName?: string
   cardType?: string
   description?: string
+  level?: string
+  quantity?: number
 }
 
 export default function MesRecus() {
   const { currentUser } = useAuth()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'deposit' | 'withdrawal' | 'card_payment'>('all')
+  const [filter, setFilter] = useState<'all' | 'deposit' | 'withdrawal' | 'card_payment' | 'investment'>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
@@ -79,6 +81,33 @@ export default function MesRecus() {
         })
       } catch (error) {
         console.log('Collection cardPurchases non trouvée, ignorée')
+      }
+
+      // Charger les investissements (rentals)
+      try {
+        const rentalsRef = collection(db, 'rentals')
+        const rentalsQuery = query(
+          rentalsRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('createdAt', 'desc')
+        )
+        
+        const rentalsSnapshot = await getDocs(rentalsQuery)
+        rentalsSnapshot.forEach((doc) => {
+          const data = doc.data()
+          transactionsList.push({
+            id: doc.id,
+            type: 'investment',
+            amount: (data.price || 0) * (data.quantity || 1),
+            status: 'active',
+            createdAt: data.createdAt,
+            productName: data.productName,
+            level: data.level,
+            quantity: data.quantity
+          } as Transaction)
+        })
+      } catch (error) {
+        console.log('Erreur chargement investissements:', error)
       }
       
       // Trier toutes les transactions par date
