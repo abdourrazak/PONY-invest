@@ -275,7 +275,7 @@ export default function Portefeuille() {
     </header>
 
     {/* Content Lists */}
-    <main className="max-w-md mx-auto px-4 py-6 space-y-4">
+    <main className="max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
       {activeTab === 'deposits' ? (
         deposits.length === 0 ? (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center">
