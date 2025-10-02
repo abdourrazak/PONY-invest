@@ -68,7 +68,7 @@ export default function EquipePage() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-md mx-auto px-4 py-6 pb-24 space-y-6">
         {/* Statistiques globales */}
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
           <div className="text-center space-y-4">

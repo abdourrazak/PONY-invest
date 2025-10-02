@@ -113,8 +113,7 @@ export default function MesRecus() {
         const rentalsRef = collection(db, 'rentals')
         const rentalsQuery = query(
           rentalsRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', currentUser.uid)
         )
         
         const rentalsSnapshot = await getDocs(rentalsQuery)
@@ -123,11 +122,11 @@ export default function MesRecus() {
           transactionsList.push({
             id: doc.id,
             type: 'investment',
-            amount: (data.price || 0) * (data.quantity || 1),
+            amount: data.totalCost || (data.unitPrice || 0) * (data.quantity || 1),
             status: 'active',
-            createdAt: data.createdAt,
+            createdAt: data.startDate || Timestamp.now(),
             productName: data.productName,
-            level: data.level,
+            level: data.productId?.toUpperCase(),
             quantity: data.quantity
           } as Transaction)
         })
