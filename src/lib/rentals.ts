@@ -71,17 +71,40 @@ export async function createRental(
 
       const userData = userDoc.data()
       const currentBalance = userData.balance || 0
+      const currentDepositBalance = userData.depositBalance || 0
+      const currentWithdrawableBalance = userData.withdrawableBalance || 0
 
       if (currentBalance < totalCost) {
         throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
       }
 
-      // Déduire le montant du solde de dépôt et mettre à jour les totaux
+      // Déduire d'abord du depositBalance, puis du withdrawableBalance si nécessaire
+      let remainingCost = totalCost
+      let deductFromDeposit = 0
+      let deductFromWithdrawable = 0
+
+      if (currentDepositBalance >= remainingCost) {
+        // Tout peut être déduit du depositBalance
+        deductFromDeposit = remainingCost
+      } else {
+        // Déduire tout le depositBalance puis le reste du withdrawableBalance
+        deductFromDeposit = currentDepositBalance
+        deductFromWithdrawable = remainingCost - currentDepositBalance
+      }
+
+      console.log('💰 Déduction:', {
+        totalCost,
+        deductFromDeposit,
+        deductFromWithdrawable
+      })
+
+      // Mettre à jour les soldes
       transaction.update(userRef, {
         balance: increment(-totalCost),
-        depositBalance: increment(-totalCost), // Déduire du solde de dépôt
-        totalInvested: increment(totalCost), // Ajouter au total investi
-        hasInvested: true // Marquer l'utilisateur comme ayant investi
+        depositBalance: increment(-deductFromDeposit),
+        withdrawableBalance: increment(-deductFromWithdrawable),
+        totalInvested: increment(totalCost),
+        hasInvested: true
       })
 
       // Créer l'enregistrement de location
