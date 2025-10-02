@@ -72,37 +72,22 @@ export async function createRental(
       const userData = userDoc.data()
       const currentBalance = userData.balance || 0
       const currentDepositBalance = userData.depositBalance || 0
-      const currentWithdrawableBalance = userData.withdrawableBalance || 0
 
-      if (currentBalance < totalCost) {
-        throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
+      // Vérifier que le depositBalance est suffisant
+      if (currentDepositBalance < totalCost) {
+        throw new Error(`Solde de dépôt insuffisant. Vous avez ${currentDepositBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA. Veuillez faire un dépôt.`)
       }
 
-      // Déduire d'abord du depositBalance, puis du withdrawableBalance si nécessaire
-      let remainingCost = totalCost
-      let deductFromDeposit = 0
-      let deductFromWithdrawable = 0
-
-      if (currentDepositBalance >= remainingCost) {
-        // Tout peut être déduit du depositBalance
-        deductFromDeposit = remainingCost
-      } else {
-        // Déduire tout le depositBalance puis le reste du withdrawableBalance
-        deductFromDeposit = currentDepositBalance
-        deductFromWithdrawable = remainingCost - currentDepositBalance
-      }
-
-      console.log('💰 Déduction:', {
+      console.log('💰 Déduction du depositBalance:', {
         totalCost,
-        deductFromDeposit,
-        deductFromWithdrawable
+        currentDepositBalance,
+        remaining: currentDepositBalance - totalCost
       })
 
-      // Mettre à jour les soldes
+      // Déduire uniquement du depositBalance (jamais du withdrawableBalance)
       transaction.update(userRef, {
         balance: increment(-totalCost),
-        depositBalance: increment(-deductFromDeposit),
-        withdrawableBalance: increment(-deductFromWithdrawable),
+        depositBalance: increment(-totalCost), // Déduire du solde de dépôt uniquement
         totalInvested: increment(totalCost),
         hasInvested: true
       })
