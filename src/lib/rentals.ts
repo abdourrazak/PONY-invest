@@ -73,9 +73,9 @@ export async function createRental(
       const currentBalance = userData.balance || 0
       const currentDepositBalance = userData.depositBalance || 0
 
-      // Vérifier que le depositBalance est suffisant
-      if (currentDepositBalance < totalCost) {
-        throw new Error(`Solde de dépôt insuffisant. Vous avez ${currentDepositBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA. Veuillez faire un dépôt.`)
+      // Vérifier que le balance total est suffisant
+      if (currentBalance < totalCost) {
+        throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
       }
 
       console.log('💰 Déduction du depositBalance:', {

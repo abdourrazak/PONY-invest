@@ -374,6 +374,11 @@ export default function ProduitsPage() {
       
       setUserRentals(updatedRentals)
       
+      // Rediriger vers l'onglet Activité après un court délai
+      setTimeout(() => {
+        setActiveTab('activity')
+      }, 500)
+      
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
     } catch (error: any) {
       console.error('Erreur lors de l\'investissement:', error)
