@@ -205,9 +205,15 @@ export default function ProduitsPage() {
       // Collecter les gains via la fonction Firestore
       await collectRentalEarnings(currentUser.uid, rental.id, accumulatedRevenue)
       
+      // Attendre un peu pour que Firestore se mette à jour
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
       // Recharger les données utilisateur pour voir la mise à jour
       const updatedRentals = await getUserRentals(currentUser.uid)
       setUserRentals(updatedRentals)
+      
+      // Forcer le rafraîchissement de l'affichage
+      console.log('🔄 Rentals mis à jour:', updatedRentals.length)
       
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
       
