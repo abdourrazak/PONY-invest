@@ -474,7 +474,8 @@ export async function getUserBalance(userId: string): Promise<number> {
     
     if (userDoc.exists()) {
       const userData = userDoc.data() as User;
-      return userData.balance || 0;
+      // S'assurer que le solde ne soit jamais négatif
+      return Math.max(0, userData.balance || 0);
     }
     
     return 0;
@@ -494,7 +495,8 @@ export function subscribeToUserBalance(
   const unsubscribe = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const userData = doc.data() as User;
-      callback(userData.balance || 0);
+      // S'assurer que le solde ne soit jamais négatif
+      callback(Math.max(0, userData.balance || 0));
     } else {
       callback(0);
     }

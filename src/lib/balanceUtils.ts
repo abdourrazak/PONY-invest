@@ -11,7 +11,8 @@ export async function getWithdrawableBalance(userId: string): Promise<number> {
     }
     
     const userData = userDoc.data() as User
-    return userData.withdrawableBalance || 0
+    // S'assurer que le solde ne soit jamais négatif
+    return Math.max(0, userData.withdrawableBalance || 0)
   } catch (error) {
     console.error('Erreur récupération solde retirable:', error)
     return 0
@@ -28,9 +29,10 @@ export function subscribeToWithdrawableBalance(
   const unsubscribe = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const userData = doc.data() as User
-      const withdrawableBalance = userData.withdrawableBalance || 0
-      const depositBalance = userData.depositBalance || 0
-      const totalBalance = userData.balance || 0
+      // S'assurer que les soldes ne soient jamais négatifs
+      const withdrawableBalance = Math.max(0, userData.withdrawableBalance || 0)
+      const depositBalance = Math.max(0, userData.depositBalance || 0)
+      const totalBalance = Math.max(0, userData.balance || 0)
       
       callback(withdrawableBalance, depositBalance, totalBalance)
     } else {
@@ -75,9 +77,9 @@ export async function getBalanceBreakdown(userId: string): Promise<{
     const userData = userDoc.data() as User
     
     return {
-      totalBalance: userData.balance || 0,
-      depositBalance: userData.depositBalance || 0,
-      withdrawableBalance: userData.withdrawableBalance || 0,
+      totalBalance: Math.max(0, userData.balance || 0),
+      depositBalance: Math.max(0, userData.depositBalance || 0),
+      withdrawableBalance: Math.max(0, userData.withdrawableBalance || 0),
       breakdown: {
         signupBonus: 1000, // Bonus d'inscription fixe
         referralCommissions: 0, // À calculer depuis referralCommissions
