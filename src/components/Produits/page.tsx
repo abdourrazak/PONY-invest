@@ -237,7 +237,7 @@ export default function ProduitsPage() {
       dailyRevenue: 500,
       duration: 120,
       totalRevenue: 60000,
-      image: '/p1.PNG',
+      image: '/p1.jpg',
       type: 'Fixé',
       vipLevel: 0,
       maxInvestment: 100,
@@ -252,7 +252,7 @@ export default function ProduitsPage() {
       dailyRevenue: 1400,
       duration: 120,
       totalRevenue: 168000,
-      image: '/p2.PNG',
+      image: '/p2.jpg',
       type: 'Fixé',
       vipLevel: 2,
       maxInvestment: 100,
@@ -453,7 +453,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p1.PNG" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p1.jpg" alt="LV1" width={64} height={64} className="object-cover w-full h-full" unoptimized />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -525,7 +525,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p2.PNG" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p2.jpg" alt="LV2" width={64} height={64} className="object-cover w-full h-full" unoptimized />
             </div>
             
             <div className="flex-1 space-y-2">

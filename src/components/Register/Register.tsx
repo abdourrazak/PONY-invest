@@ -208,7 +208,7 @@ export default function Register() {
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
             <div className="relative z-10 flex flex-col items-center">
               <div className="text-white text-2xl mb-1">🌍</div>
-              <span className="text-white font-bold text-sm leading-none">Global</span>
+              <span className="text-white font-bold text-sm leading-none">PONY</span>
             </div>
           </div>
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">

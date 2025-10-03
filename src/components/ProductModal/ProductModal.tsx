@@ -245,7 +245,7 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
           {/* Product Header */}
           <div className="flex items-center space-x-4 bg-gray-50 backdrop-blur-sm p-4 rounded-2xl border border-gray-200">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg">
-              <NextImage src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" />
+              <NextImage src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" unoptimized />
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-gray-800 text-lg">{product.name}</h3>

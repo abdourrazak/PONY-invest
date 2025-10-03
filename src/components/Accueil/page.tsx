@@ -132,7 +132,7 @@ export default function AccueilPage() {
       dailyRevenue: 500,
       duration: 120,
       totalRevenue: 60000,
-      image: '/p1.PNG',
+      image: '/p1.jpg',
       type: 'Fixé',
       vipLevel: 0,
       maxInvestment: 100,
@@ -147,7 +147,7 @@ export default function AccueilPage() {
       dailyRevenue: 1400,
       duration: 120,
       totalRevenue: 168000,
-      image: '/p2.PNG',
+      image: '/p2.jpg',
       type: 'Fixé',
       vipLevel: 2,
       maxInvestment: 100,
@@ -332,7 +332,7 @@ export default function AccueilPage() {
               <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center relative">
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                  <span className="text-white font-bold text-[8px] leading-none">PONY</span>
                 </div>
               </div>
               <div>
@@ -454,7 +454,7 @@ export default function AccueilPage() {
             
             <div className="flex items-start space-x-3">
               <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p1.PNG" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
+                <Image src="/p1.jpg" alt="LV1" width={64} height={64} className="object-cover w-full h-full" unoptimized />
               </div>
               
               <div className="flex-1 space-y-2">
@@ -525,7 +525,7 @@ export default function AccueilPage() {
             
             <div className="flex items-start space-x-3">
               <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p2.PNG" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
+                <Image src="/p2.jpg" alt="LV2" width={64} height={64} className="object-cover w-full h-full" unoptimized />
               </div>
               
               <div className="flex-1 space-y-2">
