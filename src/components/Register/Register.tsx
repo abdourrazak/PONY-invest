@@ -52,8 +52,12 @@ export default function Register() {
     // Validation téléphone
     if (!formData.phone) {
       newErrors.phone = 'Le numéro de téléphone est requis'
-    } else if (!/^6[0-9]{8}$/.test(formData.phone)) {
-      newErrors.phone = 'Format: 6XXXXXXXX'
+    } else {
+      // Extraire le numéro local (sans indicatif pays)
+      const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
+      if (!/^6[0-9]{8}$/.test(localNumber)) {
+        newErrors.phone = 'Format: 6XXXXXXXX'
+      }
     }
 
     // Validation mot de passe
@@ -105,9 +109,12 @@ export default function Register() {
         finalCodeType: typeof finalReferralCode
       })
       
+      // Extraire le numéro local pour l'inscription
+      const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
+      
       // Inscription avec Firebase Auth + Firestore
       const result = await registerUser(
-        formData.phone,
+        localNumber,
         formData.password,
         finalReferralCode
       )

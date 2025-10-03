@@ -32,8 +32,12 @@ export default function Login() {
 
     if (!formData.phone) {
       newErrors.phone = 'Le numéro de téléphone est requis'
-    } else if (!/^6[0-9]{8}$/.test(formData.phone)) {
-      newErrors.phone = 'Format: 6XXXXXXXX'
+    } else {
+      // Extraire le numéro local (sans indicatif pays)
+      const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
+      if (!/^6[0-9]{8}$/.test(localNumber)) {
+        newErrors.phone = 'Format: 6XXXXXXXX'
+      }
     }
 
     if (!formData.password) {
@@ -52,7 +56,9 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const result = await authLoginUser(formData.phone, formData.password)
+      // Extraire le numéro local pour la connexion
+      const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
+      const result = await authLoginUser(localNumber, formData.password)
       
       if (result.success && result.user) {
         localStorage.setItem('userPhone', formData.phone)
