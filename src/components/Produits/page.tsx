@@ -237,7 +237,7 @@ export default function ProduitsPage() {
       dailyRevenue: 500,
       duration: 120,
       totalRevenue: 60000,
-      image: '/p1.png',
+      image: '/p1.PNG',
       type: 'Fixé',
       vipLevel: 0,
       maxInvestment: 100,
@@ -252,7 +252,7 @@ export default function ProduitsPage() {
       dailyRevenue: 1400,
       duration: 120,
       totalRevenue: 168000,
-      image: '/p2.png',
+      image: '/p2.PNG',
       type: 'Fixé',
       vipLevel: 2,
       maxInvestment: 100,
@@ -267,7 +267,7 @@ export default function ProduitsPage() {
       dailyRevenue: 3500,
       duration: 120,
       totalRevenue: 420000,
-      image: '/p3.png',
+      image: '/p3.JPG',
       type: 'Fixé',
       vipLevel: 3,
       maxInvestment: 100,
@@ -282,7 +282,7 @@ export default function ProduitsPage() {
       dailyRevenue: 8500,
       duration: 120,
       totalRevenue: 1020000,
-      image: '/p4.png',
+      image: '/p4.JPG',
       type: 'Fixé',
       vipLevel: 4,
       maxInvestment: 100,
@@ -297,7 +297,7 @@ export default function ProduitsPage() {
       dailyRevenue: 12000,
       duration: 120,
       totalRevenue: 1440000,
-      image: '/p5.png',
+      image: '/p5.JPG',
       type: 'Fixé',
       vipLevel: 5,
       maxInvestment: 100,
@@ -312,7 +312,7 @@ export default function ProduitsPage() {
       dailyRevenue: 28500,
       duration: 120,
       totalRevenue: 3420000,
-      image: '/p6.png',
+      image: '/p6.JPG',
       type: 'Fixé',
       vipLevel: 6,
       maxInvestment: 100,
@@ -327,7 +327,7 @@ export default function ProduitsPage() {
       dailyRevenue: 47000,
       duration: 120,
       totalRevenue: 5640000,
-      image: '/p7.png',
+      image: '/p7.jpg',
       type: 'Fixé',
       vipLevel: 7,
       maxInvestment: 100,
@@ -453,7 +453,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p1.png" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p1.PNG" alt="LV1" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -525,7 +525,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p2.png" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p2.PNG" alt="LV2" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -571,7 +571,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p3.png" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p3.JPG" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -617,7 +617,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p4.png" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p4.JPG" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -663,7 +663,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p5.png" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p5.JPG" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -709,7 +709,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p6.png" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p6.JPG" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
@@ -755,7 +755,7 @@ export default function ProduitsPage() {
           
           <div className="flex items-start space-x-3">
             <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p7.png" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
+              <Image src="/p7.jpg" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
             </div>
             
             <div className="flex-1 space-y-2">
