@@ -3,6 +3,7 @@ import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import { ArrowLeft } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
+import Image from 'next/image'
 
 export default function ProposPage() {
   return (
@@ -18,7 +19,7 @@ export default function ProposPage() {
               <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center mr-3 border border-white/30">
                 <span className="text-white text-base">ℹ️</span>
               </div>
-              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">À propos de Global</h1>
+              <h1 className="text-white text-base font-black tracking-wide drop-shadow-lg">À propos de Pony AI</h1>
             </div>
             <div className="w-5"></div>
           </div>
@@ -27,15 +28,17 @@ export default function ProposPage() {
 
       {/* Main Content */}
       <main className="max-w-md mx-auto px-4 py-6 space-y-6 pb-20">
-        {/* Company Title */}
+        {/* Company Logo & Title */}
         <div className="text-center">
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-6 shadow-xl">
-            <h1 className="text-3xl font-black mb-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">Global Holdings</h1>
+            <div className="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg">
+              <Image src="/ponyHily.png" alt="Pony AI Logo" width={96} height={96} className="object-cover w-full h-full" unoptimized />
+            </div>
+            <h1 className="text-3xl font-black mb-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">Pony AI Inc.</h1>
             <div className="w-20 h-1 bg-white/50 mx-auto mb-3 rounded-full"></div>
             <p className="text-white/80 text-sm leading-relaxed font-medium">
-              <span className="font-bold text-white">Advanced Semiconductor Materials Lithography</span> - Le leader mondial dans la fabrication 
-              de machines de lithographie ultra-sophistiquées pour la production de puces 
-              électroniques de nouvelle génération.
+              <span className="font-bold text-white">Pionnier de la Conduite Autonome</span> - Leader mondial dans le développement 
+              de technologies de véhicules autonomes et d'intelligence artificielle pour la mobilité du futur.
             </p>
           </div>
         </div>
@@ -64,7 +67,7 @@ export default function ProposPage() {
                 </svg>
               </div>
               <div className="text-blue-400 text-xs font-bold mb-2">Siège Social</div>
-              <div className="text-white text-sm font-black">Veldhoven, Pays-Bas</div>
+              <div className="text-white text-sm font-black">Fremont, CA, USA</div>
             </div>
 
             {/* Fondation */}
@@ -75,7 +78,7 @@ export default function ProposPage() {
                 </svg>
               </div>
               <div className="text-green-400 text-xs font-bold mb-2">Fondation</div>
-              <div className="text-white text-sm font-black">1984</div>
+              <div className="text-white text-sm font-black">2016</div>
             </div>
 
             {/* Employés */}
@@ -86,7 +89,7 @@ export default function ProposPage() {
                 </svg>
               </div>
               <div className="text-purple-400 text-xs font-bold mb-2">Employés</div>
-              <div className="text-white text-sm font-black">+40 000</div>
+              <div className="text-white text-sm font-black">+1 000</div>
             </div>
 
             {/* Secteur */}
@@ -97,7 +100,7 @@ export default function ProposPage() {
                 </svg>
               </div>
               <div className="text-orange-400 text-xs font-bold mb-2">Secteur</div>
-              <div className="text-white text-sm font-black">Semi-conducteurs</div>
+              <div className="text-white text-sm font-black">Véhicules Autonomes</div>
             </div>
           </div>
         </div>
@@ -106,18 +109,18 @@ export default function ProposPage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-              <span className="text-white text-lg">🔬</span>
+              <span className="text-white text-lg">🚗</span>
             </div>
             <h3 className="text-lg font-black text-white">Notre Spécialité</h3>
           </div>
           <p className="text-white/80 text-sm leading-relaxed font-medium">
-            Global est spécialisée dans la <span className="font-black text-blue-400">fabrication de machines de lithographie ultra-sophistiquées</span> qui 
-            permettent de graver des circuits microscopiques sur les microprocesseurs. Ces équipements sont 
-            <span className="font-black text-green-400">indispensables</span> pour la production de puces électroniques modernes.
+            Pony AI est spécialisée dans le <span className="font-black text-blue-400">développement de technologies de conduite autonome</span> et 
+            d'intelligence artificielle pour révolutionner la mobilité. Nos solutions sont 
+            <span className="font-black text-green-400">à la pointe de l'innovation</span> dans l'industrie des véhicules autonomes.
           </p>
         </div>
 
-        {/* EUV Technology Section */}
+        {/* Autonomous Technology Section */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8">
           {/* Section Header */}
           <div className="px-5 py-4 border-b border-white/20">
@@ -127,27 +130,30 @@ export default function ProposPage() {
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-white">Technologie EUV - Notre Innovation Phare</h3>
+              <h3 className="text-base font-semibold text-white">Technologie Autonome - Notre Innovation Phare</h3>
             </div>
           </div>
 
-          {/* EUV Image */}
+          {/* Robotrust Image */}
           <div className="relative rounded-lg overflow-hidden mb-4">
-            <img 
-              src="/asml2.jpeg" 
-              alt="Technologie EUV Global" 
+            <Image 
+              src="/Robotrust.png" 
+              alt="Technologie Robotrust Pony AI" 
+              width={400}
+              height={200}
               className="w-full h-48 object-cover"
+              unoptimized
             />
           </div>
 
-          {/* EUV Content */}
+          {/* Autonomous Content */}
           <div className="p-5">
-            <h4 className="text-lg font-bold text-white mb-3">Extreme Ultraviolet Lithography (EUV)</h4>
+            <h4 className="text-lg font-bold text-white mb-3">Robotrust - Intelligence Artificielle Avancée</h4>
             
             <p className="text-white/80 text-sm leading-relaxed mb-4">
-              Global est <span className="font-semibold text-white">la seule entreprise au monde</span> à maîtriser cette technologie révolutionnaire. L'EUV permet de 
-              fabriquer des puces électroniques extrêmement fines et puissantes, notamment les processeurs de <span className="font-semibold text-white">3 
-              nanomètres ou moins</span>.
+              Pony AI développe des <span className="font-semibold text-white">systèmes de conduite autonome de niveau 4 et 5</span> utilisant l'intelligence artificielle 
+              la plus avancée. Notre technologie Robotrust permet une <span className="font-semibold text-white">conduite entièrement autonome</span> 
+              dans des environnements urbains complexes.
             </p>
 
             {/* Applications Section */}
@@ -156,69 +162,120 @@ export default function ProposPage() {
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <span className="text-purple-400 mr-2 mt-0.5">•</span>
-                  <span className="text-white/80 text-sm">Smartphones de nouvelle génération</span>
+                  <span className="text-white/80 text-sm">Robotaxis autonomes</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-purple-400 mr-2 mt-0.5">•</span>
-                  <span className="text-white/80 text-sm">Ordinateurs haute performance</span>
+                  <span className="text-white/80 text-sm">Livraison autonome</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-purple-400 mr-2 mt-0.5">•</span>
-                  <span className="text-white/80 text-sm">Voitures autonomes et électriques</span>
+                  <span className="text-white/80 text-sm">Transport public intelligent</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-purple-400 mr-2 mt-0.5">•</span>
-                  <span className="text-white/80 text-sm">Objets connectés (IoT)</span>
+                  <span className="text-white/80 text-sm">Logistique et fret</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-purple-400 mr-2 mt-0.5">•</span>
-                  <span className="text-white/80 text-sm">Intelligence artificielle</span>
+                  <span className="text-white/80 text-sm">Véhicules personnels autonomes</span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Strategic Position Section */}
+        {/* Team Management Section */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8">
           {/* Section Header */}
           <div className="px-5 py-4 border-b border-white/20">
             <div className="flex items-center mb-2">
               <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-white">Position Stratégique Mondiale</h3>
+              <h3 className="text-base font-semibold text-white">Équipe de Direction Mondiale</h3>
             </div>
+          </div>
+
+          {/* Team Image */}
+          <div className="relative rounded-lg overflow-hidden mb-4">
+            <Image 
+              src="/TeamManager.png" 
+              alt="Équipe de direction Pony AI" 
+              width={400}
+              height={200}
+              className="w-full h-48 object-cover"
+              unoptimized
+            />
           </div>
 
           {/* Content */}
           <div className="p-5">
-            <h4 className="text-lg font-bold text-white mb-3">Quasi-Monopole EUV</h4>
+            <h4 className="text-lg font-bold text-white mb-3">Leadership d'Excellence</h4>
             
             <p className="text-white/80 text-sm leading-relaxed mb-4">
-              Global détient un <span className="font-semibold text-white">quasi-monopole mondial</span> dans les équipements EUV. Sans Global, aucun grand 
-              fabricant de puces ne peut produire les dernières générations de processeurs.
+              Pony AI est dirigée par une <span className="font-semibold text-white">équipe d'experts de renommée mondiale</span> issus des plus grandes entreprises 
+              technologiques. Notre leadership combine expertise technique et vision stratégique pour <span className="font-semibold text-white">révolutionner la mobilité</span>.
             </p>
 
-            {/* Clients Section */}
+            {/* Leadership Section */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4 mb-4">
-              <h5 className="text-white font-semibold text-sm mb-3">Clients Principaux :</h5>
+              <h5 className="text-white font-semibold text-sm mb-3">Expertise Clé :</h5>
               <div className="flex flex-wrap gap-3">
-                <span className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">TSMC</span>
-                <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">Intel</span>
-                <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">Samsung</span>
+                <span className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">Intelligence Artificielle</span>
+                <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">Robotique</span>
+                <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">Vision par Ordinateur</span>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Strategic Image */}
-            <div className="relative rounded-lg overflow-hidden">
-              <img 
-                src="/banner2.jpeg" 
-                alt="Position stratégique Global" 
-                className="w-full h-48 object-cover"
-              />
+        {/* Global Expansion Section */}
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8">
+          {/* Section Header */}
+          <div className="px-5 py-4 border-b border-white/20">
+            <div className="flex items-center mb-2">
+              <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-white">Expansion Mondiale</h3>
+            </div>
+          </div>
+
+          {/* Global Expansion Image */}
+          <div className="relative rounded-lg overflow-hidden mb-4">
+            <Image 
+              src="/GlobalExpanssion.png" 
+              alt="Expansion mondiale Pony AI" 
+              width={400}
+              height={200}
+              className="w-full h-48 object-cover"
+              unoptimized
+            />
+          </div>
+
+          {/* Content */}
+          <div className="p-5">
+            <h4 className="text-lg font-bold text-white mb-3">Présence Internationale</h4>
+            
+            <p className="text-white/80 text-sm leading-relaxed mb-4">
+              Pony AI opère dans <span className="font-semibold text-white">plusieurs marchés clés mondiaux</span> avec des centres de R&D et des déploiements 
+              commerciaux en Amérique du Nord, en Chine et en expansion vers l'Europe et d'autres régions stratégiques.
+            </p>
+
+            {/* Markets Section */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4">
+              <h5 className="text-white font-semibold text-sm mb-3">Marchés Principaux :</h5>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium text-center">🇺🇸 États-Unis</span>
+                <span className="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium text-center">🇨🇳 Chine</span>
+                <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium text-center">🇪🇺 Europe</span>
+                <span className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium text-center">🌏 Asie-Pacifique</span>
+              </div>
             </div>
           </div>
         </div>
@@ -239,7 +296,7 @@ export default function ProposPage() {
 
           {/* Investment Cards */}
           <div className="p-5 space-y-4">
-            {/* Leader Mondial Card */}
+            {/* Pionnier Technologique Card */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3 mt-1">
@@ -248,15 +305,15 @@ export default function ProposPage() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-white font-semibold text-base mb-2">Leader Mondial Ultra Spécialisé</h4>
+                  <h4 className="text-white font-semibold text-base mb-2">Pionnier de la Conduite Autonome</h4>
                   <p className="text-white/80 text-sm leading-relaxed">
-                    Position dominante dans un secteur technologique critique avec des barrières d'entrée extrêmement élevées.
+                    Leader technologique dans un marché en forte expansion avec des perspectives de croissance exceptionnelles.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Forte Croissance Card */}
+            {/* Marché en Expansion Card */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3 mt-1">
@@ -265,15 +322,15 @@ export default function ProposPage() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-white font-semibold text-base mb-2">Forte Croissance</h4>
+                  <h4 className="text-white font-semibold text-base mb-2">Marché en Forte Expansion</h4>
                   <p className="text-white/80 text-sm leading-relaxed">
-                    Croissance soutenue grâce à la demande mondiale croissante en puces électroniques et en intelligence artificielle.
+                    Le marché des véhicules autonomes connaît une croissance exponentielle avec des applications multiples.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Position Incontournable Card */}
+            {/* Innovation Continue Card */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3 mt-1">
@@ -282,9 +339,9 @@ export default function ProposPage() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-white font-semibold text-base mb-2">Position Incontournable</h4>
+                  <h4 className="text-white font-semibold text-base mb-2">Innovation Continue</h4>
                   <p className="text-white/80 text-sm leading-relaxed">
-                    Technologie exclusive et indispensable pour tous les grands fabricants de semi-conducteurs mondiaux.
+                    Investissement massif en R&D pour maintenir l'avance technologique et développer de nouvelles solutions.
                   </p>
                 </div>
               </div>
@@ -292,66 +349,45 @@ export default function ProposPage() {
           </div>
         </div>
 
-        {/* Institutional Shareholders Section */}
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8">
+        {/* Disclaimer Section */}
+        <div className="bg-gradient-to-br from-red-900/20 to-orange-900/20 backdrop-blur-md border border-red-500/30 rounded-xl p-6 mb-8">
           {/* Section Header */}
-          <div className="px-5 py-4 border-b border-white/20">
+          <div className="px-5 py-4 border-b border-red-500/30">
             <div className="flex items-center mb-2">
-              <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-white">Actionnariat Institutionnel</h3>
+              <h3 className="text-base font-semibold text-white">Avertissement Important</h3>
             </div>
           </div>
 
-          {/* Content */}
+          {/* Disclaimer Content */}
           <div className="p-5">
-            <p className="text-white/80 text-sm leading-relaxed mb-6">
-              Les principaux actionnaires d'Global incluent des <span className="font-semibold text-white">institutions financières de renom</span> et des fonds de 
-              pension internationaux, témoignant de la confiance du marché dans la stratégie et la performance 
-              de l'entreprise.
-            </p>
-
-            {/* Institutional Investors Cards */}
-            <div className="space-y-3">
-              {/* BlackRock */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mb-2">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-                      <path fillRule="evenodd" d="M3 8a2 2 0 012-2v9a2 2 0 002 2h8a2 2 0 002-2V6a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <h4 className="text-white font-medium text-sm">BlackRock</h4>
-                </div>
-              </div>
-
-              {/* Vanguard */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-2">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M3 4a1 1 0 00-1 1v1H4a1 1 0 011 1v1a1 1 0 01-1 1H3a1 1 0 00-1-1V6a1 1 0 011-1h2.586a1 1 0 011.707.293l2.586 2.586a1 1 0 010 1.414l-2.586 2.586a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <h4 className="text-white font-medium text-sm">Vanguard</h4>
-                </div>
-              </div>
-
-              {/* Amundi */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg flex items-center justify-center mb-2">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <h4 className="text-white font-medium text-sm">Amundi</h4>
-                </div>
-              </div>
+            <div className="space-y-4 text-xs leading-relaxed">
+              <p className="text-white/90">
+                <span className="font-semibold text-red-300">Avertissement :</span> Cette présentation a été préparée par Pony AI Inc. à des fins d'information uniquement. 
+                Aucune déclaration, garantie ou engagement, expresse ou implicite, n'est fait par la Société concernant l'exactitude, 
+                l'équité, l'exhaustivité ou la justesse des informations présentées.
+              </p>
+              
+              <p className="text-white/80">
+                <span className="font-semibold text-orange-300">Déclarations prospectives :</span> Certaines déclarations de cette présentation sont des déclarations prospectives 
+                qui reflètent les intentions, croyances ou attentes actuelles de la Société concernant l'avenir. Ces déclarations ne sont pas 
+                des garanties de performance future.
+              </p>
+              
+              <p className="text-white/80">
+                <span className="font-semibold text-yellow-300">Risques d'investissement :</span> Cette présentation ne constitue pas une offre de vente ou une invitation 
+                à acheter des titres de la Société. Tout investissement comporte des risques et les performances passées ne préjugent pas 
+                des résultats futurs.
+              </p>
+              
+              <p className="text-red-200 font-medium text-center mt-6 p-3 bg-red-900/30 rounded-lg border border-red-500/30">
+                ⚠️ Les investisseurs doivent effectuer leurs propres recherches et consulter des conseillers financiers qualifiés 
+                avant de prendre toute décision d'investissement.
+              </p>
             </div>
           </div>
         </div>
@@ -373,22 +409,22 @@ export default function ProposPage() {
           {/* Content */}
           <div className="p-5">
             <p className="text-white text-sm leading-relaxed mb-4">
-              Dans l'industrie des semi-conducteurs, la demande pour une <span className="font-semibold text-yellow-400">productivité plus élevée</span>, des <span className="font-semibold text-green-400">coûts 
-              plus bas</span> et des <span className="font-semibold text-pink-400">processus plus simples</span> représente une opportunité de croissance à long terme pour 
-              Global.
+              Dans l'industrie des véhicules autonomes, la demande pour une <span className="font-semibold text-yellow-400">mobilité plus sûre</span>, des <span className="font-semibold text-green-400">coûts 
+              de transport réduits</span> et des <span className="font-semibold text-pink-400">solutions plus intelligentes</span> représente une opportunité de croissance à long terme pour 
+              Pony AI.
             </p>
             
             <p className="text-white text-sm leading-relaxed mb-4">
-              Ses machines restent un <span className="font-semibold text-orange-400">élément essentiel</span> de la chaîne d'approvisionnement en puces, et ses clients 
-              s'appuieront sur la technologie d'Global pour les années à venir.
+              Nos technologies restent un <span className="font-semibold text-orange-400">élément essentiel</span> de la révolution de la mobilité, et nos partenaires 
+              s'appuieront sur l'innovation de Pony AI pour les décennies à venir.
             </p>
 
             {/* Strategic Positioning Box */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4 mt-4">
               <h4 className="text-white font-semibold text-sm mb-2">Positionnement Stratégique</h4>
               <p className="text-white/80 text-xs leading-relaxed">
-                Global continue d'investir massivement dans la R&D pour maintenir son avance technologique et répondre aux 
-                besoins futurs de l'industrie des semi-conducteurs.
+                Pony AI continue d'investir massivement dans la R&D pour maintenir son avance technologique et développer 
+                les solutions de mobilité autonome de demain.
               </p>
             </div>
           </div>

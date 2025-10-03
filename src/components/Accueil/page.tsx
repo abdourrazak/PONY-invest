@@ -50,7 +50,7 @@ export default function AccueilPage() {
   const services = [
     { title: 'Recharge', icon: Plus, color: 'bg-gradient-to-r from-green-500 to-emerald-500', href: '/recharge' },
     { title: 'Retrait', icon: Minus, color: 'bg-gradient-to-r from-red-500 to-pink-500', href: '/retrait' },
-    { title: 'Produits', icon: Smartphone, color: 'bg-gradient-to-r from-blue-500 to-cyan-500', href: '/produits' },
+    { title: 'À propos', icon: Smartphone, color: 'bg-gradient-to-r from-blue-500 to-cyan-500', href: '/propos' },
     { title: 'Cadeau', icon: Gift, color: 'bg-gradient-to-r from-pink-500 to-rose-500', href: '/cadeau', special: 'gift' },
     { title: 'Compte', icon: Wallet, color: 'bg-gradient-to-r from-purple-500 to-indigo-500', href: '/compte' },
     { title: 'Check-in Quotidien', icon: TrendingUp, color: 'bg-gradient-to-r from-yellow-500 to-orange-500', href: '/check-Quotidien' },
