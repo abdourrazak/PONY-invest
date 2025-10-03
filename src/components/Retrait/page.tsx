@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Bell } from 'lucide-react'
+import { ArrowLeft, Bell, Eye, EyeOff, Wallet, AlertCircle, CheckCircle, Clock } from 'lucide-react'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
@@ -187,15 +187,14 @@ export default function RetraitPage() {
               <Link href="/" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95">
                 <ArrowLeft size={18} className="text-white" />
               </Link>
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  <Image src="/ponyHily.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
                 </div>
               </div>
               <div>
-                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <h1 className="text-white font-bold text-xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">PONY</h1>
                 <p className="text-white/60 text-xs">Retrait</p>
               </div>
             </div>

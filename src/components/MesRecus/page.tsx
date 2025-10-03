@@ -221,7 +221,7 @@ export default function MesRecus() {
   const downloadReceipt = (transaction: Transaction) => {
     // Créer un reçu simple en format texte
     const receiptContent = `
-AXML GLOBAL - REÇU DE TRANSACTION
+AXML PONY - REÇU DE TRANSACTION
 ================================
 
 Référence: ${transaction.reference || transaction.id}
@@ -233,7 +233,7 @@ ${transaction.method ? `Méthode: ${transaction.method}` : ''}
 ${transaction.description ? `Description: ${transaction.description}` : ''}
 
 Merci de votre confiance !
-AXML Global - Plateforme d'investissement
+AXML PONY - Plateforme d'investissement
     `
 
     const blob = new Blob([receiptContent], { type: 'text/plain' })

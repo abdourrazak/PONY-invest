@@ -329,14 +329,11 @@ export default function AccueilPage() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center relative">
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">PONY</span>
-                </div>
+              <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center relative overflow-hidden">
+                <Image src="/ponyHily.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full" unoptimized />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">PONY</h1>
                 <p className="text-white/60 text-xs">Plateforme d'investissement</p>
               </div>
             </div>

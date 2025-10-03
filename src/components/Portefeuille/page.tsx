@@ -225,7 +225,7 @@ export default function Portefeuille() {
           <div className="w-8 h-8 mr-3">
             <Image
               src="/asml_logo_.png"
-              alt="Global Logo"
+              alt="PONY Logo"
               width={32}
               height={32}
               className="w-full h-full object-contain animate-spin"

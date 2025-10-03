@@ -128,13 +128,13 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
               </div>
             </div>
 
-            {/* Global */}
+            {/* PONY */}
             <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-sm p-3 rounded-xl border border-white/10">
               <div className="w-8 h-8 bg-orange-500/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0 border border-orange-400/30">
                 <span className="text-base">🌟</span>
               </div>
               <div>
-                <p className="text-white/90 text-xs font-bold">Investissement Global</p>
+                <p className="text-white/90 text-xs font-bold">Investissement PONY</p>
                 <p className="text-white/70 text-xs">Revenus en 90 jours</p>
               </div>
             </div>

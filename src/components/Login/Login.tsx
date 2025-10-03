@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import WelcomePopup from '@/components/WelcomePopup/WelcomePopup'
-import { Eye, EyeOff, Smartphone, Lock, ArrowRight } from 'lucide-react'
-import { loginUser } from '@/lib/firebaseAuth'
+import { signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from 'firebase/auth'
+import { auth, db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { loginUser as authLoginUser } from '@/lib/firebaseAuth'
+import { Smartphone, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import WelcomePopup from '@/components/WelcomePopup/WelcomePopup'
 
 export default function Login() {
   const router = useRouter()
@@ -49,7 +51,7 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const result = await loginUser(formData.phone, formData.password)
+      const result = await authLoginUser(formData.phone, formData.password)
       
       if (result.success && result.user) {
         localStorage.setItem('userPhone', formData.phone)
@@ -109,15 +111,14 @@ export default function Login() {
       
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
         <div className="mb-8 text-center">
-          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center relative animate-pulse">
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center relative animate-pulse overflow-hidden">
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="text-white text-2xl mb-1">🌍</div>
-              <span className="text-white font-bold text-sm leading-none">PONY</span>
+            <div className="relative z-10 w-full h-full flex items-center justify-center">
+              <Image src="/ponyHily.png" alt="PONY AI" width={80} height={80} className="object-cover w-full h-full rounded-full" unoptimized />
             </div>
           </div>
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-            Connexion à Global
+            Connexion à PONY
           </div>
         </div>
 
@@ -144,7 +145,7 @@ export default function Login() {
         <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
           <div className="bg-black/30 backdrop-blur-sm p-4 text-center border-b border-white/10">
             <h1 className="text-lg font-black text-white/90 mb-1">Connexion</h1>
-            <p className="text-white/70 text-xs font-bold">Accédez à votre compte Global</p>
+            <p className="text-white/70 text-xs font-bold">Accédez à votre compte PONY</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-4 space-y-4">

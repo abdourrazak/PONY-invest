@@ -6,7 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'GLOBAL Platform',
+  title: 'PONY Platform',
   description: 'Plateforme d\'investissement AXML',
 }
 

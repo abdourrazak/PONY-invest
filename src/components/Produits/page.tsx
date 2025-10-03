@@ -396,15 +396,14 @@ export default function ProduitsPage() {
               <Link href="/" className="text-white hover:text-purple-200 transition-colors p-2 rounded-lg hover:bg-white/10">
                 <ArrowLeft size={20} />
               </Link>
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  <Image src="/ponyHily.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
                 </div>
               </div>
               <div>
-                <h1 className="text-white font-bold text-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">GLOBAL</h1>
+                <h1 className="text-white font-bold text-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">PONY</h1>
                 <p className="text-white/60 text-xs">Forfaits d'investissement</p>
               </div>
             </div>

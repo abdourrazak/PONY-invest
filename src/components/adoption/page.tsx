@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import NavigationLink from '../NavigationLink/NavigationLink'
 import { ArrowLeft, Bell } from 'lucide-react'
+import Image from 'next/image'
 
 export default function AdoptionPage() {
   const [activeTab, setActiveTab] = useState('valide')
@@ -14,11 +15,10 @@ export default function AdoptionPage() {
         <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="text-white text-xs mb-0.5">🌍</div>
-                  <span className="text-white font-bold text-[8px] leading-none">Global</span>
+                <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  <Image src="/ponyHily.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
                 </div>
               </div>
               <div>
