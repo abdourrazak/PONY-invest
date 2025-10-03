@@ -330,7 +330,7 @@ export default function AccueilPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center relative overflow-hidden">
-                <Image src="/ponyHily.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full" unoptimized />
+                <Image src="/ponyAI.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full" unoptimized />
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">PONY</h1>

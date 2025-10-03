@@ -32,7 +32,7 @@ export default function ProposPage() {
         <div className="text-center">
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-6 shadow-xl">
             <div className="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg">
-              <Image src="/ponyHily.png" alt="Pony AI Logo" width={96} height={96} className="object-cover w-full h-full" unoptimized />
+              <Image src="/ponyAI.png" alt="Pony AI Logo" width={96} height={96} className="object-cover w-full h-full" unoptimized />
             </div>
             <h1 className="text-3xl font-black mb-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">Pony AI Inc.</h1>
             <div className="w-20 h-1 bg-white/50 mx-auto mb-3 rounded-full"></div>
@@ -349,48 +349,6 @@ export default function ProposPage() {
           </div>
         </div>
 
-        {/* Disclaimer Section */}
-        <div className="bg-gradient-to-br from-red-900/20 to-orange-900/20 backdrop-blur-md border border-red-500/30 rounded-xl p-6 mb-8">
-          {/* Section Header */}
-          <div className="px-5 py-4 border-b border-red-500/30">
-            <div className="flex items-center mb-2">
-              <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <h3 className="text-base font-semibold text-white">Avertissement Important</h3>
-            </div>
-          </div>
-
-          {/* Disclaimer Content */}
-          <div className="p-5">
-            <div className="space-y-4 text-xs leading-relaxed">
-              <p className="text-white/90">
-                <span className="font-semibold text-red-300">Avertissement :</span> Cette présentation a été préparée par Pony AI Inc. à des fins d'information uniquement. 
-                Aucune déclaration, garantie ou engagement, expresse ou implicite, n'est fait par la Société concernant l'exactitude, 
-                l'équité, l'exhaustivité ou la justesse des informations présentées.
-              </p>
-              
-              <p className="text-white/80">
-                <span className="font-semibold text-orange-300">Déclarations prospectives :</span> Certaines déclarations de cette présentation sont des déclarations prospectives 
-                qui reflètent les intentions, croyances ou attentes actuelles de la Société concernant l'avenir. Ces déclarations ne sont pas 
-                des garanties de performance future.
-              </p>
-              
-              <p className="text-white/80">
-                <span className="font-semibold text-yellow-300">Risques d'investissement :</span> Cette présentation ne constitue pas une offre de vente ou une invitation 
-                à acheter des titres de la Société. Tout investissement comporte des risques et les performances passées ne préjugent pas 
-                des résultats futurs.
-              </p>
-              
-              <p className="text-red-200 font-medium text-center mt-6 p-3 bg-red-900/30 rounded-lg border border-red-500/30">
-                ⚠️ Les investisseurs doivent effectuer leurs propres recherches et consulter des conseillers financiers qualifiés 
-                avant de prendre toute décision d'investissement.
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Future Perspectives Section */}
         <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8">
