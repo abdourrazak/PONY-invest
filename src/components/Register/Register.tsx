@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Eye, EyeOff, Smartphone, Lock, ArrowRight, Users } from 'lucide-react'
 import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { registerUser, isReferralCodeValid } from '@/lib/firebaseAuth'
+import PhoneInput from '@/components/PhoneInput/PhoneInput'
 
 export default function Register() {
   const router = useRouter()
@@ -226,24 +227,17 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="p-4 space-y-4">
             {/* Phone Field */}
             <div>
-              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
+              <label className="flex items-center text-white/90 font-black mb-2 text-sm">
                 <Smartphone className="w-3 h-3 mr-1" />
                 Numéro de téléphone
               </label>
-              <input
-                type="tel"
+              <PhoneInput
                 value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="6XXXXXXXX"
-                style={{ fontSize: '16px' }}
-                className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
-                  errors.phone 
-                    ? 'border-red-400' 
-                    : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
-                } focus:outline-none shadow-sm`}
+                onChange={(value) => handleInputChange('phone', value)}
+                placeholder="Numéro de téléphone"
+                className={errors.phone ? 'border-red-400' : ''}
               />
               {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
-              <p className="text-blue-400 text-xs mt-1 font-bold">Format: 6XXXXXXXX</p>
             </div>
 
             {/* Password Field */}
