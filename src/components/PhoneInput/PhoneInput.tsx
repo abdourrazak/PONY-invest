@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown, Phone } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 interface Country {
   code: string
@@ -133,7 +133,7 @@ export default function PhoneInput({
             type="button"
             onClick={() => !disabled && setIsOpen(!isOpen)}
             disabled={disabled}
-            className={`flex items-center px-3 py-3 bg-black/30 backdrop-blur-sm border border-white/10 border-r-0 rounded-l-xl text-white hover:bg-black/40 transition-all duration-300 ${
+            className={`flex items-center px-3 py-3 bg-black/30 backdrop-blur-sm border border-white/10 border-r-0 rounded-l-xl text-white hover:bg-black/40 transition-all duration-300 h-[48px] ${
               disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
             } ${isOpen ? 'border-purple-400' : ''}`}
           >
@@ -185,18 +185,17 @@ export default function PhoneInput({
         </div>
 
         {/* Champ de saisie du numéro */}
-        <div className="flex-1 relative">
+        <div className="flex-1">
           <input
             type="tel"
             value={value}
             onChange={handlePhoneChange}
             placeholder={placeholder}
             disabled={disabled}
-            className={`w-full px-4 py-3 pl-10 bg-black/30 backdrop-blur-sm border border-white/10 border-l-0 rounded-r-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300 ${
+            className={`w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 border-l-0 rounded-r-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300 h-[48px] ${
               disabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           />
-          <Phone size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
         </div>
       </div>
 
