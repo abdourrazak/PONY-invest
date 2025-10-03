@@ -198,12 +198,6 @@ export default function PhoneInput({
           />
         </div>
       </div>
-
-      {/* Indicateur du pays sélectionné */}
-      <div className="mt-2 text-xs text-white/60 flex items-center">
-        <span className="mr-1">{selectedCountry.flag}</span>
-        <span>{selectedCountry.name} ({selectedCountry.dialCode})</span>
-      </div>
     </div>
   )
 }
