@@ -9,9 +9,9 @@ import { db } from '@/lib/firebase'
 
 interface Transaction {
   id: string
-  type: 'deposit' | 'withdrawal' | 'card_payment' | 'investment'
+  type: 'deposit' | 'withdrawal' | 'card_payment' | 'investment' | 'rental' | 'commission' | 'checkin' | 'gift'
   amount: number
-  status: 'pending' | 'approved' | 'rejected' | 'active'
+  status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed'
   createdAt: Timestamp
   updatedAt?: Timestamp
   method?: string
@@ -21,13 +21,16 @@ interface Transaction {
   description?: string
   level?: string
   quantity?: number
+  paymentMethod?: string
+  phoneNumber?: string
+  transactionImage?: string
 }
 
 export default function MesRecus() {
   const { currentUser } = useAuth()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'deposit' | 'withdrawal' | 'card_payment' | 'investment'>('all')
+  const [filter, setFilter] = useState<'all' | 'deposit' | 'withdrawal' | 'investment' | 'commission' | 'gift'>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
@@ -66,27 +69,124 @@ export default function MesRecus() {
 
     try {
       setLoading(true)
-      
-      // Charger les transactions
-      const transactionsRef = collection(db, 'transactions')
-      const q = query(
-        transactionsRef,
-        where('userId', '==', currentUser.uid),
-        orderBy('createdAt', 'desc')
-      )
-      
-      const querySnapshot = await getDocs(q)
       const transactionsList: Transaction[] = []
       
-      querySnapshot.forEach((doc) => {
-        const data = doc.data()
-        transactionsList.push({
-          id: doc.id,
-          ...data
-        } as Transaction)
-      })
+      // 1. Charger les transactions principales (dépôts/retraits)
+      try {
+        const transactionsRef = collection(db, 'transactions')
+        const q = query(
+          transactionsRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('createdAt', 'desc')
+        )
+        
+        const querySnapshot = await getDocs(q)
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          transactionsList.push({
+            id: doc.id,
+            type: data.type || 'deposit',
+            amount: data.amount || 0,
+            status: data.status || 'pending',
+            createdAt: data.createdAt || Timestamp.now(),
+            method: data.paymentMethod || data.method,
+            reference: data.reference || doc.id,
+            description: data.type === 'deposit' ? 'Dépôt de fonds' : 'Retrait de fonds',
+            phoneNumber: data.phoneNumber,
+            ...data
+          } as Transaction)
+        })
+      } catch (error) {
+        console.log('Erreur chargement transactions:', error)
+      }
 
-      // Charger les achats de cartes produits (si la collection existe)
+      // 2. Charger les investissements (rentals)
+      try {
+        const rentalsRef = collection(db, 'rentals')
+        const rentalsQuery = query(
+          rentalsRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('startDate', 'desc')
+        )
+        
+        const rentalsSnapshot = await getDocs(rentalsQuery)
+        rentalsSnapshot.forEach((doc) => {
+          const data = doc.data()
+          transactionsList.push({
+            id: doc.id,
+            type: 'investment',
+            amount: data.totalCost || (data.unitPrice || 0) * (data.quantity || 1),
+            status: 'active',
+            createdAt: data.startDate || data.createdAt || Timestamp.now(),
+            productName: data.productName || `Produit ${data.productId?.toUpperCase()}`,
+            level: data.productId?.toUpperCase(),
+            quantity: data.quantity || 1,
+            description: `Investissement ${data.productName || data.productId?.toUpperCase()}`,
+            reference: `INV-${doc.id.slice(-8).toUpperCase()}`
+          } as Transaction)
+        })
+      } catch (error) {
+        console.log('Erreur chargement investissements:', error)
+      }
+
+      // 3. Charger les commissions de parrainage
+      try {
+        const commissionsRef = collection(db, 'referralCommissions')
+        const commissionsQuery = query(
+          commissionsRef,
+          where('referrerId', '==', currentUser.uid),
+          orderBy('createdAt', 'desc')
+        )
+        
+        const commissionsSnapshot = await getDocs(commissionsQuery)
+        commissionsSnapshot.forEach((doc) => {
+          const data = doc.data()
+          transactionsList.push({
+            id: doc.id,
+            type: 'commission',
+            amount: data.amount || 0,
+            status: 'completed',
+            createdAt: data.createdAt || Timestamp.now(),
+            productName: `Commission ${data.level || 'Parrainage'}`,
+            description: `Commission de parrainage - ${data.productName || 'Investissement'}`,
+            reference: `COM-${doc.id.slice(-8).toUpperCase()}`,
+            level: data.level
+          } as Transaction)
+        })
+      } catch (error) {
+        console.log('Erreur chargement commissions:', error)
+      }
+
+      // 4. Charger les cadeaux et check-ins
+      try {
+        const giftsRef = collection(db, 'userGifts')
+        const giftsQuery = query(
+          giftsRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('claimedAt', 'desc')
+        )
+        
+        const giftsSnapshot = await getDocs(giftsQuery)
+        giftsSnapshot.forEach((doc) => {
+          const data = doc.data()
+          if (data.claimed) {
+            transactionsList.push({
+              id: doc.id,
+              type: 'gift',
+              amount: data.amount || 0,
+              status: 'completed',
+              createdAt: data.claimedAt || data.createdAt || Timestamp.now(),
+              productName: data.type === 'checkin' ? 'Check-in quotidien' : 'Cadeau',
+              description: data.type === 'checkin' ? 'Récompense check-in quotidien' : 'Cadeau reçu',
+              reference: `GIFT-${doc.id.slice(-8).toUpperCase()}`
+            } as Transaction)
+          }
+        })
+      } catch (error) {
+        console.log('Erreur chargement cadeaux:', error)
+      }
+
+      // 5. Charger les achats de cartes produits (si la collection existe)
       try {
         const cardPurchasesRef = collection(db, 'cardPurchases')
         const cardQuery = query(
@@ -100,42 +200,34 @@ export default function MesRecus() {
           const data = doc.data()
           transactionsList.push({
             id: doc.id,
-            type: 'card_payment',
-            ...data
+            type: 'investment',
+            amount: data.amount || 0,
+            status: data.status || 'completed',
+            createdAt: data.createdAt || Timestamp.now(),
+            productName: data.productName || 'Carte Produit',
+            description: `Achat carte produit - ${data.productName || 'Produit'}`,
+            reference: `CARD-${doc.id.slice(-8).toUpperCase()}`,
+            cardType: data.cardType
           } as Transaction)
         })
       } catch (error) {
         console.log('Collection cardPurchases non trouvée, ignorée')
       }
-
-      // Charger les investissements (rentals)
-      try {
-        const rentalsRef = collection(db, 'rentals')
-        const rentalsQuery = query(
-          rentalsRef,
-          where('userId', '==', currentUser.uid)
-        )
-        
-        const rentalsSnapshot = await getDocs(rentalsQuery)
-        rentalsSnapshot.forEach((doc) => {
-          const data = doc.data()
-          transactionsList.push({
-            id: doc.id,
-            type: 'investment',
-            amount: data.totalCost || (data.unitPrice || 0) * (data.quantity || 1),
-            status: 'active',
-            createdAt: data.startDate || Timestamp.now(),
-            productName: data.productName,
-            level: data.productId?.toUpperCase(),
-            quantity: data.quantity
-          } as Transaction)
-        })
-      } catch (error) {
-        console.log('Erreur chargement investissements:', error)
-      }
       
-      // Trier toutes les transactions par date
-      transactionsList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+      // Trier toutes les transactions par date (plus récentes en premier)
+      transactionsList.sort((a, b) => {
+        const timeA = a.createdAt?.toMillis() || 0
+        const timeB = b.createdAt?.toMillis() || 0
+        return timeB - timeA
+      })
+      
+      console.log(`✅ ${transactionsList.length} transactions chargées:`, {
+        deposits: transactionsList.filter(t => t.type === 'deposit').length,
+        withdrawals: transactionsList.filter(t => t.type === 'withdrawal').length,
+        investments: transactionsList.filter(t => t.type === 'investment').length,
+        commissions: transactionsList.filter(t => t.type === 'commission').length,
+        gifts: transactionsList.filter(t => t.type === 'gift').length
+      })
       
       setTransactions(transactionsList)
     } catch (error) {
@@ -162,8 +254,12 @@ export default function MesRecus() {
         return <ArrowDownCircle className="text-green-400" size={24} />
       case 'withdrawal':
         return <ArrowUpCircle className="text-red-400" size={24} />
-      case 'card_payment':
+      case 'investment':
         return <CreditCard className="text-blue-400" size={24} />
+      case 'commission':
+        return <div className="text-orange-400 text-xl">💰</div>
+      case 'gift':
+        return <div className="text-pink-400 text-xl">🎁</div>
       default:
         return <Receipt className="text-gray-400" size={24} />
     }
@@ -175,8 +271,12 @@ export default function MesRecus() {
         return 'Dépôt'
       case 'withdrawal':
         return 'Retrait'
-      case 'card_payment':
-        return transaction.productName || 'Paiement Carte Produit'
+      case 'investment':
+        return transaction.productName || 'Investissement'
+      case 'commission':
+        return transaction.productName || 'Commission de parrainage'
+      case 'gift':
+        return transaction.productName || 'Cadeau'
       default:
         return 'Transaction'
     }
@@ -190,6 +290,10 @@ export default function MesRecus() {
         return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30'
       case 'rejected':
         return 'text-red-400 bg-red-400/10 border-red-400/30'
+      case 'active':
+        return 'text-blue-400 bg-blue-400/10 border-blue-400/30'
+      case 'completed':
+        return 'text-green-400 bg-green-400/10 border-green-400/30'
       default:
         return 'text-gray-400 bg-gray-400/10 border-gray-400/30'
     }
@@ -203,6 +307,10 @@ export default function MesRecus() {
         return 'En attente'
       case 'rejected':
         return 'Rejeté'
+      case 'active':
+        return 'Actif'
+      case 'completed':
+        return 'Terminé'
       default:
         return status
     }
@@ -305,14 +413,34 @@ AXML PONY - Plateforme d'investissement
                 Retraits
               </button>
               <button
-                onClick={() => setFilter('card_payment')}
+                onClick={() => setFilter('investment')}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  filter === 'card_payment' 
+                  filter === 'investment' 
                     ? 'bg-blue-500 text-white' 
                     : 'bg-white/10 text-white/70 hover:bg-white/20'
                 }`}
               >
-                Cartes
+                Investissements
+              </button>
+              <button
+                onClick={() => setFilter('commission')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  filter === 'commission' 
+                    ? 'bg-orange-500 text-white' 
+                    : 'bg-white/10 text-white/70 hover:bg-white/20'
+                }`}
+              >
+                Commissions
+              </button>
+              <button
+                onClick={() => setFilter('gift')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  filter === 'gift' 
+                    ? 'bg-pink-500 text-white' 
+                    : 'bg-white/10 text-white/70 hover:bg-white/20'
+                }`}
+              >
+                Cadeaux
               </button>
             </div>
 
