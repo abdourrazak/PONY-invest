@@ -334,7 +334,7 @@ export default function AccueilPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">PONY</h1>
-                <p className="text-white/60 text-xs">Plateforme d'investissement</p>
+                <p className="text-white/60 text-xs">Plateforme de location</p>
               </div>
             </div>
 
