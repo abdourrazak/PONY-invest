@@ -261,7 +261,7 @@ export default function Cadeau() {
   const handleInviteFriends = () => {
     if (!userData?.referralCode) return
 
-    const referralLink = `https://axml-global.vercel.app/register-auth?ref=${userData.referralCode}`
+    const referralLink = `https://pony-invest.vercel.app/register-auth?ref=${userData.referralCode}`
     
     if (navigator.share) {
       navigator.share({

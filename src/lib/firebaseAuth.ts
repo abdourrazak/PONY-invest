@@ -308,7 +308,7 @@ export function getReferralLink(referralCode: string): string {
   const baseUrl = typeof window !== 'undefined' 
     ? window.location.origin
     : process.env.NODE_ENV === 'production' 
-      ? 'https://axml-global.vercel.app' 
+      ? 'https://pony-invest.vercel.app' 
       : 'http://localhost:3000'
     
   return `${baseUrl}/register-auth?ref=${referralCode}`
