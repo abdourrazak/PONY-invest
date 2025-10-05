@@ -6,7 +6,7 @@ import { auth, db } from '@/lib/firebase'
 function generateReferralCode(): string {
   const timestamp = Date.now().toString(36)
   const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `AXML${timestamp}${random}`.toUpperCase()
+  return `PONY${timestamp}${random}`.toUpperCase()
 }
 
 export async function POST(request: NextRequest) {

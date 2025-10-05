@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PONY Platform',
-  description: 'Plateforme d\'investissement AXML',
+  description: 'Plateforme d\'investissement PONY',
 }
 
 export const viewport = {

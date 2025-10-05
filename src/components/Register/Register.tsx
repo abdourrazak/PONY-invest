@@ -317,7 +317,7 @@ export default function Register() {
                 type="text"
                 value={formData.referralCode}
                 onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
-                placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "AXML... (optionnel)"}
+                placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "PONY... (optionnel)"}
                 disabled={!!searchParams.get('ref')}
                 style={{ fontSize: '16px' }}
                 className={`w-full px-3 py-2.5 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${

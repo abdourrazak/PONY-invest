@@ -265,7 +265,7 @@ export default function Cadeau() {
     
     if (navigator.share) {
       navigator.share({
-        title: '🎁 Rejoignez-moi sur AXML PONY !',
+        title: '🎁 Rejoignez-moi sur PONY !',
         text: 'Gagnez des bonus en jouant à la roue de la fortune !',
         url: referralLink
       })

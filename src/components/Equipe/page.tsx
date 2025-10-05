@@ -41,8 +41,8 @@ export default function EquipePage() {
   const shareReferralLink = () => {
     if (multiLevelStats?.referralLink && navigator.share) {
       navigator.share({
-        title: 'Rejoignez AXML PONY',
-        text: 'Investissez et gagnez avec AXML PONY !',
+        title: 'Rejoignez PONY',
+        text: 'Investissez et gagnez avec PONY !',
         url: multiLevelStats.referralLink
       })
     } else {

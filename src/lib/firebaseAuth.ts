@@ -46,11 +46,17 @@ export function generateReferralCode(): string {
 // Vérifie si un code d'invitation existe dans Firestore
 export async function isReferralCodeValid(code: string): Promise<boolean> {
   try {
-    console.log('🔍 Validation du code:', code, 'Longueur:', code.length, 'Commence par AXML:', code.startsWith('AXML'))
+    console.log('🔍 Validation du code:', code, 'Longueur:', code.length, 'Commence par PONY:', code.startsWith('PONY'))
     
-    // Accepter TOUS les codes qui commencent par AXML (codes générés par notre système)
+    // Accepter TOUS les codes qui commencent par PONY (codes générés par notre système)
+    if (code.startsWith('PONY')) {
+      console.log('✅ Code PONY accepté automatiquement:', code)
+      return true
+    }
+    
+    // Rétrocompatibilité : accepter aussi les anciens codes AXML
     if (code.startsWith('AXML')) {
-      console.log('✅ Code AXML accepté automatiquement:', code)
+      console.log('✅ Code AXML (ancien format) accepté:', code)
       return true
     }
     
@@ -68,9 +74,9 @@ export async function isReferralCodeValid(code: string): Promise<boolean> {
     }
   } catch (error) {
     console.log('❌ Erreur validation code:', error)
-    // En cas d'erreur, accepter les codes AXML par défaut
-    if (code.startsWith('AXML')) {
-      console.log('🔄 Fallback: Code AXML accepté malgré l\'erreur')
+    // En cas d'erreur, accepter les codes PONY et AXML par défaut
+    if (code.startsWith('PONY') || code.startsWith('AXML')) {
+      console.log('🔄 Fallback: Code accepté malgré l\'erreur')
       return true
     }
     return false
@@ -79,14 +85,14 @@ export async function isReferralCodeValid(code: string): Promise<boolean> {
 
 // Génère un code unique (vérifie l'unicité en base)
 export async function generateUniqueReferralCode(): Promise<string> {
-  // Générer un code AXML directement pour éviter les conflits de validation
+  // Générer un code PONY directement pour éviter les conflits de validation
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let code = 'AXML'
+  let code = 'PONY'
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   
-  console.log('🎯 Code AXML généré:', code)
+  console.log('🎯 Code PONY généré:', code)
   return code
 }
 
