@@ -107,7 +107,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? { primary: "yellow", secondary: "red" }
     : { primary: "blue", secondary: "purple" }
 
-  // Vérifier si l'utilisateur a la réduction LV1 (20+ amis)
+  // Vérifier si l'utilisateur a la réduction LV1 (10+ amis)
   useEffect(() => {
     if (currentUser) {
       checkLV1Discount(currentUser.uid).then(hasDiscount => {
@@ -232,7 +232,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           {/* Preset Amount Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => {
-              // Le bouton 2000 FCFA nécessite 20+ amis
+              // Le bouton 2000 FCFA nécessite 10+ amis
               const isLocked = presetAmount === 2000 && !hasLV1Discount
               
               return (
