@@ -176,13 +176,15 @@ export default function RetraitPage() {
         transactionData
       )
 
-      // Déduire immédiatement le montant net du solde de retrait
+      // Déduire immédiatement le montant net de TOUS les soldes
       const userRef = doc(db, 'users', currentUser.uid)
       await updateDoc(userRef, {
-        withdrawableBalance: increment(-netAmount) // Déduire du solde de retrait uniquement
+        balance: increment(-netAmount), // Solde général
+        withdrawableBalance: increment(-netAmount), // Solde de retrait
+        depositBalance: increment(-netAmount) // Solde de dépôt
       })
 
-      console.log(`💰 Solde de retrait déduit immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
+      console.log(`💰 Tous les soldes déduits immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
 
       // Réinitialiser le formulaire
       setAmount('')

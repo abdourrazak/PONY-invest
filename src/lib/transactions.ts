@@ -367,15 +367,16 @@ export async function adminApproveWithdrawal(transactionId: string): Promise<voi
         ? transactionData.netAmount 
         : transactionData.amount;
 
-      // Vérifier le solde de retrait suffisant (on vérifie avec le montant net)
-      const withdrawableBalance = userData.withdrawableBalance || userData.balance || 0;
-      if (withdrawableBalance < amountToDeduct) {
-        throw new Error('Solde de retrait insuffisant pour ce retrait');
+      // Vérifier le solde suffisant (on vérifie avec le montant net)
+      if (userData.balance < amountToDeduct) {
+        throw new Error('Solde insuffisant pour ce retrait');
       }
 
-      // Mettre à jour le solde de retrait (déduire le montant net)
+      // Mettre à jour TOUS les soldes (déduire le montant net)
       transaction.update(userRef, {
-        withdrawableBalance: increment(-amountToDeduct)
+        balance: increment(-amountToDeduct), // Solde général
+        withdrawableBalance: increment(-amountToDeduct), // Solde de retrait
+        depositBalance: increment(-amountToDeduct) // Solde de dépôt
       });
 
       // Mettre à jour le statut de la transaction
@@ -557,10 +558,11 @@ export async function approveTransaction(
         // Pour les retraits, utiliser le montant net (après frais)
         const amountToDeduct = transactionData.netAmount || transactionData.amount;
         
-        // Déduire le montant net du solde retirable uniquement
+        // Déduire le montant net de TOUS les soldes
         transaction.update(userRef, {
-          balance: increment(-amountToDeduct),
-          withdrawableBalance: increment(-amountToDeduct) // Déduire du solde retirable
+          balance: increment(-amountToDeduct), // Solde général
+          withdrawableBalance: increment(-amountToDeduct), // Solde de retrait
+          depositBalance: increment(-amountToDeduct) // Solde de dépôt
         });
       }
     });
