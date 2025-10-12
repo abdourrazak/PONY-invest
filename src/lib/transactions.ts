@@ -362,14 +362,16 @@ export async function adminApproveWithdrawal(transactionId: string): Promise<voi
 
       const userData = userDoc.data() as User;
 
-      // Vérifier le solde suffisant
-      if (userData.balance < transactionData.amount) {
-        throw new Error('Solde insuffisant pour ce retrait');
+      // Vérifier le solde de retrait suffisant
+      const withdrawableBalance = userData.withdrawableBalance || userData.balance || 0;
+      if (withdrawableBalance < transactionData.amount) {
+        throw new Error('Solde de retrait insuffisant pour ce retrait');
       }
 
-      // Mettre à jour le solde
+      // Mettre à jour le solde général ET le solde de retrait
       transaction.update(userRef, {
-        balance: increment(-transactionData.amount)
+        balance: increment(-transactionData.amount),
+        withdrawableBalance: increment(-transactionData.amount)
       });
 
       // Mettre à jour le statut de la transaction
