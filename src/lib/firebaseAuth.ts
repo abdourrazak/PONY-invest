@@ -527,7 +527,7 @@ export async function getMultiLevelReferralStats(user: User): Promise<MultiLevel
   }
 }
 
-// Vérifier si l'utilisateur a droit à la réduction LV1 (20+ amis réels inscrits)
+// Vérifier si l'utilisateur a droit à la réduction LV1 (10+ amis réels inscrits)
 export async function checkLV1Discount(userId: string): Promise<boolean> {
   try {
     console.log('🔍 Vérification réduction LV1 pour userId:', userId)
@@ -552,11 +552,11 @@ export async function checkLV1Discount(userId: string): Promise<boolean> {
     const totalReferrals = referralsSnapshot.size
     console.log('👥 Nombre total d\'amis inscrits:', totalReferrals)
     
-    // Vérifier si l'utilisateur a au moins 20 amis inscrits
-    const hasDiscount = totalReferrals >= 20
-    console.log('🎯 Réduction LV1 accordée:', hasDiscount, `(${totalReferrals}/20 amis)`)
+    // Vérifier si l'utilisateur a au moins 10 amis inscrits
+    const hasDiscount = totalReferrals >= 10
+    console.log('🎯 Réduction LV1 accordée:', hasDiscount, `(${totalReferrals}/10 amis)`)
     
-    return hasDiscount // Au moins 20 amis réels inscrits
+    return hasDiscount // Au moins 10 amis réels inscrits
   } catch (error) {
     console.error('Erreur lors de la vérification de la réduction LV1:', error)
     return false

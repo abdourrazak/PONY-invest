@@ -151,9 +151,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       return
     }
     
-    // Validation spéciale pour 2000 FCFA (nécessite 20+ amis)
+    // Validation spéciale pour 2000 FCFA (nécessite 10+ amis)
     if (numericAmount === 2000 && !hasLV1Discount) {
-      alert(`Le montant de 2,000 FCFA nécessite d'inviter au moins 20 amis`)
+      alert(`Le montant de 2,000 FCFA nécessite d'inviter au moins 10 amis`)
       return
     }
 
@@ -252,7 +252,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400 hover:scale-105 active:scale-95'
                       : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40 hover:scale-105 active:scale-95'
                   }`}
-                  title={isLocked ? 'Invitez 20 amis pour débloquer' : ''}
+                  title={isLocked ? 'Invitez 10 amis pour débloquer' : ''}
                 >
                   {presetAmount.toLocaleString()} FCFA
                   {isLocked && <span className="ml-1">🔒</span>}
