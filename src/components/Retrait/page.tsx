@@ -124,10 +124,10 @@ export default function RetraitPage() {
     // Validation du montant minimum selon le mode de paiement
     const numericAmount = parseFloat(amount)
     const isCrypto = paymentMethods[selectedPaymentMethod].value === 'crypto'
-    const minAmount = isCrypto ? 10 : 5000 // 10 USDT ou 5000 FCFA
+    const minAmount = isCrypto ? 10 : 2000 // 10 USDT ou 2000 FCFA
     
     if (numericAmount < minAmount) {
-      alert(`Le montant minimum de retrait est de ${isCrypto ? '10 USDT' : '5000 FCFA'}`)
+      alert(`Le montant minimum de retrait est de ${isCrypto ? '10 USDT' : '2000 FCFA'}`)
       return
     }
 
@@ -240,7 +240,7 @@ export default function RetraitPage() {
             </label>
             <input
               type="text"
-              placeholder={paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'Minimum 10 USDT' : 'Minimum 5,000 FCFA'}
+              placeholder={paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'Minimum 10 USDT' : 'Minimum 2,000 FCFA'}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
