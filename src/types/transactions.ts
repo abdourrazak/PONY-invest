@@ -30,6 +30,9 @@ export interface Transaction {
     accountNumber: string;
     holderName: string;
   };
+  fees?: number; // Frais de retrait
+  netAmount?: number; // Montant net à recevoir
+  description?: string; // Description de la transaction
 }
 
 // Interface User

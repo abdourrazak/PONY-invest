@@ -102,7 +102,7 @@ export default function Portefeuille() {
           
           return {
             id: t.id,
-            amount: t.amount,
+            amount: t.netAmount || t.amount, // Utiliser netAmount si disponible, sinon amount
             paymentMethod: t.paymentMethod,
             phoneNumber: t.phoneNumber || '',
             cryptoAddress: t.cryptoAddress || '',
