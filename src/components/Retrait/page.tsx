@@ -50,6 +50,12 @@ export default function RetraitPage() {
       value: 'mtn',
       color: 'border-yellow-200 bg-yellow-50',
       selectedColor: 'border-yellow-500 bg-yellow-100'
+    },
+    {
+      name: 'Cryptomonnaie (USDT TRC20)',
+      value: 'crypto',
+      color: 'border-yellow-200 bg-yellow-50',
+      selectedColor: 'border-yellow-500 bg-yellow-100'
     }
   ]
 
@@ -115,10 +121,13 @@ export default function RetraitPage() {
       return
     }
 
-    // Validation du montant minimum
+    // Validation du montant minimum selon le mode de paiement
     const numericAmount = parseFloat(amount)
-    if (numericAmount < 5000) {
-      alert('Le montant minimum de retrait est de 5000 FCFA')
+    const isCrypto = paymentMethods[selectedPaymentMethod].value === 'crypto'
+    const minAmount = isCrypto ? 10 : 5000 // 10 USDT ou 5000 FCFA
+    
+    if (numericAmount < minAmount) {
+      alert(`Le montant minimum de retrait est de ${isCrypto ? '10 USDT' : '5000 FCFA'}`)
       return
     }
 
@@ -149,7 +158,7 @@ export default function RetraitPage() {
       const transactionData: CreateTransactionData = {
         type: 'withdrawal',
         amount: numericAmount,
-        paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn',
+        paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn' | 'crypto',
         phoneNumber: '693098877', // Utiliser le numéro fixe
         withdrawalAccount: withdrawalAccountInfo // Inclure les informations de retrait pour l'admin
       }
@@ -227,11 +236,11 @@ export default function RetraitPage() {
           {/* Amount Input */}
           <div className="mb-6">
             <label className="block text-white/70 font-medium text-sm mb-2">
-              💰 Montant à retirer (FCFA)
+              💰 Montant à retirer {paymentMethods[selectedPaymentMethod].value === 'crypto' ? '(USDT)' : '(FCFA)'}
             </label>
             <input
               type="text"
-              placeholder="Minimum 5,000 FCFA"
+              placeholder={paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'Minimum 10 USDT' : 'Minimum 5,000 FCFA'}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
@@ -243,48 +252,79 @@ export default function RetraitPage() {
             <label className="block text-white/70 font-medium text-sm mb-3">
               📱 Mode de paiement
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-3">
               {paymentMethods.map((method, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedPaymentMethod(index)}
-                  className={`p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
+                  className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
                     selectedPaymentMethod === index
                       ? 'border-purple-400 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm shadow-xl'
                       : 'border-white/20 bg-black/30 backdrop-blur-sm hover:border-purple-300 hover:bg-black/40'
                   }`}
                 >
-                  <div className="flex items-center justify-center">
-                    {index === 0 && (
-                      <div className="flex items-center">
-                        <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-2 border border-orange-400/50 shadow-lg">
-                          <Image src="/org.png" alt="Orange Money" width={16} height={16} className="object-contain" />
-                        </div>
-                        <span className="font-bold text-xs text-white">Orange Money</span>
-                      </div>
-                    )}
-                    {index === 1 && (
-                      <div className="flex items-center">
-                        <div className="w-6 h-6 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-2 border border-yellow-400/50 shadow-lg">
-                          <Image src="/mtn.png" alt="MTN Money" width={16} height={16} className="object-contain" />
-                        </div>
-                        <span className="font-bold text-xs text-white">MTN Money</span>
-                      </div>
-                    )}
-                  </div>
-                  {selectedPaymentMethod === index && (
-                    <div className="flex items-center justify-center mt-2">
-                      <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
-                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      {index === 0 && (
+                        <>
+                          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-3 border border-orange-400/50 shadow-lg">
+                            <Image src="/org.png" alt="Orange Money" width={20} height={20} className="object-contain" />
+                          </div>
+                          <span className="font-bold text-sm text-white">Orange Money</span>
+                        </>
+                      )}
+                      {index === 1 && (
+                        <>
+                          <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-3 border border-yellow-400/50 shadow-lg">
+                            <Image src="/mtn.png" alt="MTN Money" width={20} height={20} className="object-contain" />
+                          </div>
+                          <span className="font-bold text-sm text-white">MTN Money</span>
+                        </>
+                      )}
+                      {index === 2 && (
+                        <>
+                          <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center mr-3 border border-yellow-400/50 shadow-lg">
+                            <div className="text-yellow-900 text-lg font-bold">₿</div>
+                          </div>
+                          <div>
+                            <span className="font-bold text-sm text-white block">Cryptomonnaie (USDT TRC20)</span>
+                            <span className="text-xs text-white/60">1 USDT = 600 FCFA</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    {selectedPaymentMethod === index && (
+                      <div className="w-4 h-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
           </div>
+
+          {/* Information taux de change crypto */}
+          {paymentMethods[selectedPaymentMethod].value === 'crypto' && (
+            <div className="mb-6">
+              <div className="bg-yellow-500/20 backdrop-blur-sm border border-yellow-400/30 rounded-xl p-4">
+                <div className="flex items-center mb-2">
+                  <div className="text-yellow-400 text-lg mr-2">ℹ️</div>
+                  <span className="text-yellow-300 font-bold text-sm">Taux de change</span>
+                </div>
+                <p className="text-yellow-200 text-sm">
+                  1 USDT = 600 FCFA
+                </p>
+                {amount && (
+                  <p className="text-yellow-200 text-xs mt-1">
+                    {amount} USDT ≈ {(parseFloat(amount) * 600).toLocaleString()} FCFA
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Informations de retrait configurées */}
           {hasWithdrawalAccount && withdrawalAccountInfo && (
