@@ -72,9 +72,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const isCrypto = paymentMethod === 'crypto'
 
   const beneficiaryCode = isOrange 
-    ? "#150*46*0535612#" 
+    ? "#150*1*1*2*Numéro Beneficiaire*Montant*1#" 
     : isMTN 
-    ? "*126*1*1*655434565#" 
+    ? "*126*1*1*Numero Telephone*Montant*1#" 
     : "1038166766"
   
   const beneficiaryName = isOrange 
