@@ -65,6 +65,8 @@ export default function CompteRetraitPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('🔍 Début de handleSubmit avec formData:', formData)
+    
     if (!currentUser?.uid) {
       toast.error('Vous devez être connecté')
       return
@@ -72,29 +74,31 @@ export default function CompteRetraitPage() {
 
     if (!formData.operator || !formData.accountNumber || !formData.holderName) {
       toast.error('Veuillez remplir tous les champs')
+      console.log('❌ Champs manquants:', { operator: formData.operator, accountNumber: formData.accountNumber, holderName: formData.holderName })
       return
     }
 
     // Validation du numéro de compte
     if (formData.operator === 'crypto') {
-      if (formData.accountNumber.length !== 34) {
-        toast.error('L\'adresse USDT TRC20 doit contenir exactement 34 caractères')
+      console.log('🔍 Validation crypto pour adresse:', formData.accountNumber, 'Longueur:', formData.accountNumber.length)
+      
+      if (formData.accountNumber.length < 25) {
+        toast.error('L\'adresse crypto doit contenir au moins 25 caractères')
+        console.log('❌ Adresse trop courte')
         return
       }
       if (!formData.accountNumber.startsWith('T')) {
         toast.error('L\'adresse USDT TRC20 doit commencer par "T"')
+        console.log('❌ Adresse ne commence pas par T')
         return
       }
-      // Validation basique du format TRC20
-      if (!/^T[A-Za-z0-9]{33}$/.test(formData.accountNumber)) {
-        toast.error('Format d\'adresse USDT TRC20 invalide')
-        return
-      }
+      console.log('✅ Validation crypto réussie')
     } else if (formData.operator !== 'crypto' && formData.accountNumber.length < 8) {
       toast.error('Le numéro de compte doit contenir au moins 8 chiffres')
       return
     }
 
+    console.log('🚀 Début de la sauvegarde...')
     setLoading(true)
 
     try {
@@ -103,9 +107,15 @@ export default function CompteRetraitPage() {
         updatedAt: new Date()
       }
 
+      console.log('💾 Données à sauvegarder:', withdrawalData)
+      console.log('👤 UID utilisateur:', currentUser.uid)
+
       await setDoc(doc(db, 'users', currentUser.uid), {
         withdrawalAccount: withdrawalData
       }, { merge: true })
+
+      console.log('✅ Sauvegarde réussie!')
+      toast.success('Informations de retrait enregistrées avec succès!')
 
       // Afficher la popup de succès
       setShowSuccessPopup(true)
@@ -116,10 +126,11 @@ export default function CompteRetraitPage() {
       }, 2000)
       
     } catch (error) {
-      console.error('Erreur lors de la mise à jour:', error)
-      toast.error('Erreur lors de la mise à jour')
+      console.error('❌ Erreur lors de la mise à jour:', error)
+      toast.error('Erreur lors de la mise à jour: ' + error.message)
     } finally {
       setLoading(false)
+      console.log('🏁 Fin de handleSubmit')
     }
   }
 
@@ -246,6 +257,26 @@ export default function CompteRetraitPage() {
             </button>
           </form>
 
+          {/* Panel de debug pour développement */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-6 p-4 bg-red-500/20 backdrop-blur-sm rounded-xl border border-red-400/30">
+              <h3 className="font-semibold text-red-300 mb-2">🐛 Debug Panel</h3>
+              <div className="text-sm text-red-200 space-y-1">
+                <div>Opérateur: {formData.operator || '❌ Vide'} {formData.operator ? '✅' : '❌'}</div>
+                <div>Compte: {formData.accountNumber || '❌ Vide'} {formData.accountNumber ? '✅' : '❌'}</div>
+                <div>Titulaire: {formData.holderName || '❌ Vide'} {formData.holderName ? '✅' : '❌'}</div>
+                <div>Loading: {loading ? '✅ En cours' : '❌ Arrêté'}</div>
+                <div>User UID: {currentUser?.uid ? '✅ Connecté' : '❌ Non connecté'}</div>
+                {formData.operator === 'crypto' && (
+                  <>
+                    <div>Longueur adresse: {formData.accountNumber.length} {formData.accountNumber.length >= 25 ? '✅' : '❌'}</div>
+                    <div>Commence par T: {formData.accountNumber.startsWith('T') ? '✅' : '❌'}</div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Informations importantes */}
           <div className="mt-6 p-4 bg-blue-500/20 backdrop-blur-sm rounded-xl border border-blue-400/30">
             <h3 className="font-semibold text-blue-300 mb-2">ℹ️ Informations importantes</h3>
@@ -255,7 +286,7 @@ export default function CompteRetraitPage() {
               {formData.operator === 'crypto' && (
                 <>
                   <li>• Utilisez uniquement une adresse USDT TRC20 (réseau TRON)</li>
-                  <li>• L'adresse doit commencer par "T" et contenir 34 caractères</li>
+                  <li>• L'adresse doit commencer par "T" et contenir au moins 25 caractères</li>
                   <li>• Vérifiez bien l'adresse avant validation</li>
                 </>
               )}
