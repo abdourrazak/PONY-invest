@@ -131,7 +131,7 @@ export default function RetraitPage() {
       return
     }
 
-    // Vérifier le solde
+    // Vérifier le solde (le montant demandé doit être disponible, les frais sont déduits du montant)
     if (numericAmount > balance) {
       alert('Solde insuffisant pour effectuer ce retrait')
       return
@@ -154,13 +154,20 @@ export default function RetraitPage() {
         }
       }
 
+      // Calculer les frais et le montant net
+      const fees = numericAmount * 0.03
+      const netAmount = numericAmount * 0.97
+
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'withdrawal',
-        amount: numericAmount,
+        amount: numericAmount, // Montant brut demandé
         paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn' | 'crypto',
         phoneNumber: '693098877', // Utiliser le numéro fixe
-        withdrawalAccount: withdrawalAccountInfo // Inclure les informations de retrait pour l'admin
+        withdrawalAccount: withdrawalAccountInfo, // Inclure les informations de retrait pour l'admin
+        fees: fees, // Frais de retrait (3%)
+        netAmount: netAmount, // Montant net à recevoir
+        description: `Retrait ${paymentMethods[selectedPaymentMethod].name} - Frais: ${fees.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'} (3%)`
       }
 
       await createTransaction(
@@ -245,6 +252,29 @@ export default function RetraitPage() {
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
             />
+            
+            {/* Calcul des frais et montant réel */}
+            {amount && parseFloat(amount) > 0 && (
+              <div className="mt-3 p-3 bg-orange-500/20 backdrop-blur-sm border border-orange-400/30 rounded-xl">
+                <div className="text-orange-300 text-sm font-semibold mb-2">💳 Détails du retrait</div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between text-white/80">
+                    <span>Montant demandé:</span>
+                    <span>{parseFloat(amount).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
+                  </div>
+                  <div className="flex justify-between text-orange-300">
+                    <span>Frais de retrait (3%):</span>
+                    <span>-{(parseFloat(amount) * 0.03).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
+                  </div>
+                  <div className="border-t border-orange-400/30 pt-1 mt-2">
+                    <div className="flex justify-between text-green-300 font-bold">
+                      <span>Montant réel à recevoir:</span>
+                      <span>{(parseFloat(amount) * 0.97).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Payment Method Selection */}

@@ -76,6 +76,9 @@ export interface CreateTransactionData {
   cryptoAddress?: string;
   transactionImage?: string;
   withdrawalAccount?: any; // Informations du compte de retrait pour l'admin
+  fees?: number; // Frais de retrait
+  netAmount?: number; // Montant net à recevoir
+  description?: string; // Description de la transaction
 }
 
 // Options pour mise à jour admin
