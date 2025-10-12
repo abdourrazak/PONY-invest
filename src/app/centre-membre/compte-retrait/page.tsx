@@ -87,7 +87,7 @@ export default function CompteRetraitPage() {
         console.log('❌ Adresse trop courte')
         return
       }
-      if (!formData.accountNumber.startsWith('T')) {
+      if (!formData.accountNumber.startsWith('T') && !formData.accountNumber.startsWith('Т')) {
         toast.error('L\'adresse USDT TRC20 doit commencer par "T"')
         console.log('❌ Adresse ne commence pas par T')
         return
