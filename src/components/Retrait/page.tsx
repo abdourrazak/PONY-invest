@@ -131,9 +131,13 @@ export default function RetraitPage() {
       return
     }
 
-    // Vérifier le solde (le montant demandé doit être disponible, les frais sont déduits du montant)
-    if (numericAmount > balance) {
-      alert('Solde insuffisant pour effectuer ce retrait')
+    // Calculer les frais et le montant net
+    const fees = numericAmount * 0.03
+    const netAmount = numericAmount * 0.97
+
+    // Vérifier le solde de retrait (le montant net doit être disponible)
+    if (netAmount > balance) {
+      alert('Solde de retrait insuffisant pour effectuer ce retrait')
       return
     }
 
@@ -154,10 +158,6 @@ export default function RetraitPage() {
         }
       }
 
-      // Calculer les frais et le montant net
-      const fees = numericAmount * 0.03
-      const netAmount = numericAmount * 0.97
-
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'withdrawal',
@@ -176,13 +176,13 @@ export default function RetraitPage() {
         transactionData
       )
 
-      // Déduire immédiatement le montant net du solde utilisateur
+      // Déduire immédiatement le montant net du solde de retrait
       const userRef = doc(db, 'users', currentUser.uid)
       await updateDoc(userRef, {
-        balance: increment(-netAmount) // Déduire le montant net (après frais)
+        withdrawableBalance: increment(-netAmount) // Déduire du solde de retrait uniquement
       })
 
-      console.log(`💰 Solde déduit immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
+      console.log(`💰 Solde de retrait déduit immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
 
       // Réinitialiser le formulaire
       setAmount('')

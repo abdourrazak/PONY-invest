@@ -41,6 +41,8 @@ export interface User {
   numeroTel: string;
   displayName: string;
   balance: number;
+  withdrawableBalance?: number; // Solde retirable
+  depositBalance?: number; // Solde de dépôt
   role: UserRole;
   createdAt: Timestamp | Date;
   referralCode?: string;

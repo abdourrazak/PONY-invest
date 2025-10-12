@@ -367,14 +367,15 @@ export async function adminApproveWithdrawal(transactionId: string): Promise<voi
         ? transactionData.netAmount 
         : transactionData.amount;
 
-      // Vérifier le solde suffisant (on vérifie avec le montant net)
-      if (userData.balance < amountToDeduct) {
-        throw new Error('Solde insuffisant pour ce retrait');
+      // Vérifier le solde de retrait suffisant (on vérifie avec le montant net)
+      const withdrawableBalance = userData.withdrawableBalance || userData.balance || 0;
+      if (withdrawableBalance < amountToDeduct) {
+        throw new Error('Solde de retrait insuffisant pour ce retrait');
       }
 
-      // Mettre à jour le solde (déduire le montant net)
+      // Mettre à jour le solde de retrait (déduire le montant net)
       transaction.update(userRef, {
-        balance: increment(-amountToDeduct)
+        withdrawableBalance: increment(-amountToDeduct)
       });
 
       // Mettre à jour le statut de la transaction
