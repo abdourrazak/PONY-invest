@@ -9,7 +9,7 @@ import { ArrowLeft, Bell, Eye, EyeOff, Wallet, AlertCircle, CheckCircle, Clock }
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { subscribeToWithdrawableBalance } from '@/lib/balanceUtils'
 import AnimatedBalance from '@/components/AnimatedBalance/AnimatedBalance'
@@ -176,12 +176,20 @@ export default function RetraitPage() {
         transactionData
       )
 
+      // Déduire immédiatement le montant net du solde utilisateur
+      const userRef = doc(db, 'users', currentUser.uid)
+      await updateDoc(userRef, {
+        balance: increment(-netAmount) // Déduire le montant net (après frais)
+      })
+
+      console.log(`💰 Solde déduit immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
+
       // Réinitialiser le formulaire
       setAmount('')
       setFundsPassword('')
       setSelectedPaymentMethod(0)
       
-      alert('Demande de retrait soumise avec succès!')
+      alert(`Demande de retrait soumise avec succès!\nMontant net déduit: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
       
       // Rediriger vers le portefeuille
       router.push('/portefeuille')
