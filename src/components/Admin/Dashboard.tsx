@@ -356,9 +356,7 @@ export default function AdminDashboard() {
                       {transaction.userNumeroTel || transaction.userPhone || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-white">
-                      {transaction.type === 'withdrawal' && transaction.netAmount 
-                        ? `${transaction.netAmount.toLocaleString()} FCFA (net)` 
-                        : `${transaction.amount.toLocaleString()} FCFA`}
+                      {transaction.amount.toLocaleString()} FCFA
                     </td>
                     <td className="px-4 py-3 text-sm text-white/90">
                       {transaction.paymentMethod.toUpperCase()}
@@ -458,11 +456,7 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Montant</div>
-                    <div className="text-white font-bold">
-                      {transaction.type === 'withdrawal' && transaction.netAmount 
-                        ? `${transaction.netAmount.toLocaleString()} FCFA (net)` 
-                        : `${transaction.amount.toLocaleString()} FCFA`}
-                    </div>
+                    <div className="text-white font-bold">{transaction.amount.toLocaleString()} FCFA</div>
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Méthode</div>
@@ -513,9 +507,7 @@ export default function AdminDashboard() {
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-xs text-gray-600 mb-1">Montant</div>
                   <div className="font-bold text-xl text-green-600">
-                    {selectedTransaction.type === 'withdrawal' && selectedTransaction.netAmount 
-                      ? `${selectedTransaction.netAmount.toLocaleString()} FCFA (net)` 
-                      : `${selectedTransaction.amount.toLocaleString()} FCFA`}
+                    {selectedTransaction.amount.toLocaleString()} FCFA
                   </div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
@@ -551,27 +543,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
-
-              {/* Détails des frais pour les retraits */}
-              {selectedTransaction.type === 'withdrawal' && selectedTransaction.fees && (
-                <div className="border-t pt-4">
-                  <h3 className="font-medium text-gray-800 mb-3">💰 Breakdown des frais</h3>
-                  <div className="bg-orange-50 rounded-lg p-3 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Montant demandé:</span>
-                      <span className="font-medium">{selectedTransaction.amount.toLocaleString()} FCFA</span>
-                    </div>
-                    <div className="flex justify-between text-orange-600">
-                      <span>Frais de retrait (3%):</span>
-                      <span className="font-medium">-{selectedTransaction.fees.toLocaleString()} FCFA</span>
-                    </div>
-                    <div className="border-t border-orange-200 pt-2 flex justify-between text-green-600 font-bold">
-                      <span>Montant net à recevoir:</span>
-                      <span>{selectedTransaction.netAmount?.toLocaleString()} FCFA</span>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Détails spécifiques */}
               {selectedTransaction.type === 'withdrawal' && (

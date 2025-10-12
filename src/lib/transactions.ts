@@ -362,21 +362,14 @@ export async function adminApproveWithdrawal(transactionId: string): Promise<voi
 
       const userData = userDoc.data() as User;
 
-      // Pour les retraits, utiliser le montant net (après frais)
-      const amountToDeduct = transactionData.type === 'withdrawal' && transactionData.netAmount 
-        ? transactionData.netAmount 
-        : transactionData.amount;
-
-      // Vérifier le solde suffisant (on vérifie avec le montant net)
-      if (userData.balance < amountToDeduct) {
+      // Vérifier le solde suffisant
+      if (userData.balance < transactionData.amount) {
         throw new Error('Solde insuffisant pour ce retrait');
       }
 
-      // Mettre à jour TOUS les soldes (déduire le montant net)
+      // Mettre à jour le solde
       transaction.update(userRef, {
-        balance: increment(-amountToDeduct), // Solde général
-        withdrawableBalance: increment(-amountToDeduct), // Solde de retrait
-        depositBalance: increment(-amountToDeduct) // Solde de dépôt
+        balance: increment(-transactionData.amount)
       });
 
       // Mettre à jour le statut de la transaction
@@ -555,14 +548,10 @@ export async function approveTransaction(
           lastDepositDate: serverTimestamp() // Mettre à jour la date du dernier dépôt
         });
       } else if (transactionData.type === 'withdrawal') {
-        // Pour les retraits, utiliser le montant net (après frais)
-        const amountToDeduct = transactionData.netAmount || transactionData.amount;
-        
-        // Déduire le montant net de TOUS les soldes
+        // Déduire le montant du solde retirable uniquement
         transaction.update(userRef, {
-          balance: increment(-amountToDeduct), // Solde général
-          withdrawableBalance: increment(-amountToDeduct), // Solde de retrait
-          depositBalance: increment(-amountToDeduct) // Solde de dépôt
+          balance: increment(-transactionData.amount),
+          withdrawableBalance: increment(-transactionData.amount) // Déduire du solde retirable
         });
       }
     });

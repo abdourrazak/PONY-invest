@@ -9,7 +9,7 @@ import { ArrowLeft, Bell, Eye, EyeOff, Wallet, AlertCircle, CheckCircle, Clock }
 import SupportFloat from '../SupportFloat/SupportFloat'
 import { createTransaction, getUserBalance, subscribeToUserBalance } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
-import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { subscribeToWithdrawableBalance } from '@/lib/balanceUtils'
 import AnimatedBalance from '@/components/AnimatedBalance/AnimatedBalance'
@@ -131,13 +131,9 @@ export default function RetraitPage() {
       return
     }
 
-    // Calculer les frais et le montant net
-    const fees = numericAmount * 0.03
-    const netAmount = numericAmount * 0.97
-
-    // Vérifier le solde de retrait (le montant net doit être disponible)
-    if (netAmount > balance) {
-      alert('Solde de retrait insuffisant pour effectuer ce retrait')
+    // Vérifier le solde
+    if (numericAmount > balance) {
+      alert('Solde insuffisant pour effectuer ce retrait')
       return
     }
 
@@ -161,13 +157,10 @@ export default function RetraitPage() {
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'withdrawal',
-        amount: numericAmount, // Montant brut demandé
+        amount: numericAmount,
         paymentMethod: paymentMethods[selectedPaymentMethod].value as 'orange' | 'mtn' | 'crypto',
         phoneNumber: '693098877', // Utiliser le numéro fixe
-        withdrawalAccount: withdrawalAccountInfo, // Inclure les informations de retrait pour l'admin
-        fees: fees, // Frais de retrait (3%)
-        netAmount: netAmount, // Montant net à recevoir
-        description: `Retrait ${paymentMethods[selectedPaymentMethod].name} - Frais: ${fees.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'} (3%)`
+        withdrawalAccount: withdrawalAccountInfo // Inclure les informations de retrait pour l'admin
       }
 
       await createTransaction(
@@ -176,22 +169,12 @@ export default function RetraitPage() {
         transactionData
       )
 
-      // Déduire immédiatement le montant net de TOUS les soldes
-      const userRef = doc(db, 'users', currentUser.uid)
-      await updateDoc(userRef, {
-        balance: increment(-netAmount), // Solde général
-        withdrawableBalance: increment(-netAmount), // Solde de retrait
-        depositBalance: increment(-netAmount) // Solde de dépôt
-      })
-
-      console.log(`💰 Tous les soldes déduits immédiatement: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
-
       // Réinitialiser le formulaire
       setAmount('')
       setFundsPassword('')
       setSelectedPaymentMethod(0)
       
-      alert(`Demande de retrait soumise avec succès!\nMontant net déduit: ${netAmount.toLocaleString()} ${isCrypto ? 'USDT' : 'FCFA'}`)
+      alert('Demande de retrait soumise avec succès!')
       
       // Rediriger vers le portefeuille
       router.push('/portefeuille')
@@ -263,28 +246,6 @@ export default function RetraitPage() {
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
             />
             
-            {/* Calcul des frais et montant réel */}
-            {amount && parseFloat(amount) > 0 && (
-              <div className="mt-3 p-3 bg-orange-500/20 backdrop-blur-sm border border-orange-400/30 rounded-xl">
-                <div className="text-orange-300 text-sm font-semibold mb-2">💳 Détails du retrait</div>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between text-white/80">
-                    <span>Montant demandé:</span>
-                    <span>{parseFloat(amount).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
-                  </div>
-                  <div className="flex justify-between text-orange-300">
-                    <span>Frais de retrait (3%):</span>
-                    <span>-{(parseFloat(amount) * 0.03).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
-                  </div>
-                  <div className="border-t border-orange-400/30 pt-1 mt-2">
-                    <div className="flex justify-between text-green-300 font-bold">
-                      <span>Montant réel à recevoir:</span>
-                      <span>{(parseFloat(amount) * 0.97).toLocaleString()} {paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'USDT' : 'FCFA'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Payment Method Selection */}
