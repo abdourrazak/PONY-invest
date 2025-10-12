@@ -76,9 +76,20 @@ export default function CompteRetraitPage() {
     }
 
     // Validation du numéro de compte
-    if (formData.operator === 'crypto' && formData.accountNumber.length < 20) {
-      toast.error('L\'adresse crypto doit contenir au moins 20 caractères')
-      return
+    if (formData.operator === 'crypto') {
+      if (formData.accountNumber.length !== 34) {
+        toast.error('L\'adresse USDT TRC20 doit contenir exactement 34 caractères')
+        return
+      }
+      if (!formData.accountNumber.startsWith('T')) {
+        toast.error('L\'adresse USDT TRC20 doit commencer par "T"')
+        return
+      }
+      // Validation basique du format TRC20
+      if (!/^T[A-Za-z0-9]{33}$/.test(formData.accountNumber)) {
+        toast.error('Format d\'adresse USDT TRC20 invalide')
+        return
+      }
     } else if (formData.operator !== 'crypto' && formData.accountNumber.length < 8) {
       toast.error('Le numéro de compte doit contenir au moins 8 chiffres')
       return
@@ -178,7 +189,9 @@ export default function CompteRetraitPage() {
             {/* Numéro de compte */}
             <div>
               <label htmlFor="accountNumber" className="block text-sm font-medium text-white/80 mb-2">
-                {formData.operator === 'bank' ? 'Numéro de compte bancaire' : 'Numéro de téléphone'}
+                {formData.operator === 'bank' ? 'Numéro de compte bancaire' : 
+                 formData.operator === 'crypto' ? 'Adresse de portefeuille (USDT TRC20)' : 
+                 'Numéro de téléphone'}
               </label>
               <input
                 type="text"
@@ -186,7 +199,11 @@ export default function CompteRetraitPage() {
                 name="accountNumber"
                 value={formData.accountNumber}
                 onChange={handleInputChange}
-                placeholder={formData.operator === 'bank' ? 'Ex: 1234567890123456' : 'Ex: 6******'}
+                placeholder={
+                  formData.operator === 'bank' ? 'Ex: 1234567890123456' : 
+                  formData.operator === 'crypto' ? 'Ex: TXxx...xxxx (adresse TRC20)' : 
+                  'Ex: 6******'
+                }
                 className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
                 required
               />
@@ -235,6 +252,13 @@ export default function CompteRetraitPage() {
             <ul className="text-sm text-blue-200 space-y-1">
               <li>• Assurez-vous que les informations sont exactes</li>
               <li>• Les retraits seront effectués sur ce compte uniquement</li>
+              {formData.operator === 'crypto' && (
+                <>
+                  <li>• Utilisez uniquement une adresse USDT TRC20 (réseau TRON)</li>
+                  <li>• L'adresse doit commencer par "T" et contenir 34 caractères</li>
+                  <li>• Vérifiez bien l'adresse avant validation</li>
+                </>
+              )}
             </ul>
           </div>
         </div>
