@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Download, Filter, Search, Receipt, CreditCard, ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -32,40 +32,12 @@ export default function MesRecus() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'deposit' | 'withdrawal' | 'investment' | 'commission' | 'gift'>('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const isLoadingRef = useRef(false)
 
-  useEffect(() => {
-    if (currentUser) {
-      loadTransactions()
-    }
-  }, [currentUser])
-
-  // Rafraîchir quand la page devient visible
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && currentUser) {
-        console.log('Page visible - Rafraîchissement des transactions')
-        loadTransactions()
-      }
-    }
-
-    const handleFocus = () => {
-      if (currentUser) {
-        console.log('Page focus - Rafraîchissement des transactions')
-        loadTransactions()
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    window.addEventListener('focus', handleFocus)
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      window.removeEventListener('focus', handleFocus)
-    }
-  }, [currentUser])
-
-  const loadTransactions = async () => {
-    if (!currentUser) return
+  const loadTransactions = useCallback(async () => {
+    if (!currentUser || isLoadingRef.current) return
+    
+    isLoadingRef.current = true
 
     try {
       setLoading(true)
@@ -234,9 +206,40 @@ export default function MesRecus() {
       console.error('Erreur chargement transactions:', error)
     } finally {
       setLoading(false)
+      isLoadingRef.current = false
     }
-  }
+  }, [currentUser])
 
+  useEffect(() => {
+    if (currentUser) {
+      loadTransactions()
+    }
+  }, [currentUser, loadTransactions])
+
+  // Rafraîchir quand la page devient visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && currentUser && !isLoadingRef.current) {
+        console.log('Page visible - Rafraîchissement des transactions')
+        loadTransactions()
+      }
+    }
+
+    const handleFocus = () => {
+      if (currentUser && !isLoadingRef.current) {
+        console.log('Page focus - Rafraîchissement des transactions')
+        loadTransactions()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [currentUser, loadTransactions])
 
   const filteredTransactions = transactions.filter(transaction => {
     const matchesFilter = filter === 'all' || transaction.type === filter
