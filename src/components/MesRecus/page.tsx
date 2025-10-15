@@ -76,8 +76,7 @@ export default function MesRecus() {
         const transactionsRef = collection(db, 'transactions')
         const q = query(
           transactionsRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', currentUser.uid)
         )
         
         const querySnapshot = await getDocs(q)
@@ -96,8 +95,9 @@ export default function MesRecus() {
             ...data
           } as Transaction)
         })
+        console.log(`✅ ${querySnapshot.size} transactions chargées`)
       } catch (error) {
-        console.log('Erreur chargement transactions:', error)
+        console.error('❌ Erreur chargement transactions:', error)
       }
 
       // 2. Charger les investissements (rentals)
@@ -105,8 +105,7 @@ export default function MesRecus() {
         const rentalsRef = collection(db, 'rentals')
         const rentalsQuery = query(
           rentalsRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('startDate', 'desc')
+          where('userId', '==', currentUser.uid)
         )
         
         const rentalsSnapshot = await getDocs(rentalsQuery)
@@ -125,8 +124,9 @@ export default function MesRecus() {
             reference: `INV-${doc.id.slice(-8).toUpperCase()}`
           } as Transaction)
         })
+        console.log(`✅ ${rentalsSnapshot.size} investissements chargés`)
       } catch (error) {
-        console.log('Erreur chargement investissements:', error)
+        console.error('❌ Erreur chargement investissements:', error)
       }
 
       // 3. Charger les commissions de parrainage
@@ -134,8 +134,7 @@ export default function MesRecus() {
         const commissionsRef = collection(db, 'referralCommissions')
         const commissionsQuery = query(
           commissionsRef,
-          where('referrerId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
+          where('referrerId', '==', currentUser.uid)
         )
         
         const commissionsSnapshot = await getDocs(commissionsQuery)
@@ -153,8 +152,9 @@ export default function MesRecus() {
             level: data.level
           } as Transaction)
         })
+        console.log(`✅ ${commissionsSnapshot.size} commissions chargées`)
       } catch (error) {
-        console.log('Erreur chargement commissions:', error)
+        console.error('❌ Erreur chargement commissions:', error)
       }
 
       // 4. Charger les cadeaux et check-ins
@@ -162,8 +162,7 @@ export default function MesRecus() {
         const giftsRef = collection(db, 'userGifts')
         const giftsQuery = query(
           giftsRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('claimedAt', 'desc')
+          where('userId', '==', currentUser.uid)
         )
         
         const giftsSnapshot = await getDocs(giftsQuery)
@@ -182,8 +181,9 @@ export default function MesRecus() {
             } as Transaction)
           }
         })
+        console.log(`✅ ${giftsSnapshot.size} cadeaux chargés`)
       } catch (error) {
-        console.log('Erreur chargement cadeaux:', error)
+        console.error('❌ Erreur chargement cadeaux:', error)
       }
 
       // 5. Charger les achats de cartes produits (si la collection existe)
@@ -191,8 +191,7 @@ export default function MesRecus() {
         const cardPurchasesRef = collection(db, 'cardPurchases')
         const cardQuery = query(
           cardPurchasesRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', currentUser.uid)
         )
         
         const cardSnapshot = await getDocs(cardQuery)
@@ -210,8 +209,9 @@ export default function MesRecus() {
             cardType: data.cardType
           } as Transaction)
         })
+        console.log(`✅ ${cardSnapshot.size} achats de cartes chargés`)
       } catch (error) {
-        console.log('Collection cardPurchases non trouvée, ignorée')
+        console.log('⚠️ Collection cardPurchases non trouvée, ignorée')
       }
       
       // Trier toutes les transactions par date (plus récentes en premier)
