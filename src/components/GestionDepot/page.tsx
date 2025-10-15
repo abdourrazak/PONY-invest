@@ -296,11 +296,11 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               <div className="bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 inline-block">
                 <div className="bg-white rounded-lg p-2">
                   <Image
-                    src="/mtn-qr.png"
+                    src="/mtn-qr-code.png"
                     alt="QR Code MTN Mobile Money"
-                    width={150}
-                    height={150}
-                    className="w-32 h-32 object-contain"
+                    width={200}
+                    height={200}
+                    className="w-40 h-40 object-contain"
                     unoptimized
                   />
                 </div>
