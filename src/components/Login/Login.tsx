@@ -124,7 +124,7 @@ export default function Login() {
               <Image src="/ponyAI.png" alt="PONY AI" width={80} height={80} className="object-cover w-full h-full rounded-full" unoptimized />
             </div>
           </div>
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white px-6 py-3 rounded-full text-base font-extrabold shadow-lg tracking-wide">
             Connexion à PONY
           </div>
         </div>
@@ -136,8 +136,8 @@ export default function Login() {
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-red-500 text-2xl">⚠️</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">Connexion échouée</h3>
-                <p className="text-gray-600 text-sm mb-6">{errorMessage}</p>
+                <h3 className="text-xl font-extrabold text-gray-800 mb-3 tracking-tight">Connexion échouée</h3>
+                <p className="text-gray-600 text-sm font-medium mb-6 leading-relaxed">{errorMessage}</p>
                 <button
                   onClick={() => setShowErrorPopup(false)}
                   className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-bold hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
@@ -150,16 +150,16 @@ export default function Login() {
         )}
 
         <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
-          <div className="bg-black/30 backdrop-blur-sm p-4 text-center border-b border-white/10">
-            <h1 className="text-lg font-black text-white/90 mb-1">Connexion</h1>
-            <p className="text-white/70 text-xs font-bold">Accédez à votre compte PONY</p>
+          <div className="bg-black/30 backdrop-blur-sm p-6 text-center border-b border-white/10">
+            <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Connexion</h1>
+            <p className="text-white/80 text-sm font-semibold">Accédez à votre compte PONY</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
             <div>
-              <label className="flex items-center text-white/90 font-black mb-2 text-sm">
-                <Smartphone className="w-3 h-3 mr-1" />
-                Numéro de téléphone
+              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                <Smartphone className="w-4 h-4 mr-2" />
+                <span className="font-extrabold">Numéro de téléphone</span>
               </label>
               <PhoneInput
                 value={formData.phone}
@@ -171,9 +171,9 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="flex items-center text-white/90 font-black mb-1 text-sm">
-                <Lock className="w-3 h-3 mr-1" />
-                Mot de passe
+              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                <Lock className="w-4 h-4 mr-2" />
+                <span className="font-extrabold">Mot de passe</span>
               </label>
               <div className="relative">
                 <input
@@ -182,7 +182,7 @@ export default function Login() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="Votre mot de passe"
                   style={{ fontSize: '16px' }}
-                  className={`w-full px-3 py-2.5 pr-10 rounded-lg border transition-all duration-300 text-white/90 placeholder-white/50 font-medium bg-black/20 backdrop-blur-sm ${
+                  className={`w-full px-4 py-3 pr-10 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-semibold bg-black/20 backdrop-blur-sm ${
                     errors.password 
                       ? 'border-red-400' 
                       : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
@@ -202,31 +202,31 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 text-sm rounded-lg font-black text-white transition-all duration-300 transform ${
+              className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${
                 isLoading
                   ? 'bg-gray-600/50 cursor-not-allowed'
                   : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
               } flex items-center justify-center`}
             >
               {isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Connexion...
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                  <span className="font-extrabold tracking-wide">Connexion en cours...</span>
                 </div>
               ) : (
-                <div className="flex items-center">
-                  Se connecter
+                <div className="flex items-center justify-center">
+                  <span className="font-extrabold tracking-wide">Se connecter</span>
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </div>
               )}
             </button>
 
-            <div className="text-center pt-3 border-t border-white/10">
-              <p className="text-white/70 text-sm font-bold">
+            <div className="text-center pt-5 border-t border-white/10 mt-6">
+              <p className="text-white/80 text-sm font-semibold">
                 Pas encore de compte ?{' '}
                 <Link 
                   href={searchParams.get('ref') ? `/register-auth?ref=${searchParams.get('ref')}` : '/register-auth'} 
-                  className="text-blue-400 font-black hover:text-blue-300 transition-colors"
+                  className="text-blue-400 font-extrabold hover:text-blue-300 transition-colors underline decoration-2 underline-offset-2"
                 >
                   Créer un compte
                 </Link>
@@ -236,24 +236,24 @@ export default function Login() {
         </div>
 
         <div className="mt-8 max-w-md w-full">
-          <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-            <h3 className="font-bold text-white/90 mb-3 text-center">🎯 Accès à votre compte</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+            <h3 className="font-extrabold text-white text-base mb-4 text-center tracking-wide">🎯 Accès à votre compte</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center text-green-400">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Vos investissements
+                <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                <span className="font-semibold">Vos investissements</span>
               </div>
               <div className="flex items-center text-blue-400">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                Historique des gains
+                <span className="w-2.5 h-2.5 bg-blue-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                <span className="font-semibold">Historique des gains</span>
               </div>
               <div className="flex items-center text-purple-400">
-                <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                Système de parrainage
+                <span className="w-2.5 h-2.5 bg-purple-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                <span className="font-semibold">Système de parrainage</span>
               </div>
               <div className="flex items-center text-orange-400">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                Retraits sécurisés
+                <span className="w-2.5 h-2.5 bg-orange-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                <span className="font-semibold">Retraits sécurisés</span>
               </div>
             </div>
           </div>
