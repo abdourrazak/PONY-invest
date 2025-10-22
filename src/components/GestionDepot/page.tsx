@@ -289,6 +289,27 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
             </button>
           </div>
           
+          {/* QR Code Orange Money */}
+          {isOrange && (
+            <div className="mt-4 text-center">
+              <p className="text-orange-400 text-sm mb-2 font-bold">📱 Utilisez l'application MaxIt</p>
+              <p className="text-white/70 text-xs mb-3 font-medium">Scannez ce QR Code avec MaxIt</p>
+              <div className="bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 inline-block">
+                <div className="bg-white rounded-lg p-2">
+                  <Image
+                    src="/orange-qr-code.png"
+                    alt="QR Code Orange Money MaxIt"
+                    width={200}
+                    height={200}
+                    className="w-40 h-40 object-contain"
+                    unoptimized
+                  />
+                </div>
+                <p className="text-white/80 text-xs mt-2 font-medium">QR Code Orange Money (MaxIt)</p>
+              </div>
+            </div>
+          )}
+
           {/* QR Code MTN Mobile Money */}
           {isMTN && (
             <div className="mt-4 text-center">
