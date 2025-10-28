@@ -31,6 +31,9 @@ export interface User {
   totalDeposited?: number // Total des dépôts effectués
   totalInvested?: number  // Total investi depuis le dernier dépôt
   lastDepositDate?: any   // Date du dernier dépôt
+  lastLoginAt?: any       // Date/heure de dernière connexion
+  lastLoginIP?: string    // IP/hostname de dernière connexion
+  loginCount?: number     // Nombre total de connexions
 }
 
 // Génère un code d'invitation unique de 8 caractères
@@ -172,22 +175,58 @@ export async function loginUser(
   password: string
 ): Promise<{ success: boolean; user?: User; error?: string }> {
   try {
+    console.log('🔐 Tentative de connexion pour:', numeroTel)
+    
     const email = `${numeroTel}@axml.local`
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const firebaseUser = userCredential.user
 
+    console.log('✅ Authentification réussie pour UID:', firebaseUser.uid)
+
     // Récupérer les données utilisateur depuis Firestore
-    const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
+    const userDocRef = doc(db, 'users', firebaseUser.uid)
+    const userDoc = await getDoc(userDocRef)
     
     if (userDoc.exists()) {
       const userData = userDoc.data() as User
+      
+      // Mettre à jour les informations de dernière connexion dans Firestore
+      try {
+        await setDoc(userDocRef, {
+          ...userData,
+          lastLoginAt: serverTimestamp(), // Date/heure de dernière connexion
+          lastLoginIP: typeof window !== 'undefined' ? window.location.hostname : 'unknown', // IP/hostname
+          loginCount: (userData.loginCount || 0) + 1 // Compteur de connexions
+        }, { merge: true })
+        
+        console.log('✅ Informations de connexion enregistrées dans Firestore')
+      } catch (updateError) {
+        console.error('⚠️ Erreur mise à jour connexion:', updateError)
+        // Ne pas bloquer la connexion si la mise à jour échoue
+      }
+      
       return { success: true, user: userData }
     } else {
+      console.error('❌ Document utilisateur introuvable dans Firestore')
       return { success: false, error: 'Données utilisateur introuvables' }
     }
   } catch (error: any) {
-    console.error('Erreur connexion:', error)
-    return { success: false, error: 'Numéro ou mot de passe incorrect' }
+    console.error('❌ Erreur connexion:', error)
+    
+    // Messages d'erreur plus précis
+    let errorMessage = 'Numéro ou mot de passe incorrect'
+    
+    if (error.code === 'auth/wrong-password') {
+      errorMessage = 'Mot de passe incorrect'
+    } else if (error.code === 'auth/user-not-found') {
+      errorMessage = 'Aucun compte trouvé avec ce numéro'
+    } else if (error.code === 'auth/too-many-requests') {
+      errorMessage = 'Trop de tentatives. Réessayez plus tard'
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'Problème de connexion internet'
+    }
+    
+    return { success: false, error: errorMessage }
   }
 }
 
