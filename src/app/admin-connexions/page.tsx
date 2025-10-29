@@ -25,13 +25,22 @@ export default function AdminConnexionsPage() {
   const loadConnections = async () => {
     setLoading(true)
     try {
+      console.log('🔄 Chargement des connexions utilisateurs...')
       const usersRef = collection(db, 'users')
-      const usersQuery = query(usersRef, orderBy('lastLoginAt', 'desc'))
-      const snapshot = await getDocs(usersQuery)
+      
+      // Récupérer TOUS les utilisateurs sans tri (pour éviter erreur d'index)
+      const snapshot = await getDocs(usersRef)
+      console.log(`📊 ${snapshot.size} utilisateurs trouvés`)
       
       const usersList: UserConnection[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
+        console.log(`👤 Utilisateur ${data.numeroTel}:`, {
+          lastLoginAt: data.lastLoginAt ? 'OUI' : 'NON',
+          loginCount: data.loginCount || 0,
+          lastLoginIP: data.lastLoginIP || 'N/A'
+        })
+        
         usersList.push({
           uid: doc.id,
           numeroTel: data.numeroTel || 'N/A',
@@ -44,10 +53,20 @@ export default function AdminConnexionsPage() {
         })
       })
       
+      // Trier côté client par lastLoginAt (les plus récents en premier)
+      usersList.sort((a, b) => {
+        if (!a.lastLoginAt && !b.lastLoginAt) return 0
+        if (!a.lastLoginAt) return 1
+        if (!b.lastLoginAt) return -1
+        return b.lastLoginAt.toMillis() - a.lastLoginAt.toMillis()
+      })
+      
+      console.log('✅ Utilisateurs triés:', usersList.length)
       setUsers(usersList)
       setLastUpdate(new Date())
     } catch (error) {
-      console.error('Erreur chargement connexions:', error)
+      console.error('❌ Erreur chargement connexions:', error)
+      alert(`Erreur: ${error}`)
     } finally {
       setLoading(false)
     }
@@ -198,6 +217,20 @@ export default function AdminConnexionsPage() {
               <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
                 <Clock size={24} className="text-purple-400" />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Message */}
+        <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 mb-6">
+          <div className="flex items-start space-x-3">
+            <div className="text-blue-400 text-xl">ℹ️</div>
+            <div>
+              <h3 className="text-blue-400 font-medium text-sm mb-1">Information importante</h3>
+              <p className="text-white/70 text-xs">
+                Les données de connexion (heure, compteur) s'afficheront automatiquement dès que les utilisateurs se connecteront à l'application. 
+                Les utilisateurs qui ne se sont pas encore reconnectés depuis la mise à jour afficheront "Jamais connecté".
+              </p>
             </div>
           </div>
         </div>
