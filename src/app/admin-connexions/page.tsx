@@ -14,6 +14,10 @@ interface UserConnection {
   createdAt: Timestamp
   balance: number
   role?: string
+  totalDeposits: number
+  totalWithdrawals: number
+  pendingDeposits: number
+  pendingWithdrawals: number
 }
 
 export default function AdminConnexionsPage() {
@@ -32,13 +36,61 @@ export default function AdminConnexionsPage() {
       const snapshot = await getDocs(usersRef)
       console.log(`📊 ${snapshot.size} utilisateurs trouvés`)
       
+      // Récupérer toutes les transactions
+      const transactionsRef = collection(db, 'transactions')
+      const transactionsSnapshot = await getDocs(transactionsRef)
+      console.log(`💰 ${transactionsSnapshot.size} transactions trouvées`)
+      
+      // Créer un map des transactions par userId
+      const transactionsByUser = new Map<string, { deposits: number, withdrawals: number, pendingDeposits: number, pendingWithdrawals: number }>()
+      
+      transactionsSnapshot.forEach((doc) => {
+        const transaction = doc.data()
+        const userId = transaction.userId
+        
+        if (!transactionsByUser.has(userId)) {
+          transactionsByUser.set(userId, { 
+            deposits: 0, 
+            withdrawals: 0,
+            pendingDeposits: 0,
+            pendingWithdrawals: 0
+          })
+        }
+        
+        const userTransactions = transactionsByUser.get(userId)!
+        const amount = transaction.amount || 0
+        
+        if (transaction.type === 'deposit') {
+          if (transaction.status === 'approved') {
+            userTransactions.deposits += amount
+          } else if (transaction.status === 'pending') {
+            userTransactions.pendingDeposits += amount
+          }
+        } else if (transaction.type === 'withdrawal') {
+          if (transaction.status === 'approved') {
+            userTransactions.withdrawals += amount
+          } else if (transaction.status === 'pending') {
+            userTransactions.pendingWithdrawals += amount
+          }
+        }
+      })
+      
       const usersList: UserConnection[] = []
       snapshot.forEach((doc) => {
         const data = doc.data()
+        const userTransactions = transactionsByUser.get(doc.id) || { 
+          deposits: 0, 
+          withdrawals: 0,
+          pendingDeposits: 0,
+          pendingWithdrawals: 0
+        }
+        
         console.log(`👤 Utilisateur ${data.numeroTel}:`, {
           lastLoginAt: data.lastLoginAt ? 'OUI' : 'NON',
           loginCount: data.loginCount || 0,
-          lastLoginIP: data.lastLoginIP || 'N/A'
+          lastLoginIP: data.lastLoginIP || 'N/A',
+          deposits: userTransactions.deposits,
+          withdrawals: userTransactions.withdrawals
         })
         
         usersList.push({
@@ -49,7 +101,11 @@ export default function AdminConnexionsPage() {
           lastLoginIP: data.lastLoginIP || 'unknown',
           createdAt: data.createdAt || Timestamp.now(),
           balance: data.balance || 0,
-          role: data.role || 'user'
+          role: data.role || 'user',
+          totalDeposits: userTransactions.deposits,
+          totalWithdrawals: userTransactions.withdrawals,
+          pendingDeposits: userTransactions.pendingDeposits,
+          pendingWithdrawals: userTransactions.pendingWithdrawals
         })
       })
       
@@ -147,6 +203,9 @@ export default function AdminConnexionsPage() {
     const loginDate = user.lastLoginAt.toDate()
     return loginDate.toDateString() === new Date().toDateString()
   }).length
+  
+  const totalDeposits = users.reduce((sum, u) => sum + u.totalDeposits, 0)
+  const totalWithdrawals = users.reduce((sum, u) => sum + u.totalWithdrawals, 0)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white">
@@ -181,7 +240,7 @@ export default function AdminConnexionsPage() {
 
       {/* Stats Cards */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -216,6 +275,34 @@ export default function AdminConnexionsPage() {
               </div>
               <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
                 <Clock size={24} className="text-purple-400" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/70 text-sm mb-1">Dépôts Totaux</p>
+                <p className="text-2xl font-bold text-green-400">
+                  {totalDeposits.toLocaleString()} F
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                <span className="text-green-400 text-xl">💰</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/70 text-sm mb-1">Retraits Totaux</p>
+                <p className="text-2xl font-bold text-red-400">
+                  {totalWithdrawals.toLocaleString()} F
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+                <span className="text-red-400 text-xl">💸</span>
               </div>
             </div>
           </div>
@@ -303,6 +390,12 @@ export default function AdminConnexionsPage() {
                       Nb Connexions
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                      Dépôts
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                      Retraits
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                       Solde
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
@@ -352,6 +445,30 @@ export default function AdminConnexionsPage() {
                           <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-500/20 text-purple-400">
                             {user.loginCount}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm text-green-400 font-medium">
+                              +{user.totalDeposits.toLocaleString()} FCFA
+                            </div>
+                            {user.pendingDeposits > 0 && (
+                              <div className="text-xs text-yellow-400">
+                                ({user.pendingDeposits.toLocaleString()} en attente)
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm text-red-400 font-medium">
+                              -{user.totalWithdrawals.toLocaleString()} FCFA
+                            </div>
+                            {user.pendingWithdrawals > 0 && (
+                              <div className="text-xs text-yellow-400">
+                                ({user.pendingWithdrawals.toLocaleString()} en attente)
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-green-400 font-medium">
