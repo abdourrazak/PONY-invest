@@ -24,7 +24,7 @@ export default function AdminConnexionsPage() {
   const [users, setUsers] = useState<UserConnection[]>([])
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [filter, setFilter] = useState<'all' | 'today' | 'week'>('all')
+  const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'new'>('all')
 
   const loadConnections = async () => {
     setLoading(true)
@@ -192,6 +192,13 @@ export default function AdminConnexionsPage() {
           const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
           return loginDate >= weekAgo
         })
+      case 'new':
+        return usersList.filter(user => {
+          if (!user.createdAt) return false
+          const createdDate = user.createdAt.toDate()
+          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+          return createdDate >= oneDayAgo
+        })
       default:
         return usersList
     }
@@ -202,6 +209,14 @@ export default function AdminConnexionsPage() {
     if (!user.lastLoginAt) return false
     const loginDate = user.lastLoginAt.toDate()
     return loginDate.toDateString() === new Date().toDateString()
+  }).length
+  
+  const newUsersToday = users.filter(user => {
+    if (!user.createdAt) return false
+    const createdDate = user.createdAt.toDate()
+    const now = new Date()
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    return createdDate >= oneDayAgo
   }).length
   
   const totalDeposits = users.reduce((sum, u) => sum + u.totalDeposits, 0)
@@ -241,7 +256,7 @@ export default function AdminConnexionsPage() {
 
       {/* Stats Cards */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6">
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
               <div className="flex-1">
@@ -262,6 +277,18 @@ export default function AdminConnexionsPage() {
               </div>
               <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/20 rounded-full flex items-center justify-center">
                 <Activity size={20} className="text-green-400 md:w-6 md:h-6" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Nouveaux Inscrits</p>
+                <p className="text-2xl md:text-3xl font-bold text-yellow-400">{newUsersToday}</p>
+              </div>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                <span className="text-yellow-400 text-lg md:text-xl">✨</span>
               </div>
             </div>
           </div>
@@ -355,6 +382,16 @@ export default function AdminConnexionsPage() {
           >
             Cette semaine
           </button>
+          <button
+            onClick={() => setFilter('new')}
+            className={`px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+              filter === 'new'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                : 'bg-white/10 text-white/70 hover:bg-white/20'
+            }`}
+          >
+            ✨ Nouveaux ({newUsersToday})
+          </button>
         </div>
 
         {/* Users Table */}
@@ -383,6 +420,9 @@ export default function AdminConnexionsPage() {
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                       Utilisateur
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                      Date Inscription
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                       Dernière Connexion
@@ -430,6 +470,23 @@ export default function AdminConnexionsPage() {
                               <div className="text-xs text-white/50">
                                 {user.uid.slice(0, 8)}...
                               </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm text-yellow-400">
+                              {user.createdAt ? user.createdAt.toDate().toLocaleDateString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              }) : 'N/A'}
+                            </div>
+                            <div className="text-xs text-white/50">
+                              {user.createdAt ? user.createdAt.toDate().toLocaleTimeString('fr-FR', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              }) : ''}
                             </div>
                           </div>
                         </td>
