@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react'
 import { collection, getDocs, query, orderBy, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import Link from 'next/link'
-import { ArrowLeft, RefreshCw, Users, Activity, Clock } from 'lucide-react'
+import { RefreshCw, Users, Activity, Clock } from 'lucide-react'
 
 interface UserConnection {
   uid: string
@@ -228,18 +227,13 @@ export default function AdminConnexionsPage() {
       <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center space-x-2 md:space-x-4 flex-1 min-w-0">
-              <Link href="/dashboard-admin" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all flex-shrink-0">
-                <ArrowLeft size={18} className="text-white md:w-5 md:h-5" />
-              </Link>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base md:text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
-                  Connexions Utilisateurs
-                </h1>
-                <p className="text-white/60 text-xs md:text-sm truncate">
-                  MAJ: {lastUpdate.toLocaleTimeString('fr-FR')}
-                </p>
-              </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base md:text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
+                Connexions Utilisateurs
+              </h1>
+              <p className="text-white/60 text-xs md:text-sm truncate">
+                MAJ: {lastUpdate.toLocaleTimeString('fr-FR')}
+              </p>
             </div>
             <button
               onClick={loadConnections}
