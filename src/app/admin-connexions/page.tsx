@@ -211,28 +211,29 @@ export default function AdminConnexionsPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white">
       {/* Header */}
       <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard-admin" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all">
-                <ArrowLeft size={20} className="text-white" />
+        <div className="max-w-7xl mx-auto px-3 md:px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center space-x-2 md:space-x-4 flex-1 min-w-0">
+              <Link href="/dashboard-admin" className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all flex-shrink-0">
+                <ArrowLeft size={18} className="text-white md:w-5 md:h-5" />
               </Link>
-              <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base md:text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent truncate">
                   Connexions Utilisateurs
                 </h1>
-                <p className="text-white/60 text-sm">
-                  Dernière mise à jour: {lastUpdate.toLocaleTimeString('fr-FR')}
+                <p className="text-white/60 text-xs md:text-sm truncate">
+                  MAJ: {lastUpdate.toLocaleTimeString('fr-FR')}
                 </p>
               </div>
             </div>
             <button
               onClick={loadConnections}
               disabled={loading}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50"
+              className="flex items-center space-x-1 md:space-x-2 px-3 md:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 flex-shrink-0"
             >
-              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-              <span className="text-sm font-medium">Actualiser</span>
+              <RefreshCw size={14} className={`${loading ? 'animate-spin' : ''} md:w-4 md:h-4`} />
+              <span className="text-xs md:text-sm font-medium hidden sm:inline">Actualiser</span>
+              <span className="text-xs md:text-sm font-medium sm:hidden">↻</span>
             </button>
           </div>
         </div>
@@ -240,69 +241,69 @@ export default function AdminConnexionsPage() {
 
       {/* Stats Cards */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-sm mb-1">Total Utilisateurs</p>
-                <p className="text-3xl font-bold text-white">{users.length}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Total Utilisateurs</p>
+                <p className="text-2xl md:text-3xl font-bold text-white">{users.length}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                <Users size={24} className="text-blue-400" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-sm mb-1">Connectés Aujourd'hui</p>
-                <p className="text-3xl font-bold text-green-400">{connectedToday}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                <Activity size={24} className="text-green-400" />
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <Users size={20} className="text-blue-400 md:w-6 md:h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-sm mb-1">Connexions Totales</p>
-                <p className="text-3xl font-bold text-purple-400">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Connectés Aujourd'hui</p>
+                <p className="text-2xl md:text-3xl font-bold text-green-400">{connectedToday}</p>
+              </div>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                <Activity size={20} className="text-green-400 md:w-6 md:h-6" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Connexions Totales</p>
+                <p className="text-2xl md:text-3xl font-bold text-purple-400">
                   {users.reduce((sum, u) => sum + u.loginCount, 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
-                <Clock size={24} className="text-purple-400" />
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
+                <Clock size={20} className="text-purple-400 md:w-6 md:h-6" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-sm mb-1">Dépôts Totaux</p>
-                <p className="text-2xl font-bold text-green-400">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Dépôts Totaux</p>
+                <p className="text-xl md:text-2xl font-bold text-green-400">
                   {totalDeposits.toLocaleString()} F
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                <span className="text-green-400 text-xl">💰</span>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                <span className="text-green-400 text-lg md:text-xl">💰</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/70 text-sm mb-1">Retraits Totaux</p>
-                <p className="text-2xl font-bold text-red-400">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 md:p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-white/70 text-xs md:text-sm mb-1">Retraits Totaux</p>
+                <p className="text-xl md:text-2xl font-bold text-red-400">
                   {totalWithdrawals.toLocaleString()} F
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
-                <span className="text-red-400 text-xl">💸</span>
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+                <span className="text-red-400 text-lg md:text-xl">💸</span>
               </div>
             </div>
           </div>
@@ -323,10 +324,10 @@ export default function AdminConnexionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex space-x-3 mb-6">
+        <div className="flex space-x-2 md:space-x-3 mb-6 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               filter === 'all'
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                 : 'bg-white/10 text-white/70 hover:bg-white/20'
@@ -336,7 +337,7 @@ export default function AdminConnexionsPage() {
           </button>
           <button
             onClick={() => setFilter('today')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               filter === 'today'
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                 : 'bg-white/10 text-white/70 hover:bg-white/20'
@@ -346,7 +347,7 @@ export default function AdminConnexionsPage() {
           </button>
           <button
             onClick={() => setFilter('week')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               filter === 'week'
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
                 : 'bg-white/10 text-white/70 hover:bg-white/20'
@@ -358,6 +359,12 @@ export default function AdminConnexionsPage() {
 
         {/* Users Table */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden">
+          {/* Mobile: Afficher un message pour faire défiler */}
+          <div className="md:hidden bg-yellow-500/10 border-b border-yellow-400/30 px-4 py-2">
+            <p className="text-yellow-400 text-xs text-center">
+              ← Faites défiler horizontalement pour voir toutes les colonnes →
+            </p>
+          </div>
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
@@ -370,8 +377,8 @@ export default function AdminConnexionsPage() {
               <p className="text-white/70">Aucune connexion trouvée</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-4 md:mx-0">
+              <table className="w-full min-w-[1200px]">
                 <thead className="bg-black/30 border-b border-white/10">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
