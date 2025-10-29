@@ -75,13 +75,13 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? "#150*1*1*2*689440366*Montant*1#" 
     : isMTN 
     ? "*126*1*1*653086253*Montant*1#" 
-    : "1038166766"
+    : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
   
   const beneficiaryName = isOrange 
     ? "DJOGANG MBIANDA" 
     : isMTN 
     ? "ADAMA DJAIMOU" 
-    : "TLjWdzsFMMifpBuShQu4kGrUbSxmbLanFt"
+    : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
   
   const serviceName = isOrange 
     ? "Orange Money Cameroun" 
@@ -326,6 +326,27 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                   />
                 </div>
                 <p className="text-white/80 text-xs mt-2 font-medium">QR Code MTN MoMo</p>
+              </div>
+            </div>
+          )}
+
+          {/* QR Code Crypto USDT TRC20 */}
+          {isCrypto && (
+            <div className="mt-4 text-center">
+              <p className="text-blue-400 text-sm mb-2 font-bold">₿ Adresse USDT TRC20</p>
+              <p className="text-white/70 text-xs mb-3 font-medium">Scannez ce QR Code pour envoyer</p>
+              <div className="bg-white/20 backdrop-blur-sm border border-white/20 rounded-xl p-4 inline-block">
+                <div className="bg-white rounded-lg p-2">
+                  <Image
+                    src="/crypto-qr-code.png"
+                    alt="QR Code USDT TRC20"
+                    width={200}
+                    height={200}
+                    className="w-40 h-40 object-contain"
+                    unoptimized
+                  />
+                </div>
+                <p className="text-white/80 text-xs mt-2 font-medium">QR Code USDT TRC20</p>
               </div>
             </div>
           )}
