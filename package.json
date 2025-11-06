@@ -8,13 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "@types/uuid": "^10.0.0",
     "date-fns": "^4.1.0",
     "firebase": "^10.13.2",
     "lucide-react": "^0.539.0",
     "next": "14.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "24.3.0",
