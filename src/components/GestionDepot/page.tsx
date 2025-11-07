@@ -422,8 +422,8 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
             <LygosButton
               amount={selectedAmount}
               userId={currentUser.uid}
-              userPhone={userData?.numeroTel || userData?.email || currentUser.email || '+237600000000'}
-              userName={userData?.nom || userData?.email || currentUser.email || 'Utilisateur'}
+              userPhone={userData?.numeroTel || '+237600000000'}
+              userName={userData?.numeroTel || 'Utilisateur'}
               disabled={loading}
             />
           </div>
