@@ -30,19 +30,28 @@ export default function LygosButton({
     setError('')
 
     try {
-      console.log('🚀 Initiation paiement Lygos:', { amount, userId })
+      console.log('🚀 Initiation paiement Lygos:', { 
+        amount, 
+        userId, 
+        userPhone, 
+        userName 
+      })
+
+      const payload = {
+        amount,
+        userId,
+        userPhone,
+        userName,
+      }
+
+      console.log('📤 Payload envoyé:', payload)
 
       const response = await fetch('/api/lygos/initiate-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          amount,
-          userId,
-          userPhone,
-          userName,
-        }),
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
