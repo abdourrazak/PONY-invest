@@ -27,19 +27,30 @@
 4. Ajoutez ces variables :
 
 ```env
-NEXT_PUBLIC_LYGOS_API_KEY=lygosapp-36d8a4d4-11a4-4117-928f-4caf95e464a6
+# MODE SANDBOX (Pour les tests)
+NEXT_PUBLIC_LYGOS_API_KEY=lygossandbox-959a3962-5e70-48e1-a29a-ae3eac137754
 NEXT_PUBLIC_LYGOS_API_URL=https://api.lygosapp.com/v1/gateway
-NEXT_PUBLIC_LYGOS_MODE=production
+NEXT_PUBLIC_LYGOS_MODE=sandbox
 NEXT_PUBLIC_APP_URL=https://votre-domaine.vercel.app
+
+# MODE PRODUCTION (Pour les vrais paiements)
+# NEXT_PUBLIC_LYGOS_API_KEY=lygosapp-36d8a4d4-11a4-4117-928f-4caf95e464a6
+# NEXT_PUBLIC_LYGOS_MODE=production
 ```
 
-**⚠️ IMPORTANT :** Remplacez `votre-domaine.vercel.app` par votre vraie URL Vercel !
+**⚠️ IMPORTANT :** 
+- Remplacez `votre-domaine.vercel.app` par votre vraie URL Vercel !
+- Utilisez la clé **Sandbox** pour les tests
+- Utilisez la clé **Production** quand tout fonctionne
 
 ### Étape 2 : Configurer le Webhook Lygos
 
+**⚠️ IMPORTANT :** Configurez le webhook en mode **SANDBOX** pour les tests !
+
 1. Connectez-vous à votre compte Lygos : https://lygosapp.com
-2. Allez dans **Paramètres** → **Webhooks**
-3. Ajoutez cette URL de webhook :
+2. **Passez en mode SANDBOX** (sélecteur en haut à droite)
+3. Allez dans **Paramètres** → **Webhooks**
+4. Ajoutez cette URL de webhook :
 
 ```
 https://votre-domaine.vercel.app/api/lygos/webhook
