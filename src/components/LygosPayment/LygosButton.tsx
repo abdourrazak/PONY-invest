@@ -52,6 +52,7 @@ export default function LygosButton({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        cache: 'no-store',
       })
 
       const data = await response.json()
