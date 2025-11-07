@@ -45,7 +45,11 @@ export async function POST(request: NextRequest) {
       orderId,
       amount,
       userId,
+      apiUrl: LYGOS_API_URL,
+      apiKey: LYGOS_API_KEY?.substring(0, 20) + '...',
     })
+
+    console.log('📤 Payload envoyé à Lygos:', payload)
 
     // Appel à l'API Lygos
     const response = await fetch(LYGOS_API_URL, {
@@ -59,10 +63,25 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json()
 
+    console.log('📥 Réponse Lygos:', {
+      status: response.status,
+      ok: response.ok,
+      data: data,
+    })
+
     if (!response.ok) {
-      console.error('❌ Erreur API Lygos:', data)
+      console.error('❌ Erreur API Lygos:', {
+        status: response.status,
+        statusText: response.statusText,
+        data: data,
+      })
       return NextResponse.json(
-        { error: 'Erreur lors de la création du paiement', details: data },
+        { 
+          error: 'Erreur lors de la création du paiement', 
+          details: data,
+          status: response.status,
+          apiUrl: LYGOS_API_URL,
+        },
         { status: response.status }
       )
     }
