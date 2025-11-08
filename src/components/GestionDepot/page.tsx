@@ -8,7 +8,6 @@ import { ArrowLeft, Copy, Upload, X } from 'lucide-react'
 import { createTransaction } from '@/lib/transactions'
 import { CreateTransactionData } from '@/types/transactions'
 import { checkLV1Discount } from '@/lib/firebaseAuth'
-import LygosButton from '@/components/LygosPayment/LygosButton'
 
 
 // Fonction pour compresser une image si elle dépasse 1MB
@@ -405,31 +404,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           )}
         </div>
 
-        {/* Lygos Payment Button - Paiement International */}
-        {selectedAmount && currentUser && (
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/20"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white/70">
-                  OU
-                </span>
-              </div>
-            </div>
-
-            <LygosButton
-              amount={selectedAmount}
-              userId={currentUser.uid}
-              userPhone={userData?.numeroTel || '+237600000000'}
-              userName={userData?.numeroTel || 'Utilisateur'}
-              disabled={loading}
-            />
-          </div>
-        )}
-
-        {/* Submit Button - Méthode traditionnelle */}
+        {/* Submit Button */}
         <button
           onClick={handleSubmit}
           disabled={(() => {
