@@ -16,12 +16,12 @@ const compressImage = (file: File, maxSizeBytes: number = 1048487): Promise<stri
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')!
     const img = document.createElement('img')
-    
+
     img.onload = () => {
       // Calculer les nouvelles dimensions (réduire si nécessaire)
       let { width, height } = img
       const maxDimension = 1200 // Dimension maximale
-      
+
       if (width > maxDimension || height > maxDimension) {
         if (width > height) {
           height = (height * maxDimension) / width
@@ -31,24 +31,24 @@ const compressImage = (file: File, maxSizeBytes: number = 1048487): Promise<stri
           height = maxDimension
         }
       }
-      
+
       canvas.width = width
       canvas.height = height
       ctx.drawImage(img, 0, 0, width, height)
-      
+
       // Commencer avec une qualité élevée et réduire si nécessaire
       let quality = 0.8
       let compressedDataUrl = canvas.toDataURL('image/jpeg', quality)
-      
+
       // Réduire la qualité jusqu'à ce que l'image soit sous la limite
       while (compressedDataUrl.length > maxSizeBytes && quality > 0.1) {
         quality -= 0.1
         compressedDataUrl = canvas.toDataURL('image/jpeg', quality)
       }
-      
+
       resolve(compressedDataUrl)
     }
-    
+
     img.src = URL.createObjectURL(file)
   })
 }
@@ -71,41 +71,41 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
   const isMTN = paymentMethod === 'mtn'
   const isCrypto = paymentMethod === 'crypto'
 
-  const beneficiaryCode = isOrange 
-    ? "#150*1*1*2*689440366*Montant*1#" 
-    : isMTN 
-    ? "*126*1*1*653086253*Montant*1#" 
-    : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
-  
-  const beneficiaryName = isOrange 
-    ? "DJOGANG MBIANDA" 
-    : isMTN 
-    ? "ADAMA DJAIMOU" 
-    : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
-  
-  const serviceName = isOrange 
-    ? "Orange Money Cameroun" 
-    : isMTN 
-    ? "MTN Mobile Money" 
-    : "Cryptomonnaie (USDT TRC20) 1USDT = 600 FCFA"
-  
-  const logoSrc = isOrange 
-    ? "/org.png" 
-    : isMTN 
-    ? "/mtn.png" 
-    : "₿"
-  
-  const headerColors = isOrange 
-    ? "from-orange-500 via-orange-600 to-red-500" 
+  const beneficiaryCode = isOrange
+    ? "#150*1*1*2*689440366*Montant*1#"
     : isMTN
-    ? "from-yellow-500 via-yellow-600 to-orange-500"
-    : "from-blue-500 via-purple-600 to-indigo-600"
-  
+      ? "*126*1*1*653086253*Montant*1#"
+      : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
+
+  const beneficiaryName = isOrange
+    ? "DJOGANG MBIANDA"
+    : isMTN
+      ? "ADAMA DJAIMOU"
+      : "TUBbip6CZHH8R9tods5Fnmcrxpvw2TdRpS"
+
+  const serviceName = isOrange
+    ? "Orange Money Cameroun"
+    : isMTN
+      ? "MTN Mobile Money"
+      : "Cryptomonnaie (USDT TRC20) 1USDT = 600 FCFA"
+
+  const logoSrc = isOrange
+    ? "/org.png"
+    : isMTN
+      ? "/mtn.png"
+      : "₿"
+
+  const headerColors = isOrange
+    ? "from-orange-500 via-orange-600 to-red-500"
+    : isMTN
+      ? "from-yellow-500 via-yellow-600 to-orange-500"
+      : "from-blue-500 via-purple-600 to-indigo-600"
+
   const accentColors = isOrange
     ? { primary: "blue", secondary: "orange" }
     : isMTN
-    ? { primary: "yellow", secondary: "red" }
-    : { primary: "blue", secondary: "purple" }
+      ? { primary: "yellow", secondary: "red" }
+      : { primary: "blue", secondary: "purple" }
 
   // Vérifier si l'utilisateur a la réduction LV1 (10+ amis)
   useEffect(() => {
@@ -145,12 +145,12 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
 
     // Validation du montant
     const numericAmount = parseFloat(amount)
-    
+
     if (isNaN(numericAmount) || numericAmount <= 0) {
       alert(`Veuillez entrer un montant valide`)
       return
     }
-    
+
     // Validation spéciale pour 2000 FCFA (nécessite 10+ amis)
     if (numericAmount === 2000 && !hasLV1Discount) {
       alert(`Le montant de 2,000 FCFA nécessite d'inviter au moins 10 amis`)
@@ -160,10 +160,10 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     setLoading(true)
 
     try {
-      
+
       // Compresser l'image si elle dépasse 1MB
       const compressedImage = await compressImage(transactionImage)
-      
+
       // Créer la transaction dans Firestore
       const transactionData: CreateTransactionData = {
         type: 'deposit',
@@ -185,9 +185,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       setAmount('')
       setTransactionImage(null)
       setImagePreview(null)
-      
+
       alert('Demande de dépôt soumise avec succès!')
-      
+
       // Rediriger vers le portefeuille (exactement comme retrait)
       router.push('/portefeuille')
     } catch (error) {
@@ -228,13 +228,13 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           <label className="block text-white/70 font-medium text-sm mb-4">
             Montant à déposer (FCFA)
           </label>
-          
+
           {/* Preset Amount Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => {
               // Le bouton 2000 FCFA nécessite 10+ amis
               const isLocked = presetAmount === 2000 && !hasLV1Discount
-              
+
               return (
                 <button
                   key={presetAmount}
@@ -245,13 +245,12 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                     }
                   }}
                   disabled={isLocked}
-                  className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 transform ${
-                    isLocked
+                  className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 transform ${isLocked
                       ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-500/30'
                       : selectedAmount === presetAmount
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400 hover:scale-105 active:scale-95'
-                      : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40 hover:scale-105 active:scale-95'
-                  }`}
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-2 border-purple-400 hover:scale-105 active:scale-95'
+                        : 'bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/40 hover:scale-105 active:scale-95'
+                    }`}
                   title={isLocked ? 'Invitez 10 amis pour débloquer' : ''}
                 >
                   {presetAmount.toLocaleString()} FCFA
@@ -260,7 +259,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               )
             })}
           </div>
-          
+
           {/* Selected Amount Display */}
           {selectedAmount && (
             <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl p-4">
@@ -288,7 +287,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
               <Copy className="w-4 h-4 text-white" />
             </button>
           </div>
-          
+
           {/* QR Code Orange Money */}
           {isOrange && (
             <div className="mt-4 text-center">
@@ -367,7 +366,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           <label className="block text-white/70 font-medium text-sm mb-3">
             Capture de transaction
           </label>
-          
+
           {!imagePreview ? (
             <div className="border-2 border-dashed border-white/30 bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-black/30 transition-colors duration-200">
               <input
@@ -404,39 +403,40 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           )}
         </div>
 
-        {/* Submit Button */}
+
+
+        {/* Submit Button - Méthode traditionnelle */}
         <button
           onClick={handleSubmit}
           disabled={(() => {
             const numericAmount = parseFloat(amount);
-            
+
             // Vérifier si 2000 FCFA est bloqué
             const is2000Locked = numericAmount === 2000 && !hasLV1Discount;
-            
-            return !amount || 
-                   !transactionImage || 
-                   loading || 
-                   is2000Locked ||
-                   isNaN(numericAmount) ||
-                   numericAmount <= 0;
+
+            return !amount ||
+              !transactionImage ||
+              loading ||
+              is2000Locked ||
+              isNaN(numericAmount) ||
+              numericAmount <= 0;
           })()}
-          className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
-            (() => {
+          className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${(() => {
               const numericAmount = parseFloat(amount);
               const is2000Locked = numericAmount === 2000 && !hasLV1Discount;
-              
-              const isEnabled = amount && 
-                               transactionImage && 
-                               !loading && 
-                               !isNaN(numericAmount) && 
-                               numericAmount > 0 &&
-                               !is2000Locked;
-              
+
+              const isEnabled = amount &&
+                transactionImage &&
+                !loading &&
+                !isNaN(numericAmount) &&
+                numericAmount > 0 &&
+                !is2000Locked;
+
               return isEnabled
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
                 : 'bg-white/20 text-white/50 cursor-not-allowed';
             })()
-          }`}
+            }`}
         >
           <div className="flex items-center justify-center">
             {loading ? (
