@@ -3,30 +3,48 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye, EyeOff, Smartphone, Lock, ArrowRight, Users } from 'lucide-react'
+import { Eye, EyeOff, Smartphone, Lock, ArrowRight, Users, MessageCircle, RefreshCw, CheckCircle } from 'lucide-react'
 import WelcomePopup from '../WelcomePopup/WelcomePopup'
 import { registerUser, isReferralCodeValid } from '@/lib/firebaseAuth'
 import PhoneInput from '@/components/PhoneInput/PhoneInput'
 
+// Étapes du formulaire
+type Step = 'form' | 'otp' | 'success'
+
 export default function Register() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [step, setStep] = useState<Step>('form')
   const [formData, setFormData] = useState({
     phone: '',
     password: '',
     confirmPassword: '',
     referralCode: ''
   })
+  const [otpCode, setOtpCode] = useState(['', '', '', '', '', ''])
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [errors, setErrors] = useState<{[key: string]: string}>({})
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [isSendingOtp, setIsSendingOtp] = useState(false)
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [isValidReferral, setIsValidReferral] = useState<boolean | null>(null)
   const [showErrorPopup, setShowErrorPopup] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showWelcomePopup, setShowWelcomePopup] = useState(false)
+  const [otpError, setOtpError] = useState('')
+  const [countdown, setCountdown] = useState(0)
+  const [phoneVerified, setPhoneVerified] = useState(false)
+  const [debugCode, setDebugCode] = useState('') // Dev only
 
-  // Debug state changes
+  // Compte à rebours pour renvoyer le code
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [countdown])
+
   useEffect(() => {
     console.log('🔍 Register: showWelcomePopup state changed to:', showWelcomePopup)
   }, [showWelcomePopup])
@@ -35,11 +53,8 @@ export default function Register() {
     const refCode = searchParams.get('ref')
     if (refCode) {
       setFormData(prev => ({ ...prev, referralCode: refCode }))
-      // Validation asynchrone du code de parrainage
       const validateCode = async () => {
-        console.log('🔍 Validation code URL:', refCode)
         const isValid = await isReferralCodeValid(refCode)
-        console.log('📋 Résultat validation URL:', isValid)
         setIsValidReferral(isValid)
       }
       validateCode()
@@ -47,134 +62,144 @@ export default function Register() {
   }, [searchParams])
 
   const validateForm = () => {
-    const newErrors: {[key: string]: string} = {}
+    const newErrors: { [key: string]: string } = {}
 
-    // Validation téléphone
     if (!formData.phone) {
       newErrors.phone = 'Le numéro de téléphone est requis'
     } else {
-      // Extraire le numéro local (sans indicatif pays)
       const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
       if (!/^6[0-9]{8}$/.test(localNumber)) {
         newErrors.phone = 'Format: 6XXXXXXXX'
       }
     }
 
-    // Validation mot de passe
     if (!formData.password) {
       newErrors.password = 'Le mot de passe est requis'
     } else if (formData.password.length < 6) {
       newErrors.password = 'Minimum 6 caractères'
     }
 
-    // Validation confirmation
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Confirmez votre mot de passe'
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
-    // Validation code d'invitation - Pas de validation d'erreur pour les codes d'URL
     const hasReferralFromURL = !!searchParams.get('ref')
     if (!hasReferralFromURL && formData.referralCode && isValidReferral === false) {
       newErrors.referralCode = 'Code d\'invitation invalide'
     }
-    // Les codes d'URL sont toujours considérés comme valides pour la validation du formulaire
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+  // ─── Envoi de l'OTP WhatsApp ───────────────────────────────────────────────
+  const handleSendOtp = async () => {
     if (!validateForm()) return
+    if (countdown > 0) return
 
+    setIsSendingOtp(true)
+    setOtpError('')
+
+    try {
+      const response = await fetch('/api/twilio/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: formData.phone }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setOtpError(data.error || 'Erreur lors de l\'envoi du code')
+        return
+      }
+
+      // En dev : afficher le code directement pour faciliter les tests
+      if (data.debugCode) {
+        setDebugCode(data.debugCode)
+      }
+
+      setStep('otp')
+      setCountdown(60) // 60 secondes avant de pouvoir renvoyer
+    } catch (err) {
+      setOtpError('Erreur réseau. Vérifiez votre connexion.')
+    } finally {
+      setIsSendingOtp(false)
+    }
+  }
+
+  // ─── Vérification de l'OTP ────────────────────────────────────────────────
+  const handleVerifyOtp = async () => {
+    const code = otpCode.join('')
+    if (code.length !== 6) {
+      setOtpError('Entrez les 6 chiffres du code')
+      return
+    }
+
+    setIsVerifyingOtp(true)
+    setOtpError('')
+
+    try {
+      const response = await fetch('/api/twilio/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: formData.phone, code }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setOtpError(data.error || 'Code incorrect')
+        return
+      }
+
+      // ✅ Téléphone vérifié → créer le compte Firebase
+      setPhoneVerified(true)
+      await handleCreateAccount()
+    } catch (err) {
+      setOtpError('Erreur réseau. Vérifiez votre connexion.')
+    } finally {
+      setIsVerifyingOtp(false)
+    }
+  }
+
+  // ─── Création du compte Firebase après vérification OTP ──────────────────
+  const handleCreateAccount = async () => {
     setIsLoading(true)
 
     try {
-      console.log('🚀 Début inscription avec:', {
-        phone: formData.phone,
-        referralCode: formData.referralCode,
-        hasReferralFromURL: !!searchParams.get('ref'),
-        urlRef: searchParams.get('ref')
-      })
-      
-      // Forcer l'utilisation du code d'URL si présent
       const finalReferralCode = searchParams.get('ref') || formData.referralCode || undefined
-      console.log('🎯 Code final utilisé pour inscription:', {
-        finalCode: finalReferralCode,
-        urlRef: searchParams.get('ref'),
-        formRef: formData.referralCode,
-        finalCodeType: typeof finalReferralCode
-      })
-      
-      // Extraire le numéro local pour l'inscription
       const localNumber = formData.phone.replace(/^\+\d+\s*/, '').trim()
-      
-      // Inscription avec Firebase Auth + Firestore
-      const result = await registerUser(
-        localNumber,
-        formData.password,
-        finalReferralCode
-      )
-      
-      console.log('📋 Résultat inscription:', result)
-      
+
+      const result = await registerUser(localNumber, formData.password, finalReferralCode)
+
       if (result.success && result.user) {
-        console.log('✅ Inscription réussie, sauvegarde localStorage')
-        
-        // Sauvegarder les données utilisateur
         localStorage.setItem('userPhone', formData.phone)
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('userId', result.user.uid)
-        
-        // Le code d'invitation est déjà généré et sauvegardé dans Firestore lors de l'inscription
-        // Récupérer le code depuis les données utilisateur retournées
+
         if (result.user.referralCode) {
           const userKey = result.user.numeroTel
           localStorage.setItem(`userReferralCode_${userKey}`, result.user.referralCode)
-          console.log('✅ Code d\'invitation sauvegardé:', result.user.referralCode)
         }
-        console.log('🏠 Redirection vers accueil')
-        // Afficher popup de bienvenue pour chaque inscription
-        console.log('🎉 Register: Showing welcome popup (every registration)')
-        // Toujours effacer hasSeenWelcome pour forcer l'affichage
+
         localStorage.removeItem('hasSeenWelcome')
-        // Afficher le popup à chaque inscription
         setShowWelcomePopup(true)
-        console.log('🎉 Register: Popup state set to true')
       } else {
-        console.log('❌ Inscription échouée:', result.error)
-        console.log('🔍 Debug - Code utilisé:', finalReferralCode)
-        console.log('🔍 Debug - Code d\'URL:', searchParams.get('ref'))
-        console.log('🔍 Debug - Code du formulaire:', formData.referralCode)
-        
-        // Afficher les détails d'erreur pour le debug mobile
-        let message = result.error || 'Erreur lors de l\'inscription. Veuillez réessayer.'
-        
-        // Ajouter des détails pour aider au debug
-        if (searchParams.get('ref')) {
-          message = `Erreur: ${result.error || 'Inconnue'}\nCode URL: ${searchParams.get('ref')}\nCode final: ${finalReferralCode}`
-        }
-        
-        // Afficher popup d'erreur avec détails
+        const message = result.error || 'Erreur lors de l\'inscription. Veuillez réessayer.'
         setErrorMessage(message)
         setShowErrorPopup(true)
-        setErrors({ referralCode: message })
-        
-        // Masquer le popup après 4 secondes
         setTimeout(() => setShowErrorPopup(false), 4000)
+        // Revenir à l'étape du formulaire
+        setStep('form')
       }
     } catch (error) {
-      console.error('💥 Erreur inscription catch:', error)
-      const message = 'Erreur lors de l\'inscription. Vérifiez votre connexion internet.'
-      setErrorMessage(message)
+      setErrorMessage('Erreur lors de l\'inscription. Vérifiez votre connexion internet.')
       setShowErrorPopup(true)
-      setErrors({ referralCode: message })
-      
-      // Masquer le popup après 4 secondes
       setTimeout(() => setShowErrorPopup(false), 4000)
+      setStep('form')
     } finally {
       setIsLoading(false)
     }
@@ -182,13 +207,11 @@ export default function Register() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    
-    // Validation en temps réel pour le code d'invitation
+
     if (field === 'referralCode') {
       if (value) {
         const validateCode = async () => {
           const isValid = await isReferralCodeValid(value)
-          console.log('🔍 Validation code:', value, 'Résultat:', isValid)
           setIsValidReferral(isValid)
         }
         validateCode()
@@ -196,23 +219,55 @@ export default function Register() {
         setIsValidReferral(null)
       }
     }
-    
-    // Effacer l'erreur quand l'utilisateur tape
+
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
     }
   }
 
+  // ─── Gestion de la saisie du code OTP (cases individuelles) ──────────────
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return // Chiffres uniquement
+    const newOtp = [...otpCode]
+    newOtp[index] = value.slice(-1) // 1 chiffre par case
+    setOtpCode(newOtp)
+    setOtpError('')
+
+    // Focus automatique sur la case suivante
+    if (value && index < 5) {
+      const next = document.getElementById(`otp-${index + 1}`)
+      next?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !otpCode[index] && index > 0) {
+      const prev = document.getElementById(`otp-${index - 1}`)
+      prev?.focus()
+    }
+  }
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (paste.length === 6) {
+      setOtpCode(paste.split(''))
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // RENDU
+  // ══════════════════════════════════════════════════════════════════════════
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 animate-pulse"></div>
-      
+
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
-        {/* Logo Section */}
+        {/* Logo */}
         <div className="mb-8 text-center">
           <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 rounded-full shadow-2xl border-4 border-white flex items-center justify-center relative animate-pulse overflow-hidden">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-blue-500 opacity-95 animate-spin" style={{ animationDuration: '10s' }}></div>
             <div className="relative z-10 w-full h-full flex items-center justify-center">
               <Image src="/ponyAI.png" alt="PONY AI" width={80} height={80} className="object-cover w-full h-full rounded-full" unoptimized />
             </div>
@@ -222,194 +277,288 @@ export default function Register() {
           </div>
         </div>
 
-        {/* Form Card */}
-        <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
-          {/* Header */}
-          <div className="bg-black/30 backdrop-blur-sm p-6 text-center border-b border-white/10">
-            <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Créer un compte PONY</h1>
-            <p className="text-white/80 text-sm font-semibold">Rejoignez notre plateforme d'investissement</p>
+        {/* ─────────────────────────────── ÉTAPE 1 : Formulaire ─── */}
+        {step === 'form' && (
+          <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-black/30 backdrop-blur-sm p-6 text-center border-b border-white/10">
+              <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Créer un compte PONY</h1>
+              <p className="text-white/80 text-sm font-semibold">Rejoignez notre plateforme d'investissement</p>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); handleSendOtp() }} className="p-6 space-y-5">
+              {/* Phone */}
+              <div>
+                <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                  <Smartphone className="w-4 h-4 mr-2" />
+                  <span className="font-extrabold">Numéro de téléphone</span>
+                </label>
+                <PhoneInput
+                  value={formData.phone}
+                  onChange={(value) => handleInputChange('phone', value)}
+                  placeholder="Numéro de téléphone"
+                  className={errors.phone ? 'border-red-400' : ''}
+                />
+                {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                  <Lock className="w-4 h-4 mr-2" />
+                  <span className="font-extrabold">Mot de passe</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    placeholder="Minimum 6 caractères"
+                    style={{ fontSize: '16px' }}
+                    className={`w-full px-4 py-3 pr-10 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-semibold bg-black/20 backdrop-blur-sm ${errors.password ? 'border-red-400' : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
+                      } focus:outline-none shadow-sm`}
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90">
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-400 text-xs mt-1 font-bold">{errors.password}</p>}
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                  <Lock className="w-4 h-4 mr-2" />
+                  <span className="font-extrabold">Confirmation du mot de passe</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    placeholder="Confirmez votre mot de passe"
+                    style={{ fontSize: '16px' }}
+                    className={`w-full px-4 py-3 pr-10 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-semibold bg-black/20 backdrop-blur-sm ${errors.confirmPassword ? 'border-red-400' : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
+                      } focus:outline-none shadow-sm`}
+                  />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90">
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.confirmPassword && <p className="text-red-400 text-xs mt-1 font-bold">{errors.confirmPassword}</p>}
+              </div>
+
+              {/* Referral Code */}
+              <div>
+                <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
+                  <Users className="w-4 h-4 mr-2" />
+                  <span className="font-extrabold">Code d'invitation</span>
+                  {searchParams.get('ref') ? <span className="text-red-400 ml-1.5 font-black">*</span> : <span className="text-white/60 ml-1.5 font-semibold text-xs">(optionnel)</span>}
+                </label>
+                <input
+                  type="text"
+                  value={formData.referralCode}
+                  onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
+                  placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "PONY... (optionnel)"}
+                  disabled={!!searchParams.get('ref')}
+                  style={{ fontSize: '16px' }}
+                  className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${searchParams.get('ref') ? 'border-green-400 bg-green-500/10'
+                      : errors.referralCode ? 'border-red-400'
+                        : isValidReferral === true ? 'border-green-400 bg-green-500/10'
+                          : isValidReferral === false ? 'border-red-400'
+                            : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
+                    } focus:outline-none shadow-sm ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
+                />
+                {errors.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">{errors.referralCode}</p>}
+                {searchParams.get('ref') && <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide du lien</p>}
+                {!searchParams.get('ref') && isValidReferral === true && <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide</p>}
+                {!searchParams.get('ref') && isValidReferral === false && formData.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">❌ Code d'invitation invalide</p>}
+                {!searchParams.get('ref') && <p className="text-blue-400 text-xs mt-1 font-bold">Laissez vide si vous êtes le premier utilisateur</p>}
+              </div>
+
+              {/* Error OTP send */}
+              {otpError && (
+                <div className="bg-red-500/10 border border-red-400/30 rounded-xl p-3">
+                  <p className="text-red-400 text-sm text-center font-semibold">{otpError}</p>
+                </div>
+              )}
+
+              {/* Submit → Envoyer OTP */}
+              <button
+                type="submit"
+                disabled={isSendingOtp || (!searchParams.get('ref') && !!formData.referralCode && isValidReferral === false)}
+                className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${isSendingOtp || (!searchParams.get('ref') && !!formData.referralCode && isValidReferral === false)
+                    ? 'bg-gray-600/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:scale-[1.02] active:scale-[0.98]'
+                  } flex items-center justify-center`}
+              >
+                {isSendingOtp ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    <span className="font-extrabold tracking-wide">Envoi du code...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    <span className="font-extrabold tracking-wide">Vérifier via WhatsApp</span>
+                  </div>
+                )}
+              </button>
+
+              {/* Login Link */}
+              <div className="text-center pt-5 border-t border-white/10 mt-6">
+                <p className="text-white/80 text-sm font-semibold">
+                  Déjà un compte ?{' '}
+                  <Link
+                    href={searchParams.get('ref') ? `/login?ref=${searchParams.get('ref')}` : '/login'}
+                    className="text-blue-400 font-extrabold hover:text-blue-300 transition-colors underline decoration-2 underline-offset-2"
+                  >
+                    Connexion
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
+        )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-5">
-            {/* Phone Field */}
-            <div>
-              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
-                <Smartphone className="w-4 h-4 mr-2" />
-                <span className="font-extrabold">Numéro de téléphone</span>
-              </label>
-              <PhoneInput
-                value={formData.phone}
-                onChange={(value) => handleInputChange('phone', value)}
-                placeholder="Numéro de téléphone"
-                className={errors.phone ? 'border-red-400' : ''}
-              />
-              {errors.phone && <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>}
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
-                <Lock className="w-4 h-4 mr-2" />
-                <span className="font-extrabold">Mot de passe</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Minimum 6 caractères"
-                  style={{ fontSize: '16px' }}
-                  className={`w-full px-4 py-3 pr-10 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-semibold bg-black/20 backdrop-blur-sm ${
-                    errors.password 
-                      ? 'border-red-400' 
-                      : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
-                  } focus:outline-none shadow-sm`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+        {/* ─────────────────────────────── ÉTAPE 2 : Saisie OTP ─── */}
+        {step === 'otp' && (
+          <div className="w-full max-w-md bg-black/20 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-black/30 backdrop-blur-sm p-6 text-center border-b border-white/10">
+              <div className="w-16 h-16 bg-green-500/20 border-2 border-green-400/40 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-8 h-8 text-green-400" />
               </div>
-              {errors.password && <p className="text-red-400 text-xs mt-1 font-bold">{errors.password}</p>}
-            </div>
-
-            {/* Confirm Password Field */}
-            <div>
-              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
-                <Lock className="w-4 h-4 mr-2" />
-                <span className="font-extrabold">Confirmation du mot de passe</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  placeholder="Confirmez votre mot de passe"
-                  style={{ fontSize: '16px' }}
-                  className={`w-full px-4 py-3 pr-10 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-semibold bg-black/20 backdrop-blur-sm ${
-                    errors.confirmPassword 
-                      ? 'border-red-400' 
-                      : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
-                  } focus:outline-none shadow-sm`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white/90"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="text-red-400 text-xs mt-1 font-bold">{errors.confirmPassword}</p>}
-            </div>
-
-            {/* Referral Code Field */}
-            <div>
-              <label className="flex items-center text-white font-bold mb-2.5 text-sm tracking-wide">
-                <Users className="w-4 h-4 mr-2" />
-                <span className="font-extrabold">Code d'invitation</span>
-                {searchParams.get('ref') ? <span className="text-red-400 ml-1.5 font-black">*</span> : <span className="text-white/60 ml-1.5 font-semibold text-xs">(optionnel)</span>}
-              </label>
-              <input
-                type="text"
-                value={formData.referralCode}
-                onChange={(e) => handleInputChange('referralCode', e.target.value.toUpperCase())}
-                placeholder={searchParams.get('ref') ? "Code d'invitation requis" : "PONY... (optionnel)"}
-                disabled={!!searchParams.get('ref')}
-                style={{ fontSize: '16px' }}
-                className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${
-                  searchParams.get('ref')
-                    ? 'border-green-400 bg-green-500/10 text-white/90'
-                    : errors.referralCode 
-                      ? 'border-red-400' 
-                      : isValidReferral === true
-                        ? 'border-green-400 bg-green-500/10 text-white/90'
-                        : isValidReferral === false
-                          ? 'border-red-400'
-                          : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
-                } focus:outline-none shadow-sm ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
-              />
-              {errors.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">{errors.referralCode}</p>}
-              {searchParams.get('ref') && (
-                <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide du lien</p>
-              )}
-              {!searchParams.get('ref') && isValidReferral === true && (
-                <p className="text-green-400 text-xs mt-1 font-bold">✅ Code d'invitation valide</p>
-              )}
-              {!searchParams.get('ref') && isValidReferral === false && formData.referralCode && (
-                <p className="text-red-400 text-xs mt-1 font-bold">❌ Code d'invitation invalide</p>
-              )}
-              {!searchParams.get('ref') && (
-                <p className="text-blue-400 text-xs mt-1 font-bold">Laissez vide si vous êtes le premier utilisateur</p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)}
-              className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${
-                isLoading || (!searchParams.get('ref') && formData.referralCode && isValidReferral === false)
-                  ? 'bg-gray-600/50 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
-              } flex items-center justify-center`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                  <span className="font-extrabold tracking-wide">Création en cours...</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center">
-                  <span className="font-extrabold tracking-wide">S'inscrire</span>
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </div>
-              )}
-            </button>
-
-            {/* Login Link */}
-            <div className="text-center pt-5 border-t border-white/10 mt-6">
-              <p className="text-white/80 text-sm font-semibold">
-                Déjà un compte ?{' '}
-                <Link 
-                  href={searchParams.get('ref') ? `/login?ref=${searchParams.get('ref')}` : '/login'} 
-                  className="text-blue-400 font-extrabold hover:text-blue-300 transition-colors underline decoration-2 underline-offset-2"
-                >
-                  Connexion
-                </Link>
+              <h2 className="text-xl font-black text-white mb-2">Code WhatsApp envoyé !</h2>
+              <p className="text-white/70 text-sm font-semibold">
+                Un code à 6 chiffres a été envoyé au
               </p>
+              <p className="text-green-400 font-black text-base mt-1">{formData.phone}</p>
             </div>
-          </form>
-        </div>
 
-        {/* Benefits */}
-        <div className="mt-8 max-w-md w-full">
-          <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
-            <h3 className="font-extrabold text-white text-base mb-4 text-center tracking-wide">🎁 Avantages de l'inscription</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center text-green-400">
-                <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                <span className="font-semibold">Solde de départ : 1000 FCFA</span>
+            <div className="p-6 space-y-6">
+              {/* Info sandbox */}
+              <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-xl p-4">
+                <p className="text-yellow-400 text-xs font-bold text-center">
+                  ⚠️ Mode Test (Sandbox) : Votre numéro doit d'abord avoir rejoint le sandbox Twilio
+                </p>
               </div>
-              <div className="flex items-center text-blue-400">
-                <span className="w-2.5 h-2.5 bg-blue-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                <span className="font-semibold">Récompenses quotidiennes</span>
+
+              {/* Debug code (dev uniquement) */}
+              {debugCode && (
+                <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-3">
+                  <p className="text-blue-300 text-xs font-bold text-center">
+                    🛠️ Mode dev — Code : <span className="text-white text-lg font-black tracking-widest">{debugCode}</span>
+                  </p>
+                </div>
+              )}
+
+              {/* Cases OTP */}
+              <div>
+                <label className="block text-white/70 font-semibold text-sm mb-4 text-center">
+                  Entrez le code reçu sur WhatsApp
+                </label>
+                <div className="flex justify-center gap-3" onPaste={handleOtpPaste}>
+                  {otpCode.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`otp-${index}`}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      className={`w-12 h-14 text-center text-2xl font-black rounded-xl border-2 transition-all duration-200 bg-black/30 text-white focus:outline-none ${digit
+                          ? 'border-green-400 bg-green-500/10'
+                          : otpError
+                            ? 'border-red-400'
+                            : 'border-white/30 focus:border-blue-400 focus:bg-black/40'
+                        }`}
+                    />
+                  ))}
+                </div>
+                {otpError && (
+                  <p className="text-red-400 text-sm text-center mt-3 font-bold">{otpError}</p>
+                )}
               </div>
-              <div className="flex items-center text-purple-400">
-                <span className="w-2.5 h-2.5 bg-purple-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                <span className="font-semibold">Système de parrainage</span>
-              </div>
-              <div className="flex items-center text-orange-400">
-                <span className="w-2.5 h-2.5 bg-orange-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                <span className="font-semibold">Investissements rentables</span>
+
+              {/* Bouton vérifier */}
+              <button
+                onClick={handleVerifyOtp}
+                disabled={isVerifyingOtp || isLoading || otpCode.join('').length !== 6}
+                className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${isVerifyingOtp || isLoading || otpCode.join('').length !== 6
+                    ? 'bg-gray-600/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
+                  } flex items-center justify-center`}
+              >
+                {isVerifyingOtp || isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    <span>{isVerifyingOtp ? 'Vérification...' : 'Création du compte...'}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    <span>Confirmer et créer mon compte</span>
+                  </div>
+                )}
+              </button>
+
+              {/* Renvoyer le code */}
+              <div className="text-center space-y-3">
+                {countdown > 0 ? (
+                  <p className="text-white/50 text-sm">
+                    Renvoyer dans <span className="text-white font-bold">{countdown}s</span>
+                  </p>
+                ) : (
+                  <button
+                    onClick={handleSendOtp}
+                    disabled={isSendingOtp}
+                    className="flex items-center justify-center mx-auto text-blue-400 hover:text-blue-300 text-sm font-bold transition-colors gap-2"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isSendingOtp ? 'animate-spin' : ''}`} />
+                    {isSendingOtp ? 'Envoi...' : 'Renvoyer le code'}
+                  </button>
+                )}
+
+                <button
+                  onClick={() => { setStep('form'); setOtpCode(['', '', '', '', '', '']); setOtpError('') }}
+                  className="text-white/50 hover:text-white/80 text-sm transition-colors underline"
+                >
+                  ← Modifier mon numéro
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Avantages */}
+        {step === 'form' && (
+          <div className="mt-8 max-w-md w-full">
+            <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+              <h3 className="font-extrabold text-white text-base mb-4 text-center tracking-wide">🎁 Avantages de l'inscription</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center text-green-400">
+                  <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                  <span className="font-semibold">Solde de départ : 1000 FCFA</span>
+                </div>
+                <div className="flex items-center text-blue-400">
+                  <span className="w-2.5 h-2.5 bg-blue-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                  <span className="font-semibold">Récompenses quotidiennes</span>
+                </div>
+                <div className="flex items-center text-purple-400">
+                  <span className="w-2.5 h-2.5 bg-purple-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                  <span className="font-semibold">Système de parrainage</span>
+                </div>
+                <div className="flex items-center text-orange-400">
+                  <span className="w-2.5 h-2.5 bg-orange-500 rounded-full mr-2.5 flex-shrink-0"></span>
+                  <span className="font-semibold">Investissements rentables</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Error Popup */}
         {showErrorPopup && (
@@ -433,12 +582,10 @@ export default function Register() {
         )}
 
         {/* Welcome Popup */}
-        <WelcomePopup 
+        <WelcomePopup
           isOpen={showWelcomePopup}
           onClose={() => {
             setShowWelcomePopup(false)
-            // Ne plus sauvegarder hasSeenWelcome pour permettre l'affichage répétitif
-            console.log('🔒 Register: Popup closed, redirecting to home')
             router.push('/')
           }}
           onTelegramJoin={() => {
