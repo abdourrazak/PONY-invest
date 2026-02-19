@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { initializeApp, getApps } from 'firebase/app'
+import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 
-// Import du même store (note: en production utiliser Redis pour partager entre instances)
-// Pour l'instant on utilise un module partagé
-declare global {
-    var otpStore: Map<string, { code: string; expiresAt: number; attempts: number }> | undefined
+// Initialiser Firebase client
+const firebaseConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Accès au store global partagé avec send-otp
-// On utilise globalThis pour persister entre les requêtes en développement
-if (!globalThis.otpStore) {
-    globalThis.otpStore = new Map()
-}
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+const db = getFirestore(app)
 
 export async function POST(request: NextRequest) {
     try {
@@ -25,53 +28,56 @@ export async function POST(request: NextRequest) {
 
         const cleanPhone = phoneNumber.replace(/\s+/g, '').trim()
         const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `+237${cleanPhone}`
+        const docId = fullPhone.replace('+', '')
 
-        const stored = globalThis.otpStore!.get(fullPhone)
+        // Lire le code depuis Firestore
+        const otpRef = doc(db, 'otp_verifications', docId)
+        const otpDoc = await getDoc(otpRef)
 
-        // Vérifier si un code existe pour ce numéro
-        if (!stored) {
+        if (!otpDoc.exists()) {
             return NextResponse.json(
                 { error: 'Aucun code envoyé pour ce numéro. Demandez un nouveau code.' },
                 { status: 400 }
             )
         }
 
-        // Vérifier si le code a expiré
-        if (Date.now() > stored.expiresAt) {
-            globalThis.otpStore!.delete(fullPhone)
+        const stored = otpDoc.data()
+
+        // Vérifier expiration
+        if (Date.now() > stored.expiresAtMs) {
+            await deleteDoc(otpRef)
             return NextResponse.json(
                 { error: 'Code expiré. Demandez un nouveau code.' },
                 { status: 400 }
             )
         }
 
-        // Vérifier le nombre de tentatives (max 5)
+        // Vérifier tentatives max
         if (stored.attempts >= 5) {
-            globalThis.otpStore!.delete(fullPhone)
+            await deleteDoc(otpRef)
             return NextResponse.json(
                 { error: 'Trop de tentatives. Demandez un nouveau code.' },
                 { status: 429 }
             )
         }
 
-        // Incrémenter les tentatives
-        stored.attempts++
-        globalThis.otpStore!.set(fullPhone, stored)
+        // Incrémenter tentatives
+        await updateDoc(otpRef, { attempts: stored.attempts + 1 })
 
-        // Vérifier le code
+        // Comparer le code
         if (stored.code !== code.toString().trim()) {
-            const remaining = 5 - stored.attempts
+            const remaining = 5 - (stored.attempts + 1)
             return NextResponse.json(
                 {
                     error: `Code incorrect. ${remaining} tentative(s) restante(s).`,
-                    attemptsRemaining: remaining
+                    attemptsRemaining: remaining,
                 },
                 { status: 400 }
             )
         }
 
-        // ✅ Code correct : supprimer du store et confirmer
-        globalThis.otpStore!.delete(fullPhone)
+        // ✅ Code correct → supprimer de Firestore
+        await deleteDoc(otpRef)
 
         console.log('✅ OTP vérifié avec succès pour:', fullPhone)
 
@@ -80,6 +86,7 @@ export async function POST(request: NextRequest) {
             message: 'Numéro WhatsApp vérifié avec succès',
             verifiedPhone: fullPhone,
         })
+
     } catch (error: any) {
         console.error('❌ Erreur vérification OTP:', error)
         return NextResponse.json(
