@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Plus, Minus, Smartphone, Gift, Wallet, TrendingUp, Users, Bell, Shield, Home, BarChart3, UserCheck, User } from 'lucide-react'
 import Image from 'next/image'
+import CryptoTicker from '../CryptoTicker/CryptoTicker'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '@/components/ProductModal/ProductModal'
 import WelcomePopup from '../WelcomePopup/WelcomePopup'
@@ -14,7 +15,7 @@ import { useRouter } from 'next/navigation'
 
 const banners = [
   '/banner1.jpeg',
-  '/banner2.jpeg', 
+  '/banner2.jpeg',
   '/banner3.jpeg'
 ]
 
@@ -66,14 +67,14 @@ export default function AccueilPage() {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
       }
     }
-    
+
     // Fix scroll behavior
     const fixScrollBehavior = () => {
       document.body.style.position = 'relative'
       document.body.style.overflowX = 'hidden'
       document.body.style.height = 'auto'
       document.body.style.minHeight = '100vh'
-      
+
       // Prevent scroll bounce
       document.addEventListener('touchmove', (e) => {
         if (e.target === document.body) {
@@ -81,14 +82,14 @@ export default function AccueilPage() {
         }
       }, { passive: false })
     }
-    
+
     resetViewport()
     fixScrollBehavior()
-    
+
     // Reset on orientation change
     window.addEventListener('orientationchange', resetViewport)
     window.addEventListener('resize', resetViewport)
-    
+
     return () => {
       window.removeEventListener('orientationchange', resetViewport)
       window.removeEventListener('resize', resetViewport)
@@ -243,7 +244,7 @@ export default function AccueilPage() {
     if (!currentUser || !userData) {
       throw new Error('Vous devez être connecté pour effectuer un investissement')
     }
-    
+
     try {
       const rentalId = await createRental(
         currentUser.uid,
@@ -258,7 +259,7 @@ export default function AccueilPage() {
         },
         quantity
       )
-      
+
       // Le solde sera automatiquement mis à jour via subscribeToUserBalance
     } catch (error: any) {
       console.error('Erreur lors de l\'investissement:', error)
@@ -351,13 +352,12 @@ export default function AccueilPage() {
           {banners.map((banner, index) => (
             <div
               key={index}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
             >
-              <Image 
-                src={banner} 
-                alt={`Banner ${index + 1}`} 
+              <Image
+                src={banner}
+                alt={`Banner ${index + 1}`}
                 fill
                 className="object-cover"
                 priority={index === 0}
@@ -365,16 +365,15 @@ export default function AccueilPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
             </div>
           ))}
-          
+
           {/* Slide Indicators */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
-                }`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
+                  }`}
               />
             ))}
           </div>
@@ -394,23 +393,19 @@ export default function AccueilPage() {
           {services.map((service, index) => {
             const IconComponent = service.icon
             const ServiceContent = (
-              <div className={`bg-white/10 backdrop-blur-sm rounded-2xl p-2 flex flex-col items-center justify-center min-h-[95px] cursor-pointer border border-white/20 ${
-                service.special === 'gift' 
-                  ? 'hover:shadow-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20' 
+              <div className={`bg-white/10 backdrop-blur-sm rounded-2xl p-2 flex flex-col items-center justify-center min-h-[95px] cursor-pointer border border-white/20 ${service.special === 'gift'
+                  ? 'hover:shadow-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20'
                   : 'transition-colors duration-200'
-              }`}>
-                <div className={`${service.color} p-3 rounded-2xl mb-1 shadow-lg ${
-                  service.special === 'gift' 
-                    ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50 transition-all duration-200 hover:rotate-6 hover:shadow-xl' 
+                }`}>
+                <div className={`${service.color} p-3 rounded-2xl mb-1 shadow-lg ${service.special === 'gift'
+                    ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50 transition-all duration-200 hover:rotate-6 hover:shadow-xl'
                     : ''
-                }`}>
-                  <IconComponent size={24} className={`text-white drop-shadow-sm ${
-                    service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
-                  }`} />
+                  }`}>
+                  <IconComponent size={24} className={`text-white drop-shadow-sm ${service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
+                    }`} />
                 </div>
-                <span className={`text-xs text-center font-bold leading-tight ${
-                  service.special === 'gift' ? 'text-pink-300 animate-pulse' : 'text-white/70'
-                }`}>
+                <span className={`text-xs text-center font-bold leading-tight ${service.special === 'gift' ? 'text-pink-300 animate-pulse' : 'text-white/70'
+                  }`}>
                   {service.title}
                 </span>
               </div>
@@ -426,6 +421,9 @@ export default function AccueilPage() {
           })}
         </div>
 
+        {/* Section Marché Crypto - Temps réel */}
+        <CryptoTicker />
+
         {/* Section Produits d'investissement */}
         <div className="mt-8 pb-20">
           <div className="flex items-center justify-between mb-6">
@@ -434,356 +432,355 @@ export default function AccueilPage() {
               7 Offres
             </div>
           </div>
-          
+
           <div className="space-y-4">
-          {/* LV1 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-              <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
-                hasLV1Discount 
-                  ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
-                  : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
-              }`}>
-                {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Promo'}
-              </span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p1.jpg" alt="LV1" width={64} height={64} className="object-cover w-full h-full" unoptimized />
+            {/* LV1 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
+                <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${hasLV1Discount
+                    ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500'
+                    : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
+                  }`}>
+                  {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Promo'}
+                </span>
               </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">
-                      {hasLV1Discount ? '3 000 FCFA' : '6 000 FCFA'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+500 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">60 000 FCFA</span>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p1.jpg" alt="LV1" width={64} height={64} className="object-cover w-full h-full" unoptimized />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">
+                        {hasLV1Discount ? '3 000 FCFA' : '6 000 FCFA'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+500 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">60 000 FCFA</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex flex-col">
-                {hasLV1Discount ? (
-                  <>
-                    <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
-                    <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
-                    <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
-                  </>
-                )}
+
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex flex-col">
+                  {hasLV1Discount ? (
+                    <>
+                      <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
+                      <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
+                      <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
+                    </>
+                  )}
+                </div>
+                <div className="flex flex-col space-y-2">
+                  {!hasLV1Discount && (
+                    <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
+                      <p className="text-orange-300 text-xs font-medium">
+                        💡 Invitez 10 amis pour débloquer ce prix !
+                      </p>
+                      <p className="text-white/70 text-xs mt-1">
+                        Prix actuel : 6,000 FCFA
+                      </p>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => handleRentClick('lv1')}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                  >
+                    <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent font-bold">Louer Maintenant</span>
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-col space-y-2">
-                {!hasLV1Discount && (
-                  <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
-                    <p className="text-orange-300 text-xs font-medium">
-                      💡 Invitez 10 amis pour débloquer ce prix !
-                    </p>
-                    <p className="text-white/70 text-xs mt-1">
-                      Prix actuel : 6,000 FCFA
-                    </p>
+            </div>
+
+            {/* LV2 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p2.jpg" alt="LV2" width={64} height={64} className="object-cover w-full h-full" unoptimized />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">15 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+1 400 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">168 000 FCFA</span>
+                    </div>
                   </div>
-                )}
-                <button 
-                  onClick={() => handleRentClick('lv1')}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv2')}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
                 >
-                  <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent font-bold">Louer Maintenant</span>
+                  Louer Maintenant
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* LV2 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p2.jpg" alt="LV2" width={64} height={64} className="object-cover w-full h-full" unoptimized />
+            {/* LV3 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
               </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">15 000 FCFA</span>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p3.JPG" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">35 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+3 400 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">408 000 FCFA</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+1 400 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">168 000 FCFA</span>
+
+
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv3')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  Louer Maintenant
+                </button>
+              </div>
+            </div>
+
+            {/* LV4 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p4.JPG" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">80 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+7 900 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">948 000 FCFA</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv2')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
 
-          {/* LV3 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p3.JPG" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv4')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  Louer Maintenant
+                </button>
               </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">35 000 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+3 400 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">408 000 FCFA</span>
-                  </div>
+            </div>
+
+            {/* LV5 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p5.JPG" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
                 </div>
-                
-    
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv3')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
 
-          {/* LV4 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p4.JPG" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
-              </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">80 000 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+7 900 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">948 000 FCFA</span>
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">110 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+10 800 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">1 296 000 FCFA</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv4')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
 
-          {/* LV5 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p5.JPG" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv5')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  Louer Maintenant
+                </button>
               </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">110 000 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+10 800 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">1 296 000 FCFA</span>
+            </div>
+
+            {/* LV6 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p6.JPG" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">250 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+24 900 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">2 998 000 FCFA</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv5')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
 
-          {/* LV6 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p6.JPG" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv6')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  Louer Maintenant
+                </button>
               </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">250 000 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+24 900 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">2 998 000 FCFA</span>
+            </div>
+
+            {/* LV7 */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
+                <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
+                  <Image src="/p7.jpg" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
+                      <span className="text-blue-400 text-xs sm:text-sm font-black">400 000 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
+                      <span className="text-purple-400 text-xs sm:text-sm font-black">+38 500 FCFA</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
+                      <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
+                    </div>
+                    <div className="flex justify-between sm:flex-col sm:items-center">
+                      <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
+                      <span className="text-green-400 text-xs sm:text-sm font-black">4 620 000 FCFA</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv6')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
 
-          {/* LV7 */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-            <div className="flex justify-between items-start mb-3">
-              <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
-              <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-                <Image src="/p7.jpg" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
-              </div>
-              
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                    <span className="text-blue-400 text-xs sm:text-sm font-black">400 000 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                    <span className="text-purple-400 text-xs sm:text-sm font-black">+38 500 FCFA</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                    <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                  </div>
-                  <div className="flex justify-between sm:flex-col sm:items-center">
-                    <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                    <span className="text-green-400 text-xs sm:text-sm font-black">4 620 000 FCFA</span>
-                  </div>
-                </div>
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
+                <button
+                  onClick={() => handleRentClick('lv7')}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  Louer Maintenant
+                </button>
               </div>
             </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
-              <button 
-                onClick={() => handleRentClick('lv7')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                Louer Maintenant
-              </button>
-            </div>
-          </div>
           </div>
         </div>
 
@@ -820,8 +817,8 @@ export default function AccueilPage() {
 
       {/* Support Float */}
       <SupportFloat />
-      
-      <ProductModal 
+
+      <ProductModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         product={selectedProduct}
@@ -830,7 +827,7 @@ export default function AccueilPage() {
       />
 
       {/* Welcome Popup */}
-      <WelcomePopup 
+      <WelcomePopup
         isOpen={showWelcomePopup}
         onClose={handleWelcomeClose}
         onTelegramJoin={handleTelegramJoin}
