@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { TrendingUp, TrendingDown, Activity } from 'lucide-react'
 
 interface CryptoData {
@@ -23,38 +23,41 @@ const CRYPTO_SYMBOLS = [
 export default function CryptoTicker() {
     const [cryptos, setCryptos] = useState<CryptoData[]>([])
     const [loading, setLoading] = useState(true)
+    const [wsConnected, setWsConnected] = useState(false)
     const wsRef = useRef<WebSocket | null>(null)
     const pricesRef = useRef<Map<string, CryptoData>>(new Map())
+    const initializedRef = useRef(false)
 
-    // Charger les prix initiaux + variation 24h via l'API REST Binance
+    // Charger les prix initiaux via des requêtes individuelles (plus fiable)
     useEffect(() => {
+        if (initializedRef.current) return
+        initializedRef.current = true
+
         const fetchInitialPrices = async () => {
             try {
-                const symbols = CRYPTO_SYMBOLS.map(s => s.symbol)
-                const tickerRes = await fetch(
-                    `https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(symbols)}`
-                )
-                const tickers = await tickerRes.json()
+                // Récupérer chaque crypto individuellement pour éviter les problèmes de format
+                const promises = CRYPTO_SYMBOLS.map(async (meta) => {
+                    const res = await fetch(
+                        `https://api.binance.com/api/v3/ticker/24hr?symbol=${meta.symbol}`
+                    )
+                    const ticker = await res.json()
 
-                const initialData: CryptoData[] = tickers.map((ticker: any) => {
-                    const meta = CRYPTO_SYMBOLS.find(s => s.symbol === ticker.symbol)!
+                    const price = parseFloat(ticker.lastPrice) || 0
+                    const changePercent = parseFloat(ticker.priceChangePercent) || 0
+
                     return {
-                        symbol: ticker.symbol,
+                        symbol: meta.symbol,
                         name: meta.name,
-                        price: parseFloat(ticker.lastPrice),
-                        prevPrice: parseFloat(ticker.lastPrice),
-                        change24h: parseFloat(ticker.priceChangePercent),
+                        price,
+                        prevPrice: price,
+                        change24h: changePercent,
                         icon: meta.icon,
                     }
                 })
 
-                // Trier par market cap (ordre du tableau CRYPTO_SYMBOLS)
-                const sorted = CRYPTO_SYMBOLS.map(s =>
-                    initialData.find(d => d.symbol === s.symbol)!
-                ).filter(Boolean)
-
-                sorted.forEach(c => pricesRef.current.set(c.symbol, c))
-                setCryptos(sorted)
+                const results = await Promise.all(promises)
+                results.forEach(c => pricesRef.current.set(c.symbol, c))
+                setCryptos(results)
                 setLoading(false)
             } catch (error) {
                 console.error('❌ Erreur chargement prix crypto:', error)
@@ -67,55 +70,84 @@ export default function CryptoTicker() {
 
     // WebSocket pour les mises à jour en temps réel
     useEffect(() => {
-        if (cryptos.length === 0) return
+        if (loading || cryptos.length === 0 || wsConnected) return
 
+        // Utiliser le stream @ticker (pas miniTicker) qui contient le champ P (priceChangePercent)
         const streams = CRYPTO_SYMBOLS
-            .map(s => `${s.symbol.toLowerCase()}@miniTicker`)
+            .map(s => `${s.symbol.toLowerCase()}@ticker`)
             .join('/')
 
         const ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`)
         wsRef.current = ws
 
-        ws.onmessage = (event) => {
-            const msg = JSON.parse(event.data)
-            const data = msg.data
-            if (!data || !data.s) return
-
-            const symbol = data.s
-            const existing = pricesRef.current.get(symbol)
-            if (!existing) return
-
-            const newPrice = parseFloat(data.c)
-            const updated: CryptoData = {
-                ...existing,
-                prevPrice: existing.price,
-                price: newPrice,
-                change24h: parseFloat(data.P),
-            }
-
-            pricesRef.current.set(symbol, updated)
-
-            // Mise à jour de l'état avec l'ordre d'origine
-            const newCryptos = CRYPTO_SYMBOLS
-                .map(s => pricesRef.current.get(s.symbol)!)
-                .filter(Boolean)
-            setCryptos([...newCryptos])
+        ws.onopen = () => {
+            console.log('✅ WebSocket Binance connecté')
+            setWsConnected(true)
         }
 
-        ws.onerror = (err) => console.error('WebSocket error:', err)
+        ws.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data)
+                const data = msg.data
+                if (!data || !data.s) return
+
+                const symbol = data.s as string
+                const existing = pricesRef.current.get(symbol)
+                if (!existing) return
+
+                const newPrice = parseFloat(data.c)
+                const changePercent = parseFloat(data.P)
+
+                if (isNaN(newPrice) || isNaN(changePercent)) return
+
+                const updated: CryptoData = {
+                    ...existing,
+                    prevPrice: existing.price,
+                    price: newPrice,
+                    change24h: changePercent,
+                }
+
+                pricesRef.current.set(symbol, updated)
+
+                // Reconstruire la liste dans l'ordre d'origine
+                const newCryptos = CRYPTO_SYMBOLS
+                    .map(s => pricesRef.current.get(s.symbol))
+                    .filter((c): c is CryptoData => c !== undefined)
+                setCryptos([...newCryptos])
+            } catch (e) {
+                // Ignorer les messages malformés
+            }
+        }
+
+        ws.onerror = () => {
+            console.error('WebSocket error')
+            setWsConnected(false)
+        }
+
+        ws.onclose = () => {
+            setWsConnected(false)
+        }
 
         return () => {
             ws.close()
             wsRef.current = null
+            setWsConnected(false)
         }
-    }, [cryptos.length > 0])
+    }, [loading, cryptos.length])
 
     // Formatage du prix
-    const formatPrice = (price: number) => {
+    const formatPrice = useCallback((price: number) => {
+        if (isNaN(price) || price === 0) return '0.00'
         if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         if (price >= 1) return price.toFixed(2)
         return price.toFixed(4)
-    }
+    }, [])
+
+    // Formatage du pourcentage (anti-NaN)
+    const formatPercent = useCallback((value: number) => {
+        if (isNaN(value) || value === undefined || value === null) return '0.00'
+        return value.toFixed(2)
+    }, [])
 
     if (loading) {
         return (
@@ -148,9 +180,9 @@ export default function CryptoTicker() {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className={`w-2 h-2 rounded-full animate-pulse ${wsConnected ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
                     <span className="text-white font-bold text-sm">Marché Crypto</span>
-                    <span className="text-white/40 text-xs">Live</span>
+                    <span className="text-white/40 text-xs">{wsConnected ? 'Live' : 'Connexion...'}</span>
                 </div>
                 <div className="flex items-center gap-4 text-white/40 text-xs font-semibold">
                     <span>Dernier prix</span>
@@ -161,7 +193,8 @@ export default function CryptoTicker() {
             {/* Crypto List */}
             <div className="divide-y divide-white/5">
                 {cryptos.map((crypto) => {
-                    const isUp = crypto.change24h >= 0
+                    const change = typeof crypto.change24h === 'number' && !isNaN(crypto.change24h) ? crypto.change24h : 0
+                    const isUp = change >= 0
                     const priceFlash = crypto.price !== crypto.prevPrice
                     const flashUp = crypto.price > crypto.prevPrice
 
@@ -189,7 +222,7 @@ export default function CryptoTicker() {
 
                             {/* Prix */}
                             <div className="text-right">
-                                <span className={`text-white font-bold text-sm tabular-nums transition-colors duration-300 ${priceFlash ? (flashUp ? 'text-green-400' : 'text-red-400') : 'text-white'
+                                <span className={`font-bold text-sm tabular-nums transition-colors duration-300 ${priceFlash ? (flashUp ? 'text-green-400' : 'text-red-400') : 'text-white'
                                     }`}>
                                     ${formatPrice(crypto.price)}
                                 </span>
@@ -201,7 +234,7 @@ export default function CryptoTicker() {
                                     : 'bg-red-500/20 text-red-400'
                                 }`}>
                                 {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                <span>{isUp ? '+' : ''}{crypto.change24h.toFixed(2)}%</span>
+                                <span>{isUp ? '+' : ''}{formatPercent(change)}%</span>
                             </div>
                         </div>
                     )
