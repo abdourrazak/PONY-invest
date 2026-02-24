@@ -30,7 +30,7 @@ export default function CheckQuotidien() {
   ])
 
   const [currentDay, setCurrentDay] = useState(1)
-  const [checkInBalance, setCheckInBalance] = useState(0) // Solde Check-in indépendant (max 540 XOF)
+  const [checkInBalance, setCheckInBalance] = useState(0) // Solde Check-in indépendant (max 540 $)
   const [hasInvested, setHasInvested] = useState(false) // Vérifier si l'utilisateur a investi
   const [isLoading, setIsLoading] = useState(true)
   const [nextCheckIn, setNextCheckIn] = useState<Date | null>(null)
@@ -166,7 +166,7 @@ export default function CheckQuotidien() {
       setRewards(newRewards)
       localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
       
-      // Vérifier si toutes les récompenses ont été récupérées (540 XOF total)
+      // Vérifier si toutes les récompenses ont été récupérées (540 $ total)
       if (newCheckInBalance >= 540) {
         try {
           // Migrer le solde Check-in vers le solde principal
@@ -266,8 +266,8 @@ export default function CheckQuotidien() {
         {/* Check-in Balance Display - Indépendant */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center shadow-xl">
           <div className="text-white/70 text-sm font-medium mb-1">Solde Check-in Quotidien</div>
-          <div className="text-purple-400 text-2xl font-black">{checkInBalance} XOF</div>
-          <div className="text-white/60 text-xs mt-1">Maximum: 540 XOF</div>
+          <div className="text-purple-400 text-2xl font-black">{checkInBalance} $</div>
+          <div className="text-white/60 text-xs mt-1">Maximum: 540 $</div>
         </div>
 
         {/* Reward Container */}

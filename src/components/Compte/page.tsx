@@ -139,7 +139,7 @@ export default function ComptePage() {
               <AnimatedBalance value={funds} suffix="" />
             </div>
             <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
-              XOF
+              $
             </div>
           </div>
           
@@ -193,7 +193,7 @@ export default function ComptePage() {
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains aujourd'hui</div>
               <div className="text-green-400 text-lg font-bold">
-                <AnimatedBalance value={todayEarnings} suffix=" XOF" className="text-green-400" />
+                <AnimatedBalance value={todayEarnings} suffix=" $" className="text-green-400" />
               </div>
               <div className="text-white/60 text-xs mt-1">📈 +{growthPercentage}%</div>
             </div>
@@ -202,7 +202,7 @@ export default function ComptePage() {
             <div className="text-center">
               <div className="text-white/70 text-xs mb-1">Gains totaux</div>
               <div className="text-yellow-400 text-lg font-bold">
-                <AnimatedBalance value={totalEarnings} suffix=" XOF" className="text-yellow-400" />
+                <AnimatedBalance value={totalEarnings} suffix=" $" className="text-yellow-400" />
               </div>
               <div className="text-white/60 text-xs mt-1">💰 Parrainage + Check-in</div>
             </div>

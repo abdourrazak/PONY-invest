@@ -76,7 +76,7 @@ export async function validateReferrals(userId: string, referralCode: string): P
   }
 }
 
-// Vérifier si un filleul est valide (a fait des transactions approuvées >= 500 XAF)
+// Vérifier si un filleul est valide (a fait des transactions approuvées >= 500 $)
 export async function checkReferralValidity(referralUserId: string): Promise<boolean> {
   try {
     const transactionsRef = collection(db, 'transactions')
@@ -135,19 +135,19 @@ export async function performSpin(userId: string, referralCode: string): Promise
     
     if (giftData.spinCount === 0) {
       // Premier spin : montant élevé
-      spinAmount = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
+      spinAmount = Math.floor(Math.random() * 61) + 4850 // 4850-4910 $
       spinType = 'first'
     } else if (newValidReferrals > 0) {
       // Bonus de parrainage
-      spinAmount = Math.floor(Math.random() * 6) + 1 // 1-6 XAF
+      spinAmount = Math.floor(Math.random() * 6) + 1 // 1-6 $
       spinType = 'referral'
     } else {
       // Spin quotidien normal
-      spinAmount = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
+      spinAmount = Math.floor(Math.random() * 5) + 1 // 1-5 $
       spinType = 'daily'
     }
     
-    // Calculer le nouveau total (max 5000 XAF)
+    // Calculer le nouveau total (max 5000 $)
     const newTotal = Math.min(giftData.totalBonus + spinAmount, 5000)
     
     // Mettre à jour les données dans Firestore
@@ -171,7 +171,7 @@ export async function performSpin(userId: string, referralCode: string): Promise
       amount: spinAmount,
       newTotal,
       spinType,
-      message: `Vous avez gagné ${spinAmount.toLocaleString()} XAF !`
+      message: `Vous avez gagné ${spinAmount.toLocaleString()} $ !`
     }
     
   } catch (error) {

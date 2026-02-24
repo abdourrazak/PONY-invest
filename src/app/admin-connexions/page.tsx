@@ -306,7 +306,7 @@ export default function AdminConnexionsPage() {
               <div className="flex-1">
                 <p className="text-white/70 text-xs md:text-sm mb-1">Dépôts Totaux</p>
                 <p className="text-xl md:text-2xl font-bold text-green-400">
-                  {totalDeposits.toLocaleString()} F
+                  {totalDeposits.toLocaleString()} $
                 </p>
               </div>
               <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -320,7 +320,7 @@ export default function AdminConnexionsPage() {
               <div className="flex-1">
                 <p className="text-white/70 text-xs md:text-sm mb-1">Retraits Totaux</p>
                 <p className="text-xl md:text-2xl font-bold text-red-400">
-                  {totalWithdrawals.toLocaleString()} F
+                  {totalWithdrawals.toLocaleString()} $
                 </p>
               </div>
               <div className="w-10 h-10 md:w-12 md:h-12 bg-red-500/20 rounded-full flex items-center justify-center">

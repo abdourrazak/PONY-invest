@@ -316,7 +316,7 @@ export async function resetAllUserRewards(): Promise<void> {
     
     // Réinitialiser les données localStorage pour chaque utilisateur
     userPhones.forEach((phone) => {
-      // Réinitialiser le solde à 1000 XOF
+      // Réinitialiser le solde à 1000 $
       localStorage.setItem(`userFunds_${phone}`, '1000')
       
       // Réinitialiser les récompenses de parrainage

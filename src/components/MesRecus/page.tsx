@@ -337,7 +337,7 @@ PONY - REÇU DE TRANSACTION
 
 Référence: ${transaction.reference || transaction.id}
 Type: ${getTransactionTitle(transaction)}
-Montant: ${transaction.amount.toLocaleString()} XAF
+Montant: ${transaction.amount.toLocaleString()} $
 Statut: ${getStatusText(transaction.status)}
 Date: ${formatDate(transaction.createdAt)}
 ${transaction.method ? `Méthode: ${transaction.method}` : ''}
@@ -505,7 +505,7 @@ PONY - Plateforme d'investissement
 
                   <div className="text-right">
                     <div className="text-white font-bold text-xl mb-2">
-                      {transaction.amount.toLocaleString()} XAF
+                      {transaction.amount.toLocaleString()} $
                     </div>
                     <div className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(transaction.status)}`}>
                       {getStatusText(transaction.status)}

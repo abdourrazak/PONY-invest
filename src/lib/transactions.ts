@@ -300,7 +300,7 @@ export async function adminApproveDeposit(transactionId: string): Promise<void> 
       const userDoc = await transaction.get(userRef);
 
       if (!userDoc.exists()) {
-        // Créer l'utilisateur s'il n'existe pas avec solde initial de 1000 XOF + montant du dépôt
+        // Créer l'utilisateur s'il n'existe pas avec solde initial de 1000 $ + montant du dépôt
         transaction.set(userRef, {
           uid: transactionData.userId,
           numeroTel: transactionData.userNumeroTel,
@@ -617,12 +617,12 @@ export async function initializeUser(
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      // Créer le nouvel utilisateur avec solde de base 1000 XOF
+      // Créer le nouvel utilisateur avec solde de base 1000 $
       await updateDoc(userRef, {
         uid,
         numeroTel,
         displayName,
-        balance: 1000, // Solde initial de 1000 XOF
+        balance: 1000, // Solde initial de 1000 $
         role: 'user',
         createdAt: serverTimestamp()
       });

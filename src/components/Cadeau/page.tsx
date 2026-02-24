@@ -209,10 +209,10 @@ export default function Cadeau() {
         
         let bonus
         if (currentBonus === 0) {
-          bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 XAF
+          bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 $
           console.log('Premier spin, bonus:', bonus)
         } else {
-          bonus = Math.floor(Math.random() * 5) + 1 // 1-5 XAF
+          bonus = Math.floor(Math.random() * 5) + 1 // 1-5 $
           console.log('Spin quotidien, bonus:', bonus)
         }
         
@@ -276,7 +276,7 @@ export default function Cadeau() {
   }
 
 
-  // Calculer le progrès vers 5000 XAF avec localStorage en priorité
+  // Calculer le progrès vers 5000 $ avec localStorage en priorité
   const getLocalStorageBonus = () => {
     if (userData?.numeroTel) {
       const savedBonus = localStorage.getItem(`spinBonus_${userData.numeroTel}`)
@@ -349,10 +349,10 @@ export default function Cadeau() {
         {/* Objectif et Progrès */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-black text-white/90 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">🎯 Défi des 5000 XAF</h2>
+            <h2 className="text-lg font-black text-white/90 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">🎯 Défi des 5000 $</h2>
             <div className="text-right">
-              <div className="text-2xl font-black text-yellow-400">{totalBonus.toLocaleString()} XAF</div>
-              <div className="text-sm text-white/70">/ 5000 XAF</div>
+              <div className="text-2xl font-black text-yellow-400">{totalBonus.toLocaleString()} $</div>
+              <div className="text-sm text-white/70">/ 5000 $</div>
             </div>
           </div>
           
@@ -366,7 +366,7 @@ export default function Cadeau() {
           
           <div className="text-sm text-white/90 font-medium">
             {remainingAmount > 0 ? (
-              <>Il vous reste <span className="font-black text-yellow-400">{remainingAmount.toLocaleString()} XAF</span> à gagner !</>
+              <>Il vous reste <span className="font-black text-yellow-400">{remainingAmount.toLocaleString()} $</span> à gagner !</>
             ) : (
               <span className="text-green-400 font-black">🎉 Objectif atteint ! Vous pouvez retirer vos gains.</span>
             )}
@@ -402,7 +402,7 @@ export default function Cadeau() {
           {spinResult && (
             <div className="mb-4 p-4 bg-green-600/20 rounded-lg border border-green-500/30">
               <div className="text-green-300 font-bold text-lg">
-                🎉 Vous avez gagné {spinResult.toLocaleString()} XAF !
+                🎉 Vous avez gagné {spinResult.toLocaleString()} $ !
               </div>
             </div>
           )}
