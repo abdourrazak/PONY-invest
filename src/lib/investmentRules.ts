@@ -114,7 +114,7 @@ export async function validateInvestment(
       return {
         canInvest: false,
         canWithdraw: false,
-        message: `Vous devez d'abord investir les ${remainingToInvest.toLocaleString()} FCFA restants de votre dépôt avant de pouvoir investir plus.`
+        message: `Vous devez d'abord investir les ${remainingToInvest.toLocaleString()} $ restants de votre dépôt avant de pouvoir investir plus.`
       }
     }
 

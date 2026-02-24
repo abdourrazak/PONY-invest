@@ -98,7 +98,7 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
               </div>
               <div>
                 <p className="text-white/90 text-xs font-bold">
-                  <span className="font-black text-green-400">1000 FCFA</span> bonus d'inscription
+                  <span className="font-black text-green-400">1000 $</span> bonus d'inscription
                 </p>
                 <p className="text-white/70 text-xs">Utilisable pour retrait</p>
               </div>

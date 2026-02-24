@@ -86,7 +86,7 @@ export async function processReferralCommissions(
             createdAt: serverTimestamp()
           })
           
-          console.log(`✅ Commission Équipe ${level} payée: ${commissionAmount} FCFA à ${sponsorId}`)
+          console.log(`✅ Commission Équipe ${level} payée: ${commissionAmount} $ à ${sponsorId}`)
         } else {
           console.log(`❌ Parrain ${sponsorId} non trouvé`)
         }

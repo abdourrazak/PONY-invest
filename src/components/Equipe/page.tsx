@@ -81,7 +81,7 @@ export default function EquipePage() {
             
             <div>
               <div className="text-2xl font-bold text-green-400">
-                {Math.round(multiLevelStats?.totalRevenue || 0)} FCFA
+                {Math.round(multiLevelStats?.totalRevenue || 0)} $
               </div>
               <div className="text-white/70">Commissions Reçues</div>
               <div className="text-xs text-white/50 mt-1">Basées sur les investissements</div>
@@ -117,7 +117,7 @@ export default function EquipePage() {
             <div className="flex justify-between items-center">
               <span className="text-white/70">Commissions reçues</span>
               <span className="text-green-400 font-semibold">
-                {Math.round(multiLevelStats?.equipeA.revenue || 0)} FCFA
+                {Math.round(multiLevelStats?.equipeA.revenue || 0)} $
               </span>
             </div>
             
@@ -169,7 +169,7 @@ export default function EquipePage() {
             <div className="flex justify-between items-center">
               <span className="text-white/70">Commissions reçues</span>
               <span className="text-blue-400 font-semibold">
-                {Math.round(multiLevelStats?.equipeB.revenue || 0)} FCFA
+                {Math.round(multiLevelStats?.equipeB.revenue || 0)} $
               </span>
             </div>
             
@@ -221,7 +221,7 @@ export default function EquipePage() {
             <div className="flex justify-between items-center">
               <span className="text-white/70">Commissions reçues</span>
               <span className="text-purple-400 font-semibold">
-                {Math.round(multiLevelStats?.equipeC.revenue || 0)} FCFA
+                {Math.round(multiLevelStats?.equipeC.revenue || 0)} $
               </span>
             </div>
             
@@ -355,7 +355,7 @@ export default function EquipePage() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-bold text-green-400">
-                        +{commission.commissionAmount.toLocaleString()} FCFA
+                        +{commission.commissionAmount.toLocaleString()} $
                       </div>
                       <div className="text-xs text-white/50">
                         {commission.commissionPercentage}%
@@ -374,7 +374,7 @@ export default function EquipePage() {
                 Total des commissions reçues
               </div>
               <div className="text-center text-lg font-bold text-green-400">
-                {recentCommissions.reduce((total, c) => total + c.commissionAmount, 0).toLocaleString()} FCFA
+                {recentCommissions.reduce((total, c) => total + c.commissionAmount, 0).toLocaleString()} $
               </div>
             </div>
           </div>

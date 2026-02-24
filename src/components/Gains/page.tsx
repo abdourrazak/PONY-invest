@@ -53,11 +53,11 @@ export default function MesGains() {
     try {
       // Calculer les gains depuis Firestore
       const earnings = await calculateUserEarnings(currentUser.uid)
-      
+
       // Récupérer les données utilisateur
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
       const userData = userDoc.data()
-      
+
       // Compter les investissements actifs
       const rentalsQuery = query(
         collection(db, 'rentals'),
@@ -65,7 +65,7 @@ export default function MesGains() {
       )
       const rentalsSnapshot = await getDocs(rentalsQuery)
       const forfaitsVipActifs = rentalsSnapshot.size
-      
+
       // Calculer gains horaire (estimé) et récupérer les rentals
       let gainsHoraire = 0
       const rentals: RentalData[] = []
@@ -94,7 +94,7 @@ export default function MesGains() {
         gainsInvestissements: earnings.breakdown.productRevenue,
         recompensesCheckIn: earnings.breakdown.checkInRewards
       })
-      
+
       setActiveRentals(rentals)
 
       console.log('🔄 Gains rafraîchis depuis Firestore:', earnings)
@@ -145,11 +145,11 @@ export default function MesGains() {
   }, [currentUser])
 
   const formatCurrency = (amount: number) => {
-    return `XOF${amount.toFixed(2).replace('.', ',')}`
+    return `$${amount.toLocaleString()}`
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900" style={{ 
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900" style={{
       minHeight: '100vh',
       width: '100%',
       maxWidth: '100%',
@@ -161,7 +161,7 @@ export default function MesGains() {
       {/* Header */}
       <header className="bg-black/20 backdrop-blur-sm border-b border-white/10 px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <button 
+          <button
             onClick={() => router.back()}
             className="p-2 text-white/90 hover:bg-white/10 rounded-full transition-all duration-200 transform hover:scale-110"
           >
@@ -251,7 +251,7 @@ export default function MesGains() {
           <h2 className="text-center text-lg sm:text-xl font-black text-white/90 mb-6 tracking-wide">
             Mes Forfaits Et Revenus Actifs
           </h2>
-          
+
           {loading ? (
             <div className="text-center py-12">
               <p className="text-white/70">Chargement...</p>
@@ -261,8 +261,8 @@ export default function MesGains() {
             <div className="text-center py-12">
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-12 sm:h-12">
-                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" 
-                        fill="#8B5CF6" stroke="#A855F7" strokeWidth="1"/>
+                  <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"
+                    fill="#8B5CF6" stroke="#A855F7" strokeWidth="1" />
                 </svg>
               </div>
               <h3 className="text-lg sm:text-xl font-black text-white/90 mb-2 tracking-wide">
@@ -289,15 +289,15 @@ export default function MesGains() {
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div>
                       <p className="text-white/60">Investissement</p>
-                      <p className="text-green-400 font-bold">{(rental.price * rental.quantity).toLocaleString()} FCFA</p>
+                      <p className="text-green-400 font-bold">${(rental.price * rental.quantity).toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-white/60">Revenu/jour</p>
-                      <p className="text-blue-400 font-bold">{(rental.dailyRevenue * rental.quantity).toLocaleString()} FCFA</p>
+                      <p className="text-blue-400 font-bold">${(rental.dailyRevenue * rental.quantity).toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-white/60">Collecté</p>
-                      <p className="text-yellow-400 font-bold">{rental.totalCollected.toLocaleString()} FCFA</p>
+                      <p className="text-yellow-400 font-bold">${rental.totalCollected.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>

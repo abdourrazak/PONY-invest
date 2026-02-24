@@ -87,7 +87,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
     ? "Orange Money Cameroun"
     : isMTN
       ? "MTN Mobile Money"
-      : "Cryptomonnaie (USDT TRC20) 1USDT = 600 FCFA"
+      : "Cryptomonnaie (USDT TRC20) 1USDT = 600 $"
 
   const logoSrc = isOrange
     ? "/org.png"
@@ -151,9 +151,9 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
       return
     }
 
-    // Validation spéciale pour 2000 FCFA (nécessite 10+ amis)
+    // Validation spéciale pour 2000 $ (nécessite 10+ amis)
     if (numericAmount === 2000 && !hasLV1Discount) {
-      alert(`Le montant de 2,000 FCFA nécessite d'inviter au moins 10 amis`)
+      alert(`Le montant de 2,000 $ nécessite d'inviter au moins 10 amis`)
       return
     }
 
@@ -226,13 +226,13 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
         {/* Amount Selection Section */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
           <label className="block text-white/70 font-medium text-sm mb-4">
-            Montant à déposer (FCFA)
+            Montant à déposer ($)
           </label>
 
           {/* Preset Amount Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             {[2000, 5000, 14000, 34000, 79000, 109000, 249000, 399000].map((presetAmount) => {
-              // Le bouton 2000 FCFA nécessite 10+ amis
+              // Le bouton 2000 $ nécessite 10+ amis
               const isLocked = presetAmount === 2000 && !hasLV1Discount
 
               return (
@@ -253,7 +253,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
                     }`}
                   title={isLocked ? 'Invitez 10 amis pour débloquer' : ''}
                 >
-                  {presetAmount.toLocaleString()} FCFA
+                  {presetAmount.toLocaleString()} $
                   {isLocked && <span className="ml-1">🔒</span>}
                 </button>
               )
@@ -265,7 +265,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
             <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <span className="text-white/70 text-sm">Montant sélectionné :</span>
-                <span className="text-green-400 font-bold text-lg">{selectedAmount.toLocaleString()} FCFA</span>
+                <span className="text-green-400 font-bold text-lg">{selectedAmount.toLocaleString()} $</span>
               </div>
             </div>
           )}
@@ -411,7 +411,7 @@ export default function GestionDepot({ paymentMethod = 'orange' }: GestionDepotP
           disabled={(() => {
             const numericAmount = parseFloat(amount);
 
-            // Vérifier si 2000 FCFA est bloqué
+            // Vérifier si 2000 $ est bloqué
             const is2000Locked = numericAmount === 2000 && !hasLV1Discount;
 
             return !amount ||

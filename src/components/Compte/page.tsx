@@ -72,7 +72,7 @@ export default function ComptePage() {
       if (storedCode && hasInvested) {
         try {
           const referralCount = await getReferralCount(storedCode)
-          referralRewards = referralCount * 25 // 25 FCFA par parrainage
+          referralRewards = referralCount * 25 // 25 $ par parrainage
           setReferralRewards(referralRewards)
         } catch (error) {
           console.log('Erreur calcul récompenses parrainage:', error)

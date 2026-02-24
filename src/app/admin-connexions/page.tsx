@@ -507,7 +507,7 @@ export default function AdminConnexionsPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm text-green-400 font-medium">
-                              +{user.totalDeposits.toLocaleString()} FCFA
+                              +{user.totalDeposits.toLocaleString()} $
                             </div>
                             {user.pendingDeposits > 0 && (
                               <div className="text-xs text-yellow-400">
@@ -519,7 +519,7 @@ export default function AdminConnexionsPage() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm text-red-400 font-medium">
-                              -{user.totalWithdrawals.toLocaleString()} FCFA
+                              -{user.totalWithdrawals.toLocaleString()} $
                             </div>
                             {user.pendingWithdrawals > 0 && (
                               <div className="text-xs text-yellow-400">
@@ -530,7 +530,7 @@ export default function AdminConnexionsPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-green-400 font-medium">
-                            {user.balance.toLocaleString()} FCFA
+                            {user.balance.toLocaleString()} $
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

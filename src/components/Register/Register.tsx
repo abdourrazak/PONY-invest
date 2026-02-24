@@ -541,7 +541,7 @@ export default function Register() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center text-green-400">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                  <span className="font-semibold">Solde de départ : 1000 FCFA</span>
+                  <span className="font-semibold">Solde de départ : 1000 $</span>
                 </div>
                 <div className="flex items-center text-blue-400">
                   <span className="w-2.5 h-2.5 bg-blue-500 rounded-full mr-2.5 flex-shrink-0"></span>

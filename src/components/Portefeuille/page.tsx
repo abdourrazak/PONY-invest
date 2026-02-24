@@ -243,7 +243,7 @@ export default function Portefeuille() {
       <div className="max-w-md mx-auto px-4 pt-4">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center">
           <div className="text-white/70 text-sm mb-1">Solde disponible</div>
-          <div className="text-white text-2xl font-bold">{balance.toLocaleString()} FCFA</div>
+          <div className="text-white text-2xl font-bold">{balance.toLocaleString()} $</div>
         </div>
       </div>
 
@@ -304,7 +304,7 @@ export default function Portefeuille() {
                     </span>
                   </div>
                   <div>
-                    <div className="font-bold text-white text-lg">{deposit.amount.toLocaleString()} FCFA</div>
+                    <div className="font-bold text-white text-lg">{deposit.amount.toLocaleString()} $</div>
                     <div className="text-sm text-white/70 font-medium">{getPaymentMethodName(deposit.paymentMethod)}</div>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export default function Portefeuille() {
                     </span>
                   </div>
                   <div>
-                    <div className="font-bold text-white text-lg">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}</div>
+                    <div className="font-bold text-white text-lg">{(typeof withdrawal.amount === 'string' ? parseInt(withdrawal.amount) : withdrawal.amount).toLocaleString()} {withdrawal.paymentMethod === 'crypto' ? 'USDT' : '$'}</div>
                     <div className="text-sm text-white/70 font-medium">{getPaymentMethodName(withdrawal.paymentMethod)}</div>
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function Portefeuille() {
           <div className="p-4 space-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-white mb-1">
-                {(typeof selectedWithdrawal.amount === 'string' ? parseInt(selectedWithdrawal.amount) : selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : 'FCFA'}
+                {(typeof selectedWithdrawal.amount === 'string' ? parseInt(selectedWithdrawal.amount) : selectedWithdrawal.amount).toLocaleString()} {selectedWithdrawal.paymentMethod === 'crypto' ? 'USDT' : '$'}
               </div>
               <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full backdrop-blur-sm border text-sm font-bold ${getStatusColor(selectedWithdrawal.status)}`}>
                 {getStatusIcon(selectedWithdrawal.status)}
@@ -508,7 +508,7 @@ export default function Portefeuille() {
           <div className="p-4 space-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-white mb-1">
-                {(typeof selectedDeposit.amount === 'string' ? parseInt(selectedDeposit.amount) : selectedDeposit.amount).toLocaleString()} FCFA
+                {(typeof selectedDeposit.amount === 'string' ? parseInt(selectedDeposit.amount) : selectedDeposit.amount).toLocaleString()} $
               </div>
               <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full backdrop-blur-sm border text-sm font-bold ${getStatusColor(selectedDeposit.status)}`}>
                 {getStatusIcon(selectedDeposit.status)}

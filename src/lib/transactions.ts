@@ -660,7 +660,7 @@ export async function addCheckInReward(
       });
     });
     
-    console.log(`Récompense check-in de ${rewardAmount} FCFA ajoutée au solde`);
+    console.log(`Récompense check-in de ${rewardAmount} $ ajoutée au solde`);
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la récompense check-in:', error);
     throw error;

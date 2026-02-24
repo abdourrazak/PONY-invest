@@ -124,10 +124,10 @@ export default function RetraitPage() {
     // Validation du montant minimum selon le mode de paiement
     const numericAmount = parseFloat(amount)
     const isCrypto = paymentMethods[selectedPaymentMethod].value === 'crypto'
-    const minAmount = isCrypto ? 5 : 2000 // 5 USDT ou 2000 FCFA
+    const minAmount = isCrypto ? 5 : 2000 // 5 USDT ou 2000 $
     
     if (numericAmount < minAmount) {
-      alert(`Le montant minimum de retrait est de ${isCrypto ? '5 USDT' : '2000 FCFA'}`)
+      alert(`Le montant minimum de retrait est de ${isCrypto ? '5 USDT' : '2000 $'}`)
       return
     }
 
@@ -223,7 +223,7 @@ export default function RetraitPage() {
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
               <span className="text-white font-bold text-sm">
-                Solde: <AnimatedBalance value={balance} suffix=" FCFA" className="inline" />
+                Solde: <AnimatedBalance value={balance} suffix=" $" className="inline" />
               </span>
             </div>
           </div>
@@ -236,11 +236,11 @@ export default function RetraitPage() {
           {/* Amount Input */}
           <div className="mb-6">
             <label className="block text-white/70 font-medium text-sm mb-2">
-              💰 Montant à retirer {paymentMethods[selectedPaymentMethod].value === 'crypto' ? '(USDT)' : '(FCFA)'}
+              💰 Montant à retirer {paymentMethods[selectedPaymentMethod].value === 'crypto' ? '(USDT)' : '($)'}
             </label>
             <input
               type="text"
-              placeholder={paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'Minimum 5 USDT' : 'Minimum 2,000 FCFA'}
+              placeholder={paymentMethods[selectedPaymentMethod].value === 'crypto' ? 'Minimum 5 USDT' : 'Minimum 2,000 $'}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
@@ -289,7 +289,7 @@ export default function RetraitPage() {
                           </div>
                           <div>
                             <span className="font-bold text-sm text-white block">Cryptomonnaie (USDT TRC20)</span>
-                            <span className="text-xs text-white/60">1 USDT = 600 FCFA</span>
+                            <span className="text-xs text-white/60">1 USDT = 600 $</span>
                           </div>
                         </>
                       )}
@@ -316,11 +316,11 @@ export default function RetraitPage() {
                   <span className="text-yellow-300 font-bold text-sm">Taux de change</span>
                 </div>
                 <p className="text-yellow-200 text-sm">
-                  1 USDT = 600 FCFA
+                  1 USDT = 600 $
                 </p>
                 {amount && (
                   <p className="text-yellow-200 text-xs mt-1">
-                    {amount} USDT ≈ {(parseFloat(amount) * 600).toLocaleString()} FCFA
+                    {amount} USDT ≈ {(parseFloat(amount) * 600).toLocaleString()} $
                   </p>
                 )}
               </div>

@@ -14,7 +14,7 @@ export default function AnimatedBalance({
   duration = 1000, 
   className = '',
   prefix = '',
-  suffix = ' FCFA'
+  suffix = ' $'
 }: AnimatedBalanceProps) {
   const [displayValue, setDisplayValue] = useState(value)
   const previousValue = useRef(value)

@@ -25,7 +25,7 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
     ? "Orange Money Cameroun" 
     : isMTN 
     ? "MTN Mobile Money" 
-    : "Cryptomonnaie (USDT TRC20) 1USDT = 600 FCFA"
+    : "Cryptomonnaie (USDT TRC20) 1USDT = 600 $"
   
   const logoSrc = isOrange 
     ? "/org.png" 
@@ -43,11 +43,11 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
     if (!amount || (!phoneNumber && !isCrypto) || (isCrypto && !cryptoAddress)) return
 
     // Validation du montant minimum
-    const minAmount = isCrypto ? 20 : 5000 // 20 USDT ou 5000 FCFA
+    const minAmount = isCrypto ? 20 : 5000 // 20 USDT ou 5000 $
     const numericAmount = parseFloat(amount)
     
     if (numericAmount < minAmount) {
-      alert(`Le montant minimum de retrait est de ${minAmount} ${isCrypto ? 'USDT' : 'FCFA'}`)
+      alert(`Le montant minimum de retrait est de ${minAmount} ${isCrypto ? 'USDT' : '$'}`)
       return
     }
 
@@ -107,12 +107,12 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
         {/* Amount Section */}
         <div className="mb-4">
           <label className={`block ${isOrange ? 'text-blue-600' : isMTN ? 'text-yellow-600' : 'text-blue-600'} font-black text-sm mb-2`}>
-            Montant à retirer ({isCrypto ? 'USDT' : 'FCFA'})
+            Montant à retirer ({isCrypto ? 'USDT' : '$'})
           </label>
           <div className="relative">
             <input
               type="text"
-              placeholder={isCrypto ? "Minimum 20 USDT" : "Minimum 5,000 FCFA"}
+              placeholder={isCrypto ? "Minimum 20 USDT" : "Minimum 5,000 $"}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className={`w-full px-3 py-3 border-2 ${isOrange ? 'border-blue-300 focus:border-orange-500 focus:bg-orange-50' : isMTN ? 'border-yellow-300 focus:border-yellow-500 focus:bg-yellow-50' : 'border-blue-300 focus:border-purple-500 focus:bg-purple-50'} rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none bg-white shadow-sm font-medium text-base transition-all duration-300`}

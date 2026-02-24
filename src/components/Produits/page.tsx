@@ -6,7 +6,6 @@ import Image from 'next/image'
 import SupportFloat from '../SupportFloat/SupportFloat'
 import ProductModal from '../ProductModal/ProductModal'
 import { useAuth } from '@/contexts/AuthContext'
-import { checkLV1Discount } from '@/lib/firebaseAuth'
 import { subscribeToUserBalance } from '@/lib/transactions'
 import { createRental, collectRentalEarnings, getUserRentals, RentalData } from '@/lib/rentals'
 
@@ -31,7 +30,6 @@ export default function ProduitsPage() {
   const { userData, currentUser } = useAuth()
   const [activeTab, setActiveTab] = useState('Fixe')
 
-  // Gérer l'onglet depuis l'URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const tab = urlParams.get('tab')
@@ -39,13 +37,12 @@ export default function ProduitsPage() {
       setActiveTab('Activité')
     }
   }, [])
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
   const [balance, setBalance] = useState(1000)
   const [userRentals, setUserRentals] = useState<RentalData[]>([])
-  const [hasLV1Discount, setHasLV1Discount] = useState(false)
 
-  // S'abonner au solde en temps réel
   useEffect(() => {
     if (currentUser) {
       const unsubscribe = subscribeToUserBalance(currentUser.uid, (newBalance) => {
@@ -55,23 +52,12 @@ export default function ProduitsPage() {
     }
   }, [currentUser])
 
-  // Charger les locations de l'utilisateur et vérifier la réduction LV1
   useEffect(() => {
     const loadUserData = async () => {
       if (currentUser) {
         try {
-          console.log('🔍 Chargement des locations pour utilisateur:', currentUser.uid)
-          
-          // Charger les locations
           const rentals = await getUserRentals(currentUser.uid)
-          console.log('📊 Locations récupérées:', rentals)
-          console.log('📊 Nombre de locations:', rentals.length)
-          
           setUserRentals(rentals)
-          
-          // Vérifier la réduction LV1
-          const discount = await checkLV1Discount(currentUser.uid)
-          setHasLV1Discount(discount)
         } catch (error) {
           console.error('❌ Erreur lors du chargement des données utilisateur:', error)
         }
@@ -80,34 +66,33 @@ export default function ProduitsPage() {
     loadUserData()
   }, [currentUser])
 
-  // Définir les produits par catégorie
-  const currentProducts = activeTab === 'Fixe' ? ['LV1', 'LV2', 'LV3', 'LV4', 'LV5', 'LV6', 'LV7'] : []
-  
-  // Filtrer les locations actives pour l'onglet Activité
-  const activeRentals = userRentals.filter(rental => {
-    const now = new Date()
-    const startDate = new Date(rental.startDate)
-    const endDate = new Date(rental.endDate)
-    return now >= startDate && now <= endDate && rental.status === 'active'
-  })
+  // Product data — Packs crypto en $ avec revenu en 2 heures
+  const products: ProductData[] = [
+    { id: 'lv1', name: 'BTC', level: 'Bitcoin', price: 30, dailyRevenue: 195, duration: 2, totalRevenue: 195, image: '/p1.jpg', type: 'Fixé', vipLevel: 0, maxInvestment: 1, controls: 1 },
+    { id: 'lv2', name: 'ETH', level: 'Ethereum', price: 45, dailyRevenue: 243, duration: 2, totalRevenue: 243, image: '/p2.jpg', type: 'Fixé', vipLevel: 1, maxInvestment: 1, controls: 1 },
+    { id: 'lv3', name: 'BNB', level: 'Binance Coin', price: 150, dailyRevenue: 528, duration: 2, totalRevenue: 528, image: '/p3.JPG', type: 'Fixé', vipLevel: 2, maxInvestment: 1, controls: 1 },
+    { id: 'lv4', name: 'SOL', level: 'Solana', price: 500, dailyRevenue: 2400, duration: 2, totalRevenue: 2400, image: '/p4.JPG', type: 'Fixé', vipLevel: 3, maxInvestment: 1, controls: 1 },
+    { id: 'lv5', name: 'XRP', level: 'Ripple', price: 1250, dailyRevenue: 5000, duration: 2, totalRevenue: 5000, image: '/p5.JPG', type: 'Fixé', vipLevel: 4, maxInvestment: 1, controls: 1 },
+    { id: 'lv6', name: 'DOGE', level: 'Dogecoin', price: 3000, dailyRevenue: 9000, duration: 2, totalRevenue: 9000, image: '/p6.JPG', type: 'Fixé', vipLevel: 5, maxInvestment: 1, controls: 1 },
+    { id: 'lv7', name: 'USDT', level: 'Tether', price: 10000, dailyRevenue: 25000, duration: 2, totalRevenue: 25000, image: '/p7.jpg', type: 'Fixé', vipLevel: 6, maxInvestment: 1, controls: 1 },
+  ]
 
-  // Calculer les jours restants pour une location
-  const getDaysRemaining = (rental: RentalData): number => {
+  // Calculer le temps restant en heures/minutes
+  const getTimeRemaining = (rental: RentalData) => {
     const now = new Date()
     const startDate = new Date(rental.startDate)
-    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
-    const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
-    return Math.max(0, daysRemaining)
+    const endDate = new Date(startDate.getTime() + (rental.duration * 60 * 60 * 1000))
+    const remaining = endDate.getTime() - now.getTime()
+    if (remaining <= 0) return { hours: 0, minutes: 0, expired: true }
+    const hours = Math.floor(remaining / (60 * 60 * 1000))
+    const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000))
+    return { hours, minutes, expired: false }
   }
 
-  // Fonction pour calculer les revenus accumulés depuis la dernière collecte
+  // Calculer les revenus accumulés
   const getAccumulatedRevenue = (rental: RentalData) => {
     const now = new Date()
-    
-    // Utiliser la dernière date de collecte ou la date de début si jamais collecté
     const lastCollectionDate = (rental as any).lastCollectionDate || rental.startDate
-    
-    // Convertir en Date si c'est un Timestamp Firestore
     let referenceDate: Date
     if (lastCollectionDate?.toDate) {
       referenceDate = lastCollectionDate.toDate()
@@ -116,8 +101,7 @@ export default function ProduitsPage() {
     } else {
       referenceDate = new Date(lastCollectionDate)
     }
-    
-    // Convertir startDate en Date
+
     let startDate: Date
     if ((rental.startDate as any)?.toDate) {
       startDate = (rental.startDate as any).toDate()
@@ -126,215 +110,74 @@ export default function ProduitsPage() {
     } else {
       startDate = new Date(rental.startDate)
     }
-    
-    const daysElapsed = Math.floor((now.getTime() - referenceDate.getTime()) / (24 * 60 * 60 * 1000))
-    const effectiveDays = Math.max(0, daysElapsed)
-    
-    // Vérifier que l'investissement n'est pas expiré
-    const endDate = new Date(startDate.getTime() + (rental.duration * 24 * 60 * 60 * 1000))
+
+    // Durée en heures
+    const endDate = new Date(startDate.getTime() + (rental.duration * 60 * 60 * 1000))
     if (now > endDate) {
-      return 0 // Investissement terminé
+      // Investissement terminé, calculer le revenu total restant à collecter
+      const hoursTotal = rental.duration
+      const revenuePerHour = rental.dailyRevenue / rental.duration
+      const hoursFromLastCollection = Math.min(
+        hoursTotal,
+        (endDate.getTime() - referenceDate.getTime()) / (60 * 60 * 1000)
+      )
+      return Math.max(0, Math.floor(hoursFromLastCollection * revenuePerHour * rental.quantity))
     }
-    
-    const accumulated = effectiveDays * rental.dailyRevenue * rental.quantity
-    console.log('💰 Revenus accumulés calculés:', {
-      daysElapsed,
-      effectiveDays,
-      dailyRevenue: rental.dailyRevenue,
-      quantity: rental.quantity,
-      accumulated
-    })
-    
-    return accumulated
+
+    // En cours - calculer le revenu proportionnel
+    const elapsed = (now.getTime() - referenceDate.getTime()) / (60 * 60 * 1000) // heures écoulées
+    const revenuePerHour = rental.dailyRevenue / rental.duration
+    return Math.max(0, Math.floor(elapsed * revenuePerHour * rental.quantity))
   }
 
   // Calculer le pourcentage de progression
   const getProgressPercentage = (rental: RentalData): number => {
     const now = new Date()
     const startDate = new Date(rental.startDate)
-    const totalDuration = rental.duration * 24 * 60 * 60 * 1000 // en millisecondes
+    const totalDuration = rental.duration * 60 * 60 * 1000
     const elapsed = now.getTime() - startDate.getTime()
     return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100))
   }
 
-  // Fonction pour obtenir l'image du produit
-  const getProductImage = (productId: string): string => {
-    const productImages: { [key: string]: string } = {
-      'lv1': '💎',
-      'lv2': '🏆', 
-      'lv3': '👑',
-      'lv4': '🌟',
-      'lv5': '💰',
-      'lv6': '🔥',
-      'lv7': '⚡'
-    }
-    return productImages[productId.toLowerCase()] || '💰'
+  // Obtenir le nom crypto du produit
+  const getProductName = (productId: string): string => {
+    const product = products.find(p => p.id === productId.toLowerCase())
+    return product?.name || productId.toUpperCase()
   }
 
-  // Fonction pour obtenir la couleur du produit
+  // Couleur par produit
   const getProductColor = (productId: string): string => {
-    const productColors: { [key: string]: string } = {
-      'lv1': 'from-blue-500 to-cyan-500',
-      'lv2': 'from-green-500 to-emerald-500', 
-      'lv3': 'from-purple-500 to-violet-500',
-      'lv4': 'from-yellow-500 to-orange-500',
-      'lv5': 'from-pink-500 to-rose-500',
-      'lv6': 'from-red-500 to-orange-600',
-      'lv7': 'from-indigo-500 to-purple-600'
+    const colors: { [key: string]: string } = {
+      'lv1': 'from-orange-500 to-yellow-500',
+      'lv2': 'from-blue-500 to-cyan-500',
+      'lv3': 'from-yellow-500 to-orange-500',
+      'lv4': 'from-purple-500 to-violet-500',
+      'lv5': 'from-gray-500 to-slate-500',
+      'lv6': 'from-amber-500 to-yellow-500',
+      'lv7': 'from-green-500 to-emerald-500'
     }
-    return productColors[productId.toLowerCase()] || 'from-gray-500 to-gray-600'
+    return colors[productId.toLowerCase()] || 'from-gray-500 to-gray-600'
   }
 
-  // Fonction pour collecter les gains journaliers
+  // Collecter les gains
   const handleCollectEarnings = async (rental: RentalData) => {
     if (!currentUser) return
-    
     try {
       const accumulatedRevenue = getAccumulatedRevenue(rental)
       if (accumulatedRevenue <= 0) {
         alert('Aucun gain à collecter pour le moment')
         return
       }
-
-      console.log('🎯 Début de la collecte des gains:', {
-        productName: rental.productName,
-        accumulatedRevenue,
-        rentalId: rental.id
-      })
-
-      // Collecter les gains via la fonction Firestore
       await collectRentalEarnings(currentUser.uid, rental.id, accumulatedRevenue)
-      
-      // Attendre un peu pour que Firestore se mette à jour
       await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Recharger les données utilisateur pour voir la mise à jour
       const updatedRentals = await getUserRentals(currentUser.uid)
       setUserRentals(updatedRentals)
-      
-      // Forcer le rafraîchissement de l'affichage
-      console.log('🔄 Rentals mis à jour:', updatedRentals.length)
-      
-      // Le solde sera automatiquement mis à jour via subscribeToUserBalance
-      
-      alert(`✅ Collecte réussie ! ${accumulatedRevenue.toLocaleString()} FCFA ajoutés à votre solde.`)
-      console.log('✅ Collecte terminée avec succès')
-      
+      alert(`✅ Collecte réussie ! $${accumulatedRevenue.toLocaleString()} ajoutés à votre solde.`)
     } catch (error: any) {
       console.error('❌ Erreur lors de la collecte:', error)
       alert(`Erreur lors de la collecte: ${error.message}`)
     }
   }
-
-  // Product data avec logique de réduction LV1
-  const products: ProductData[] = [
-    {
-      id: 'lv1',
-      name: 'Titres à revenu fixe 1',
-      level: 'LV1',
-      price: hasLV1Discount ? 3000 : 6000, // Prix réduit si 20+ amis inscrits
-      originalPrice: hasLV1Discount ? 6000 : 3000, // Prix original inversé
-      dailyRevenue: 500,
-      duration: 120,
-      totalRevenue: 60000,
-      image: '/p1.jpg',
-      type: 'Fixé',
-      vipLevel: 0,
-      maxInvestment: 100,
-      controls: 20,
-      badge: hasLV1Discount ? 'Réduction Parrain' : 'Promo'
-    },
-    {
-      id: 'lv2',
-      name: 'Titres à revenu fixe 2',
-      level: 'LV2',
-      price: 15000,
-      dailyRevenue: 1400,
-      duration: 120,
-      totalRevenue: 168000,
-      image: '/p2.jpg',
-      type: 'Fixé',
-      vipLevel: 2,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Standard'
-    },
-    {
-      id: 'lv3',
-      name: 'Titres à revenu fixe 3',
-      level: 'LV3',
-      price: 35000,
-      dailyRevenue: 3500,
-      duration: 120,
-      totalRevenue: 420000,
-      image: '/p3.JPG',
-      type: 'Fixé',
-      vipLevel: 3,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Premium'
-    },
-    {
-      id: 'lv4',
-      name: 'Titres à revenu fixe 4',
-      level: 'LV4',
-      price: 80000,
-      dailyRevenue: 8500,
-      duration: 120,
-      totalRevenue: 1020000,
-      image: '/p4.JPG',
-      type: 'Fixé',
-      vipLevel: 4,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Gold'
-    },
-    {
-      id: 'lv5',
-      name: 'Titres à revenu fixe 5',
-      level: 'LV5',
-      price: 110000,
-      dailyRevenue: 12000,
-      duration: 120,
-      totalRevenue: 1440000,
-      image: '/p5.JPG',
-      type: 'Fixé',
-      vipLevel: 5,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Platinum'
-    },
-    {
-      id: 'lv6',
-      name: 'Titres à revenu fixe 6',
-      level: 'LV6',
-      price: 250000,
-      dailyRevenue: 28500,
-      duration: 120,
-      totalRevenue: 3420000,
-      image: '/p6.JPG',
-      type: 'Fixé',
-      vipLevel: 6,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Diamond'
-    },
-    {
-      id: 'lv7',
-      name: 'Titres à revenu fixe 7',
-      level: 'LV7',
-      price: 400000,
-      dailyRevenue: 47000,
-      duration: 120,
-      totalRevenue: 5640000,
-      image: '/p7.jpg',
-      type: 'Fixé',
-      vipLevel: 7,
-      maxInvestment: 100,
-      controls: 20,
-      badge: 'Elite'
-    }
-  ]
 
   const handleRentClick = (productId: string) => {
     const product = products.find(p => p.id === productId)
@@ -348,9 +191,8 @@ export default function ProduitsPage() {
     if (!currentUser || !userData) {
       throw new Error('Vous devez être connecté pour effectuer un investissement')
     }
-    
     try {
-      const rentalId = await createRental(
+      await createRental(
         currentUser.uid,
         userData.numeroTel,
         {
@@ -363,26 +205,12 @@ export default function ProduitsPage() {
         },
         quantity
       )
-      
-      console.log('✅ Investissement créé avec succès, ID:', rentalId)
-      
-      // Recharger les locations de l'utilisateur
-      console.log('🔄 Rechargement des locations après investissement...')
       const updatedRentals = await getUserRentals(currentUser.uid)
-      console.log('📊 Locations après investissement:', updatedRentals)
-      console.log('📊 Nouveau nombre de locations:', updatedRentals.length)
-      
       setUserRentals(updatedRentals)
-      
-      // Rediriger vers l'onglet Activité après un court délai
-      setTimeout(() => {
-        setActiveTab('activity')
-      }, 500)
-      
-      // Le solde sera automatiquement mis à jour via subscribeToUserBalance
+      setTimeout(() => { setActiveTab('Activité') }, 500)
     } catch (error: any) {
       console.error('Erreur lors de l\'investissement:', error)
-      throw error // Re-lancer l'erreur pour que le modal puisse l'afficher
+      throw error
     }
   }
 
@@ -396,18 +224,15 @@ export default function ProduitsPage() {
               <Link href="/" className="text-white hover:text-purple-200 transition-colors p-2 rounded-lg hover:bg-white/10">
                 <ArrowLeft size={20} />
               </Link>
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
-                <div className="relative z-10 w-full h-full flex items-center justify-center">
-                  <Image src="/ponyAI.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
-                </div>
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative overflow-hidden">
+                <Image src="/ponyAI.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
               </div>
               <div>
                 <h1 className="text-white font-bold text-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">PONY</h1>
-                <p className="text-white/60 text-xs">Forfaits d'investissement</p>
+                <p className="text-white/60 text-xs">Packs d&apos;investissement</p>
               </div>
             </div>
-            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
+            <button className="p-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-200">
               <Bell size={18} className="text-white" />
             </button>
           </div>
@@ -422,13 +247,12 @@ export default function ProduitsPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
-                  activeTab === tab
+                className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${activeTab === tab
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-xl'
                     : 'bg-black/30 backdrop-blur-sm text-white/70 hover:bg-black/40 border border-white/20'
-                }`}
+                  }`}
               >
-                {tab === 'Fixe' ? '💰 Fixe' : '⚡ Activité'}
+                {tab === 'Fixe' ? '💰 Packs' : '⚡ Activité'}
               </button>
             ))}
           </div>
@@ -437,454 +261,144 @@ export default function ProduitsPage() {
 
       {/* Products List */}
       <main className="max-w-md mx-auto px-4 py-6 space-y-4 pb-20">
-        {currentProducts.includes('LV1') && (
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV1</span>
-            <span className={`text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
-              hasLV1Discount 
-                ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-500' 
-                : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
-            }`}>
-              {hasLV1Discount ? 'Réduction Obtenue ✅' : 'Promo'}
-            </span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p1.jpg" alt="LV1" width={64} height={64} className="object-cover w-full h-full" unoptimized />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">
-                    {hasLV1Discount ? '3 000 FCFA' : '6 000 FCFA'}
-                  </span>
+
+        {/* Onglet Fixe — Cartes Produits dynamiques */}
+        {activeTab === 'Fixe' && products.map((product) => {
+          const profit = product.totalRevenue - product.price
+          return (
+            <div key={product.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <div className="flex justify-between items-start mb-3">
+                <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-lg">{product.name}</span>
+                <span className="text-white/40 text-xs font-medium">{product.level}</span>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden shadow-lg">
+                  <Image src={product.image} alt={product.name} width={64} height={64} className="object-cover w-full h-full" unoptimized />
                 </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+500 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">60 000 FCFA</span>
+
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-2 gap-2 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                    <div className="flex flex-col">
+                      <span className="text-white/60 text-xs">Prix :</span>
+                      <span className="text-blue-400 text-sm font-black">${product.price.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-white/60 text-xs">Revenu :</span>
+                      <span className="text-green-400 text-sm font-black">${product.totalRevenue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-white/60 text-xs">Profit :</span>
+                      <span className="text-yellow-400 text-sm font-black">+${profit.toLocaleString()}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-white/60 text-xs">Durée :</span>
+                      <span className="text-pink-400 text-sm font-black">⏱️ 2 heures</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex flex-col">
-              {hasLV1Discount ? (
-                <>
-                  <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
-                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-green-400 font-bold text-lg">3 000 FCFA</span>
-                  <span className="text-red-400 font-medium text-sm line-through decoration-2 decoration-red-400">6 000 FCFA</span>
-                </>
-              )}
-            </div>
-            <div className="flex flex-col space-y-2">
-              {!hasLV1Discount && (
-                <div className="bg-orange-500/20 border border-orange-400/30 rounded-xl p-3 text-center">
-                  <p className="text-orange-300 text-xs font-medium">
-                    💡 Invitez 10 amis pour débloquer ce prix !
-                  </p>
-                  <p className="text-white/70 text-xs mt-1">
-                    Prix actuel : 6,000 FCFA
-                  </p>
-                </div>
-              )}
-              <button 
-                onClick={() => handleRentClick('lv1')}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-              >
-                <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent font-bold">Louer Maintenant</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        )}
 
-        {currentProducts.includes('LV2') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV2</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p2.jpg" alt="LV2" width={64} height={64} className="object-cover w-full h-full" unoptimized />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">15 000 FCFA</span>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex flex-col">
+                  <span className="text-green-400 font-bold text-lg">${product.price.toLocaleString()}</span>
+                  <span className="text-white/40 text-xs">{'\u2192'} ${product.totalRevenue.toLocaleString()} en 2h</span>
                 </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+1 400 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">168 000 FCFA</span>
-                </div>
+                <button
+                  onClick={() => handleRentClick(product.id)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent font-bold">Investir</span>
+                </button>
               </div>
             </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">15 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv2')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
+          )
+        })}
 
-        {currentProducts.includes('LV3') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV3</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p3.JPG" alt="LV3" width={64} height={64} className="object-cover w-full h-full" />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">35 000 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+3 400 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">408 000 FCFA</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">35 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv3')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
-
-        {currentProducts.includes('LV4') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV4</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p4.JPG" alt="LV4" width={64} height={64} className="object-cover w-full h-full" />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">80 000 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+7 900 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">948 000 FCFA</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">80 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv4')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
-
-        {currentProducts.includes('LV5') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV5</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p5.JPG" alt="LV5" width={64} height={64} className="object-cover w-full h-full" />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">110 000 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+10 800 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">1 296 000 FCFA</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">110 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv5')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
-
-        {currentProducts.includes('LV6') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV6</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p6.JPG" alt="LV6" width={64} height={64} className="object-cover w-full h-full" />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-0 bg-black/20 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">250 000 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+24 900 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">2 998 000 FCFA</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">250 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv6')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
-
-        {currentProducts.includes('LV7') && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <div className="flex justify-between items-start mb-3">
-            <span className="bg-purple-500 text-white px-3 py-1 rounded text-sm font-bold">LV7</span>
-            <span className="bg-gradient-to-r from-green-400 to-green-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">Standard</span>
-          </div>
-          
-          <div className="flex items-start space-x-3">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex-shrink-0 overflow-hidden">
-              <Image src="/p7.jpg" alt="LV7" width={64} height={64} className="object-cover w-full h-full" />
-            </div>
-            
-            <div className="flex-1 space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Prix :</span>
-                  <span className="text-blue-400 text-xs sm:text-sm font-black">400 000 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Par jour :</span>
-                  <span className="text-purple-400 text-xs sm:text-sm font-black">+38 500 FCFA</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/70 text-xs sm:text-sm font-bold">Durée :</span>
-                  <span className="text-pink-400 text-xs sm:text-sm font-black">120 jours</span>
-                </div>
-                <div className="flex justify-between sm:flex-col sm:items-center">
-                  <span className="text-white/90 text-xs sm:text-sm font-black">Revenu estimé :</span>
-                  <span className="text-green-400 text-xs sm:text-sm font-black">4 620 000 FCFA</span>
-                </div>
-              </div>
-              
-              
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <span className="text-yellow-400 font-bold text-lg">400 000 FCFA</span>
-            <button 
-              onClick={() => handleRentClick('lv7')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              Louer Maintenant
-            </button>
-          </div>
-        </div>
-        )}
-
-
-
-        {/* Section Activité - Locations actives */}
+        {/* Section Activité - Investissements actifs */}
         {activeTab === 'Activité' && (
           <>
             {userRentals.length > 0 ? (
               <div className="space-y-4">
-                {userRentals.map((rental, index) => (
-                  <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
-                    <div className="flex justify-between items-start mb-3">
-                      <span className={`bg-gradient-to-r ${getProductColor(rental.productId)} text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg`}>
-                        {rental.productId.toUpperCase()}
-                      </span>
-                      <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">
-                        🔵 Actif
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <div className={`w-16 h-16 bg-gradient-to-br ${getProductColor(rental.productId)} rounded-2xl flex-shrink-0 overflow-hidden shadow-lg border-2 border-white/20`}>
-                        <div className="w-full h-full flex items-center justify-center text-white text-2xl">
-                          {getProductImage(rental.productId)}
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1 space-y-2">
-                        <h3 className="text-white font-bold text-sm">{rental.productName}</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-0 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
-                          <div className="flex justify-between sm:flex-col sm:items-center">
-                            <span className="text-white/90 text-xs sm:text-sm font-black">Revenus/jour :</span>
-                            <span className="text-green-400 text-xs sm:text-sm font-black">+{rental.dailyRevenue.toLocaleString()} FCFA</span>
-                          </div>
-                          <div className="flex justify-between sm:flex-col sm:items-center">
-                            <span className="text-white/90 text-xs sm:text-sm font-black">Jours restants :</span>
-                            <span className="text-purple-400 text-xs sm:text-sm font-black">{getDaysRemaining(rental)} jours</span>
-                          </div>
-                          <div className="flex justify-between sm:flex-col sm:items-center">
-                            <span className="text-white/90 text-xs sm:text-sm font-black">Revenus accumulés :</span>
-                            <span className="text-blue-400 text-xs sm:text-sm font-black">{getAccumulatedRevenue(rental).toLocaleString()} FCFA</span>
-                          </div>
-                        </div>
-                        
-                        {/* Barre de progression */}
-                        <div className="mt-3">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-white/70">Progression</span>
-                            <span className="text-purple-400 font-bold">{getProgressPercentage(rental).toFixed(1)}%</span>
-                          </div>
-                          <div className="w-full bg-black/30 rounded-full h-2">
-                            <div 
-                              className="h-full bg-gradient-to-r from-green-400 to-purple-600 rounded-full"
-                              style={{ width: `${getProgressPercentage(rental)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center mt-4">
-                      <div className="flex flex-col">
-                        <span className="text-yellow-400 font-bold text-lg">
-                          {(rental.quantity * rental.dailyRevenue).toLocaleString()} FCFA/jour
+                {userRentals.map((rental, index) => {
+                  const timeLeft = getTimeRemaining(rental)
+                  return (
+                    <div key={`${rental.productId}-${index}`} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md">
+                      <div className="flex justify-between items-start mb-3">
+                        <span className={`bg-gradient-to-r ${getProductColor(rental.productId)} text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg`}>
+                          {getProductName(rental.productId)}
                         </span>
-                        <span className="text-white/60 text-sm">
-                          Quantité: {rental.quantity}x
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium shadow-sm ${timeLeft.expired
+                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
+                            : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                          }`}>
+                          {timeLeft.expired ? '✅ Terminé' : '🔵 Actif'}
                         </span>
                       </div>
-                      <button 
-                        onClick={() => handleCollectEarnings(rental)}
-                        className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
-                      >
-                        🎯 Collecter
-                      </button>
+
+                      <div className="flex items-start space-x-3">
+                        <div className={`w-14 h-14 bg-gradient-to-br ${getProductColor(rental.productId)} rounded-2xl flex-shrink-0 shadow-lg border-2 border-white/20 flex items-center justify-center`}>
+                          <span className="text-white text-lg font-black">{getProductName(rental.productId)}</span>
+                        </div>
+
+                        <div className="flex-1 space-y-2">
+                          <h3 className="text-white font-bold text-sm">{rental.productName}</h3>
+                          <div className="grid grid-cols-2 gap-2 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-2xl border border-white/10">
+                            <div className="flex flex-col">
+                              <span className="text-white/60 text-xs">Revenu total :</span>
+                              <span className="text-green-400 text-xs font-black">${rental.dailyRevenue.toLocaleString()}</span>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-white/60 text-xs">Temps restant :</span>
+                              <span className="text-purple-400 text-xs font-black">
+                                {timeLeft.expired ? 'Terminé' : `${timeLeft.hours}h ${timeLeft.minutes}min`}
+                              </span>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-white/60 text-xs">Accumulés :</span>
+                              <span className="text-blue-400 text-xs font-black">${getAccumulatedRevenue(rental).toLocaleString()}</span>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-white/60 text-xs">Investissement :</span>
+                              <span className="text-yellow-400 text-xs font-black">${rental.unitPrice.toLocaleString()}</span>
+                            </div>
+                          </div>
+
+                          {/* Barre de progression */}
+                          <div className="mt-3">
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-white/70">Progression</span>
+                              <span className="text-purple-400 font-bold">{getProgressPercentage(rental).toFixed(1)}%</span>
+                            </div>
+                            <div className="w-full bg-black/30 rounded-full h-2">
+                              <div
+                                className="h-full bg-gradient-to-r from-green-400 to-purple-600 rounded-full transition-all duration-500"
+                                style={{ width: `${getProgressPercentage(rental)}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end mt-4">
+                        <button
+                          onClick={() => handleCollectEarnings(rental)}
+                          className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 py-2 rounded-xl text-sm font-medium shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95"
+                        >
+                          🎯 Collecter ${getAccumulatedRevenue(rental).toLocaleString()}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <div className="text-center py-12">
                 <div className="text-white/70 text-lg mb-2">Aucun investissement actif</div>
-                <div className="text-white/50 text-sm">Vos produits loués apparaîtront ici</div>
+                <div className="text-white/50 text-sm">Vos investissements apparaîtront ici</div>
               </div>
             )}
           </>
-        )}
-
-        {/* Empty state pour Fixe */}
-        {activeTab === 'Fixe' && currentProducts.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-white/70 text-lg mb-2">Aucun produit disponible</div>
-            <div className="text-white/50 text-sm">dans la catégorie {activeTab}</div>
-          </div>
         )}
       </main>
 

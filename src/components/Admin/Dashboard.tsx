@@ -117,10 +117,10 @@ export default function AdminDashboard() {
       // Utiliser la fonction spécialisée qui met à jour le solde automatiquement
       if (transaction.type === 'deposit') {
         await adminApproveDeposit(transaction.id)
-        addDebugLog(`✅ Dépôt approuvé: ${transaction.amount} FCFA ajouté au solde`)
+        addDebugLog(`✅ Dépôt approuvé: ${transaction.amount} $ ajouté au solde`)
       } else if (transaction.type === 'withdrawal') {
         await adminApproveWithdrawal(transaction.id)
-        addDebugLog(`✅ Retrait approuvé: ${transaction.amount} FCFA déduit du solde`)
+        addDebugLog(`✅ Retrait approuvé: ${transaction.amount} $ déduit du solde`)
       }
       setSelectedTransaction(null)
       
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
             <div className="text-lg sm:text-2xl font-bold text-white">
               {(stats.totalDeposits / 1000).toFixed(0)}K
             </div>
-            <div className="text-xs text-white/60">FCFA</div>
+            <div className="text-xs text-white/60">$</div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
             <div className="text-lg sm:text-2xl font-bold text-white">
               {(stats.totalWithdrawals / 1000).toFixed(0)}K
             </div>
-            <div className="text-xs text-white/60">FCFA</div>
+            <div className="text-xs text-white/60">$</div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 col-span-2 sm:col-span-1">
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
                       {transaction.userNumeroTel || transaction.userPhone || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-white">
-                      {transaction.amount.toLocaleString()} FCFA
+                      {transaction.amount.toLocaleString()} $
                     </td>
                     <td className="px-4 py-3 text-sm text-white/90">
                       {transaction.paymentMethod.toUpperCase()}
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Montant</div>
-                    <div className="text-white font-bold">{transaction.amount.toLocaleString()} FCFA</div>
+                    <div className="text-white font-bold">{transaction.amount.toLocaleString()} $</div>
                   </div>
                   <div>
                     <div className="text-white/60 text-xs mb-1">Méthode</div>
@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-xs text-gray-600 mb-1">Montant</div>
                   <div className="font-bold text-xl text-green-600">
-                    {selectedTransaction.amount.toLocaleString()} FCFA
+                    {selectedTransaction.amount.toLocaleString()} $
                   </div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">

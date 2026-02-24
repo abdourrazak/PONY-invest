@@ -37,7 +37,7 @@ export default function RechargePage() {
       description: ''
     },
     {
-      name: 'Cryptomonnaie (USDT TRC20) 1USDT = 600 FCFA',
+      name: 'Cryptomonnaie (USDT TRC20) 1USDT = 600 $',
       icon: '₿',
       description: ''
     }
@@ -79,7 +79,7 @@ export default function RechargePage() {
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 inline-block">
             <div className="flex items-center justify-center">
               <span className="text-lg mr-2">💰</span>
-              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} FCFA</span>
+              <span className="text-white font-bold text-sm">Solde: {balance.toLocaleString()} $</span>
             </div>
           </div>
         </div>

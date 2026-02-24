@@ -237,7 +237,7 @@ export async function collectRentalEarnings(
         totalCollected: increment(collectibleRevenue)
       })
 
-      console.log('✅ Gains collectés avec succès:', collectibleRevenue, 'FCFA')
+      console.log('✅ Gains collectés avec succès:', collectibleRevenue, '$')
     })
 
   } catch (error) {

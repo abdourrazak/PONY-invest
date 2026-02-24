@@ -316,7 +316,7 @@ export default function CheckQuotidien() {
                   </div>
                   <div className="bg-purple-400/20 backdrop-blur-sm border border-purple-400/30 rounded-lg px-4 py-2">
                     <div className="text-white text-xl font-black">
-                      {reward.amount} FCFA
+                      {reward.amount} $
                     </div>
                   </div>
                   {reward.claimed && (
