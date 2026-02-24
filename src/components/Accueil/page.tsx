@@ -108,15 +108,15 @@ export default function AccueilPage() {
     }
   }, [currentUser, router])
 
-  // Product data — Packs en $ avec revenu en 2 heures
+  // Product data — Packs crypto en $ avec revenu en 2 heures
   const products: ProductData[] = [
-    { id: 'lv1', name: 'Pack Starter', level: 'Pack 1', price: 30, dailyRevenue: 195, duration: 2, totalRevenue: 195, image: '/p1.jpg', type: 'Fixé', vipLevel: 0, maxInvestment: 1, controls: 1, badge: 'Starter' },
-    { id: 'lv2', name: 'Pack Silver', level: 'Pack 2', price: 45, dailyRevenue: 243, duration: 2, totalRevenue: 243, image: '/p2.jpg', type: 'Fixé', vipLevel: 1, maxInvestment: 1, controls: 1, badge: 'Silver' },
-    { id: 'lv3', name: 'Pack Gold', level: 'Pack 3', price: 150, dailyRevenue: 528, duration: 2, totalRevenue: 528, image: '/p3.JPG', type: 'Fixé', vipLevel: 2, maxInvestment: 1, controls: 1, badge: 'Gold' },
-    { id: 'lv4', name: 'Pack Platinum', level: 'Pack 4', price: 500, dailyRevenue: 2400, duration: 2, totalRevenue: 2400, image: '/p4.JPG', type: 'Fixé', vipLevel: 3, maxInvestment: 1, controls: 1, badge: 'Platinum' },
-    { id: 'lv5', name: 'Pack Diamond', level: 'Pack 5', price: 1250, dailyRevenue: 5000, duration: 2, totalRevenue: 5000, image: '/p5.JPG', type: 'Fixé', vipLevel: 4, maxInvestment: 1, controls: 1, badge: 'Diamond' },
-    { id: 'lv6', name: 'Pack Elite', level: 'Pack 6', price: 3000, dailyRevenue: 9000, duration: 2, totalRevenue: 9000, image: '/p6.JPG', type: 'Fixé', vipLevel: 5, maxInvestment: 1, controls: 1, badge: 'Elite' },
-    { id: 'lv7', name: 'Pack VIP', level: 'Pack 7', price: 10000, dailyRevenue: 25000, duration: 2, totalRevenue: 25000, image: '/p7.jpg', type: 'Fixé', vipLevel: 6, maxInvestment: 1, controls: 1, badge: 'VIP' },
+    { id: 'lv1', name: 'BTC', level: 'Bitcoin', price: 30, dailyRevenue: 195, duration: 2, totalRevenue: 195, image: '/p1.jpg', type: 'Fixé', vipLevel: 0, maxInvestment: 1, controls: 1 },
+    { id: 'lv2', name: 'ETH', level: 'Ethereum', price: 45, dailyRevenue: 243, duration: 2, totalRevenue: 243, image: '/p2.jpg', type: 'Fixé', vipLevel: 1, maxInvestment: 1, controls: 1 },
+    { id: 'lv3', name: 'BNB', level: 'Binance Coin', price: 150, dailyRevenue: 528, duration: 2, totalRevenue: 528, image: '/p3.JPG', type: 'Fixé', vipLevel: 2, maxInvestment: 1, controls: 1 },
+    { id: 'lv4', name: 'SOL', level: 'Solana', price: 500, dailyRevenue: 2400, duration: 2, totalRevenue: 2400, image: '/p4.JPG', type: 'Fixé', vipLevel: 3, maxInvestment: 1, controls: 1 },
+    { id: 'lv5', name: 'XRP', level: 'Ripple', price: 1250, dailyRevenue: 5000, duration: 2, totalRevenue: 5000, image: '/p5.JPG', type: 'Fixé', vipLevel: 4, maxInvestment: 1, controls: 1 },
+    { id: 'lv6', name: 'DOGE', level: 'Dogecoin', price: 3000, dailyRevenue: 9000, duration: 2, totalRevenue: 9000, image: '/p6.JPG', type: 'Fixé', vipLevel: 5, maxInvestment: 1, controls: 1 },
+    { id: 'lv7', name: 'USDT', level: 'Tether', price: 10000, dailyRevenue: 25000, duration: 2, totalRevenue: 25000, image: '/p7.jpg', type: 'Fixé', vipLevel: 6, maxInvestment: 1, controls: 1 },
   ]
 
   const handleRentClick = (productId: string) => {
@@ -257,12 +257,12 @@ export default function AccueilPage() {
             const IconComponent = service.icon
             const ServiceContent = (
               <div className={`bg-white/10 backdrop-blur-sm rounded-2xl p-2 flex flex-col items-center justify-center min-h-[95px] cursor-pointer border border-white/20 ${service.special === 'gift'
-                  ? 'hover:shadow-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20'
-                  : 'transition-colors duration-200'
+                ? 'hover:shadow-xl transition-all duration-300 transform hover:scale-[1.08] active:scale-[0.95] hover:bg-white/20'
+                : 'transition-colors duration-200'
                 }`}>
                 <div className={`${service.color} p-3 rounded-2xl mb-1 shadow-lg ${service.special === 'gift'
-                    ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50'
-                    : ''
+                  ? 'animate-pulse shadow-pink-300 ring-2 ring-pink-300 ring-opacity-50'
+                  : ''
                   }`}>
                   <IconComponent size={24} className={`text-white drop-shadow-sm ${service.special === 'gift' ? 'animate-bounce filter drop-shadow-lg' : ''
                     }`} />
@@ -303,8 +303,8 @@ export default function AccueilPage() {
               return (
                 <div key={product.id} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 relative shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
                   <div className="flex justify-between items-start mb-3">
-                    <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-lg">{product.level}</span>
-                    <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-sm">{product.badge}</span>
+                    <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-lg">{product.name}</span>
+                    <span className="text-white/40 text-xs font-medium">{product.level}</span>
                   </div>
 
                   <div className="flex items-start space-x-3">
