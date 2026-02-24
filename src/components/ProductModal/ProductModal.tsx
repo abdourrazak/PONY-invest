@@ -248,15 +248,12 @@ export default function ProductModal({ isOpen, onClose, product, onRent, userBal
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-gray-800 text-lg">{product.name}</h3>
-              <div className="flex items-center space-x-2 mt-1">
-                <span className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                  {product.level}
-                </span>
-                {product.badge && (
-                  <span className="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                    {product.badge}
-                  </span>
-                )}
+              <p className="text-gray-500 text-xs">{product.level}</p>
+              <div className="flex items-center space-x-3 mt-1">
+                <span className="text-green-600 font-bold text-sm">${product.price.toLocaleString()}</span>
+                <span className="text-gray-400 text-xs">→</span>
+                <span className="text-blue-600 font-bold text-sm">${product.totalRevenue.toLocaleString()}</span>
+                <span className="text-pink-500 text-xs font-medium">⏱️ 2h</span>
               </div>
             </div>
           </div>
