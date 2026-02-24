@@ -1,6 +1,6 @@
-import { 
-  doc, 
-  updateDoc, 
+import {
+  doc,
+  updateDoc,
   getDoc,
   getDocs,
   addDoc,
@@ -50,21 +50,22 @@ export async function createRental(
 ): Promise<string> {
   try {
     const totalCost = productData.price * quantity
-    
+
     // VALIDATION DES RÈGLES D'INVESTISSEMENT
     const validation = await validateInvestment(userId, productData.id, totalCost)
     if (!validation.canInvest) {
       throw new Error(validation.message)
     }
-    
+
     const startDate = new Date()
-    const endDate = new Date(startDate.getTime() + (productData.duration * 24 * 60 * 60 * 1000))
+    // Durée en heures (2h pour tous les packs)
+    const endDate = new Date(startDate.getTime() + (productData.duration * 60 * 60 * 1000))
 
     const rentalId = await runTransaction(db, async (transaction) => {
       // Vérifier le solde de l'utilisateur
       const userRef = doc(db, 'users', userId)
       const userDoc = await transaction.get(userRef)
-      
+
       if (!userDoc.exists()) {
         throw new Error('Utilisateur non trouvé')
       }
@@ -75,7 +76,7 @@ export async function createRental(
 
       // Vérifier que le balance total est suffisant
       if (currentBalance < totalCost) {
-        throw new Error(`Solde insuffisant. Vous avez ${currentBalance.toLocaleString()} FCFA mais il faut ${totalCost.toLocaleString()} FCFA.`)
+        throw new Error(`Solde insuffisant. Vous avez $${currentBalance.toLocaleString()} mais il faut $${totalCost.toLocaleString()}.`)
       }
 
       console.log('💰 Déduction du depositBalance:', {
@@ -115,7 +116,7 @@ export async function createRental(
       transaction.set(rentalRef, {
         ...rentalData,
         startDate: serverTimestamp(),
-        endDate: new Date(Date.now() + (productData.duration * 24 * 60 * 60 * 1000)),
+        endDate: new Date(Date.now() + (productData.duration * 60 * 60 * 1000)),
         createdAt: serverTimestamp()
       })
 
@@ -130,7 +131,7 @@ export async function createRental(
         totalCost,
         productData.name
       )
-      console.log(`✅ Commissions de parrainage traitées pour l'investissement de ${totalCost} FCFA`)
+      console.log(`✅ Commissions de parrainage traitées pour l'investissement de $${totalCost}`)
     } catch (commissionError) {
       console.error('❌ Erreur lors du traitement des commissions:', commissionError)
       // Ne pas faire échouer la transaction principale si les commissions échouent
@@ -147,7 +148,7 @@ export async function createRental(
 export async function getUserRentals(userId: string): Promise<RentalData[]> {
   try {
     console.log('🔍 getUserRentals - Recherche pour userId:', userId)
-    
+
     const rentalsCollection = collection(db, 'rentals')
     const q = query(
       rentalsCollection,
@@ -155,17 +156,17 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
       // Temporairement supprimé orderBy pour éviter l'erreur d'index
       // orderBy('createdAt', 'desc')
     )
-    
+
     console.log('📋 getUserRentals - Exécution de la requête Firestore...')
     const querySnapshot = await getDocs(q)
     console.log('📋 getUserRentals - Nombre de documents trouvés:', querySnapshot.size)
-    
+
     const rentals: RentalData[] = []
-    
+
     querySnapshot.forEach((doc) => {
       const data = doc.data()
       console.log('📄 getUserRentals - Document trouvé:', doc.id, data)
-      
+
       rentals.push({
         id: doc.id,
         ...data,
@@ -174,10 +175,10 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
         createdAt: data.createdAt?.toDate() || new Date()
       } as RentalData)
     })
-    
+
     // Tri manuel par date de création (plus récent en premier)
     rentals.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    
+
     console.log('✅ getUserRentals - Locations finales:', rentals)
     return rentals
   } catch (error) {
@@ -188,18 +189,18 @@ export async function getUserRentals(userId: string): Promise<RentalData[]> {
 
 // Collecter les gains accumulés d'un investissement
 export async function collectRentalEarnings(
-  userId: string, 
-  rentalId: string, 
+  userId: string,
+  rentalId: string,
   accumulatedRevenue: number
 ): Promise<void> {
   try {
     console.log('💰 Début de la collecte des gains:', { userId, rentalId, accumulatedRevenue })
-    
+
     await runTransaction(db, async (transaction) => {
       // Référence vers l'utilisateur
       const userRef = doc(db, 'users', userId)
       const userDoc = await transaction.get(userRef)
-      
+
       if (!userDoc.exists()) {
         throw new Error('Utilisateur non trouvé')
       }
@@ -207,7 +208,7 @@ export async function collectRentalEarnings(
       // Référence vers la location
       const rentalRef = doc(db, 'rentals', rentalId)
       const rentalDoc = await transaction.get(rentalRef)
-      
+
       if (!rentalDoc.exists()) {
         throw new Error('Location non trouvée')
       }
@@ -238,7 +239,7 @@ export async function collectRentalEarnings(
 
       console.log('✅ Gains collectés avec succès:', collectibleRevenue, 'FCFA')
     })
-    
+
   } catch (error) {
     console.error('❌ Erreur lors de la collecte des gains:', error)
     throw error
