@@ -37,22 +37,22 @@ export default function ComptePage() {
   useEffect(() => {
     const loadEarnings = async () => {
       if (!currentUser) return
-      
+
       const earnings = await calculateUserEarnings(currentUser.uid)
       setTodayEarnings(earnings.todayEarnings)
       setTotalEarnings(earnings.totalEarnings)
       setGrowthPercentage(calculateGrowthPercentage(earnings.todayEarnings, earnings.totalEarnings))
     }
-    
+
     loadEarnings()
   }, [currentUser])
 
   useEffect(() => {
     const loadUserData = async () => {
       if (!userData?.numeroTel || !userData?.uid) return
-      
+
       const userKey = userData.numeroTel
-      
+
       // Vérifier si l'utilisateur a investi
       try {
         const userDoc = await getDoc(doc(db, 'users', userData.uid))
@@ -68,11 +68,11 @@ export default function ComptePage() {
       // Calculer les récompenses de parrainage UNIQUEMENT pour les investisseurs
       const storedCode = localStorage.getItem(`userReferralCode_${userKey}`)
       let referralRewards = 0
-      
+
       if (storedCode && hasInvested) {
         try {
           const referralCount = await getReferralCount(storedCode)
-          referralRewards = referralCount * 25 // 25 $ par parrainage
+          referralRewards = referralCount * 0.05 // $0.05 par parrainage
           setReferralRewards(referralRewards)
         } catch (error) {
           console.log('Erreur calcul récompenses parrainage:', error)
@@ -94,7 +94,7 @@ export default function ComptePage() {
         localStorage.setItem('userId', 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9))
       }
     }
-    
+
     loadUserData()
   }, [userData])
 
@@ -132,7 +132,7 @@ export default function ComptePage() {
               <Wallet className="w-5 h-5 text-yellow-400" />
             </div>
           </div>
-          
+
           {/* Balance Display */}
           <div className="text-center mb-4">
             <div className="text-5xl font-black mb-2 tracking-tight bg-gradient-to-r from-yellow-400 via-green-400 to-yellow-400 bg-clip-text text-transparent">
@@ -142,7 +142,7 @@ export default function ComptePage() {
               $
             </div>
           </div>
-          
+
           {/* Label */}
           <div className="text-center">
             <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">

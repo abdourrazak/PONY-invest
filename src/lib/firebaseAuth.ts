@@ -1,19 +1,19 @@
 // Services Firebase Auth et Firestore
-import { 
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   User as FirebaseUser
 } from 'firebase/auth'
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  collection, 
-  query, 
-  where, 
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
   getDocs,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from './firebase'
 
@@ -50,19 +50,19 @@ export function generateReferralCode(): string {
 export async function isReferralCodeValid(code: string): Promise<boolean> {
   try {
     console.log('🔍 Validation du code:', code, 'Longueur:', code.length, 'Commence par PONY:', code.startsWith('PONY'))
-    
+
     // Accepter TOUS les codes qui commencent par PONY (codes générés par notre système)
     if (code.startsWith('PONY')) {
       console.log('✅ Code PONY accepté automatiquement:', code)
       return true
     }
-    
+
     // Rétrocompatibilité : accepter aussi les anciens codes AXML
     if (code.startsWith('AXML')) {
       console.log('✅ Code AXML (ancien format) accepté:', code)
       return true
     }
-    
+
     // Pour les autres codes, vérifier en base (mais pas critique)
     try {
       const usersRef = collection(db, 'users')
@@ -94,29 +94,29 @@ export async function generateUniqueReferralCode(): Promise<string> {
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  
+
   console.log('🎯 Code PONY généré:', code)
   return code
 }
 
 // Inscription avec Firebase Auth + Firestore
 export async function registerUser(
-  numeroTel: string, 
-  password: string, 
+  numeroTel: string,
+  password: string,
   referredBy?: string
 ): Promise<{ success: boolean; user?: User; error?: string }> {
   try {
     console.log('🔥 Firebase registerUser appelé avec:', { numeroTel, referredBy })
-    
+
     // Accepter TOUS les codes d'invitation sans validation pour éviter les erreurs
     if (referredBy) {
       console.log('✅ Code de parrainage reçu:', referredBy)
     }
-    
+
     console.log('✅ Inscription autorisée (avec ou sans code d\'invitation)')
 
     console.log('✅ Code d\'invitation valide, création utilisateur Firebase')
-    
+
     // Créer l'utilisateur avec Firebase Auth (utiliser le numéro comme email temporaire)
     const email = `${numeroTel}@axml.local`
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
@@ -135,8 +135,8 @@ export async function registerUser(
       referralCode,
       referredBy: referredBy ? referredBy.trim().toUpperCase() : null, // Normaliser le code
       createdAt: serverTimestamp(),
-      balance: 1000, // Bonus d'inscription de 1000 $
-      depositBalance: 1000, // Bonus d'inscription pour investir
+      balance: 2, // Bonus d'inscription de $2
+      depositBalance: 2, // Bonus d'inscription pour investir
       withdrawableBalance: 0, // Pas de solde retirable initial
       totalDeposited: 0,
       totalInvested: 0
@@ -151,10 +151,10 @@ export async function registerUser(
     return { success: true, user: userData }
   } catch (error: any) {
     console.error('💥 Erreur Firebase inscription:', error)
-    
+
     // Gestion spécifique des erreurs Firebase
     let errorMessage = 'Erreur lors de l\'inscription'
-    
+
     if (error.code === 'auth/email-already-in-use') {
       errorMessage = 'Ce numéro de téléphone est déjà utilisé'
     } else if (error.code === 'auth/weak-password') {
@@ -164,19 +164,19 @@ export async function registerUser(
     } else if (error.message) {
       errorMessage = error.message
     }
-    
+
     return { success: false, error: errorMessage }
   }
 }
 
 // Connexion avec Firebase Auth
 export async function loginUser(
-  numeroTel: string, 
+  numeroTel: string,
   password: string
 ): Promise<{ success: boolean; user?: User; error?: string }> {
   try {
     console.log('🔐 Tentative de connexion pour:', numeroTel)
-    
+
     const email = `${numeroTel}@axml.local`
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const firebaseUser = userCredential.user
@@ -186,10 +186,10 @@ export async function loginUser(
     // Récupérer les données utilisateur depuis Firestore
     const userDocRef = doc(db, 'users', firebaseUser.uid)
     const userDoc = await getDoc(userDocRef)
-    
+
     if (userDoc.exists()) {
       const userData = userDoc.data() as User
-      
+
       // Mettre à jour les informations de dernière connexion dans Firestore
       try {
         await setDoc(userDocRef, {
@@ -198,13 +198,13 @@ export async function loginUser(
           lastLoginIP: typeof window !== 'undefined' ? window.location.hostname : 'unknown', // IP/hostname
           loginCount: (userData.loginCount || 0) + 1 // Compteur de connexions
         }, { merge: true })
-        
+
         console.log('✅ Informations de connexion enregistrées dans Firestore')
       } catch (updateError) {
         console.error('⚠️ Erreur mise à jour connexion:', updateError)
         // Ne pas bloquer la connexion si la mise à jour échoue
       }
-      
+
       return { success: true, user: userData }
     } else {
       console.error('❌ Document utilisateur introuvable dans Firestore')
@@ -212,10 +212,10 @@ export async function loginUser(
     }
   } catch (error: any) {
     console.error('❌ Erreur connexion:', error)
-    
+
     // Messages d'erreur plus précis
     let errorMessage = 'Numéro ou mot de passe incorrect'
-    
+
     if (error.code === 'auth/wrong-password') {
       errorMessage = 'Mot de passe incorrect'
     } else if (error.code === 'auth/user-not-found') {
@@ -225,7 +225,7 @@ export async function loginUser(
     } else if (error.code === 'auth/network-request-failed') {
       errorMessage = 'Problème de connexion internet'
     }
-    
+
     return { success: false, error: errorMessage }
   }
 }
@@ -262,18 +262,18 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
     if (!referralCode) {
       return []
     }
-    
+
     const usersRef = collection(db, 'users')
     const cleanCode = referralCode.trim().toUpperCase()
-    
+
     // Récupérer tous les utilisateurs et filtrer côté client
     const allUsersSnapshot = await getDocs(usersRef)
     const referrals: User[] = []
-    
+
     allUsersSnapshot.forEach((doc) => {
       const userData = { ...doc.data(), uid: doc.id } as User
       const userReferredBy = userData.referredBy
-      
+
       if (userReferredBy && typeof userReferredBy === 'string') {
         const normalizedReferredBy = userReferredBy.trim().toUpperCase()
         if (normalizedReferredBy === cleanCode) {
@@ -281,7 +281,7 @@ export async function getReferrals(referralCode: string): Promise<User[]> {
         }
       }
     })
-    
+
     return referrals
   } catch (error) {
     return []
@@ -304,7 +304,7 @@ export async function resetAllUserRewards(): Promise<void> {
   try {
     const usersRef = collection(db, 'users')
     const allUsersSnapshot = await getDocs(usersRef)
-    
+
     // Récupérer tous les numéros de téléphone des utilisateurs
     const userPhones: string[] = []
     allUsersSnapshot.forEach((doc) => {
@@ -313,28 +313,28 @@ export async function resetAllUserRewards(): Promise<void> {
         userPhones.push(userData.numeroTel)
       }
     })
-    
+
     // Réinitialiser les données localStorage pour chaque utilisateur
     userPhones.forEach((phone) => {
-      // Réinitialiser le solde à 1000 $
-      localStorage.setItem(`userFunds_${phone}`, '1000')
-      
+      // Réinitialiser le solde à $2
+      localStorage.setItem(`userFunds_${phone}`, '2')
+
       // Réinitialiser les récompenses de parrainage
       localStorage.setItem(`referralRewards_${phone}`, '0')
-      
+
       // Réinitialiser l'historique des récompenses quotidiennes
       localStorage.setItem(`rewardHistory_${phone}`, '[]')
-      
+
       // Réinitialiser les forfaits VIP
       localStorage.setItem(`forfaitsVipActifs_${phone}`, '0')
-      
+
       // Réinitialiser les gains horaires
       localStorage.setItem(`gainsHoraire_${phone}`, '0')
-      
+
       // Réinitialiser les dépenses totales
       localStorage.setItem(`totalDepense_${phone}`, '0')
     })
-    
+
     console.log(`✅ Réinitialisation terminée pour ${userPhones.length} utilisateurs`)
   } catch (error) {
     console.error('❌ Erreur lors de la réinitialisation:', error)
@@ -344,12 +344,12 @@ export async function resetAllUserRewards(): Promise<void> {
 // Générer le lien d'invitation
 export function getReferralLink(referralCode: string): string {
   // Détection automatique de l'URL selon l'environnement
-  const baseUrl = typeof window !== 'undefined' 
+  const baseUrl = typeof window !== 'undefined'
     ? window.location.origin
-    : process.env.NODE_ENV === 'production' 
-      ? 'https://pony-invest.vercel.app' 
+    : process.env.NODE_ENV === 'production'
+      ? 'https://pony-invest.vercel.app'
       : 'http://localhost:3000'
-    
+
   return `${baseUrl}/register-auth?ref=${referralCode}`
 }
 
@@ -363,7 +363,7 @@ export interface ReferralStats {
 // Récupérer les statistiques de parrainage
 export async function getReferralStats(user: User): Promise<ReferralStats> {
   const totalReferrals = await getReferralCount(user.referralCode)
-  
+
   return {
     totalReferrals,
     referralCode: user.referralCode,
@@ -381,19 +381,19 @@ export async function getMultiLevelReferrals(referralCode: string): Promise<{
     if (!referralCode) {
       return { equipeA: [], equipeB: [], equipeC: [] }
     }
-    
+
     const usersRef = collection(db, 'users')
     const cleanCode = referralCode.trim().toUpperCase()
-    
+
     // Récupérer tous les utilisateurs
     const allUsersSnapshot = await getDocs(usersRef)
     const allUsers: User[] = []
-    
+
     allUsersSnapshot.forEach((doc) => {
       const userData = { ...doc.data(), uid: doc.id } as User
       allUsers.push(userData)
     })
-    
+
     // Équipe A : filleuls directs
     const equipeA = allUsers.filter(user => {
       const userReferredBy = user.referredBy
@@ -402,7 +402,7 @@ export async function getMultiLevelReferrals(referralCode: string): Promise<{
       }
       return false
     })
-    
+
     // Équipe B : filleuls des filleuls directs
     const equipeB: User[] = []
     for (const directReferral of equipeA) {
@@ -415,7 +415,7 @@ export async function getMultiLevelReferrals(referralCode: string): Promise<{
       })
       equipeB.push(...secondLevelReferrals)
     }
-    
+
     // Équipe C : filleuls des filleuls de niveau 2
     const equipeC: User[] = []
     for (const secondLevelReferral of equipeB) {
@@ -428,7 +428,7 @@ export async function getMultiLevelReferrals(referralCode: string): Promise<{
       })
       equipeC.push(...thirdLevelReferrals)
     }
-    
+
     return { equipeA, equipeB, equipeC }
   } catch (error) {
     console.error('Erreur récupération filleuls multi-niveaux:', error)
@@ -450,7 +450,7 @@ export async function calculateReferralRevenue(referralCode: string): Promise<{
       where('referralCode', '==', referralCode)
     )
     const userSnapshot = await getDocs(usersQuery)
-    
+
     if (userSnapshot.empty) {
       return {
         equipeARevenue: 0,
@@ -459,24 +459,24 @@ export async function calculateReferralRevenue(referralCode: string): Promise<{
         totalRevenue: 0
       }
     }
-    
+
     const userId = userSnapshot.docs[0].id
-    
+
     // Récupérer les vraies commissions reçues depuis la collection referralCommissions
     const commissionsQuery = query(
       collection(db, 'referralCommissions'),
       where('sponsorId', '==', userId)
     )
     const commissionsSnapshot = await getDocs(commissionsQuery)
-    
+
     let equipeARevenue = 0
     let equipeBRevenue = 0
     let equipeCRevenue = 0
-    
+
     commissionsSnapshot.forEach((doc) => {
       const commission = doc.data()
       const amount = commission.commissionAmount || 0
-      
+
       switch (commission.level) {
         case 'A':
           equipeARevenue += amount
@@ -489,9 +489,9 @@ export async function calculateReferralRevenue(referralCode: string): Promise<{
           break
       }
     })
-    
+
     const totalRevenue = equipeARevenue + equipeBRevenue + equipeCRevenue
-    
+
     return {
       equipeARevenue,
       equipeBRevenue,
@@ -539,7 +539,7 @@ export interface MultiLevelReferralStats {
 export async function getMultiLevelReferralStats(user: User): Promise<MultiLevelReferralStats> {
   const { equipeA, equipeB, equipeC } = await getMultiLevelReferrals(user.referralCode)
   const { equipeARevenue, equipeBRevenue, equipeCRevenue, totalRevenue } = await calculateReferralRevenue(user.referralCode)
-  
+
   return {
     equipeA: {
       count: equipeA.length,
@@ -570,18 +570,18 @@ export async function getMultiLevelReferralStats(user: User): Promise<MultiLevel
 export async function checkLV1Discount(userId: string): Promise<boolean> {
   try {
     console.log('🔍 Vérification réduction LV1 pour userId:', userId)
-    
+
     // Récupérer l'utilisateur pour obtenir son code de parrainage
     const userDoc = await getDoc(doc(db, 'users', userId))
     if (!userDoc.exists()) {
       console.log('❌ Utilisateur non trouvé')
       return false
     }
-    
+
     const userData = userDoc.data()
     const userReferralCode = userData.referralCode
     console.log('📋 Code de parrainage:', userReferralCode)
-    
+
     // Trouver tous les filleuls directs (amis réels inscrits)
     const referralsQuery = query(
       collection(db, 'users'),
@@ -590,11 +590,11 @@ export async function checkLV1Discount(userId: string): Promise<boolean> {
     const referralsSnapshot = await getDocs(referralsQuery)
     const totalReferrals = referralsSnapshot.size
     console.log('👥 Nombre total d\'amis inscrits:', totalReferrals)
-    
+
     // Vérifier si l'utilisateur a au moins 10 amis inscrits
     const hasDiscount = totalReferrals >= 10
     console.log('🎯 Réduction LV1 accordée:', hasDiscount, `(${totalReferrals}/10 amis)`)
-    
+
     return hasDiscount // Au moins 10 amis réels inscrits
   } catch (error) {
     console.error('Erreur lors de la vérification de la réduction LV1:', error)
@@ -607,10 +607,10 @@ export async function checkLV1DiscountTest(userId: string): Promise<boolean> {
   // Pour tester l'affichage, retournons true pour un utilisateur spécifique
   // ou false pour voir les deux états
   console.log('🧪 Mode test - Simulation réduction LV1')
-  
+
   // Vous pouvez changer cette valeur pour tester les deux états
   const simulateDiscount = false // Changez à true pour tester l'état avec réduction
-  
+
   console.log('🎯 Réduction LV1 simulée:', simulateDiscount)
   return simulateDiscount
 }

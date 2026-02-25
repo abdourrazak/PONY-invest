@@ -28,7 +28,7 @@ export async function getUserGiftData(userId: string): Promise<UserGiftData> {
   try {
     const giftDocRef = doc(db, 'userGifts', userId)
     const giftDoc = await getDoc(giftDocRef)
-    
+
     if (giftDoc.exists()) {
       return { ...giftDoc.data(), userId } as UserGiftData
     } else {
@@ -43,7 +43,7 @@ export async function getUserGiftData(userId: string): Promise<UserGiftData> {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       }
-      
+
       await setDoc(giftDocRef, newGiftData)
       return newGiftData
     }
@@ -58,9 +58,9 @@ export async function validateReferrals(userId: string, referralCode: string): P
   try {
     // Récupérer tous les filleuls
     const referrals = await getReferrals(referralCode)
-    
+
     let validCount = 0
-    
+
     // Vérifier chaque filleul
     for (const referral of referrals) {
       const isValid = await checkReferralValidity(referral.uid)
@@ -68,7 +68,7 @@ export async function validateReferrals(userId: string, referralCode: string): P
         validCount++
       }
     }
-    
+
     return validCount
   } catch (error) {
     console.error('Erreur validation filleuls:', error)
@@ -86,16 +86,16 @@ export async function checkReferralValidity(referralUserId: string): Promise<boo
       where('type', '==', 'deposit'),
       where('status', '==', 'approved')
     )
-    
+
     const querySnapshot = await getDocs(q)
     let totalDeposits = 0
-    
+
     querySnapshot.forEach((doc) => {
       const transaction = doc.data()
       totalDeposits += transaction.amount || 0
     })
-    
-    return totalDeposits >= 500
+
+    return totalDeposits >= 1 // $1 minimum
   } catch (error) {
     console.error('Erreur vérification validité filleul:', error)
     return false
@@ -113,7 +113,7 @@ export async function performSpin(userId: string, referralCode: string): Promise
   try {
     // Récupérer les données actuelles
     const giftData = await getUserGiftData(userId)
-    
+
     // Vérifier si l'utilisateur peut tourner
     if (!canUserSpin(giftData)) {
       return {
@@ -124,32 +124,32 @@ export async function performSpin(userId: string, referralCode: string): Promise
         message: 'Vous devez attendre 24h avant le prochain tour'
       }
     }
-    
+
     // Vérifier les nouveaux filleuls valides
     const currentValidReferrals = await validateReferrals(userId, referralCode)
     const newValidReferrals = Math.max(0, currentValidReferrals - giftData.validReferrals)
-    
+
     // Calculer le montant du spin
     let spinAmount: number
     let spinType: 'first' | 'referral' | 'daily'
-    
+
     if (giftData.spinCount === 0) {
       // Premier spin : montant élevé
-      spinAmount = Math.floor(Math.random() * 61) + 4850 // 4850-4910 $
+      spinAmount = Math.floor(Math.random() * 2) + 8 // $8-$9
       spinType = 'first'
     } else if (newValidReferrals > 0) {
       // Bonus de parrainage
-      spinAmount = Math.floor(Math.random() * 6) + 1 // 1-6 $
+      spinAmount = Math.round((Math.random() * 0.09 + 0.01) * 100) / 100 // $0.01-$0.10
       spinType = 'referral'
     } else {
       // Spin quotidien normal
-      spinAmount = Math.floor(Math.random() * 5) + 1 // 1-5 $
+      spinAmount = Math.round((Math.random() * 0.04 + 0.01) * 100) / 100 // $0.01-$0.05
       spinType = 'daily'
     }
-    
-    // Calculer le nouveau total (max 5000 $)
-    const newTotal = Math.min(giftData.totalBonus + spinAmount, 5000)
-    
+
+    // Calculer le nouveau total (max $10)
+    const newTotal = Math.min(giftData.totalBonus + spinAmount, 10)
+
     // Mettre à jour les données dans Firestore
     const giftDocRef = doc(db, 'userGifts', userId)
     const updateData: Partial<UserGiftData> = {
@@ -160,20 +160,20 @@ export async function performSpin(userId: string, referralCode: string): Promise
       spinCount: giftData.spinCount + 1,
       updatedAt: Timestamp.now()
     }
-    
+
     await updateDoc(giftDocRef, updateData)
-    
+
     // Enregistrer l'historique du spin
     await recordSpinHistory(userId, spinAmount, spinType)
-    
+
     return {
       success: true,
       amount: spinAmount,
       newTotal,
       spinType,
-      message: `Vous avez gagné ${spinAmount.toLocaleString()} $ !`
+      message: `Vous avez gagné $${spinAmount.toLocaleString()} !`
     }
-    
+
   } catch (error) {
     console.error('Erreur lors du spin:', error)
     return {
@@ -189,27 +189,27 @@ export async function performSpin(userId: string, referralCode: string): Promise
 // Vérifier si un utilisateur peut tourner
 export function canUserSpin(giftData: UserGiftData): boolean {
   if (!giftData.lastSpin) return true
-  
+
   // Si l'utilisateur a 60+ filleuls valides, pas de cooldown
   if (giftData.validReferrals >= 60) return true
-  
+
   // Sinon, vérifier le cooldown de 24h
   const now = Date.now()
   const lastSpinTime = giftData.lastSpin.toMillis()
   const cooldown = 24 * 60 * 60 * 1000 // 24h en millisecondes
-  
+
   return (now - lastSpinTime) >= cooldown
 }
 
 // Calculer le temps restant avant le prochain spin
 export function getTimeUntilNextSpin(giftData: UserGiftData): number {
   if (!giftData.lastSpin || giftData.validReferrals >= 60) return 0
-  
+
   const now = Date.now()
   const lastSpinTime = giftData.lastSpin.toMillis()
   const cooldown = 24 * 60 * 60 * 1000 // 24h
   const timeRemaining = cooldown - (now - lastSpinTime)
-  
+
   return Math.max(0, timeRemaining)
 }
 
@@ -223,7 +223,7 @@ async function recordSpinHistory(userId: string, amount: number, spinType: 'firs
       spinType,
       timestamp: Timestamp.now()
     }
-    
+
     await setDoc(doc(historyRef), historyData)
   } catch (error) {
     console.error('Erreur enregistrement historique spin:', error)
@@ -235,14 +235,14 @@ export async function getUserSpinHistory(userId: string, limit: number = 10): Pr
   try {
     const historyRef = collection(db, 'spinHistory')
     const q = query(historyRef, where('userId', '==', userId))
-    
+
     const querySnapshot = await getDocs(q)
     const history: SpinHistory[] = []
-    
+
     querySnapshot.forEach((doc) => {
       history.push({ ...doc.data(), id: doc.id } as SpinHistory)
     })
-    
+
     // Trier par date décroissante et limiter
     return history
       .sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis())

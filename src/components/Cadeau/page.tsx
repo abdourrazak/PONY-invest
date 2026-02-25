@@ -4,13 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Gift, Users, Clock, Share2, ArrowLeft, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
-import { 
-  getUserGiftData, 
-  performSpin, 
-  canUserSpin, 
+import {
+  getUserGiftData,
+  performSpin,
+  canUserSpin,
   getTimeUntilNextSpin,
   validateReferrals,
-  UserGiftData 
+  UserGiftData
 } from '@/lib/giftSystem'
 
 export default function Cadeau() {
@@ -31,7 +31,7 @@ export default function Cadeau() {
   // Gérer le timer quand les données changent
   useEffect(() => {
     console.log('useEffect déclenché, giftData:', giftData)
-    
+
     // Fallback avec localStorage si Firestore ne fonctionne pas
     if (!giftData && userData?.numeroTel) {
       console.log('Fallback localStorage pour:', userData.numeroTel)
@@ -41,7 +41,7 @@ export default function Cadeau() {
         const now = Date.now()
         const timeDiff = now - lastSpinTime
         const cooldown = 24 * 60 * 60 * 1000 // 24h
-        
+
         if (timeDiff < cooldown) {
           const timeRemaining = cooldown - timeDiff
           console.log('Fallback: temps restant', timeRemaining)
@@ -53,19 +53,19 @@ export default function Cadeau() {
       setTimeLeft('')
       return
     }
-    
+
     if (giftData) {
       try {
         const canSpin = canUserSpin(giftData)
         console.log('canUserSpin résultat:', canSpin)
-        
+
         if (canSpin) {
           console.log('Utilisateur peut tourner')
           setTimeLeft('')
         } else {
           const timeRemaining = getTimeUntilNextSpin(giftData)
           console.log('Temps restant calculé:', timeRemaining, 'ms')
-          
+
           if (timeRemaining > 0) {
             console.log('Démarrage du timer')
             updateTimeLeft(timeRemaining)
@@ -90,22 +90,22 @@ export default function Cadeau() {
     try {
       setLoading(true)
       console.log('Début chargement données pour userId:', currentUser.uid)
-      
+
       // Récupérer les données de cadeau depuis Firestore
       const data = await getUserGiftData(currentUser.uid)
       console.log('Données brutes récupérées:', data)
-      
+
       // Vérifier les filleuls valides
       const validReferrals = await validateReferrals(currentUser.uid, userData.referralCode)
       console.log('Filleuls valides:', validReferrals)
-      
+
       // Créer les données finales avec les filleuls mis à jour
       const finalData = { ...data, validReferrals }
       console.log('Données finales avant setGiftData:', finalData)
-      
+
       setGiftData(finalData)
       console.log('setGiftData appelé avec succès')
-      
+
     } catch (error) {
       console.error('Erreur chargement données cadeau:', error)
       // En cas d'erreur, créer des données par défaut pour débloquer l'interface
@@ -124,13 +124,13 @@ export default function Cadeau() {
     } finally {
       setLoading(false)
     }
-    
+
     // Si Firestore ne fonctionne pas, essayer localStorage
     if (!giftData && userData?.numeroTel) {
       console.log('Tentative de chargement depuis localStorage')
       const savedBonus = localStorage.getItem(`spinBonus_${userData.numeroTel}`)
       const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
-      
+
       if (savedBonus || lastSpin) {
         const localData = {
           userId: currentUser?.uid || '',
@@ -175,9 +175,9 @@ export default function Cadeau() {
   // Fonction de spin simplifiée avec localStorage
   const handleSpin = async () => {
     if (!currentUser || !userData?.numeroTel || spinning) return
-    
+
     console.log('handleSpin appelé pour:', userData.numeroTel)
-    
+
     // Vérifier le cooldown avec localStorage (plus fiable)
     const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
     if (lastSpin) {
@@ -185,7 +185,7 @@ export default function Cadeau() {
       const now = Date.now()
       const timeDiff = now - lastSpinTime
       const cooldown = 24 * 60 * 60 * 1000 // 24h
-      
+
       if (timeDiff < cooldown) {
         const timeRemaining = cooldown - timeDiff
         console.log('Cooldown actif, temps restant:', timeRemaining)
@@ -196,7 +196,7 @@ export default function Cadeau() {
 
     setSpinning(true)
     console.log('Début du spin')
-    
+
     // Animation de 3 secondes puis spin
     setTimeout(() => {
       try {
@@ -204,28 +204,28 @@ export default function Cadeau() {
         const userKey = userData.numeroTel
         const savedBonus = localStorage.getItem(`spinBonus_${userKey}`)
         const currentBonus = savedBonus ? parseInt(savedBonus) : 0
-        
+
         console.log('Bonus actuel:', currentBonus)
-        
+
         let bonus
         if (currentBonus === 0) {
-          bonus = Math.floor(Math.random() * 61) + 4850 // 4850-4910 $
+          bonus = Math.floor(Math.random() * 2) + 8 // $8-$9
           console.log('Premier spin, bonus:', bonus)
         } else {
-          bonus = Math.floor(Math.random() * 5) + 1 // 1-5 $
+          bonus = Math.round((Math.random() * 0.04 + 0.01) * 100) / 100 // $0.01-$0.05
           console.log('Spin quotidien, bonus:', bonus)
         }
-        
-        const newTotal = Math.min(currentBonus + bonus, 5000)
+
+        const newTotal = Math.min(currentBonus + bonus, 10)
         console.log('Nouveau total:', newTotal)
-        
+
         // Sauvegarder dans localStorage
         localStorage.setItem(`spinBonus_${userKey}`, newTotal.toString())
         localStorage.setItem(`lastSpin_${userKey}`, Date.now().toString())
-        
+
         // Afficher le résultat
         setSpinResult(bonus)
-        
+
         // Mettre à jour les données d'affichage
         const tempData = {
           userId: currentUser.uid,
@@ -238,16 +238,16 @@ export default function Cadeau() {
           updatedAt: new Date()
         }
         setGiftData(tempData as any)
-        
+
         console.log('Spin terminé avec succès')
-        
+
         // Essayer de synchroniser avec Firestore en arrière-plan (optionnel)
         if (userData?.referralCode) {
           performSpin(currentUser.uid, userData.referralCode).catch(error => {
             console.log('Sync Firestore échouée (pas grave):', error)
           })
         }
-        
+
       } catch (error) {
         console.error('Erreur dans le spin localStorage:', error)
         alert('Erreur lors du spin. Veuillez réessayer.')
@@ -262,7 +262,7 @@ export default function Cadeau() {
     if (!userData?.referralCode) return
 
     const referralLink = `https://pony-invest.vercel.app/register-auth?ref=${userData.referralCode}`
-    
+
     if (navigator.share) {
       navigator.share({
         title: '🎁 Rejoignez-moi sur PONY !',
@@ -276,7 +276,7 @@ export default function Cadeau() {
   }
 
 
-  // Calculer le progrès vers 5000 $ avec localStorage en priorité
+  // Calculer le progrès vers $10 avec localStorage en priorité
   const getLocalStorageBonus = () => {
     if (userData?.numeroTel) {
       const savedBonus = localStorage.getItem(`spinBonus_${userData.numeroTel}`)
@@ -284,28 +284,28 @@ export default function Cadeau() {
     }
     return 0
   }
-  
+
   const totalBonus = giftData?.totalBonus || getLocalStorageBonus()
   const invitedFriends = giftData?.validReferrals || 0
-  
+
   // Vérifier si peut tourner avec localStorage
   const canSpinLocalStorage = () => {
     if (!userData?.numeroTel) return true
     const lastSpin = localStorage.getItem(`lastSpin_${userData.numeroTel}`)
     if (!lastSpin) return true
-    
+
     const lastSpinTime = parseInt(lastSpin)
     const now = Date.now()
     const timeDiff = now - lastSpinTime
     const cooldown = 24 * 60 * 60 * 1000 // 24h
-    
+
     return timeDiff >= cooldown
   }
-  
+
   const canSpin = giftData ? canUserSpin(giftData) : canSpinLocalStorage()
-  
-  const progressPercentage = Math.min((totalBonus / 5000) * 100, 100)
-  const remainingAmount = Math.max(5000 - totalBonus, 0)
+
+  const progressPercentage = Math.min((totalBonus / 10) * 100, 100)
+  const remainingAmount = Math.max(10 - totalBonus, 0)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
@@ -319,7 +319,7 @@ export default function Cadeau() {
             </Link>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 opacity-95 animate-spin" style={{ animationDuration: '10s' }}></div>
                 <div className="relative z-10 text-white text-xl">🎁</div>
               </div>
               <div>
@@ -345,122 +345,120 @@ export default function Cadeau() {
           </div>
         ) : (
           <>
-        
-        {/* Objectif et Progrès */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-black text-white/90 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">🎯 Défi des 5000 $</h2>
-            <div className="text-right">
-              <div className="text-2xl font-black text-yellow-400">{totalBonus.toLocaleString()} $</div>
-              <div className="text-sm text-white/70">/ 5000 $</div>
-            </div>
-          </div>
-          
-          {/* Barre de progression */}
-          <div className="w-full bg-black/30 backdrop-blur-sm rounded-full h-4 mb-3 border border-white/10">
-            <div 
-              className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 h-4 rounded-full transition-all duration-500 shadow-lg"
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div>
-          
-          <div className="text-sm text-white/90 font-medium">
-            {remainingAmount > 0 ? (
-              <>Il vous reste <span className="font-black text-yellow-400">{remainingAmount.toLocaleString()} $</span> à gagner !</>
-            ) : (
-              <span className="text-green-400 font-black">🎉 Objectif atteint ! Vous pouvez retirer vos gains.</span>
-            )}
-          </div>
-        </div>
 
-        {/* Roue de la Fortune */}
-        <div className="bg-black/30 rounded-xl p-6 text-center">
-          <div className="relative mx-auto w-64 h-64 mb-6">
-            {/* Roue */}
-            <div className={`w-full h-full rounded-full border-8 border-yellow-400 bg-gradient-to-br from-red-500 via-green-500 to-blue-500 relative overflow-hidden ${
-              spinning ? 'animate-spin' : ''
-            }`} style={{ animationDuration: spinning ? '3s' : '0s' }}>
-              {/* Segments de la roue */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-xl">
-                  {spinning ? '?' : '1'}
+            {/* Objectif et Progrès */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-black text-white/90 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">🎯 Défi des $10</h2>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-yellow-400">${totalBonus.toLocaleString()}</div>
+                  <div className="text-sm text-white/70">/ $10</div>
                 </div>
               </div>
-              
-              {/* Indicateurs sur la roue */}
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">SACAR</div>
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">100</div>
-              <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white font-bold text-sm">25K</div>
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white font-bold text-sm">100</div>
-            </div>
-            
-            {/* Flèche */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-yellow-400"></div>
-          </div>
 
-          {/* Résultat du spin */}
-          {spinResult && (
-            <div className="mb-4 p-4 bg-green-600/20 rounded-lg border border-green-500/30">
-              <div className="text-green-300 font-bold text-lg">
-                🎉 Vous avez gagné {spinResult.toLocaleString()} $ !
+              {/* Barre de progression */}
+              <div className="w-full bg-black/30 backdrop-blur-sm rounded-full h-4 mb-3 border border-white/10">
+                <div
+                  className="bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 h-4 rounded-full transition-all duration-500 shadow-lg"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+
+              <div className="text-sm text-white/90 font-medium">
+                {remainingAmount > 0 ? (
+                  <>Il vous reste <span className="font-black text-yellow-400">${remainingAmount.toLocaleString()}</span> à gagner !</>
+                ) : (
+                  <span className="text-green-400 font-black">🎉 Objectif atteint ! Vous pouvez retirer vos gains.</span>
+                )}
               </div>
             </div>
-          )}
 
-          {/* Bouton Spin */}
-          <button
-            onClick={handleSpin}
-            disabled={!canSpin || spinning}
-            className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-              canSpin && !spinning
-                ? 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transform hover:scale-105'
-                : 'bg-gray-600 text-gray-300 cursor-not-allowed'
-            }`}
-          >
-            {spinning ? (
-              <div className="flex items-center justify-center">
-                <RotateCcw className="animate-spin mr-2" size={20} />
-                Tournage en cours...
+            {/* Roue de la Fortune */}
+            <div className="bg-black/30 rounded-xl p-6 text-center">
+              <div className="relative mx-auto w-64 h-64 mb-6">
+                {/* Roue */}
+                <div className={`w-full h-full rounded-full border-8 border-yellow-400 bg-gradient-to-br from-red-500 via-green-500 to-blue-500 relative overflow-hidden ${spinning ? 'animate-spin' : ''
+                  }`} style={{ animationDuration: spinning ? '3s' : '0s' }}>
+                  {/* Segments de la roue */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-xl">
+                      {spinning ? '?' : '1'}
+                    </div>
+                  </div>
+
+                  {/* Indicateurs sur la roue */}
+                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">SACAR</div>
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">100</div>
+                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white font-bold text-sm">25K</div>
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white font-bold text-sm">100</div>
+                </div>
+
+                {/* Flèche */}
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-yellow-400"></div>
               </div>
-            ) : canSpin ? (
-              '🎰 TOURNER LA ROUE'
-            ) : (
-              timeLeft ? `⏰ Prochain tour dans ${timeLeft}` : '⏰ Chargement du timer...'
-            )}
-          </button>
-        </div>
 
-        {/* Section Invitations */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black text-white/90 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">👥 Invitez vos amis</h3>
-            <div className="text-right">
-              <div className="text-xl font-black text-blue-400">{invitedFriends}</div>
-              <div className="text-sm text-white/70">amis invités</div>
+              {/* Résultat du spin */}
+              {spinResult && (
+                <div className="mb-4 p-4 bg-green-600/20 rounded-lg border border-green-500/30">
+                  <div className="text-green-300 font-bold text-lg">
+                    🎉 Vous avez gagné ${spinResult.toLocaleString()} !
+                  </div>
+                </div>
+              )}
+
+              {/* Bouton Spin */}
+              <button
+                onClick={handleSpin}
+                disabled={!canSpin || spinning}
+                className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${canSpin && !spinning
+                    ? 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:from-yellow-600 hover:to-orange-700 transform hover:scale-105'
+                    : 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                  }`}
+              >
+                {spinning ? (
+                  <div className="flex items-center justify-center">
+                    <RotateCcw className="animate-spin mr-2" size={20} />
+                    Tournage en cours...
+                  </div>
+                ) : canSpin ? (
+                  '🎰 TOURNER LA ROUE'
+                ) : (
+                  timeLeft ? `⏰ Prochain tour dans ${timeLeft}` : '⏰ Chargement du timer...'
+                )}
+              </button>
             </div>
-          </div>
-          
-          <p className="text-sm text-white/90 mb-4 font-medium">
-            Chaque ami invité vous donne un tour supplémentaire gratuit !
-          </p>
-          
-          <div className="space-y-3">
-            <button
-              onClick={handleInviteFriends}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-black hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
-            >
-              <Share2 className="inline mr-2" size={18} />
-              Partager mon lien d'invitation
-            </button>
-            
-            <button
-              onClick={forceCheckReferrals}
-              className="w-full py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-black hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm"
-            >
-              🔄 Vérifier nouveaux amis
-            </button>
-          </div>
-        </div>
+
+            {/* Section Invitations */}
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-black text-white/90 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">👥 Invitez vos amis</h3>
+                <div className="text-right">
+                  <div className="text-xl font-black text-blue-400">{invitedFriends}</div>
+                  <div className="text-sm text-white/70">amis invités</div>
+                </div>
+              </div>
+
+              <p className="text-sm text-white/90 mb-4 font-medium">
+                Chaque ami invité vous donne un tour supplémentaire gratuit !
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  onClick={handleInviteFriends}
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-black hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  <Share2 className="inline mr-2" size={18} />
+                  Partager mon lien d'invitation
+                </button>
+
+                <button
+                  onClick={forceCheckReferrals}
+                  className="w-full py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-black hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm"
+                >
+                  🔄 Vérifier nouveaux amis
+                </button>
+              </div>
+            </div>
           </>
         )}
       </main>

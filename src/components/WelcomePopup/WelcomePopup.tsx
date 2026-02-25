@@ -47,22 +47,21 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       {/* Backdrop */}
-      <div 
-        className={`absolute inset-0 bg-black/80 backdrop-blur-lg transition-opacity duration-300 ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
+      <div
+        className={`absolute inset-0 bg-black/80 backdrop-blur-lg transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
         onClick={handleClose}
       />
-      
+
       {/* Popup */}
-      <div 
+      <div
         className={`
           relative bg-black/20 backdrop-blur-sm border border-white/10
           rounded-3xl max-w-xs sm:max-w-sm w-full max-h-[85vh] overflow-y-auto
           transform transition-all duration-300 ease-out
           ${isVisible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}
         `}
-        style={{ 
+        style={{
           position: 'relative',
           zIndex: 10000,
           display: 'block',
@@ -98,7 +97,7 @@ export default function WelcomePopup({ isOpen, onClose, onTelegramJoin }: Welcom
               </div>
               <div>
                 <p className="text-white/90 text-xs font-bold">
-                  <span className="font-black text-green-400">1000 $</span> bonus d'inscription
+                  <span className="font-black text-green-400">$2</span> bonus d&apos;inscription
                 </p>
                 <p className="text-white/70 text-xs">Utilisable pour retrait</p>
               </div>

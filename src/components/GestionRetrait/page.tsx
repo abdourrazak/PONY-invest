@@ -20,34 +20,34 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
   const isOrange = paymentMethod === 'orange'
   const isMTN = paymentMethod === 'mtn'
   const isCrypto = paymentMethod === 'crypto'
-  
-  const serviceName = isOrange 
-    ? "Orange Money Cameroun" 
-    : isMTN 
-    ? "MTN Mobile Money" 
-    : "Cryptomonnaie (USDT TRC20) 1USDT = 600 $"
-  
-  const logoSrc = isOrange 
-    ? "/org.png" 
-    : isMTN 
-    ? "/mtn.png" 
-    : "₿"
-  
-  const headerColors = isOrange 
-    ? "from-orange-500 via-orange-600 to-red-500" 
+
+  const serviceName = isOrange
+    ? "Orange Money Cameroun"
     : isMTN
-    ? "from-yellow-500 via-yellow-600 to-orange-500"
-    : "from-blue-500 via-purple-600 to-indigo-600"
+      ? "MTN Mobile Money"
+      : "Cryptomonnaie (USDT TRC20) 1 USDT = $1"
+
+  const logoSrc = isOrange
+    ? "/org.png"
+    : isMTN
+      ? "/mtn.png"
+      : "₿"
+
+  const headerColors = isOrange
+    ? "from-orange-500 via-orange-600 to-red-500"
+    : isMTN
+      ? "from-yellow-500 via-yellow-600 to-orange-500"
+      : "from-blue-500 via-purple-600 to-indigo-600"
 
   const handleSubmit = () => {
     if (!amount || (!phoneNumber && !isCrypto) || (isCrypto && !cryptoAddress)) return
 
     // Validation du montant minimum
-    const minAmount = isCrypto ? 20 : 5000 // 20 USDT ou 5000 $
+    const minAmount = isCrypto ? 5 : 10 // $5 USDT ou $10 minimum
     const numericAmount = parseFloat(amount)
-    
+
     if (numericAmount < minAmount) {
-      alert(`Le montant minimum de retrait est de ${minAmount} ${isCrypto ? 'USDT' : '$'}`)
+      alert(`Le montant minimum de retrait est de $${minAmount}`)
       return
     }
 
@@ -74,7 +74,7 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
     setAmount('')
     setPhoneNumber('')
     setCryptoAddress('')
-    
+
     // Rediriger vers le portefeuille
     router.push('/portefeuille')
   }
@@ -150,15 +150,14 @@ export default function GestionRetrait({ paymentMethod = 'orange' }: GestionRetr
         <button
           onClick={handleSubmit}
           disabled={!amount || (!phoneNumber && !isCrypto) || (isCrypto && !cryptoAddress)}
-          className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${
-            amount && ((phoneNumber && !isCrypto) || (isCrypto && cryptoAddress))
-              ? isOrange 
+          className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] shadow-lg ${amount && ((phoneNumber && !isCrypto) || (isCrypto && cryptoAddress))
+              ? isOrange
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white'
                 : isMTN
-                ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white'
-                : 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white'
+                  ? 'bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-white'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-center">
             <span className="text-lg mr-2">💸</span>

@@ -1,13 +1,13 @@
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  updateDoc, 
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
   getDoc,
   getDocs,
-  query, 
-  where, 
-  orderBy, 
+  query,
+  where,
+  orderBy,
   limit,
   onSnapshot,
   serverTimestamp,
@@ -18,9 +18,9 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { 
-  Transaction, 
-  CreateTransactionData, 
+import {
+  Transaction,
+  CreateTransactionData,
   TransactionFilters,
   TransactionStats,
   TransactionStatus,
@@ -78,11 +78,11 @@ export function subscribeUserTransactions(
   const unsubscribe = onSnapshot(q, (snapshot) => {
     console.log(`📊 subscribeUserTransactions: ${snapshot.size} transactions reçues pour utilisateur ${userId}`);
     const transactions: Transaction[] = [];
-    
+
     snapshot.forEach((doc) => {
       const data = doc.data();
       console.log(`📄 Transaction ${doc.id}: statut=${data.status}, type=${data.type}, montant=${data.amount}`);
-      
+
       // Assurer que tous les champs requis sont présents
       const transaction: Transaction = {
         id: doc.id,
@@ -103,10 +103,10 @@ export function subscribeUserTransactions(
         adminNotes: data.adminNotes || '',
         updatedAt: data.updatedAt || null
       };
-      
+
       transactions.push(transaction);
     });
-    
+
     // Trier manuellement par date
     transactions.sort((a, b) => {
       const getTime = (date: any) => {
@@ -116,15 +116,15 @@ export function subscribeUserTransactions(
         if (typeof date === 'string') return new Date(date).getTime();
         return 0;
       };
-      
+
       const timeA = getTime(a.submittedAt) || getTime(a.createdAt);
       const timeB = getTime(b.submittedAt) || getTime(b.createdAt);
       return timeB - timeA; // Plus récent en premier
     });
-    
+
     console.log(`✅ subscribeUserTransactions: Envoi de ${transactions.length} transactions triées`);
     console.log('📋 Détail transactions:', transactions.map(t => `${t.id.slice(-4)}:${t.status}:${t.type}`));
-    
+
     callback(transactions);
   }, (error) => {
     console.error('❌ Erreur lors de l\'écoute des transactions:', error);
@@ -180,7 +180,7 @@ export async function adminListTransactions(
     // Filtrage côté client pour la recherche
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase();
-      return transactions.filter(t => 
+      return transactions.filter(t =>
         t.userNumeroTel.includes(searchLower) ||
         t.id.toLowerCase().includes(searchLower) ||
         t.beneficiaryName?.toLowerCase().includes(searchLower)
@@ -202,16 +202,16 @@ export function subscribeToAllTransactions(
   callback: (transactions: Transaction[]) => void
 ): () => void {
   console.log('🔧 subscribeToAllTransactions: Initialisation de l\'écoute');
-  
+
   // Écoute simple sans orderBy pour éviter les erreurs d'index
   const unsubscribe = onSnapshot(transactionsCollection, (snapshot) => {
     console.log('📊 subscribeToAllTransactions: Snapshot reçu, nombre de docs:', snapshot.size);
-    
+
     const transactions: Transaction[] = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
       console.log('📄 Document reçu:', doc.id, data);
-      
+
       // Mapper "approved" vers "success" pour compatibilité
       if (data.status === 'approved') {
         data.status = 'success';
@@ -221,7 +221,7 @@ export function subscribeToAllTransactions(
         ...data
       } as Transaction);
     });
-    
+
     // Trier manuellement par date de soumission (si elle existe)
     transactions.sort((a, b) => {
       const getTimestamp = (date: any) => {
@@ -230,12 +230,12 @@ export function subscribeToAllTransactions(
         if (date instanceof Date) return date.getTime() / 1000;
         return 0;
       };
-      
+
       const dateA = getTimestamp(a.submittedAt);
       const dateB = getTimestamp(b.submittedAt);
       return dateB - dateA;
     });
-    
+
     console.log('✅ subscribeToAllTransactions: Envoi de', transactions.length, 'transactions');
     callback(transactions);
   }, (error) => {
@@ -279,13 +279,13 @@ export async function adminApproveDeposit(transactionId: string): Promise<void> 
       // Récupérer la transaction
       const transactionRef = doc(db, 'transactions', transactionId);
       const transactionDoc = await transaction.get(transactionRef);
-      
+
       if (!transactionDoc.exists()) {
         throw new Error('Transaction non trouvée');
       }
 
       const transactionData = transactionDoc.data() as Transaction;
-      
+
       // Vérifier que c'est bien un dépôt en attente
       if (transactionData.type !== 'deposit') {
         throw new Error('Cette transaction n\'est pas un dépôt');
@@ -300,11 +300,11 @@ export async function adminApproveDeposit(transactionId: string): Promise<void> 
       const userDoc = await transaction.get(userRef);
 
       if (!userDoc.exists()) {
-        // Créer l'utilisateur s'il n'existe pas avec solde initial de 1000 $ + montant du dépôt
+        // Créer l'utilisateur s'il n'existe pas avec solde initial de $2 + montant du dépôt
         transaction.set(userRef, {
           uid: transactionData.userId,
           numeroTel: transactionData.userNumeroTel,
-          balance: 1000 + transactionData.amount, // Solde initial + dépôt
+          balance: 2 + transactionData.amount, // Solde initial + dépôt
           role: 'user',
           createdAt: serverTimestamp()
         });
@@ -336,13 +336,13 @@ export async function adminApproveWithdrawal(transactionId: string): Promise<voi
       // Récupérer la transaction
       const transactionRef = doc(db, 'transactions', transactionId);
       const transactionDoc = await transaction.get(transactionRef);
-      
+
       if (!transactionDoc.exists()) {
         throw new Error('Transaction non trouvée');
       }
 
       const transactionData = transactionDoc.data() as Transaction;
-      
+
       // Vérifier que c'est bien un retrait en attente
       if (transactionData.type !== 'withdrawal') {
         throw new Error('Cette transaction n\'est pas un retrait');
@@ -438,7 +438,7 @@ export async function getTransactionStats(): Promise<TransactionStats> {
       where('updatedAt', '>=', Timestamp.fromDate(twentyFourHoursAgo))
     );
     const volume24hSnapshot = await getDocs(volume24hQuery);
-    
+
     let volume24h = 0;
     volume24hSnapshot.forEach((doc) => {
       const data = doc.data();
@@ -473,13 +473,13 @@ export async function getUserBalance(userId: string): Promise<number> {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
-    
+
     if (userDoc.exists()) {
       const userData = userDoc.data() as User;
       // S'assurer que le solde ne soit jamais négatif
       return Math.max(0, userData.balance || 0);
     }
-    
+
     return 0;
   } catch (error) {
     console.error('Erreur lors de la récupération du solde:', error);
@@ -493,7 +493,7 @@ export function subscribeToUserBalance(
   callback: (balance: number) => void
 ): () => void {
   const userRef = doc(db, 'users', userId);
-  
+
   const unsubscribe = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const userData = doc.data() as User;
@@ -517,30 +517,30 @@ export async function approveTransaction(
 ): Promise<void> {
   try {
     const transactionRef = doc(db, 'transactions', transactionId);
-    
+
     await runTransaction(db, async (transaction) => {
       const transactionDoc = await transaction.get(transactionRef);
-      
+
       if (!transactionDoc.exists()) {
         throw new Error('Transaction non trouvée');
       }
-      
+
       const transactionData = transactionDoc.data();
-      
+
       if (transactionData.status !== 'pending') {
         throw new Error('Transaction déjà traitée');
       }
-      
+
       // Mettre à jour le statut de la transaction
       transaction.update(transactionRef, {
         status: 'approved',
         approvedAt: serverTimestamp(),
         approvedBy: adminId
       });
-      
+
       // Mettre à jour le solde utilisateur selon le type de transaction
       const userRef = doc(db, 'users', transactionData.userId);
-      
+
       if (transactionData.type === 'deposit') {
         // Ajouter le montant au solde de dépôt (ne peut être retiré, doit être investi)
         transaction.update(userRef, {
@@ -557,7 +557,7 @@ export async function approveTransaction(
         });
       }
     });
-    
+
     console.log(`✅ Transaction ${transactionId} approuvée et solde mis à jour instantanément`);
   } catch (error) {
     console.error('Erreur lors de l\'approbation:', error);
@@ -573,14 +573,14 @@ export async function rejectTransaction(
 ): Promise<void> {
   try {
     const transactionRef = doc(db, 'transactions', transactionId);
-    
+
     await updateDoc(transactionRef, {
       status: 'rejected',
       rejectedAt: serverTimestamp(),
       rejectedBy: adminId,
       rejectionReason: reason || 'Aucune raison spécifiée'
     });
-    
+
     console.log(`❌ Transaction ${transactionId} rejetée`);
   } catch (error) {
     console.error('Erreur lors du rejet:', error);
@@ -593,12 +593,12 @@ export async function checkIsAdmin(userId: string): Promise<boolean> {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
-    
+
     if (userDoc.exists()) {
       const userData = userDoc.data() as User;
       return userData.role === 'admin';
     }
-    
+
     return false;
   } catch (error) {
     console.error('Erreur lors de la vérification du rôle admin:', error);
@@ -615,14 +615,14 @@ export async function initializeUser(
   try {
     const userRef = doc(db, 'users', uid);
     const userDoc = await getDoc(userRef);
-    
+
     if (!userDoc.exists()) {
-      // Créer le nouvel utilisateur avec solde de base 1000 $
+      // Créer le nouvel utilisateur avec solde de base $2
       await updateDoc(userRef, {
         uid,
         numeroTel,
         displayName,
-        balance: 1000, // Solde initial de 1000 $
+        balance: 2, // Solde initial de $2
         role: 'user',
         createdAt: serverTimestamp()
       });
@@ -647,7 +647,7 @@ export async function addCheckInReward(
     const userRef = doc(db, 'users', uid);
     await runTransaction(db, async (transaction) => {
       const userDoc = await transaction.get(userRef);
-      
+
       if (!userDoc.exists()) {
         throw new Error('Utilisateur non trouvé');
       }
@@ -659,7 +659,7 @@ export async function addCheckInReward(
         withdrawableBalance: currentWithdrawable + rewardAmount // Ajouter au solde retirable
       });
     });
-    
+
     console.log(`Récompense check-in de ${rewardAmount} $ ajoutée au solde`);
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la récompense check-in:', error);

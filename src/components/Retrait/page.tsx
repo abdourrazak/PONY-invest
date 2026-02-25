@@ -64,7 +64,7 @@ export default function RetraitPage() {
     if (currentUser) {
       // S'abonner aux changements de solde retirable en temps réel
       const unsubscribe = subscribeToWithdrawableBalance(
-        currentUser.uid, 
+        currentUser.uid,
         (withdrawable, deposit, total) => {
           setBalance(withdrawable) // Solde retirable uniquement
           setDepositBalance(deposit) // Solde de dépôt
@@ -79,7 +79,7 @@ export default function RetraitPage() {
           if (userDoc.exists()) {
             const data = userDoc.data()
             setHasConfiguredPassword(!!data.fundsPassword?.hash)
-            
+
             // Vérifier les informations de retrait
             if (data.withdrawalAccount) {
               setHasWithdrawalAccount(true)
@@ -124,10 +124,10 @@ export default function RetraitPage() {
     // Validation du montant minimum selon le mode de paiement
     const numericAmount = parseFloat(amount)
     const isCrypto = paymentMethods[selectedPaymentMethod].value === 'crypto'
-    const minAmount = isCrypto ? 5 : 2000 // 5 USDT ou 2000 $
-    
+    const minAmount = isCrypto ? 5 : 5 // $5 minimum
+
     if (numericAmount < minAmount) {
-      alert(`Le montant minimum de retrait est de ${isCrypto ? '5 USDT' : '2000 $'}`)
+      alert(`Le montant minimum de retrait est de $${minAmount}`)
       return
     }
 
@@ -146,7 +146,7 @@ export default function RetraitPage() {
         const data = userDoc.data()
         const storedPasswordHash = data.fundsPassword?.hash
         const enteredPasswordHash = await hashPassword(fundsPassword)
-        
+
         if (storedPasswordHash !== enteredPasswordHash) {
           alert('Mot de passe des fonds incorrect')
           setLoading(false)
@@ -173,9 +173,9 @@ export default function RetraitPage() {
       setAmount('')
       setFundsPassword('')
       setSelectedPaymentMethod(0)
-      
+
       alert('Demande de retrait soumise avec succès!')
-      
+
       // Rediriger vers le portefeuille
       router.push('/portefeuille')
     } catch (error) {
@@ -197,7 +197,7 @@ export default function RetraitPage() {
                 <ArrowLeft size={18} className="text-white" />
               </Link>
               <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{ animationDuration: '10s' }}></div>
                 <div className="relative z-10 w-full h-full flex items-center justify-center">
                   <Image src="/ponyAI.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
                 </div>
@@ -232,11 +232,11 @@ export default function RetraitPage() {
         {/* Withdrawal Form */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
           <h2 className="text-white font-bold text-lg mb-6 text-center">Formulaire de retrait</h2>
-          
+
           {/* Amount Input */}
           <div className="mb-6">
             <label className="block text-white/70 font-medium text-sm mb-2">
-              💰 Montant à retirer {paymentMethods[selectedPaymentMethod].value === 'crypto' ? '(USDT)' : '($)'}
+              💰 Montant à retirer ($)
             </label>
             <input
               type="text"
@@ -245,7 +245,7 @@ export default function RetraitPage() {
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-400 transition-all duration-300"
             />
-            
+
           </div>
 
           {/* Payment Method Selection */}
@@ -258,11 +258,10 @@ export default function RetraitPage() {
                 <button
                   key={index}
                   onClick={() => setSelectedPaymentMethod(index)}
-                  className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${
-                    selectedPaymentMethod === index
+                  className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-105 active:scale-95 ${selectedPaymentMethod === index
                       ? 'border-purple-400 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm shadow-xl'
                       : 'border-white/20 bg-black/30 backdrop-blur-sm hover:border-purple-300 hover:bg-black/40'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -289,7 +288,7 @@ export default function RetraitPage() {
                           </div>
                           <div>
                             <span className="font-bold text-sm text-white block">Cryptomonnaie (USDT TRC20)</span>
-                            <span className="text-xs text-white/60">1 USDT = 600 $</span>
+                            <span className="text-xs text-white/60">1 USDT = $1</span>
                           </div>
                         </>
                       )}
@@ -316,12 +315,14 @@ export default function RetraitPage() {
                   <span className="text-yellow-300 font-bold text-sm">Taux de change</span>
                 </div>
                 <p className="text-yellow-200 text-sm">
-                  1 USDT = 600 $
+                  1 USDT = $1
                 </p>
                 {amount && (
-                  <p className="text-yellow-200 text-xs mt-1">
-                    {amount} USDT ≈ {(parseFloat(amount) * 600).toLocaleString()} $
-                  </p>
+                  <div className="text-blue-400 font-bold">
+                    <p className="text-yellow-200 text-xs mt-1">
+                      {amount} USDT ≈ ${parseFloat(amount).toLocaleString()}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -335,11 +336,11 @@ export default function RetraitPage() {
               </label>
               <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-xl p-4">
                 <div className="text-green-400 text-sm">
-                  <div className="font-bold">{withdrawalAccountInfo.operator === 'bank' ? 'Compte bancaire' : 
+                  <div className="font-bold">{withdrawalAccountInfo.operator === 'bank' ? 'Compte bancaire' :
                     withdrawalAccountInfo.operator === 'orange' ? 'Orange Money' :
-                    withdrawalAccountInfo.operator === 'mtn' ? 'MTN Mobile Money' :
-                    withdrawalAccountInfo.operator === 'moov' ? 'Moov Money' :
-                    withdrawalAccountInfo.operator === 'wave' ? 'Wave' : withdrawalAccountInfo.operator}</div>
+                      withdrawalAccountInfo.operator === 'mtn' ? 'MTN Mobile Money' :
+                        withdrawalAccountInfo.operator === 'moov' ? 'Moov Money' :
+                          withdrawalAccountInfo.operator === 'wave' ? 'Wave' : withdrawalAccountInfo.operator}</div>
                   <div className="text-white/70">Compte: {withdrawalAccountInfo.accountNumber}</div>
                   <div className="text-white/70">Titulaire: {withdrawalAccountInfo.holderName}</div>
                 </div>
@@ -365,7 +366,7 @@ export default function RetraitPage() {
             {!hasConfiguredPassword ? (
               <div className="bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-xl p-4">
                 <p className="text-red-300 text-sm mb-3">Vous devez configurer un mot de passe des fonds</p>
-                <button 
+                <button
                   onClick={() => router.push('/centre-membre/mot-de-passe-fonds')}
                   className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
@@ -388,7 +389,7 @@ export default function RetraitPage() {
             <div className="mb-6">
               <div className="bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded-xl p-4">
                 <p className="text-red-300 text-sm mb-3">Vous devez configurer vos informations de retrait</p>
-                <button 
+                <button
                   onClick={() => router.push('/centre-membre/compte-retrait')}
                   className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
@@ -399,14 +400,13 @@ export default function RetraitPage() {
           )}
 
           {/* Submit Button */}
-          <button 
+          <button
             onClick={handleSubmit}
             disabled={!amount || !hasConfiguredPassword || !fundsPassword || !hasWithdrawalAccount || loading}
-            className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${
-              amount && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
+            className={`w-full py-4 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg ${amount && hasConfiguredPassword && fundsPassword && hasWithdrawalAccount && !loading
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white'
                 : 'bg-white/20 text-white/50 cursor-not-allowed'
-            }`}
+              }`}
           >
             <div className="flex items-center justify-center">
               {loading ? (

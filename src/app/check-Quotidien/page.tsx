@@ -20,17 +20,17 @@ export default function CheckQuotidien() {
   const { userData, currentUser } = useAuth()
   const router = useRouter()
   const [rewards, setRewards] = useState<DailyReward[]>([
-    { day: 1, amount: 75, claimed: false, available: true },
-    { day: 2, amount: 100, claimed: false, available: false },
-    { day: 3, amount: 25, claimed: false, available: false },
-    { day: 4, amount: 40, claimed: false, available: false },
-    { day: 5, amount: 120, claimed: false, available: false },
-    { day: 6, amount: 30, claimed: false, available: false },
-    { day: 7, amount: 150, claimed: false, available: false }
+    { day: 1, amount: 0.15, claimed: false, available: true },
+    { day: 2, amount: 0.20, claimed: false, available: false },
+    { day: 3, amount: 0.05, claimed: false, available: false },
+    { day: 4, amount: 0.10, claimed: false, available: false },
+    { day: 5, amount: 0.20, claimed: false, available: false },
+    { day: 6, amount: 0.10, claimed: false, available: false },
+    { day: 7, amount: 0.20, claimed: false, available: false }
   ])
 
   const [currentDay, setCurrentDay] = useState(1)
-  const [checkInBalance, setCheckInBalance] = useState(0) // Solde Check-in indépendant (max 540 $)
+  const [checkInBalance, setCheckInBalance] = useState(0) // Solde Check-in indépendant (max $1)
   const [hasInvested, setHasInvested] = useState(false) // Vérifier si l'utilisateur a investi
   const [isLoading, setIsLoading] = useState(true)
   const [nextCheckIn, setNextCheckIn] = useState<Date | null>(null)
@@ -41,7 +41,7 @@ export default function CheckQuotidien() {
   useEffect(() => {
     const checkAccessAndInitialize = async () => {
       if (!userData?.numeroTel || !currentUser) return
-      
+
       try {
         // Vérifier si l'utilisateur a investi
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid))
@@ -49,16 +49,16 @@ export default function CheckQuotidien() {
           const data = userDoc.data()
           const invested = data.hasInvested || false
           setHasInvested(invested)
-          
+
           if (!invested) {
             setIsLoading(false)
             return // Arrêter ici si l'utilisateur n'a pas investi
           }
         }
-        
+
         const userKey = userData.numeroTel
         setUserId(userKey)
-        
+
         const savedRewards = localStorage.getItem(`dailyRewards_${userKey}`)
         const savedCurrentDay = localStorage.getItem(`currentDay_${userKey}`)
         const savedNextCheckIn = localStorage.getItem(`nextCheckIn_${userKey}`)
@@ -72,19 +72,19 @@ export default function CheckQuotidien() {
         if (savedNextCheckIn) {
           setNextCheckIn(new Date(savedNextCheckIn))
         }
-        
+
         // Calculer le solde Check-in indépendant depuis localStorage
         const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userKey}`) || '[]')
         const checkInTotal = rewardHistory.reduce((total: number, reward: any) => total + reward.amount, 0)
         setCheckInBalance(checkInTotal)
-        
+
         setIsLoading(false)
       } catch (error) {
         console.error('Erreur lors de la vérification d\'accès:', error)
         setIsLoading(false)
       }
     }
-    
+
     checkAccessAndInitialize()
   }, [userData, currentUser])
 
@@ -125,14 +125,14 @@ export default function CheckQuotidien() {
 
   const claimReward = async (day: number) => {
     if (!userId || !currentUser || !hasInvested) return
-    
+
     const reward = rewards.find(r => r.day === day)
     if (!reward || reward.claimed || !reward.available) return
 
     try {
       // Ajouter immédiatement au solde retirable Firestore
       await addCheckInReward(currentUser.uid, reward.amount)
-      
+
       // Sauvegarder l'historique des récompenses Check-in indépendant
       const rewardHistory = JSON.parse(localStorage.getItem(`rewardHistory_${userId}`) || '[]')
       rewardHistory.push({
@@ -142,13 +142,13 @@ export default function CheckQuotidien() {
         userId: userId
       })
       localStorage.setItem(`rewardHistory_${userId}`, JSON.stringify(rewardHistory))
-      
+
       // Mettre à jour le solde Check-in indépendant (pour affichage local)
       const newCheckInBalance = checkInBalance + reward.amount
       setCheckInBalance(newCheckInBalance)
 
       // Marquer comme récupérée
-      const newRewards = rewards.map(r => 
+      const newRewards = rewards.map(r =>
         r.day === day ? { ...r, claimed: true, available: false } : r
       )
 
@@ -158,28 +158,28 @@ export default function CheckQuotidien() {
         nextDay.setHours(nextDay.getHours() + 24)
         setNextCheckIn(nextDay)
         localStorage.setItem(`nextCheckIn_${userId}`, nextDay.toISOString())
-        
+
         setCurrentDay(day + 1)
         localStorage.setItem(`currentDay_${userId}`, (day + 1).toString())
       }
 
       setRewards(newRewards)
       localStorage.setItem(`dailyRewards_${userId}`, JSON.stringify(newRewards))
-      
-      // Vérifier si toutes les récompenses ont été récupérées (540 $ total)
-      if (newCheckInBalance >= 540) {
+
+      // Vérifier si toutes les récompenses ont été récupérées ($1 total)
+      if (newCheckInBalance >= 1) {
         try {
           // Migrer le solde Check-in vers le solde principal
           await addCheckInReward(currentUser.uid, newCheckInBalance)
-          
+
           // Réinitialiser le solde Check-in et l'historique
           localStorage.removeItem(`rewardHistory_${userId}`)
           localStorage.removeItem(`dailyRewards_${userId}`)
           localStorage.removeItem(`currentDay_${userId}`)
           localStorage.removeItem(`nextCheckIn_${userId}`)
-          
+
           alert('Félicitations ! Toutes les récompenses quotidiennes ont été transférées vers votre solde principal (Atout).')
-          
+
           // Rediriger vers la page compte
           router.push('/compte')
         } catch (error) {
@@ -204,7 +204,7 @@ export default function CheckQuotidien() {
       </div>
     )
   }
-  
+
   if (!hasInvested) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white relative">
@@ -222,7 +222,7 @@ export default function CheckQuotidien() {
             </div>
           </div>
         </header>
-        
+
         <main className="max-w-md mx-auto px-4 py-6 flex items-center justify-center min-h-[60vh]">
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center shadow-xl">
             <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -267,7 +267,7 @@ export default function CheckQuotidien() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 text-center shadow-xl">
           <div className="text-white/70 text-sm font-medium mb-1">Solde Check-in Quotidien</div>
           <div className="text-purple-400 text-2xl font-black">{checkInBalance} $</div>
-          <div className="text-white/60 text-xs mt-1">Maximum: 540 $</div>
+          <div className="text-white/60 text-xs mt-1">Maximum: $1</div>
         </div>
 
         {/* Reward Container */}
@@ -300,13 +300,12 @@ export default function CheckQuotidien() {
                 key={reward.day}
                 onClick={() => claimReward(reward.day)}
                 disabled={!reward.available || reward.claimed}
-                className={`w-full p-4 rounded-2xl border transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-                  reward.claimed
-                    ? 'bg-green-500/20 border-green-400/30 cursor-not-allowed'
-                    : reward.available
+                className={`w-full p-4 rounded-2xl border transition-all duration-300 transform hover:scale-105 active:scale-95 ${reward.claimed
+                  ? 'bg-green-500/20 border-green-400/30 cursor-not-allowed'
+                  : reward.available
                     ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-400/30 hover:from-purple-500/30 hover:to-pink-500/30 cursor-pointer shadow-lg hover:shadow-xl'
                     : 'bg-gray-500/20 border-gray-400/30 cursor-not-allowed opacity-50'
-                }`}
+                  }`}
               >
                 <div className="flex items-center space-x-4">
                   <div className="bg-black/30 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2">

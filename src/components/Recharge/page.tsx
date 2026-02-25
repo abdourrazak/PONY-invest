@@ -37,7 +37,7 @@ export default function RechargePage() {
       description: ''
     },
     {
-      name: 'Cryptomonnaie (USDT TRC20) 1USDT = 600 $',
+      name: 'Cryptomonnaie (USDT TRC20) 1 USDT = $1',
       icon: '₿',
       description: ''
     }
@@ -54,7 +54,7 @@ export default function RechargePage() {
                 <ArrowLeft size={18} className="text-white" />
               </Link>
               <div className="w-10 h-10 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-xl border-2 border-white/20 flex items-center justify-center relative animate-pulse overflow-hidden">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{animationDuration: '10s'}}></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-95 animate-spin" style={{ animationDuration: '10s' }}></div>
                 <div className="relative z-10 w-full h-full flex items-center justify-center">
                   <Image src="/ponyAI.png" alt="PONY AI" width={40} height={40} className="object-cover w-full h-full rounded-full" unoptimized />
                 </div>
@@ -87,18 +87,17 @@ export default function RechargePage() {
         {/* Payment Methods Section */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
           <h2 className="text-white font-bold text-lg mb-6 text-center">Méthodes de paiement</h2>
-          
+
           {/* Payment Options Grid */}
           <div className="space-y-4">
             {paymentMethods.map((method, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedPaymentMethod(index)}
-                className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:scale-105 active:scale-95 ${
-                  selectedPaymentMethod === index
+                className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:scale-105 active:scale-95 ${selectedPaymentMethod === index
                     ? 'border-purple-400 bg-purple-500/20 backdrop-blur-sm shadow-lg'
                     : 'border-white/20 bg-black/30 backdrop-blur-sm hover:border-white/30'
-                }`}
+                  }`}
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-black/30 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center mr-4 shadow-lg">
@@ -129,9 +128,9 @@ export default function RechargePage() {
             ))}
           </div>
         </div>
-        
+
         {/* Action Button */}
-        <button 
+        <button
           onClick={() => {
             if (selectedPaymentMethod === 0) {
               router.push('/gestion-depot?method=orange')

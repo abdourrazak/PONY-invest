@@ -364,10 +364,10 @@ export default function Register() {
                   disabled={!!searchParams.get('ref')}
                   style={{ fontSize: '16px' }}
                   className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 text-white placeholder-white/50 font-mono font-bold bg-black/20 backdrop-blur-sm ${searchParams.get('ref') ? 'border-green-400 bg-green-500/10'
-                      : errors.referralCode ? 'border-red-400'
-                        : isValidReferral === true ? 'border-green-400 bg-green-500/10'
-                          : isValidReferral === false ? 'border-red-400'
-                            : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
+                    : errors.referralCode ? 'border-red-400'
+                      : isValidReferral === true ? 'border-green-400 bg-green-500/10'
+                        : isValidReferral === false ? 'border-red-400'
+                          : 'border-white/30 focus:border-blue-400 focus:bg-black/30'
                     } focus:outline-none shadow-sm ${!!searchParams.get('ref') ? 'opacity-60' : ''}`}
                 />
                 {errors.referralCode && <p className="text-red-400 text-xs mt-1 font-bold">{errors.referralCode}</p>}
@@ -389,8 +389,8 @@ export default function Register() {
                 type="submit"
                 disabled={isSendingOtp || (!searchParams.get('ref') && !!formData.referralCode && isValidReferral === false)}
                 className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${isSendingOtp || (!searchParams.get('ref') && !!formData.referralCode && isValidReferral === false)
-                    ? 'bg-gray-600/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:scale-[1.02] active:scale-[0.98]'
+                  ? 'bg-gray-600/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:scale-[1.02] active:scale-[0.98]'
                   } flex items-center justify-center`}
               >
                 {isSendingOtp ? (
@@ -470,10 +470,10 @@ export default function Register() {
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
                       className={`w-12 h-14 text-center text-2xl font-black rounded-xl border-2 transition-all duration-200 bg-black/30 text-white focus:outline-none ${digit
-                          ? 'border-green-400 bg-green-500/10'
-                          : otpError
-                            ? 'border-red-400'
-                            : 'border-white/30 focus:border-blue-400 focus:bg-black/40'
+                        ? 'border-green-400 bg-green-500/10'
+                        : otpError
+                          ? 'border-red-400'
+                          : 'border-white/30 focus:border-blue-400 focus:bg-black/40'
                         }`}
                     />
                   ))}
@@ -488,8 +488,8 @@ export default function Register() {
                 onClick={handleVerifyOtp}
                 disabled={isVerifyingOtp || isLoading || otpCode.join('').length !== 6}
                 className={`w-full py-3.5 text-base rounded-xl font-black text-white transition-all duration-300 transform shadow-lg ${isVerifyingOtp || isLoading || otpCode.join('').length !== 6
-                    ? 'bg-gray-600/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
+                  ? 'bg-gray-600/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:to-pink-600 hover:scale-[1.02] active:scale-[0.98]'
                   } flex items-center justify-center`}
               >
                 {isVerifyingOtp || isLoading ? (
@@ -541,7 +541,7 @@ export default function Register() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center text-green-400">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2.5 flex-shrink-0"></span>
-                  <span className="font-semibold">Solde de départ : 1000 $</span>
+                  <span className="font-semibold">Solde de départ : $2</span>
                 </div>
                 <div className="flex items-center text-blue-400">
                   <span className="w-2.5 h-2.5 bg-blue-500 rounded-full mr-2.5 flex-shrink-0"></span>
