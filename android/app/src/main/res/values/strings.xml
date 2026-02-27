@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PONY Invest</string>
+    <string name="title_activity_main">PONY Invest</string>
+    <string name="package_name">com.ponyinvest.app</string>
+    <string name="custom_url_scheme">com.ponyinvest.app</string>
+</resources>
